@@ -12,7 +12,7 @@
 
 <div class="welcome"><a href="#">Logout</a></div>
 <div class="welcome">Welcome, User!</div>
-<div class="Olive"><img src="/olive/images/Olive.JPG" alt="Olive" width="115"
+<div class="Olive"><img src="/olive/images/logo.jpg" alt="Olive" width="115"
 	height="49"></div>
 <br />
 <br />
@@ -40,7 +40,7 @@ All</button>
 	<tr>
 		<td class="images"><img src="/olive/images/olive.png" alt="Olive1" height="80"
 			width="80" /></td>
-		<td><img src="olive.png" alt="Olive2" height="80" width="80" /></td>
+		<td><img src="/olive/images/olive.png" alt="Olive2" height="80" width="80" /></td>
 
 	</tr>
 
