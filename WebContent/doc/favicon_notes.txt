@@ -17,4 +17,4 @@ http://www.convertico.com/
 4. Add favicon to project.
 
 5. Add link in <head>:
-<link rel="shortcut icon" href="/Olive/images/olive.ico">
+<link rel="shortcut icon" href="/olive/images/olive.ico">

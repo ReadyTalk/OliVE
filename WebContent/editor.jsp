@@ -4,15 +4,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Edit Project | Olive</title>
-<link rel="shortcut icon" href="/Olive/images/olive.ico">
-<link rel="stylesheet" type="text/css" href="/Olive/css/reset.css">
-<link rel="stylesheet" type="text/css" href="/Olive/css/style.css" />
+<link rel="shortcut icon" href="/olive/images/olive.ico">
+<link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
+<link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
 </head>
 <body>
 
 <div class="welcome"><a href="#">Logout</a></div>
 <div class="welcome">Welcome, User!</div>
-<div class="Olive"><img src="/Olive/images/Olive.JPG" alt="Olive" width="115"
+<div class="Olive"><img src="/olive/images/Olive.JPG" alt="Olive" width="115"
 	height="49"></div>
 <br />
 <br />
@@ -38,15 +38,15 @@ All</button>
 
 <table>
 	<tr>
-		<td class="images"><img src="/Olive/images/olive.png" alt="Olive1" height="80"
+		<td class="images"><img src="/olive/images/olive.png" alt="Olive1" height="80"
 			width="80" /></td>
 		<td><img src="olive.png" alt="Olive2" height="80" width="80" /></td>
 
 	</tr>
 
 	<tr>
-		<td><img src="olive.png" alt="Olive3" height="80" width="80" /></td>
-		<td><img src="olive.png" alt="Olive4" height="80" width="80" /></td>
+		<td><img src="/olive/images/olive.png" alt="Olive3" height="80" width="80" /></td>
+		<td><img src="/olive/images/olive.png" alt="Olive4" height="80" width="80" /></td>
 	</tr>
 </table>
 
