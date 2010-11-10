@@ -1,0 +1,20 @@
+Favicon Notes
+Updated 26 October 2010
+By Terry Smith
+----
+
+How to create Olive favicon:
+
+1. Obtain Olive image:
+http://www.sallybernstein.com/food/single-articles/SPANISH%20OLIVES.jpg
+
+2. Convert 300x290 JPG to 16x16 PNG:
+FastStone Photo Resizer
+
+3. Convert PNG to ICO:
+http://www.convertico.com/
+
+4. Add favicon to project.
+
+5. Add link in <head>:
+<link rel="shortcut icon" href="/Olive/images/olive.ico">
