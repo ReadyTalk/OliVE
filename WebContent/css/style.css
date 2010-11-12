@@ -1,11 +1,11 @@
-@charset "UTF-8";
+@charset "UTF-8";/*
 
-/* 
+ 
 	----------------------------------------
-	HTML elements
+	HTML elementses
 	----------------------------------------
-*/
-body {
+
+*/body {
 	font-size: 16px; /* default */
 	line-height: 20px;
 	font-family: Helvetica, Arial, sans-serif;
