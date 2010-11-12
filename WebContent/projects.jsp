@@ -33,8 +33,8 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, User!&nbsp<a href="#">Logout</a></div>
-<div><strong>My Projects</strong>&nbsp<a href="#">Help</a></div>
+<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div><strong>My Projects</strong>&nbsp;<a href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->

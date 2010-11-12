@@ -27,51 +27,49 @@
 </script>
 </head>
 <body>
+<div id="header">
+<div id="header-left">
+<h1>Olive</h1>
+</div>
+<!-- end #header-left -->
+<div id="header-right">
+<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div><strong>My Projects</strong>&nbsp;<a href="#">Help</a></div>
+</div>
+<!-- end #header-right --></div>
+<!-- end #header -->
 
-<div class="welcome"><a href="#">Logout</a></div>
-<div class="welcome">Welcome, User!</div>
-<div class="Olive"><img src="/olive/images/logo.jpg" alt="Olive"
-	width="115" height="49"></div>
-<br />
-<br />
-<div class="links"><a href="#">Help</a></div>
-<div class="links"><b>My Projects</b></div>
-<br />
+<div class="clear"></div>
 
-<hr>
+<div id="main">
+<div id="vacation">
 
-
-<div class="vacation">
-<h3>My Vacation</h3>
-<div class="button">
+<h3 class="center-text">My Vacation</h3>
+<span class="center-text">
 <button type="button" onclick="alert('Upload New')">Upload New</button>
 <button type="button" onclick="alert('Edit')">Edit</button>
 <button type="button" onclick="alert('Delete')">Delete</button>
 <button type="button" onclick="alert('Select All')">Select All</button>
-</div>
-<hr>
+</span>
 
-
-<table>
-	<tr>
-		<td class="images"><img src="/olive/images/olive.png"
-			alt="Olive1" height="80" width="80" /></td>
-		<td><img src="/olive/images/olive.png" alt="Olive2" height="80"
-			width="80" /></td>
-
-	</tr>
-
-	<tr>
-		<td><img src="/olive/images/olive.png" alt="Olive3" height="80"
-			width="80" /></td>
-		<td><img src="/olive/images/olive.png" alt="Olive4" height="80"
-			width="80" /></td>
-	</tr>
-</table>
-
+<div id="clips"><span><img src="/olive/images/olive.png"
+	alt="Clip 1" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 2" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 3" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 4" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 5" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 6" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 7" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 8" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 9" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 10" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 11" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 12" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 13" height="80" width="80" /><img
+	src="/olive/images/olive.png" alt="Clip 14" height="80" width="80" /></span></div>
 </div>
 
-<div class="video"><video id="vid1" width="780" height="467"
+<div id="player"><video id="vid1" width="780" height="467"
 	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
 	controls> <source
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
@@ -80,28 +78,28 @@
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb400p.ogv" />
 
 </video></div>
-<br />
-<br />
-<div class="timeline">
-<h1>timeline</h1>
 
+<div class="clear"></div>
 
-
+<div id="timeline">
+<h1>Timeline</h1>
 </div>
 
-<div class="button2">
-<button type="button" onclick="JavaScript:alert('Publish Video')">Publish
+<div class="clear"></div>
+
+<div id="export">
+<button type="button" onclick="JavaScript:alert('Export Video')">Export
 Video</button>
 
 </div>
+</div>
+<!-- end #main -->
+
+<div class="clear"></div>
 
 <div id="footer">
-
-<div class="about"><a href="index.html">About Us</a></div>
-<div class="copyright">&copy; ReadyTalk</div>
-
+<div id="footer-left"><a href="#">About Us</a></div>
+<div id="footer-right">&copy; 2010 ReadyTalk</div>
 </div>
-
 </body>
-
 </html>

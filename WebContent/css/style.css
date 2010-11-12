@@ -11,6 +11,7 @@ body {
 	font-family: Helvetica, Arial, sans-serif;
 	text-align: left;
 	background-color: #edf4e6; /* A lightened version of the Olive color */
+	padding: 10px;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -88,8 +89,10 @@ ul {
 #header-right {
 	float: right;
 	text-align: right;
-	padding-top: 15px padding-right :   10px;
+	padding-top: 15px;
+	padding-right: 10px;
 	margin-left: 10px;
+	padding-right: 10px;
 }
 
 #main {
@@ -111,7 +114,8 @@ ul {
 }
 
 #main-center div {
-	text-align: center; margin-left : auto;
+	text-align: center;
+	margin-left: auto;
 	margin-right: auto;
 	margin-left: auto;
 }
@@ -169,94 +173,41 @@ ul {
 	margin-top: 100px;
 }
 
-/* ======================================= */
-#header {
-	margin-bottom: 30px;
-}
-
-.welcome {
-	float: right;
-	margin-left: 10px;
-	padding-right: 10px;
-}
-
-.Olive {
+/* 
+	----------------------------------------
+	Editor page
+	----------------------------------------
+*/
+#vacation {
 	float: left;
-	color: #81bd6a;
-	padding-left: 5px;
-}
-
-.links {
-	float: right;
-	margin-left: 40px;
-	padding-right: 10px;
-}
-
-body {
-	font-family: sans-serif;
-	background-color: #d7efcf;
-}
-
-.vacation {
-	float: left;
-	text-align: center;
-	margin-bottom: 100px;
+	text-align: left;
 	width: 320px;
 	padding: 5px;
-	border: 1px solid gray;
-	margin: 0px;
+	border: 1px solid #888888;
+	width: 320px;
 }
 
-button {
-	background-color: #81bd6a;
+#clips {
+	height: 400px; /* Matches video player height */
+	overflow: auto;
 }
 
-.button2 {
-	background-color: #81bd6a;
-}
-
-.about {
-	float: left;
-	padding-left: 10px;
-}
-
-.copyright {
+#player {
 	float: right;
-	padding-right: 10px;
-}
-
-img {
-	border: 1px solid black;
-	padding: 5px;
-}
-
-table {
-	border-spacing: 20px 10px;
-	margin-left: 20px;
-}
-
-.video {
-	float: right;
-	margin-left: 40px;
-	padding-right: 10px;
-	width: 850px;
-	height: 500x;
+	width: 780px;
+	height: 467px;
 	border: 1px solid gray;
-	margin: 0px;
+	margin-bottom: 12px;
 }
 
-.timeline {
-	float: left;
-	margin-left: 10px;
-	padding-left: 60px;
-	padding-right: 10px;
-	padding-top: 60px;
-	text-align: center;
+#timeline {
 	width: 1200px;
 	border: 1px solid gray;
-	margin: 0px;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-.button2 {
+#export {
 	float: right;
 }
