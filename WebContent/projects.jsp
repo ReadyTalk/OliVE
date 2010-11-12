@@ -7,6 +7,24 @@
 <link rel="shortcut icon" href="/olive/images/olive.ico">
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
 <link rel="stylesheet" type="text/css" href="/olive/css/style.css">
+
+<!-- Google Analytics code. Leave intact just above closing head tag. -->
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push( [ '_setAccount', 'UA-19623968-1' ]);
+	_gaq.push( [ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
 </head>
 <body>
 <div id="header">
@@ -17,8 +35,9 @@
 <div id="header-right">
 <div>Welcome, User!&nbsp<a href="#">Logout</a></div>
 <div><strong>My Projects</strong>&nbsp<a href="#">Help</a></div>
-</div><!-- end #header-right -->
-</div><!-- end #header -->
+</div>
+<!-- end #header-right --></div>
+<!-- end #header -->
 
 <div class="clear"></div>
 
@@ -27,7 +46,8 @@
 
 <div id="title">
 <h1>My Projects</h1>
-</div><!-- end #title -->
+</div>
+<!-- end #title -->
 
 <div id="projects">
 <table>
@@ -50,10 +70,12 @@
 		<td><a href="#" class="warning">Delete</a></td>
 	</tr>
 </table>
-</div><!-- end #projects -->
+</div>
+<!-- end #projects -->
 
 <div id="controls">
-<button type="button" onclick="alert('You clicked the New Project button.')">New
+<button type="button"
+	onclick="alert('You clicked the New Project button.')">New
 Project</button>
 </div>
 <!-- end #controls --></div>
