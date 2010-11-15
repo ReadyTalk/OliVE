@@ -47,7 +47,7 @@
 
 <div id="main">
 <div id="main-left">
-<p>Olive Description</p>
+<p>Olive Description Here</p>
 </div>
 <!-- end #main-left -->
 
