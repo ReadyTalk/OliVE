@@ -83,7 +83,7 @@
 <br />
 <br />
 <div class="timeline">
-<h1>Aqui va el timeline </h1>
+<h1>timeline </h1>
 
 
 
