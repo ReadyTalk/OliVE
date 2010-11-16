@@ -16,7 +16,7 @@
 	_gaq.push( [ '_setAccount', 'UA-19623968-1' ]);
 	_gaq.push( [ '_trackPageview' ]);
 
-	(function() {
+	$(function() {
 		var ga = document.createElement('script');
 		ga.type = 'text/javascript';
 		ga.async = true;
@@ -25,6 +25,14 @@
 				+ '.google-analytics.com/ga.js';
 		var s = document.getElementsByTagName('script')[0];
 		s.parentNode.insertBefore(ga, s);
+
+		$("img").draggable();
+
+		$(".timeline").droppable({
+		    drop: function() { 
+		    	alert('dropped'); 
+		    }
+		});
 				
 	})();
 </script>
