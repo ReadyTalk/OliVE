@@ -33,6 +33,10 @@
 		    	alert('dropped'); 
 		    }
 		});
+
+		$("img").bind('click', function(){
+		    alert('clicked');
+		});
 				
 	})();
 </script>
