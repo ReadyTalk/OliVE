@@ -55,7 +55,11 @@
 
 <hr>
 
+<table id="clips">
 
+<tr>
+
+<td>
 <div class="vacation">
 <h3>My Vacation</h3>
 <div class="button">
@@ -65,7 +69,6 @@
 <button type="button" onclick="alert('Select All')">Select All</button>
 </div>
 <hr>
-
 
 <table>
 	<tr>
@@ -85,8 +88,9 @@
 </table>
 
 </div>
-
-<div class="video"><video id="vid1" width="780" height="467"
+</td>
+<td>
+<div class="video"><video id="vid1" width="500%" height="500%"
 	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
 	controls> <source
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
@@ -95,6 +99,10 @@
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb400p.ogv" />
 
 </video></div>
+
+</td>
+</tr>
+</table>
 <br />
 <br />
 <div class="timeline">

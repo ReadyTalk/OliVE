@@ -200,11 +200,10 @@ body {
 .vacation {
 	float: left;
 	text-align: center;
-	margin-bottom: 100px;
 	width: 320px;
 	padding: 5px;
 	border: 1px solid gray;
-	margin: 0px;
+
 }
 
 button {
@@ -239,10 +238,13 @@ table {
 	float: right;
 	margin-left: 40px;
 	padding-right: 10px;
-	width: 850px;
-	height: 500x;
 	border: 1px solid gray;
 	margin: 0px;
+}
+
+#clips {
+	margin-left: auto;
+    margin-right: auto;	
 }
 
 .timeline {
