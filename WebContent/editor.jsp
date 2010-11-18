@@ -7,11 +7,11 @@
 <link rel="shortcut icon" href="/olive/images/olive.ico">
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
 <link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
-<script src="/olive/scripts/jquery-1.4.4.js"></script>
+<script type="text/javascript" src="/olive/scripts/jquery-1.4.4.js"></script>
 
 <!-- Google Analytics code. Leave intact just above closing head tag. -->
-<script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="scripts/jquery-ui-1.8.6.custom.min.js"></script>
+<script type="text/javascript" src="/olive/scripts/jquery-1.4.4.js"></script>
+<script type="text/javascript" src="/olive/scripts/jquery-ui-1.8.6.custom/js/jquery-ui-1.8.6.custom.min.js"></script>
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push( [ '_setAccount', 'UA-19623968-1' ]);
@@ -26,7 +26,8 @@
 				+ '.google-analytics.com/ga.js';
 		var s = document.getElementsByTagName('script')[0];
 		s.parentNode.insertBefore(ga, s);
-
+</script>
+<script type="text/javascript">
 		$("img").draggable();
 
 		$(".timeline").droppable({
