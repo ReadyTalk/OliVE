@@ -10,12 +10,14 @@
 <script src="/olive/scripts/jquery-1.4.4.js"></script>
 
 <!-- Google Analytics code. Leave intact just above closing head tag. -->
+<script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="scripts/jquery-ui-1.8.6.custom.min.js"></script>
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push( [ '_setAccount', 'UA-19623968-1' ]);
 	_gaq.push( [ '_trackPageview' ]);
 
-	(function() {
+	$(function() {
 		var ga = document.createElement('script');
 		ga.type = 'text/javascript';
 		ga.async = true;
@@ -24,6 +26,31 @@
 				+ '.google-analytics.com/ga.js';
 		var s = document.getElementsByTagName('script')[0];
 		s.parentNode.insertBefore(ga, s);
+
+		$("img").draggable();
+
+		$(".timeline").droppable({
+		    drop: function() { 
+		    	alert('dropped'); 
+		    }
+		});
+
+		$("#Olive1").bind('click', function(){
+			$('#Olive1').clone().insertAfter("#Olive4").slidedown();
+		});
+
+		$("#Olive2").bind('click', function(){
+			$('#Olive2').clone().insertAfter("#Olive4");
+		});
+
+		$("#Olive3").bind('click', function(){
+			$('#Olive3').clone().insertAfter("#Olive4");
+		});
+
+		$("#Olive4").bind('click', function(){
+			$('#Olive4').clone().insertAfter("#Olive4");
+		});
+				
 	})();
 </script>
 </head>
@@ -44,33 +71,41 @@
 
 <div id="main">
 <div id="vacation">
+<table id="clips">
 
-<h3 class="center-text">My Vacation</h3>
-<span class="center-text">
+<tr>
+
+<td>
+<div class="vacation" style="overflow:scroll;">
+<h3>My Vacation</h3>
+<div class="button">
 <button type="button" onclick="alert('Upload New')">Upload New</button>
 <button type="button" onclick="alert('Edit')">Edit</button>
 <button type="button" onclick="alert('Delete')">Delete</button>
 <button type="button" onclick="alert('Select All')">Select All</button>
 </span>
 
-<div id="clips"><span><img src="/olive/images/olive.png"
-	alt="Clip 1" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 2" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 3" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 4" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 5" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 6" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 7" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 8" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 9" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 10" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 11" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 12" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 13" height="80" width="80" /><img
-	src="/olive/images/olive.png" alt="Clip 14" height="80" width="80" /></span></div>
-</div>
+<table>
+	<tr>
+		<td id = "Olive1" class="images"><img src="/olive/images/olive.png"
+			alt="Olive1" height="80" width="80" /></td>
+		<td id = "Olive2"><img src="/olive/images/olive.png" alt="Olive2" height="80"
+			width="80" /></td>
 
-<div id="player"><video id="vid1" width="780" height="467"
+	</tr>
+
+	<tr>
+		<td id = "Olive3"><img src="/olive/images/olive.png" alt="Olive3" height="80"
+			width="80" /></td>
+		<td id = "Olive4"><img src="/olive/images/olive.png" alt="Olive4" height="80"
+			width="80" /></td>
+	</tr>
+</table>
+
+</div>
+</td>
+<td>
+<div class="video"><video id="vid1" width="500%" height="500%"
 	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
 	controls> <source
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
@@ -79,6 +114,10 @@
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb400p.ogv" />
 
 </video></div>
+
+</td>
+</tr>
+</table>
 
 <div class="clear"></div>
 

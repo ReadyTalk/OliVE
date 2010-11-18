@@ -180,11 +180,10 @@ ul {
 */
 #vacation {
 	float: left;
-	text-align: left;
+	text-align: center;
 	width: 320px;
 	padding: 5px;
-	border: 1px solid #888888;
-	width: 320px;
+	border: 1px solid gray;
 }
 
 #clips {
@@ -194,10 +193,15 @@ ul {
 
 #player {
 	float: right;
-	width: 780px;
-	height: 467px;
+	margin-left: 40px;
+	padding-right: 10px;
 	border: 1px solid gray;
 	margin-bottom: 12px;
+}
+
+#clips {
+	margin-left: auto;
+    margin-right: auto;	
 }
 
 #timeline {
