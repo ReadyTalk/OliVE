@@ -7,6 +7,7 @@
 <link rel="shortcut icon" href="/olive/images/olive.ico">
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
 <link rel="stylesheet" type="text/css" href="/olive/css/style.css">
+<script src="/olive/scripts/jquery-1.4.4.js"></script>
 
 <!-- Google Analytics code. Leave intact just above closing head tag. -->
 <script type="text/javascript">
