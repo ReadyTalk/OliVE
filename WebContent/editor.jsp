@@ -34,8 +34,20 @@
 		    }
 		});
 
-		$("img").bind('click', function(){
-		    alert('clicked');
+		$("#Olive1").bind('click', function(){
+			$('#Olive1').clone().insertAfter("#Olive4").slidedown();
+		});
+
+		$("#Olive2").bind('click', function(){
+			$('#Olive2').clone().insertAfter("#Olive4");
+		});
+
+		$("#Olive3").bind('click', function(){
+			$('#Olive3').clone().insertAfter("#Olive4");
+		});
+
+		$("#Olive4").bind('click', function(){
+			$('#Olive4').clone().insertAfter("#Olive4");
 		});
 				
 	})();
@@ -60,7 +72,7 @@
 <tr>
 
 <td>
-<div class="vacation">
+<div class="vacation" style="overflow:scroll;">
 <h3>My Vacation</h3>
 <div class="button">
 <button type="button" onclick="alert('Upload New')">Upload New</button>
@@ -72,17 +84,17 @@
 
 <table>
 	<tr>
-		<td class="images"><img src="/olive/images/olive.png"
+		<td id = "Olive1" class="images"><img src="/olive/images/olive.png"
 			alt="Olive1" height="80" width="80" /></td>
-		<td><img src="/olive/images/olive.png" alt="Olive2" height="80"
+		<td id = "Olive2"><img src="/olive/images/olive.png" alt="Olive2" height="80"
 			width="80" /></td>
 
 	</tr>
 
 	<tr>
-		<td><img src="/olive/images/olive.png" alt="Olive3" height="80"
+		<td id = "Olive3"><img src="/olive/images/olive.png" alt="Olive3" height="80"
 			width="80" /></td>
-		<td><img src="/olive/images/olive.png" alt="Olive4" height="80"
+		<td id = "Olive4"><img src="/olive/images/olive.png" alt="Olive4" height="80"
 			width="80" /></td>
 	</tr>
 </table>
