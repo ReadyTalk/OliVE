@@ -11,11 +11,11 @@
 	
 	<link rel="stylesheet" href="/olive/css2/jquery.ui.all.css"> 
 	<script src="/olive/scripts/jquery-1.4.4.js"></script> 
-	<script src="/olive/ui/jquery.ui.core.js"></script> 
-	<script src="/olive/ui/jquery.ui.widget.js"></script> 
- 	<script src="/olive/ui/jquery.ui.button.js"></script> 
-	<script src="/olive/ui/jquery.ui.position.js"></script> 
-	<script src="/olive/ui/jquery.ui.dialog.js"></script>
+	<script src="/olive/scripts/jquery-ui-1.8.6.custom/development-bunde/ui/jquery.ui.core.js"></script> 
+	<script src="/olive/scripts/jquery-ui-1.8.6.custom/development-bunde/ui/jquery.ui.widget.js"></script> 
+ 	<script src="/olive/scripts/jquery-ui-1.8.6.custom/development-bunde/ui/jquery.ui.button.js"></script> 
+	<script src="/olive/scripts/jquery-ui-1.8.6.custom/development-bunde/ui/jquery.ui.position.js"></script> 
+	<script src="/olive/scripts/jquery-ui-1.8.6.custom/development-bunde/ui/jquery.ui.dialog.js"></script>
 	
 	
 <style>

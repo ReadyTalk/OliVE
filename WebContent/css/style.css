@@ -178,17 +178,30 @@ ul {
 	Editor page
 	----------------------------------------
 */
-#vacation {
+#clips-container {
 	float: left;
 	text-align: center;
 	width: 320px;
+	height: 400px; /* Matches video player height */
 	padding: 5px;
 	border: 1px solid gray;
+	overflow: auto; /* Or overflow: scroll */
 }
 
 #clips {
-	height: 400px; /* Matches video player height */
-	overflow: auto;
+	text-align: left;
+}
+
+.clip-icon {
+	width: 40px;
+	height: 40px;
+	margin: 5px;
+	padding: 5px;
+}
+
+.video {
+	width: 50%;
+	height: 28.125%; /* 50% x 9/16 */
 }
 
 #player {
@@ -199,13 +212,8 @@ ul {
 	margin-bottom: 12px;
 }
 
-#clips {
-	margin-left: auto;
-    margin-right: auto;	
-}
-
 #timeline {
-	width: 1200px;
+	width: 100%;
 	border: 1px solid gray;
 	text-align: center;
 	margin-left: auto;
