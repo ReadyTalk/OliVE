@@ -4,15 +4,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Edit Project | Olive</title>
+
 <link rel="shortcut icon" href="/olive/images/olive.ico">
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
 <link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
+
 <script src="/olive/scripts/jquery-1.4.4.js"></script>
-<script src="/olive/scripts/script.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/js/jquery-ui-1.8.6.custom.min.js"></script>
-
-<!-- Google Analytics code. Leave intact just above closing head tag. -->
+<script src="/olive/scripts/script.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
