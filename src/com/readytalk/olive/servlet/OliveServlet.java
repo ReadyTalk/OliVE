@@ -148,7 +148,12 @@ public class OliveServlet extends HttpServlet {
 		 * throughout the session.
 		 */
 		session.setAttribute("validity", validity);
-
-		response.sendRedirect("index.jsp");
+		if(validity.equals("Welcome!")){
+			response.sendRedirect("projects.jsp");
+		}
+		else{
+			response.sendRedirect("index.jsp");
+		}
+		
 	}
 }
