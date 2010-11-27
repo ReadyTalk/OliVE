@@ -1,8 +1,12 @@
 package com.readytalk.olive.logic;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 import com.readytalk.olive.model.User;
 
@@ -36,12 +40,30 @@ public class OliveLogic {
 	 * @return
 	 */
 	public static String login(User user) {
-		if (user.getUsername().equals("olive")
+		try{ 
+			Connection conn = getDBConnection();	
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT Username FROM Accounts WHERE Username = '"
+				+user.getUsername()+"' AND Password = '"+user.getPassword()+"';";
+			ResultSet r = st.executeQuery(s);
+			if(r.first()){
+				conn.close();
+				return "Welcome!";
+			}
+			else{
+				conn.close();
+				return "Incorrect username and/or password.";
+			}
+			
+		}catch (Exception e) { e.printStackTrace(); }
+		/*if (user.getUsername().equals("olive")
 				&& user.getPassword().equals("evilo")) {
 			return "Welcome!";	// Do not redisplay user name (security issue).
 		} else {
 			return "Incorrect username and/or password.";
-		}
+		}*/
 
 		/*
 		 * try { Statement stmt = null;
@@ -79,5 +101,25 @@ public class OliveLogic {
 		 * 
 		 * } catch (Exception e) { e.printStackTrace(); }
 		 */
+		return "error!";
 	}
+	public static Connection getDBConnection(){
+		try{
+			Context initCtx = new InitialContext();
+			DataSource ds = (DataSource)initCtx.lookup("java:comp/env/jdbc/OliveData");
+			return ds.getConnection();
+		}catch (Exception e) { e.printStackTrace(); }
+		return null;
+	}
+	public static void AddAccount(User user){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Accounts (Username, Password) VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"');";
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	
 }
