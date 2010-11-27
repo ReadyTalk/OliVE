@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/Olive"/>
+<Context antiJARLocking="true" path="/Olive">
+           <Resource name="jdbc/OliveData" 
+              auth="Container"
+              type="javax.sql.DataSource" 
+              username="root" 
+              password="Alberto"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/"
+              maxActive="15" 
+              maxIdle="3"/>
+	    </Context>
