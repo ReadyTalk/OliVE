@@ -111,15 +111,71 @@ public class OliveLogic {
 		}catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
-	public static void AddAccount(User user){
+	public static void AddAccount(String username, String password, String name, String email){
 		try{
 			Connection conn = getDBConnection();
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "INSERT INTO Accounts (Username, Password) VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"');";
+			s = "INSERT INTO Accounts (Username, Password, Name, Email)" +
+					"VALUES ('"+username+"', '"+password+"' , '"+name+"', '"+email+"');";
 			st.executeUpdate(s);
 		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void AddProject(String name, int AccountID, String icon){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Projects (Name, AccountID, Icon)" +
+					"VALUES ('"+name+"', '"+AccountID+"' , '"+icon+"');";
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void AddVideo(String name,String URL,int ProjectID,String icon){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon)" +
+					"VALUES ('"+name+"', '"+URL+"', '"+ProjectID+"' , '"+icon+"');";
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void deleteAccount(User user){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Accounts WHERE" +
+					"username = '"+user.getUsername()+"';"; //Need to add error checking
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	public static void deleteProject(String name, int AccountID){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Projects WHERE" +
+					"Name = '"+name+"' AND AccountID = '"+AccountID+"';"; //Need to add error checking
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	public static void deleteVideo(String URL){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Videos WHERE" +
+					"URL = '"+URL+"';"; //Need to add error checking
+			st.executeUpdate(s);
+		}catch (Exception e) { e.printStackTrace(); }
 	}
 	
 }
