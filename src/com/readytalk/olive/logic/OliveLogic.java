@@ -49,11 +49,11 @@ public class OliveLogic {
 				+user.getUsername()+"' AND Password = '"+user.getPassword()+"';";
 			ResultSet r = st.executeQuery(s);
 			if(r.first()){
-				conn.close();
+				closeConnection(conn);
 				return "Welcome!";
 			}
 			else{
-				conn.close();
+				closeConnection(conn);
 				return "Incorrect username and/or password.";
 			}
 			
@@ -111,6 +111,11 @@ public class OliveLogic {
 		}catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
+	public static void closeConnection(Connection c){
+		try{
+			c.close();
+		}catch (Exception e) { e.printStackTrace(); }
+	}
 	public static void AddAccount(String username, String password, String name, String email){
 		try{
 			Connection conn = getDBConnection();
@@ -120,6 +125,7 @@ public class OliveLogic {
 			s = "INSERT INTO Accounts (Username, Password, Name, Email)" +
 					"VALUES ('"+username+"', '"+password+"' , '"+name+"', '"+email+"');";
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }	
 	}
 	public static void AddProject(String name, int AccountID, String icon){
@@ -131,6 +137,7 @@ public class OliveLogic {
 			s = "INSERT INTO Projects (Name, AccountID, Icon)" +
 					"VALUES ('"+name+"', '"+AccountID+"' , '"+icon+"');";
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }	
 	}
 	public static void AddVideo(String name,String URL,int ProjectID,String icon){
@@ -142,6 +149,7 @@ public class OliveLogic {
 			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon)" +
 					"VALUES ('"+name+"', '"+URL+"', '"+ProjectID+"' , '"+icon+"');";
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }	
 	}
 	public static void deleteAccount(User user){
@@ -153,6 +161,7 @@ public class OliveLogic {
 			s = "DELETE FROM Accounts WHERE" +
 					"username = '"+user.getUsername()+"';"; //Need to add error checking
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }
 	}
 	public static void deleteProject(String name, int AccountID){
@@ -164,6 +173,7 @@ public class OliveLogic {
 			s = "DELETE FROM Projects WHERE" +
 					"Name = '"+name+"' AND AccountID = '"+AccountID+"';"; //Need to add error checking
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }
 	}
 	public static void deleteVideo(String URL){
@@ -175,6 +185,7 @@ public class OliveLogic {
 			s = "DELETE FROM Videos WHERE" +
 					"URL = '"+URL+"';"; //Need to add error checking
 			st.executeUpdate(s);
+			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }
 	}
 	
