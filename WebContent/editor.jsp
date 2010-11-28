@@ -40,7 +40,7 @@
 <!-- end #header-left -->
 <div id="header-right">
 <div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
-<div><strong>My Projects</strong>&nbsp;<a href="#">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -70,12 +70,12 @@
 <!-- end #clips --></div>
 <!-- end #clips-container -->
 
-<div id="video"><video id="video-1" width="50%" height="50%"
+<div id="player"><video id="video-1"
 	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
-	controls
+	controls="controls"
 	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
 </video></div>
-<!-- end div.video -->
+<!-- end #player -->
 
 <div class="clear"></div>
 

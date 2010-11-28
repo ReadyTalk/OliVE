@@ -83,6 +83,10 @@ ul {
 	list-style-type: none;
 }
 
+strong {
+	font-weight: bolder; /* Default HTML4 styling */
+}
+
 /* 
 	----------------------------------------
 	General styling
@@ -211,14 +215,14 @@ ul {
 #projects div {
 	float: left;
 	width: 100px;
-	padding-bottom: 20px;
-	padding-right: 20px;
+	padding-bottom: 40px;
+	padding-right: 40px;
 }
 
 #projects div img {
 	display: block;
-	width: 80px;
-	height: 80px;
+	width: 100px;
+	height: 100px;
 }
 
 #controls { /*margin-top: 100px;*/
@@ -230,14 +234,21 @@ ul {
 	Editor page
 	----------------------------------------
 */
+#main {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 100%; /* matches #player height */
+}
+
 #clips-container {
 	float: left;
 	text-align: center;
-	width: 320px;
-	height: 400px; /* Matches video player height */
+	width: 32%; /* 100% - (#player height) */
+	height: 36.5625%; /* matches #player height */
 	padding: 5px;
 	border: 1px solid gray;
-	overflow: auto; /* Or overflow: scroll */
+	overflow: auto; /* overflow:scroll shows bars at all times. */
 }
 
 #clips {
@@ -251,17 +262,16 @@ ul {
 	padding: 5px;
 }
 
-.video {
-	width: 50%;
-	height: 28.125%; /* 50% x 9/16 */
-}
-
 #player {
 	float: right;
-	margin-left: 40px;
-	padding-right: 10px;
+	width: 65%; /* 100% - (#clips-container height) */
+	height: 36.5625%; /* width x 9/16, matches #clips-container height */
 	border: 1px solid gray;
-	margin-bottom: 12px;
+}
+
+video {
+	height: 100%; /* Fill container */
+	width: 100%; /* Fill container */
 }
 
 #timeline {

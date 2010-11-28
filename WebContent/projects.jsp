@@ -39,7 +39,7 @@
 </div>
 <div id="header-right">
 <div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
-<div><strong>My Projects</strong>&nbsp;<a href="#">Help</a></div>
+<div><a href="#">Help</a></div>
 </div>
 </div>
 
