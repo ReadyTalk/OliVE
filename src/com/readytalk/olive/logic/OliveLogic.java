@@ -50,11 +50,11 @@ public class OliveLogic {
 			ResultSet r = st.executeQuery(s);
 			if(r.first()){
 				closeConnection(conn);
-				return "Welcome!";
+				return true;
 			}
 			else{
 				closeConnection(conn);
-				return "Incorrect username and/or password.";
+				return false;
 			}
 			
 		}catch (Exception e) { e.printStackTrace(); }
@@ -101,7 +101,7 @@ public class OliveLogic {
 		 * 
 		 * } catch (Exception e) { e.printStackTrace(); }
 		 */
-		return "error!";
+		return false;	// Error!
 	}
 	public static Connection getDBConnection(){
 		try{
