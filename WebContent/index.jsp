@@ -18,19 +18,33 @@
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.widget.js"></script>
 <script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.mouse.js"></script>
+<script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.button.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.position.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.draggable.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.droppable.js"></script>
 <script src="/olive/scripts/script.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
 <%
-	Object validity = session.getAttribute("validity");
-	String loginMessage = (validity != null) ? (String) validity
-			: "Please log in.";
+	Boolean isAuthorized = (Boolean) session.getAttribute("isAuthorized");	// Nasty cast
+	String loginMessage;
+	if (isAuthorized == null) {
+		loginMessage = "Please log in.";
+	}
+	else if (isAuthorized) {
+		loginMessage = "You have been successfully logged in.";
+	}
+	else {
+		loginMessage = "Incorrect username and/or password.";
+	}
 %>
 <div id="header">
 <div id="header-left">
@@ -45,13 +59,13 @@
 
 <div id="main">
 <div id="main-left">
-<p>Olive Description</p>
+<img id="splash" src="/olive/images/splash-simple.png" />
 </div>
 <!-- end #main-left -->
 
 <div id="main-right">
 
-<form action="OliveServlet" name="process" method="POST">
+<form action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
 	name="username" id="login-username" size="32" maxlength="128" /></p>
 <p><label for="password">Password</label> <input type="password"

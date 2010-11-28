@@ -1,8 +1,6 @@
 @charset "UTF-8";
 
-/* For HTML4 defaults, see: http://www.w3.org/TR/CSS2/sample.html */
-
-/* 
+/* For HTML4 defaults, see: http://www.w3.org/TR/CSS2/sample.html */ /* 
 	----------------------------------------
 	HTML elements
 	----------------------------------------
@@ -20,7 +18,8 @@ body {
 	line-height: 20px;
 	font-family: Helvetica, Arial, sans-serif;
 	text-align: left;
-	background-color: #edf4e6; /* A lightened version of the Olive color */
+	/*background-color: #edf4e6;*/
+	/* A lightened version of the Olive color */
 	padding: 10px;
 }
 
@@ -37,28 +36,23 @@ h1 {
 }
 
 h2 {
-	font-size: 240%; /* 24px */
-	/*margin: .75em 0*/
+	font-size: 240%; /* 24px */ /*margin: .75em 0*/
 }
 
 h3 {
-	font-size: 187.2%; /* 18.72px */
-	/*margin: .83em 0;*/
+	font-size: 187.2%; /* 18.72px */ /*margin: .83em 0;*/
 }
 
 h4 {
-	font-size: 160%; /* 16px */
-	/*margin: 1.12em 0;*/
+	font-size: 160%; /* 16px */ /*margin: 1.12em 0;*/
 }
 
 h5 {
-	font-size: 132.8%; /* 13.28px */
-	/*margin: 1.5em 0;*/
+	font-size: 132.8%; /* 13.28px */ /*margin: 1.5em 0;*/
 }
 
 h6 {
-	font-size: 120%; /* 12px */
-	/*margin: 1.67em 0;*/
+	font-size: 120%; /* 12px */ /*margin: 1.67em 0;*/
 }
 
 p {
@@ -80,8 +74,9 @@ img {
 	padding: 5px;
 }
 
-button {
-	background-color: #81bd6a;
+button { /*background-color: #edf4e6;*/
+	/* A lightened version of the Olive color */
+	
 }
 
 ul {
@@ -118,51 +113,36 @@ ul {
 #header {
 	height: 50px;
 	border-bottom: 2px solid #888888;
-	margin-bottom: 30px;
-	padding-top: 10px;
+	padding-bottom: 1%;
 }
 
 #header-left {
 	float: left;
-	padding-left: 10px;
+	text-align: left;
+	width: 200px;
+	margin-left: 1%;
 }
 
 #header-right {
 	float: right;
 	text-align: right;
-	padding-top: 15px;
-	padding-right: 10px;
-	margin-left: 10px;
-	padding-right: 10px;
+	width: 200px;
+	margin-right: 1%;
 }
 
 #main {
-	padding: 10px 100px 30px 100px;
+	padding: 5% 10% 5% 10%;
 }
 
 #main-left {
 	float: left;
-	width: 300px;
-	height: 300px;
-	padding: 10px 0px 10px 0px;
-	margin-left: 150px;
+	padding: 1% 0% 1% 10%;
 }
 
 #main-center {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
-}
-
-#main-center div {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	margin-left: auto;
-}
-
-#main-center h1 {
-	text-align: center;
 }
 
 #main-center table {
@@ -172,29 +152,38 @@ ul {
 
 #main-right {
 	float: right;
-	padding-top: 80px;
-	padding-right: 10px;
-	margin-right: 150px;
+	padding: 1% 10% 1% 0%;
 }
 
 #footer {
-	padding-top: 10px;
 	border-top: 2px solid #888888;
 	height: 50px;
+	padding-top: 1%;
 }
 
 #footer-left {
 	float: left;
+	text-align: left;
 	width: 200px;
-	margin-top: 1%;
 	margin-left: 1%;
 }
 
 #footer-right {
 	float: right;
+	text-align: right;
 	width: 200px;
-	margin-top: 1%;
 	margin-right: 1%;
+}
+
+/* 
+	----------------------------------------
+	Login page
+	----------------------------------------
+*/
+#splash {
+	width: 379px;
+	height: 145px;
+	border: none;
 }
 
 /* 
@@ -206,12 +195,34 @@ ul {
 	
 }
 
-#projects {
-	
+#title h1 {
+	float: left;
 }
 
-#controls {
-	margin-top: 100px;
+#title button {
+	float: right;
+	margin: 20px; /* Same as h1's padding */
+}
+
+#projects {
+	width: 100%;
+}
+
+#projects div {
+	float: left;
+	width: 100px;
+	padding-bottom: 20px;
+	padding-right: 20px;
+}
+
+#projects div img {
+	display: block;
+	width: 80px;
+	height: 80px;
+}
+
+#controls { /*margin-top: 100px;*/
+	
 }
 
 /* 

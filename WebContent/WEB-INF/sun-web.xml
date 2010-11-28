@@ -4,11 +4,11 @@
 	what my application is called. There are other things in here, but for now 
 	this is what you need to know. The "context root" is what goes after your 
 	base URL. i.e. if Tomcat is running at olive.readytalk.com, then the root 
-	context (or context-root) would make the URL to this application: http://olive.readytalk.com/Olive/ 
+	context (or context-root) would make the URL to this application: http://olive.readytalk.com/olive/ 
 	That would put you at the index.jsp. -->
 
 <sun-web-app error-url="">
-	<context-root>/Olive</context-root>
+	<context-root>/</context-root>
 	<class-loader delegate="true" />
 	<jsp-config>
 		<property name="keepgenerated" value="true">

@@ -10,17 +10,13 @@ jQuery(document).ready(function() {
 // Modified from: http://jqueryui.com/demos/draggable/
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
-	if ($('img').length) {
-		$('img').draggable();
-	}
+	$('img').draggable();
 
-	if ($('.timeline').length) {
-		$('.timeline').droppable( {
-			drop : function() {
-				alert('dropped');
-			}
-		});
-	}
+	$('.timeline').droppable( {
+		drop : function() {
+			alert('dropped');
+		}
+	});
 
 	$('#olive1').bind('click', function() {
 		$('#olive1').clone().insertAfter('#olive4').slidedown();

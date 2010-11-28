@@ -6,12 +6,29 @@
 <title>Edit Project | Olive</title>
 
 <link rel="shortcut icon" href="/olive/images/olive.ico">
-<link rel="stylesheet" type="text/css" href="/olive/css/reset.css">
+
+<link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
+<link rel="stylesheet" type="text/css"
+	href="/olive/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/jquery-ui-1.8.6.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
 
 <script src="/olive/scripts/jquery-1.4.4.js"></script>
 <script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/js/jquery-ui-1.8.6.custom.min.js"></script>
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.core.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.widget.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.mouse.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.button.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.position.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.draggable.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.droppable.js"></script>
 <script src="/olive/scripts/script.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>

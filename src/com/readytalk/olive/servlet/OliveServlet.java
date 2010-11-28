@@ -133,7 +133,7 @@ public class OliveServlet extends HttpServlet {
 
 		User user = new User(username, password);
 
-		String validity = OliveLogic.login(user);
+		Boolean isAuthorized = OliveLogic.isAuthorized(user);
 
 		/*
 		 * The session object is bound to your user's IP/MAC address by tomcat.
@@ -147,8 +147,13 @@ public class OliveServlet extends HttpServlet {
 		 * from the OliveLogic to an attribute that will be forwarded on
 		 * throughout the session.
 		 */
-		session.setAttribute("validity", validity);
+		session.setAttribute("isAuthorized", isAuthorized);	// Do not redisplay user name (XSS vulnerability).
 
-		response.sendRedirect("index.jsp");
+		if (isAuthorized) {	// Take the user to the projects page.
+			response.sendRedirect("projects.jsp");
+		}
+		else {	// Keep the user on the same page.
+			response.sendRedirect("index.jsp");
+		}
 	}
 }

@@ -35,12 +35,12 @@ public class OliveLogic {
 	 * @param password
 	 * @return
 	 */
-	public static String login(User user) {
+	public static Boolean isAuthorized(User user) {
 		if (user.getUsername().equals("olive")
 				&& user.getPassword().equals("evilo")) {
-			return "Welcome!";	// Do not redisplay user name (security issue).
+			return true;
 		} else {
-			return "Incorrect username and/or password.";
+			return false;
 		}
 
 		/*
