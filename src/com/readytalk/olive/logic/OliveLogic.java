@@ -1,8 +1,12 @@
 package com.readytalk.olive.logic;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 import com.readytalk.olive.model.User;
 
@@ -36,12 +40,30 @@ public class OliveLogic {
 	 * @return
 	 */
 	public static Boolean isAuthorized(User user) {
-		if (user.getUsername().equals("olive")
+		try{ 
+			Connection conn = getDBConnection();	
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT Username FROM Accounts WHERE Username = '"
+				+user.getUsername()+"' AND Password = '"+user.getPassword()+"';";
+			ResultSet r = st.executeQuery(s);
+			if(r.first()){
+				closeConnection(conn);
+				return "Welcome!";
+			}
+			else{
+				closeConnection(conn);
+				return "Incorrect username and/or password.";
+			}
+			
+		}catch (Exception e) { e.printStackTrace(); }
+		/*if (user.getUsername().equals("olive")
 				&& user.getPassword().equals("evilo")) {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
 
 		/*
 		 * try { Statement stmt = null;
@@ -79,5 +101,92 @@ public class OliveLogic {
 		 * 
 		 * } catch (Exception e) { e.printStackTrace(); }
 		 */
+		return "error!";
 	}
+	public static Connection getDBConnection(){
+		try{
+			Context initCtx = new InitialContext();
+			DataSource ds = (DataSource)initCtx.lookup("java:comp/env/jdbc/OliveData");
+			return ds.getConnection();
+		}catch (Exception e) { e.printStackTrace(); }
+		return null;
+	}
+	public static void closeConnection(Connection c){
+		try{
+			c.close();
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	public static void AddAccount(String username, String password, String name, String email){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Accounts (Username, Password, Name, Email)" +
+					"VALUES ('"+username+"', '"+password+"' , '"+name+"', '"+email+"');";
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void AddProject(String name, int AccountID, String icon){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Projects (Name, AccountID, Icon)" +
+					"VALUES ('"+name+"', '"+AccountID+"' , '"+icon+"');";
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void AddVideo(String name,String URL,int ProjectID,String icon){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon)" +
+					"VALUES ('"+name+"', '"+URL+"', '"+ProjectID+"' , '"+icon+"');";
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }	
+	}
+	public static void deleteAccount(User user){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Accounts WHERE" +
+					"username = '"+user.getUsername()+"';"; //Need to add error checking
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	public static void deleteProject(String name, int AccountID){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Projects WHERE" +
+					"Name = '"+name+"' AND AccountID = '"+AccountID+"';"; //Need to add error checking
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	public static void deleteVideo(String URL){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "DELETE FROM Videos WHERE" +
+					"URL = '"+URL+"';"; //Need to add error checking
+			st.executeUpdate(s);
+			closeConnection(conn);
+		}catch (Exception e) { e.printStackTrace(); }
+	}
+	
 }
