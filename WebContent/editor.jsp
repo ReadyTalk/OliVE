@@ -33,13 +33,14 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
+
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>
@@ -49,26 +50,26 @@
 
 <div id="main">
 
-<div id="clips-container">
-<div id="clips-title">
+<div id="videos-container">
+<div id="videos-title">
 <h3>My Vacation</h3>
 </div>
-<!-- end #clips-title -->
-<div id="clips-controls">
+<!-- end #videos-title -->
+<div id="videos-controls">
 <button type="button" onclick="alert('Upload New')">Upload New</button>
 <button type="button" onclick="alert('Edit')">Edit</button>
 <button type="button" onclick="alert('Delete')">Delete</button>
 <button type="button" onclick="alert('Select All')">Select All</button>
 </div>
-<!-- end #clips-controls -->
-<div id="clips"><img id="olive1" class="clip-icon"
+<!-- end #videos-controls -->
+<div id="videos"><img id="olive1" class="video-icon"
 	src="/olive/images/olive.png" alt="olive1" /> <img id="olive2"
-	class="clip-icon" src="/olive/images/olive.png" alt="olive2" /> <img
-	id="olive3" class="clip-icon" src="/olive/images/olive.png"
-	alt="olive3" /> <img id="olive4" class="clip-icon"
+	class="video-icon" src="/olive/images/olive.png" alt="olive2" /> <img
+	id="olive3" class="video-icon" src="/olive/images/olive.png"
+	alt="olive3" /> <img id="olive4" class="video-icon"
 	src="/olive/images/olive.png" alt="olive4" /></div>
-<!-- end #clips --></div>
-<!-- end #clips-container -->
+<!-- end #videos --></div>
+<!-- end #videos-container -->
 
 <div id="player"><video id="video-1"
 	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"

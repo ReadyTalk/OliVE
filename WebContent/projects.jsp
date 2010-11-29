@@ -38,7 +38,7 @@
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
 <div><a href="#">Help</a></div>
 </div>
 </div>
@@ -46,68 +46,71 @@
 <div class="clear"></div>
 
 <div id="main">
-<div id="main-center">
+<div id="projects-container">
 
-<div id="title">
+<div id="projects-title">
 <h1>My Projects</h1>
-<button type="button"
-	onclick="alert('Create New Project')">Create
+</div>
+<!-- end #projects-title -->
+
+<div id="controls">
+<button type="button" onclick="alert('Create New Project')">Create
 New Project</button>
 </div>
-<!-- end #title -->
-
-<div id="controls"></div>
 <!-- end #controls -->
 
 <div class="clear"></div>
 
-<div id="projects" class="center-block" class="center-text">
-<div id="project-1"><img src="images/wedding.jpg" alt="My Wedding" />
+<div id="project-clips">
+<div id="project-1" class="project-icon-container"><img
+	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
 <p><a href="editor.jsp">My Wedding</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-2"><img src="images/summer-flower.png"
-	alt="My Summer" />
+<div id="project-2" class="project-icon-container"><img
+	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
 <p><a href="editor.jsp">My Summer</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-3"><img src="images/vacation.jpg"
-	alt="My Vacation" />
+<div id="project-3" class="project-icon-container"><img
+	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
 <p><a href="editor.jsp">My Vacation</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-4"><img src="images/wedding.jpg" alt="My Wedding" />
+<div id="project-4" class="project-icon-container"><img
+	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
 <p><a href="editor.jsp">My Other Wedding</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-5"><img src="images/summer-flower.png"
-	alt="My Summer" />
+<div id="project-5" class="project-icon-container"><img
+	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
 <p><a href="editor.jsp">My Other Summer</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-6"><img src="images/vacation.jpg"
-	alt="My Vacation" />
+<div id="project-6" class="project-icon-container"><img
+	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
 <p><a href="editor.jsp">My Other Vacation</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-7"><img src="images/wedding.jpg" alt="My Wedding" />
+<div id="project-7" class="project-icon-container"><img
+	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
 <p><a href="editor.jsp">Yet Another Wedding</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-8"><img src="images/summer-flower.png"
-	alt="My Summer" />
+<div id="project-8" class="project-icon-container"><img
+	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
 <p><a href="editor.jsp">Yet Another Summer</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
-<div id="project-9"><img src="images/vacation.jpg"
-	alt="My Vacation" />
+<div id="project-9" class="project-icon-container"><img
+	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
 <p><a href="editor.jsp">Yet Another Vacation</a></p>
-<p><a href="" class="warning">Delete</a></p>
+<p><small><a href="" class="warning">Delete</a></small></p>
 </div>
 
 </div>
-<!-- end #projects --></div>
-<!-- end #main-center --></div>
+<!-- end #project-clips --></div>
+<!-- end #projects-container --></div>
 <!-- end #main -->
 
 <div class="clear"></div>

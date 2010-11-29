@@ -20,7 +20,6 @@ body {
 	text-align: left;
 	/*background-color: #edf4e6;*/
 	/* A lightened version of the Olive color */
-	padding: 10px;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -69,11 +68,6 @@ tr,td {
 	padding: 0px 10px 0px 10px;
 }
 
-img {
-	border: 1px solid #000000;
-	padding: 5px;
-}
-
 button { /*background-color: #edf4e6;*/
 	/* A lightened version of the Olive color */
 	
@@ -84,7 +78,11 @@ ul {
 }
 
 strong {
-	font-weight: bolder; /* Default HTML4 styling */
+	font-weight: bolder;
+}
+
+small {
+	font-size: .83em;
 }
 
 /* 
@@ -115,67 +113,52 @@ strong {
 	----------------------------------------
 */
 #header {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	left: 0px;
 	height: 50px;
 	border-bottom: 2px solid #888888;
-	padding-bottom: 1%;
 }
 
 #header-left {
 	float: left;
 	text-align: left;
-	width: 200px;
 	margin-left: 1%;
 }
 
 #header-right {
 	float: right;
 	text-align: right;
-	width: 200px;
 	margin-right: 1%;
 }
 
 #main {
-	padding: 5% 10% 5% 10%;
-}
-
-#main-left {
-	float: left;
-	padding: 1% 0% 1% 10%;
-}
-
-#main-center {
-	width: 50%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#main-center table {
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#main-right {
-	float: right;
-	padding: 1% 10% 1% 0%;
+	position: absolute;
+	top: 50px;
+	right: 0px;
+	bottom: 50px;
+	left: 0px;
 }
 
 #footer {
-	border-top: 2px solid #888888;
+	position: absolute;
+	right: 0px;
+	bottom: 00px;
+	left: 0px;
 	height: 50px;
-	padding-top: 1%;
+	border-top: 2px solid #888888;
 }
 
 #footer-left {
 	float: left;
 	text-align: left;
-	width: 200px;
 	margin-left: 1%;
 }
 
 #footer-right {
 	float: right;
 	text-align: right;
-	width: 200px;
 	margin-right: 1%;
 }
 
@@ -184,10 +167,32 @@ strong {
 	Login page
 	----------------------------------------
 */
-#splash {
+#splash-container {
+	position: absolute;
+	top: 0%;
+	right: 50%;
+	bottom: 0%;
+	left: 0%;
+	padding: 10% 10% 10% 10%;
+}
+
+#splash-image {
+	float: right;
 	width: 379px;
 	height: 145px;
-	border: none;
+}
+
+#login-form-container {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	bottom: 0%;
+	left: 50%;
+	padding: 10% 10% 10% 10%;
+}
+
+#login-form {
+	
 }
 
 /* 
@@ -195,34 +200,47 @@ strong {
 	Projects page
 	----------------------------------------
 */
-#title {
+#projects-title {
 	
 }
 
-#title h1 {
-	float: left;
+#projects-title h1 {
+	
 }
 
-#title button {
-	float: right;
-	margin: 20px; /* Same as h1's padding */
+#projects-title button {
+	display: block; /* Make it go to the next line. */
 }
 
-#projects {
-	width: 100%;
+#projects-container {
+	width: 50%;
+	height: 100%;
+	border: 1px solid red;
+	margin-left: auto;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-#projects div {
+#project-clips {
+	height: 100%;
+	border: 1px solid blue;
+	overflow: auto;
+}
+
+.project-icon-container {
 	float: left;
 	width: 100px;
 	padding-bottom: 40px;
 	padding-right: 40px;
 }
 
-#projects div img {
+#project-clips div img {
 	display: block;
+	padding: 5px;
+	border: 1px solid #000000;
 	width: 100px;
 	height: 100px;
+	border: 1px solid #000000;
 }
 
 #controls { /*margin-top: 100px;*/
@@ -234,56 +252,71 @@ strong {
 	Editor page
 	----------------------------------------
 */
-#main {
-	margin: 0px;
-	padding: 0px;
-	width: 100%;
-	height: 100%; /* matches #player height */
+#videos-container {
+	position: absolute;
+	top: 0px;
+	right: 70%;
+	bottom: 150px;
+	left: 0px;
+	text-align: center;
+	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 }
 
-#clips-container {
-	float: left;
-	text-align: center;
-	width: 32%; /* 100% - (#player height) */
-	height: 36.5625%; /* matches #player height */
-	padding: 5px;
+#videos-controls {
+	border-top: 1px solid gray;
+	border-right: 1px solid gray;
+	border-bottom: 0px solid gray; /* different */
+	border-left: 1px solid gray;
+}
+
+#videos {
+	height: 100%;
+	text-align: left;
 	border: 1px solid gray;
 	overflow: auto; /* overflow:scroll shows bars at all times. */
 }
 
-#clips {
-	text-align: left;
-}
-
-.clip-icon {
+.video-icon {
 	width: 40px;
 	height: 40px;
 	margin: 5px;
 	padding: 5px;
 }
 
+.video-icon img {
+	border: 1px solid #000000;
+}
+
 #player {
-	float: right;
-	width: 65%; /* 100% - (#clips-container height) */
-	height: 36.5625%; /* width x 9/16, matches #clips-container height */
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 150px;
+	left: 30%;
+	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
 }
 
 video {
-	height: 100%; /* Fill container */
-	width: 100%; /* Fill container */
+	float: right;
+	width: 100%;
+	height: 100%;
 }
 
 #timeline {
-	width: 100%;
+	position: absolute;
+	right: 100px;
+	bottom: 0px;
+	left: 0px;
+	height: 150px;
 	border: 1px solid gray;
 	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 #export {
-	float: right;
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
 }
 
 /* 
@@ -331,4 +364,17 @@ div#users-contain table td,div#users-contain table th {
 .validateTips {
 	border: 1px solid transparent;
 	padding: 0.3em;
+}
+
+/* 
+	----------------------------------------
+	Edit account page
+	----------------------------------------
+*/
+#edit-account-container {
+	padding: 10%;
+}
+
+#edit-account-container h2 {
+	margin: .75em 0;
 }
