@@ -34,15 +34,14 @@
 </head>
 <body>
 <%
-	Boolean isAuthorized = (Boolean) session.getAttribute("isAuthorized");	// Nasty cast
+	Boolean isAuthorized = (Boolean) session
+			.getAttribute("isAuthorized"); // Nasty cast
 	String loginMessage;
 	if (isAuthorized == null) {
 		loginMessage = "Please log in.";
-	}
-	else if (isAuthorized) {
+	} else if (isAuthorized) {
 		loginMessage = "You have been successfully logged in.";
-	}
-	else {
+	} else {
 		loginMessage = "Incorrect username and/or password.";
 	}
 %>
@@ -58,25 +57,22 @@
 <div class="clear"></div>
 
 <div id="main">
-<div id="main-left">
-<img id="splash" src="/olive/images/splash-simple.png" />
-</div>
-<!-- end #main-left -->
+<div id="splash-container"><img id="splash-image"
+	src="/olive/images/splash-simple.png" /></div>
+<!-- end #splash-container -->
 
-<div id="main-right">
+<div id="login-form-container">
 
-<form action="OliveServlet" name="process" method="post">
+<form id="login-form" action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
 	name="username" id="login-username" size="32" maxlength="128" /></p>
 <p><label for="password">Password</label> <input type="password"
 	name="password" id="login-password" size="32" maxlength="128" /></p>
-<input type="submit" value="Login" /> <span><%=loginMessage%></span></form>
+<input type="submit" value="Login" /> <span><%=loginMessage%> <a href="">Forgot password?</a></span></form>
 <p>Don't have an account? <a id="create-user" href="javascript:;"
 	title="">Sign up for one now!</a></p>
 </div>
-<!-- end #main-right -->
-
-<div class="clear"></div>
+<!-- end #login-form-container -->
 
 <div id="dialog-form" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
@@ -92,8 +88,6 @@
 </div>
 <!-- end #dialog-form --></div>
 <!-- end #main -->
-
-<div class="clear"></div>
 
 <div class="demo"></div>
 <!-- End form -->
