@@ -89,9 +89,6 @@
 <!-- end #dialog-form --></div>
 <!-- end #main -->
 
-<div class="demo"></div>
-<!-- End form -->
-
 <div id="footer">
 <div id="footer-left"><a href="#">About Us</a></div>
 <div id="footer-right">&copy; 2010 ReadyTalk</div>

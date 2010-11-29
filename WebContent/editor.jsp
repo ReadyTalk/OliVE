@@ -33,13 +33,14 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
+
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>

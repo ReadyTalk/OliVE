@@ -365,3 +365,16 @@ div#users-contain table td,div#users-contain table th {
 	border: 1px solid transparent;
 	padding: 0.3em;
 }
+
+/* 
+	----------------------------------------
+	Edit account page
+	----------------------------------------
+*/
+#edit-account-container {
+	padding: 10%;
+}
+
+#edit-account-container h2 {
+	margin: .75em 0;
+}

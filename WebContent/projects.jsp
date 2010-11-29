@@ -38,7 +38,7 @@
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
 <div><a href="#">Help</a></div>
 </div>
 </div>
