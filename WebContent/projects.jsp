@@ -53,7 +53,7 @@
 </div>
 <!-- end #projects-title -->
 
-<div id="controls">
+<div id="project-controls">
 <button type="button" onclick="alert('Create New Project')">Create
 New Project</button>
 </div>
