@@ -200,6 +200,14 @@ small {
 	Projects page
 	----------------------------------------
 */
+#projects-container {
+	position: absolute;
+	top: 0%;
+	right: 25%;
+	bottom: 0%;
+	left: 25%;
+}
+
 #projects-title {
 	position: absolute;
 	top: 0%;
@@ -208,20 +216,12 @@ small {
 	left: 0%;
 }
 
-#project-controls {
+#projects-controls {
 	position: absolute;
 	top: 15%;
 	right: 0%;
 	bottom: 20%;
 	left: 0%;
-}
-
-#projects-container {
-	position: absolute;
-	top: 0%;
-	right: 25%;
-	bottom: 0%;
-	left: 25%;
 }
 
 #project-clips {
@@ -264,6 +264,22 @@ small {
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 }
 
+#videos-title {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	bottom: 10%;
+	left: 0%;
+}
+
+#videos-controls {
+	position: absolute;
+	top: 10%;
+	right: 0%;
+	bottom: 20%;
+	left: 0%;
+}
+
 #videos-controls {
 	border-top: 1px solid gray;
 	border-right: 1px solid gray;
@@ -272,7 +288,11 @@ small {
 }
 
 #videos {
-	height: 100%;
+	position: absolute;
+	top: 20%;
+	right: 0%;
+	bottom: 0%;
+	left: 0%;
 	text-align: left;
 	border: 1px solid gray;
 	overflow: auto; /* overflow:scroll shows bars at all times. */
