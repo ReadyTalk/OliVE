@@ -1,32 +1,7 @@
 #! /bin/sh
 
-# Create PDF of the Olive source code.
+# Create PDF of the Olive source code. Ignore third-party code.
 #	olivesrc-enscript.pdf	created using enscript
-
-# Ignore "WebContent/scripts/jquery-ui-1.8.6.custom/"
-# because it's huge and we're not using it.
-# But here is the syntax for it, with the exception of "WebContent/scripts/jquery-ui-1.8.6.custom/development-bundle":
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_diagonals-thick_18_b81900_40x40.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_flat_10_000000_40x100.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_glass_100_f6f6f6_1x400.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_glass_100_fdf5ce_1x400.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_glass_65_ffffff_1x400.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-bg_highlight-soft_75_ffe45c_1x100.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-icons_222222_256x240.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-icons_228ef1_256x240.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-icons_ef8c08_256x240.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-icons_ffd27a_256x240.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/images/ui-icons_ffffff_256x240.png \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/jquery-ui-1.8.6.custom.css \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/js/jquery-1.4.2.min.js \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/js/jquery-ui-1.8.6.custom.min.js \
-#    WebContent/scripts/jquery-ui-1.8.6.custom/index.html
-#    WebContent/scripts/jquery-1.4.4.js \
-#    WebContent/scripts/jquery.1.4.4.min.js \
-
 
 # List of files to be included in PDF.
 FILES="\
@@ -70,7 +45,7 @@ FILES="\
 rm -f olivesrc-enscript.ps olivesrc-enscript.pdf
 
 # Generate PostScript versions of each file, appending them to a single
-# PostScript file for each of a2ps and enscript versions.
+# PostScript file for the enscript version.
 for f in ${FILES}
 do
     enscript -2Gr -T4 -bOlive -p- ${f} >> olivesrc-enscript.ps
