@@ -72,9 +72,9 @@
 <!-- end #videos-container -->
 
 <div id="player"><video id="video-1"
-	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
+	poster="/olive/images/bbb480.jpg"
 	controls="controls"
-	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
+	src="/olive/videos/bbb_trailer_iphone.m4v">
 </video></div>
 <!-- end #player -->
 
