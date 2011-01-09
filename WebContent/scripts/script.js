@@ -2,42 +2,69 @@
  * This is Olive's custom JavaScript file.
  */
 
+var video; // Global
+
 // Called once the DOM is ready but before the images, etc. load.
-jQuery(document).ready(function() {
-
-});
-
-// Modified from: http://jqueryui.com/demos/draggable/
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
-	$('img').draggable();
+	video = document.getElementById('player-video');
 
-	$('.timeline').droppable( {
-		drop : function() {
-			alert('dropped');
+	$('#videos-playpause').click(function() {
+		if (video.paused) {
+			video.play();
+		} else {
+			video.pause();
 		}
 	});
 
-	$('#olive1').bind('click', function() {
-		$('#olive1').clone().insertAfter('#olive4').slidedown();
+	$('#videos-volume-up').click(function() {
+		if (video.volume <= 0.9) {
+			video.volume += 0.1;
+		}
 	});
 
-	$('#olive2').bind('click', function() {
-		$('#olive2').clone().insertAfter('#olive4');
+	$('#videos-volume-down').click(function() {
+		if (video.volume >= 0.1) {
+			video.volume -= 0.1;
+		}
 	});
 
-	$('#olive3').bind('click', function() {
-		$('#olive3').clone().insertAfter('#olive4');
+	// Modified from: http://jqueryui.com/demos/draggable/
+	$('.video-icon-container').draggable( {
+		appendTo: 'body',
+		scroll: false,
+		connectToSortable : '#timeline-sortable',
+		helper : 'clone',
+		revert : 'invalid',
+		snap : '#timeline'
 	});
 
-	$('#olive4').bind('click', function() {
-		$('#olive4').clone().insertAfter('#olive4');
+	$('#timeline-sortable').sortable( {
+		revert : true
 	});
-});
 
-// Modified from: http://jqueryui.com/demos/dialog/#modal-form
-// Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
-jQuery(function($) {
+	$('#timeline-sortable').disableSelection();
+	
+	$('#timeline').droppable( {
+		drop : function() {
+			console.log('Dropped');
+		}
+	});
+
+	/*
+	 * $('#olive1').bind('click', function() {
+	 * $('#olive1').clone().insertAfter('#olive4').slidedown(); });
+	 * 
+	 * $('#olive2').bind('click', function() {
+	 * $('#olive2').clone().insertAfter('#olive4'); });
+	 * 
+	 * $('#olive3').bind('click', function() {
+	 * $('#olive3').clone().insertAfter('#olive4'); });
+	 * 
+	 * $('#olive4').bind('click', function() {
+	 * $('#olive4').clone().insertAfter('#olive4'); });
+	 */
+
 	var name = $("#register-name"), email = $("#register-email"), password = $("#register-password"), allFields = $(
 			[]).add(name).add(email).add(password), tips = $(".validateTips");
 
