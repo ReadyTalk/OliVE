@@ -1,0 +1,53 @@
+/* 
+	----------------------------------------
+	Projects page
+	----------------------------------------
+*/
+#projects-container {
+	position: absolute;
+	top: 0%;
+	right: 25%;
+	bottom: 0%;
+	left: 25%;
+}
+
+#projects-title {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	bottom: 15%;
+	left: 0%;
+}
+
+#projects-controls {
+	position: absolute;
+	top: 15%;
+	right: 0%;
+	bottom: 20%;
+	left: 0%;
+}
+
+#project-clips {
+	position: absolute;
+	top: 20%;
+	right: 0%;
+	bottom: 0%;
+	left: 0%;
+	overflow: auto;
+}
+
+.project-icon-container {
+	float: left;
+	width: 100px;
+	padding-bottom: 40px;
+	padding-right: 40px;
+}
+
+#project-clips div img {
+	display: block;
+	padding: 5px;
+	border: 1px solid #000000;
+	width: 100px;
+	height: 100px;
+	border: 1px solid #000000;
+}
