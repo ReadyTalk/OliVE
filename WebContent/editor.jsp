@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Edit Project | Olive</title>
+<title>Edit Project | Olive</title> 
 
 <link rel="shortcut icon" href="/olive/images/olive.ico">
 
