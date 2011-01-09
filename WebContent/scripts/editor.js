@@ -18,21 +18,21 @@ jQuery(function($) {
 	});
 
 	$('#videos-volume-up').click(function() {
-		if (video.volume <= 0.9) {
+		if (video.volume <= 0.9) { // Any higher will cause an error.
 			video.volume += 0.1;
 		}
 	});
 
 	$('#videos-volume-down').click(function() {
-		if (video.volume >= 0.1) {
+		if (video.volume >= 0.1) { // Any lower will cause an error.
 			video.volume -= 0.1;
 		}
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
 	$('.video-icon-container').draggable( {
-		appendTo: 'body',
-		scroll: false,
+		appendTo : 'body',
+		scroll : false,
 		connectToSortable : '#timeline-sortable',
 		helper : 'clone',
 		revert : 'invalid',
@@ -44,7 +44,7 @@ jQuery(function($) {
 	});
 
 	$('#timeline-sortable').disableSelection();
-	
+
 	$('#timeline').droppable( {
 		drop : function() {
 			console.log('Dropped');
