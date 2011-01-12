@@ -3,6 +3,7 @@
     <wb-module deploy-name="olive">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/lib" source-path="/WebContent/WEB-INF/lib"/>
         <property name="java-output-path" value="/olive/build/classes"/>
         <property name="context-root" value="olive"/>
     </wb-module>
