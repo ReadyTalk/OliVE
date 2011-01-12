@@ -22,12 +22,20 @@ FILES="\
     WebContent/WEB-INF/web.xml \
         \
     WebContent/css/reset.css \
-    WebContent/css/style.css \
+    WebContent/css/account.css \
+    WebContent/css/editor.css \
+    WebContent/css/index.css \
+    WebContent/css/master.css \
+    WebContent/css/projects.css \
         \
     WebContent/doc/favicon_notes.txt \
         \
-    WebContent/scripts/google-analytics.js \
-    WebContent/scripts/script.js \
+
+    WebContent/scripts/account.js \
+    WebContent/scripts/editor.js \
+    WebContent/scripts/index.js \
+    WebContent/scripts/master.js \
+    WebContent/scripts/projects.js \
         \
     WebContent/account.jsp \
     WebContent/editor.jsp \
