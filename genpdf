@@ -1,0 +1,65 @@
+#! /bin/sh
+
+# Create PDF of the Olive source code. Ignore third-party code.
+#	olivesrc-enscript.pdf	created using enscript
+
+# List of files to be included in PDF.
+FILES="\
+    README \
+    .classpath \
+    .project \
+    .settings/.jsdtscope \
+    .settings/org.eclipse.jdt.core.prefs \
+    .settings/org.eclipse.wst.common.component \
+    .settings/org.eclipse.wst.common.project.facet.core.xml \
+    .settings/org.eclipse.wst.jsdt.ui.superType.container \
+    .settings/org.eclipse.wst.jsdt.ui.superType.name \
+    \
+    WebContent/META-INF/MANIFEST.MF \
+    WebContent/META-INF/context.xml \
+        \
+    WebContent/WEB-INF/sun-web.xml \
+    WebContent/WEB-INF/web.xml \
+        \
+    WebContent/css/reset.css \
+    WebContent/css/account.css \
+    WebContent/css/editor.css \
+    WebContent/css/index.css \
+    WebContent/css/master.css \
+    WebContent/css/projects.css \
+        \
+    WebContent/doc/favicon_notes.txt \
+        \
+
+    WebContent/scripts/account.js \
+    WebContent/scripts/editor.js \
+    WebContent/scripts/index.js \
+    WebContent/scripts/master.js \
+    WebContent/scripts/projects.js \
+        \
+    WebContent/account.jsp \
+    WebContent/editor.jsp \
+    WebContent/index.jsp \
+    WebContent/projects.jsp \
+    WebContent/test.jsp \
+    \
+    src/com/readytalk/olive/logic/OliveLogic.java \
+    src/com/readytalk/olive/model/Project.java \
+    src/com/readytalk/olive/model/User.java \
+    src/com/readytalk/olive/servlet/OliveServlet.java \
+    "
+
+# Remove any old PostScript or PDF versions lying around.
+rm -f olivesrc-enscript.ps olivesrc-enscript.pdf
+
+# Generate PostScript versions of each file, appending them to a single
+# PostScript file for the enscript version.
+for f in ${FILES}
+do
+    enscript -2Gr -T4 -bOlive -p- ${f} >> olivesrc-enscript.ps
+done
+
+# Convert the enscript version from PostScript to PDF, removing the PostScript
+# version when completed.
+ps2pdf olivesrc-enscript.ps olivesrc-enscript.pdf
+rm -f olivesrc-enscript.ps

@@ -1,41 +1,8 @@
 /*
- * This is Olive's custom JavaScript file.
+ * This is Olive's JavaScript file for index.jsp only.
  */
 
 // Called once the DOM is ready but before the images, etc. load.
-jQuery(document).ready(function() {
-
-});
-
-// Modified from: http://jqueryui.com/demos/draggable/
-// Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
-jQuery(function($) {
-	$('img').draggable();
-
-	$('.timeline').droppable( {
-		drop : function() {
-			alert('dropped');
-		}
-	});
-
-	$('#olive1').bind('click', function() {
-		$('#olive1').clone().insertAfter('#olive4').slidedown();
-	});
-
-	$('#olive2').bind('click', function() {
-		$('#olive2').clone().insertAfter('#olive4');
-	});
-
-	$('#olive3').bind('click', function() {
-		$('#olive3').clone().insertAfter('#olive4');
-	});
-
-	$('#olive4').bind('click', function() {
-		$('#olive4').clone().insertAfter('#olive4');
-	});
-});
-
-// Modified from: http://jqueryui.com/demos/dialog/#modal-form
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	var name = $("#register-name"), email = $("#register-email"), password = $("#register-password"), allFields = $(

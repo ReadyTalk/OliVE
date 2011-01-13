@@ -1,0 +1,163 @@
+@charset "UTF-8";
+
+/* For HTML4 defaults, see: http://www.w3.org/TR/CSS2/sample.html */ /* 
+	----------------------------------------
+	HTML elements
+	----------------------------------------
+*/
+body {
+	/* The default font-size is 16px, but this makes the math easier. For
+	 * example, to set the size of the 'p' element to 16px, set it to 160%.
+	 * To set the size of the 'h1' element to 32px, set it to 320%. Why not just
+	 * set the 'p' element to 16px and the 'h1' element to 32px? Because users
+	 * who want to resize the text on the page won't be able to because the size
+	 * is fixed. It's better to express font-size in terms of percentages, and
+	 * this is a neat way to do that.
+	 */
+	font-size: 62.5%;
+	line-height: 20px;
+	font-family: Helvetica, Arial, sans-serif;
+	text-align: left;
+	/*background-color: #edf4e6;*/
+	/* A lightened version of the Olive color */
+}
+
+h1,h2,h3,h4,h5,h6 {
+	color: #92bd6a; /* The Olive color */
+	font-family: Georgia, serif;
+}
+
+h1 {
+	font-size: 320%; /* 32px */
+	font-family: serif;
+	/*margin: .67em 0;*/
+	padding: 20px;
+}
+
+h2 {
+	font-size: 240%; /* 24px */ /*margin: .75em 0*/
+}
+
+h3 {
+	font-size: 187.2%; /* 18.72px */ /*margin: .83em 0;*/
+}
+
+h4 {
+	font-size: 160%; /* 16px */ /*margin: 1.12em 0;*/
+}
+
+h5 {
+	font-size: 132.8%; /* 13.28px */ /*margin: 1.5em 0;*/
+}
+
+h6 {
+	font-size: 120%; /* 12px */ /*margin: 1.67em 0;*/
+}
+
+p {
+	font-size: 160%; /* 16px */
+}
+
+table {
+	border-spacing: 40px 10px;
+	margin-left: 100px;
+	padding: 10px;
+}
+
+tr,td {
+	padding: 0px 10px 0px 10px;
+}
+
+button { /*background-color: #edf4e6;*/
+	/* A lightened version of the Olive color */
+	
+}
+
+ul {
+	list-style-type: none;
+}
+
+strong {
+	font-weight: bolder;
+}
+
+small {
+	font-size: .83em;
+}
+
+/* 
+	----------------------------------------
+	General styling
+	----------------------------------------
+*/
+.clear {
+	clear: both;
+}
+
+.center-text {
+	text-align: center
+}
+
+.center-block {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.warning {
+	color: red;
+}
+
+/* 
+	----------------------------------------
+	Common elements to every page
+	----------------------------------------
+*/
+#header {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	left: 0px;
+	height: 50px;
+	border-bottom: 2px solid #888888;
+}
+
+#header-left {
+	float: left;
+	text-align: left;
+	margin-left: 1%;
+}
+
+#header-right {
+	float: right;
+	text-align: right;
+	margin-right: 1%;
+}
+
+#main {
+	position: absolute;
+	top: 50px;
+	right: 0px;
+	bottom: 50px;
+	left: 0px;
+}
+
+#footer {
+	position: absolute;
+	right: 0px;
+	bottom: 00px;
+	left: 0px;
+	height: 50px;
+	border-top: 2px solid #888888;
+}
+
+#footer-left {
+	float: left;
+	text-align: left;
+	margin-left: 1%;
+}
+
+#footer-right {
+	float: right;
+	text-align: right;
+	margin-right: 1%;
+}

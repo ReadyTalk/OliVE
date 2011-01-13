@@ -10,7 +10,8 @@
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
 	href="/olive/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/jquery-ui-1.8.6.custom.css" />
-<link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
+<link rel="stylesheet" type="text/css" href="/olive/css/editor.css" />
 
 <script src="/olive/scripts/jquery-1.4.4.js"></script>
 <script
@@ -29,7 +30,10 @@
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.draggable.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.droppable.js"></script>
-<script src="/olive/scripts/script.js"></script>
+<script
+	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.sortable.js"></script>
+<script src="/olive/scripts/master.js"></script>
+<script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
@@ -41,7 +45,8 @@
 <!-- end #header-left -->
 <div id="header-right">
 <div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a href="#">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
+	href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -62,26 +67,52 @@
 <button type="button" onclick="alert('Select All')">Select All</button>
 </div>
 <!-- end #videos-controls -->
-<div id="videos"><img id="olive1" class="video-icon"
-	src="/olive/images/olive.png" alt="olive1" /> <img id="olive2"
-	class="video-icon" src="/olive/images/olive.png" alt="olive2" /> <img
-	id="olive3" class="video-icon" src="/olive/images/olive.png"
-	alt="olive3" /> <img id="olive4" class="video-icon"
-	src="/olive/images/olive.png" alt="olive4" /></div>
-<!-- end #videos --></div>
+<div id="videos">
+
+<div id="video-1" class="video-icon-container"><img id="olive1"
+	class="video-icon" src="/olive/images/olive.png" alt="olive1" />
+<p>Video 1</p>
+<p><small><a href="" class="warning">Delete</a></small></p>
+</div>
+
+<div id="video-2" class="video-icon-container"><img id="olive2"
+	class="video-icon" src="/olive/images/olive.png" alt="olive2" />
+<p>Video 2</p>
+<p><small><a href="" class="warning">Delete</a></small></p>
+</div>
+
+<div id="video-3" class="video-icon-container"><img id="olive3"
+	class="video-icon" src="/olive/images/olive.png" alt="olive3" />
+<p>Video 3</p>
+<p><small><a href="" class="warning">Delete</a></small></p>
+</div>
+
+<div id="video-4" class="video-icon-container"><img id="olive4"
+	class="video-icon" src="/olive/images/olive.png" alt="olive4" />
+<p>Video 4</p>
+<p><small><a href="" class="warning">Delete</a></small></p>
+</div>
+
+</div>
+<!-- end #videos -->
+<div id="player-videos-controls"><span id="videos-playpause">Play/pause</span>
+<span id="videos-volume-up">Volume up</span> <span
+	id="videos-volume-down">Volume down</span></div>
+</div>
 <!-- end #videos-container -->
 
-<div id="player"><video id="video-1"
-	poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg"
-	controls="controls"
-	src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone.m4v">
-</video></div>
+<div id="player-div"><video id="player-video"
+	poster="/olive/images/bbb480.jpg" preload="preload"
+	src="/olive/videos/bbb_trailer_iphone.m4v"></video></div>
 <!-- end #player -->
 
 <div class="clear"></div>
 
 <div id="timeline">
-<h1>Timeline</h1>
+<ul id="timeline-sortable">
+	<li class="timeline-video">Video 5</li>
+	<li class="timeline-video">Video 6</li>
+</ul>
 </div>
 
 <div class="clear"></div>

@@ -8,7 +8,7 @@
 	That would put you at the index.jsp. -->
 
 <sun-web-app error-url="">
-	<context-root>/</context-root>
+	<context-root>/olive</context-root>
 	<class-loader delegate="true" />
 	<jsp-config>
 		<property name="keepgenerated" value="true">

@@ -10,7 +10,8 @@
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
 	href="/olive/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/jquery-ui-1.8.6.custom.css" />
-<link rel="stylesheet" type="text/css" href="/olive/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
+<link rel="stylesheet" type="text/css" href="/olive/css/index.css" />
 
 <script src="/olive/scripts/jquery-1.4.4.js"></script>
 <script
@@ -29,7 +30,8 @@
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.draggable.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.droppable.js"></script>
-<script src="/olive/scripts/script.js"></script>
+<script src="/olive/scripts/master.js"></script>
+<script src="/olive/scripts/index.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
