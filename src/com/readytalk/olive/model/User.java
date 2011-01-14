@@ -38,7 +38,7 @@ public class User {
 		
 		// Remove the *really* bad stuff (which cause XSS attacks and SQL
 		// injections).
-		String[] illegalStrings = {"<", ">", "(", ")", "\"", "'", ";"};
+		String[] illegalStrings = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",", ".", "<", ">", "/", "?", "`", "~"};
 		for (int i = 0; i < illegalStrings.length; ++i) {
 			output = output.replaceAll(illegalStrings[i], "");
 		}
