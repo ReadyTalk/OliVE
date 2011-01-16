@@ -1,5 +1,6 @@
 package com.readytalk.olive.servlet;
 //Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
+// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
