@@ -220,7 +220,7 @@ public class OliveLogic {
 		
 		// Remove the *really* bad stuff (which cause XSS attacks and SQL
 		// injections).
-		String[] illegalStrings = {"!", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",", "<", ">", "/", "?", "`", "~"};
+		String[] illegalStrings = {"!", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",", "<", ">", "/", "?", "`", "~"};
 		for (int i = 0; i < illegalStrings.length; ++i) {
 			output = output.replace(illegalStrings[i], "");
 		}
