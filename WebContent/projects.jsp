@@ -35,12 +35,23 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
+<%
+	Boolean isAuthorized = (Boolean) session
+			.getAttribute("isAuthorized"); // Nasty cast
+	if (isAuthorized == null) {
+		response.sendRedirect("index.jsp");
+	} else if (!isAuthorized) {
+		response.sendRedirect("index.jsp");
+	} 
+	String user = (String) session.getAttribute("username");		
+			
+%>
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><a href="#">Help</a></div>
 </div>
 </div>

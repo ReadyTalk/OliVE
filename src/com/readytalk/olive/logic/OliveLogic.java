@@ -1,5 +1,6 @@
 package com.readytalk.olive.logic;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -116,17 +117,20 @@ public class OliveLogic {
 			c.close();
 		}catch (Exception e) { e.printStackTrace(); }
 	}
-	public static void AddAccount(String username, String password, String name, String email){
+	public static boolean AddAccount(User user){
 		try{
 			Connection conn = getDBConnection();
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "INSERT INTO Accounts (Username, Password, Name, Email)" +
-					"VALUES ('"+username+"', '"+password+"' , '"+name+"', '"+email+"');";
+					"VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"' " +
+							", '"+user.getName()+"', '"+user.getEmail()+"');";
 			st.executeUpdate(s);
 			closeConnection(conn);
+			return true;
 		}catch (Exception e) { e.printStackTrace(); }	
+		return false;
 	}
 	public static void AddProject(String name, int AccountID, String icon){
 		try{
@@ -188,5 +192,50 @@ public class OliveLogic {
 			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }
 	}
+	public static Boolean editAccount(User user){
+		try{
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Accounts SET Name = '"+user.getName()+"' WHERE Username " +
+					"= '"+user.getUsername()+"'";
+			st.executeUpdate(s);
+
+			s = "UPDATE Accounts SET Password = '"+user.getPassword()+"' WHERE Username " +
+					"= '"+user.getUsername()+"'";
+			st.executeUpdate(s);
+
+			s = "UPDATE Accounts SET Email = '"+user.getEmail()+"' WHERE Username " +
+					"= '"+user.getUsername()+"'";
+			st.executeUpdate(s);
+			closeConnection(conn);
+			return true;
+		}catch (Exception e) { e.printStackTrace(); }
+		return false;
+	}
+	
+	public static String sanitize(String input) throws UnsupportedEncodingException {
+		String output = input;
+		
+		// Remove the *really* bad stuff (which cause XSS attacks and SQL
+		// injections).
+		String[] illegalStrings = {"<", ">", "(", ")", "\"", "'", ";"};
+		for (int i = 0; i < illegalStrings.length; ++i) {
+			output = output.replace(illegalStrings[i], "");
+		}
+		
+		// Let encoding convert the rest to safe strings (but not remove).
+		String encoding = "UTF-8";	// This is recommended by the The World Wide Web Consortium Recommendation. See : http://download.oracle.com/javase/1.4.2/docs/api/java/net/URLEncoder.html#encode(java.lang.String, java.lang.String)
+									// Other encodings: http://download.oracle.com/javase/1.4.2/docs/api/java/nio/charset/Charset.html
+		try {
+			output = java.net.URLEncoder.encode(output, encoding);
+		} catch (UnsupportedEncodingException e) {
+			throw new UnsupportedEncodingException("Choose a different encoding than \"" + encoding + "\". " + e.getMessage());
+		}
+		
+		return output;
+	}
+	
 	
 }

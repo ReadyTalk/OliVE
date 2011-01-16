@@ -37,14 +37,23 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
-
+<%
+	Boolean isAuthorized = (Boolean) session
+			.getAttribute("isAuthorized"); // Nasty cast
+	if (isAuthorized == null) {
+		response.sendRedirect("index.jsp");
+	} else if (!isAuthorized) {
+		response.sendRedirect("index.jsp");
+	}
+	String user = (String) session.getAttribute("username");
+%>
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="account.jsp">User!</a>&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
 	href="#">Help</a></div>
 </div>
@@ -61,7 +70,8 @@
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls">
-<button type="button" onclick="alert('Upload New')">Upload New</button>
+<button type="button" onclick="javascript:win1()">Upload New</button>
+
 <button type="button" onclick="alert('Edit')">Edit</button>
 <button type="button" onclick="alert('Delete')">Delete</button>
 <button type="button" onclick="alert('Select All')">Select All</button>

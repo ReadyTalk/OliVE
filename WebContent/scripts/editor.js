@@ -65,3 +65,6 @@ jQuery(function($) {
 	 * $('#olive4').clone().insertAfter('#olive4'); });
 	 */
 });
+function win1() {
+    window.open("videoUpload.jsp","Window1","menubar=no,width=320,height=55,toolbar=no");
+}

@@ -35,14 +35,37 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
+<%
+	Boolean isAuthorized = (Boolean) session
+			.getAttribute("isAuthorized"); // Nasty cast
+	if (isAuthorized == null) {
+		response.sendRedirect("index.jsp");
+	} else if (!isAuthorized) {
+		response.sendRedirect("index.jsp");
+	}
+	Boolean editSuccesfully = (Boolean) session.getAttribute("editSuccesfully");
+	String editConfirmation;
+	if(editSuccesfully == null){
+		editConfirmation="Change any information here!";
+	}
+	else if(editSuccesfully){
+		editConfirmation="Your information has been changed succesfully!";
+	}
+	else{
+		editConfirmation="We are unable to change your information at the the time.";
+	}
 
+	String user = (String) session.getAttribute("username");
+	
+	
+%>
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, User!&nbsp;<a href="#">Logout</a></div>
+<div>Welcome, <%=user%>!&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a href="#">Help</a></div>
 </div>
 <!-- end #header-right --></div>
@@ -56,16 +79,17 @@
 <h2>Account information</h2>
 <form id="edit-account-form" action="OliveServlet" name="process" method="post">
 <p><label for="new-name">Name</label> <input type="text"
-	name="new-name" id="new-name" value="Olivia" size="32" maxlength="128" /></p>
+	name="new-name" id="new-name" value="" size="32" maxlength="128" /></p>
 <p><label for="new-email">Email</label> <input type="text"
-	name="new-email" id="new-email" value="olivia (at) olive.readytalk.com" size="32" maxlength="128" /></p>
+	name="new-email" id="new-email" value="" size="32" maxlength="128" /></p>
 <p><label for="new-password">Password</label> <input type="password"
-	name="new-password" id="new-password" value="s3crets" size="32"
+	name="new-password" id="new-password" value="" size="32"
 	maxlength="128" /></p>
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
-	value="s3crets" size="32" maxlength="128" /></p>
-<input type="submit" value="Update information" /></form>
+	value="" size="32" maxlength="128" /></p>
+<input type="hidden" name="FormName" value="EditUser"></input>
+<input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 
 </div>
 <!-- end #login-form-container --></div>

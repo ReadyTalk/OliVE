@@ -76,12 +76,7 @@ jQuery(function($) {
 												"Password field only allow : a-z 0-9");
 
 								if (bValid) {
-									$("#users tbody").append(
-											"<tr>" + "<td>" + name.val()
-													+ "</td>" + "<td>"
-													+ email.val() + "</td>"
-													+ "<td>" + password.val()
-													+ "</td>" + "</tr>");
+									$("#register-form").submit();
 									$(this).dialog("close");
 								}
 							},

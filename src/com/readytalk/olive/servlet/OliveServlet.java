@@ -5,6 +5,8 @@ import com.readytalk.olive.model.User;
 
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -117,43 +119,76 @@ public class OliveServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
+		HttpSession session = request.getSession();
 		/*
 		 * The log will have .severe (very bad) .warning (uh oh) and .info
 		 * 
 		 * You probably want to always use the .info method to log.
 		 */
-		log.info("This is a servlet responding to an Http POST request");
+		String id = request.getParameter("FormName");
+		log.info("This is a servlet responding to an Http POST request from form: "+id);
 
 		/*
 		 * These came from the form you submitted to this URL
 		 */
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		Boolean isAuthorized;
+		
+		if(id.equals("LoginUser")){
+			String username = OliveLogic.sanitize(request.getParameter("username"));
+			String password = OliveLogic.sanitize(request.getParameter("password"));
 
-		User user = new User(username, password);
+			User user = new User(username, password);
 
-		Boolean isAuthorized = OliveLogic.isAuthorized(user);
+			isAuthorized = OliveLogic.isAuthorized(user);
+			/*
+			 * The session object is bound to your user's IP/MAC address by tomcat.
+			 * That means that it should be unique for each user. The timeout (when
+			 * tomcat destroys a session) can be configured in web.xml
+			 */
+			
 
-		/*
-		 * The session object is bound to your user's IP/MAC address by tomcat.
-		 * That means that it should be unique for each user. The timeout (when
-		 * tomcat destroys a session) can be configured in web.xml
-		 */
-		HttpSession session = request.getSession();
-
-		/*
-		 * Don't go to crazy with this, but you can set the information learned
-		 * from the OliveLogic to an attribute that will be forwarded on
-		 * throughout the session.
-		 */
-		session.setAttribute("isAuthorized", isAuthorized);	// Do not redisplay user name (XSS vulnerability).
-
-		if (isAuthorized) {	// Take the user to the projects page.
-			response.sendRedirect("projects.jsp");
+			/*
+			 * Don't go to crazy with this, but you can set the information learned
+			 * from the OliveLogic to an attribute that will be forwarded on
+			 * throughout the session.
+			 */
+			session.setAttribute("isAuthorized", isAuthorized);	// Do not redisplay user name (XSS vulnerability).
+			if (isAuthorized) {	// Take the user to the projects page.
+				session.setAttribute("username", username);
+				session.setAttribute("password", password);
+				response.sendRedirect("projects.jsp");
+			}
+			else {	// Keep the user on the same page.
+				response.sendRedirect("index.jsp");
+			}
 		}
-		else {	// Keep the user on the same page.
+		else if(id.equals("EditUser")){
+			Object user = session.getAttribute("username");
+			String username = (String) user;
+			String newName = OliveLogic.sanitize(request.getParameter("new-name"));
+			String newEmail = OliveLogic.sanitize(request.getParameter("new-email"));
+			String newPassword = OliveLogic.sanitize(request.getParameter("new-password"));
+			User updateUser = new User(username, newPassword, newEmail, newName);
+			Boolean editSuccesfully = OliveLogic.editAccount(updateUser);
+			session.setAttribute("editSuccesfully", editSuccesfully);
+			response.sendRedirect("account.jsp");
+		}
+		else if(id.equals("AddUser")){
+			log.info("This is a servlet announcing that the if was accessed succesfully");
+			String username = OliveLogic.sanitize(request.getParameter("name"));
+			String password = OliveLogic.sanitize(request.getParameter("password"));
+			String email = OliveLogic.sanitize(request.getParameter("email"));
+			
+			User newUser = new User(username,password,email,username);
+			Boolean addSuccesfully = OliveLogic.AddAccount(newUser);
+			session.setAttribute("addSuccesfully", addSuccesfully);
 			response.sendRedirect("index.jsp");
 		}
+		
+		
+
+		
+
+		
 	}
 }

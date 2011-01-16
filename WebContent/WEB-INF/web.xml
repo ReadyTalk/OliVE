@@ -8,6 +8,14 @@
     <servlet-name>OliveServlet</servlet-name>
     <url-pattern>/OliveServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>CommonsFileUploadServlet</servlet-name>
+    <servlet-class>com.readytalk.olive.servlet.CommonsFileUploadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CommonsFileUploadServlet</servlet-name>
+    <url-pattern>/CommonsFileUploadServlet</url-pattern>
+  </servlet-mapping>
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>

@@ -4,6 +4,12 @@
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/lib" source-path="/WebContent/WEB-INF/lib"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/olive/WebContent/WEB-INF/lib/commons-fileupload-1.2.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/olive/WebContent/WEB-INF/lib/mysql-connector-java-5.1.13-bin.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/olive/build/classes"/>
         <property name="context-root" value="olive"/>
     </wb-module>
