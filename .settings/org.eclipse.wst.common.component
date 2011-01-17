@@ -10,6 +10,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/olive/WebContent/WEB-INF/lib/mysql-connector-java-5.1.13-bin.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="commons-io-2.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/olive/WebContent/WEB-INF/lib/commons-io-2.0.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/olive/build/classes"/>
         <property name="context-root" value="olive"/>
     </wb-module>
