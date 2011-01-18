@@ -4,6 +4,10 @@ import com.readytalk.olive.logic.OliveLogic;
 import com.readytalk.olive.model.User;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -156,6 +160,23 @@ public class OliveServlet extends HttpServlet {
 			if (isAuthorized) {	// Take the user to the projects page.
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
+				
+				try {
+					Connection conn = OliveLogic.getDBConnection();
+					Statement st = conn.createStatement();
+					String s = "USE OliveData;";
+					st.executeUpdate(s);
+					s = "SELECT AccountID FROM Accounts WHERE username = '"+username+"';";
+					ResultSet r = st.executeQuery(s);
+					if(r.first()){
+						user.setAccountID(r.getInt("AccountID"));
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String projectsHTML = OliveLogic.populateProjects(user);
+				session.setAttribute("projectsHTML",projectsHTML);
 				response.sendRedirect("projects.jsp");
 			}
 			else {	// Keep the user on the same page.

@@ -3,6 +3,7 @@ package com.readytalk.olive.logic;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.naming.Context;
@@ -51,6 +52,7 @@ public class OliveLogic {
 			ResultSet r = st.executeQuery(s);
 			if(r.first()){
 				closeConnection(conn);
+				
 				return true;
 			}
 			else{
@@ -104,6 +106,39 @@ public class OliveLogic {
 		 */
 		return false;	// Error!
 	}
+	public static String populateProjects(User user) {
+
+		String projects = "";
+		try {
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s  = "SELECT * FROM Projects WHERE AccountID = "+user.getAccountID()+";";
+			ResultSet r = st.executeQuery(s);
+			if(r.first()){
+				int projectNum = 0;
+				do{
+					projectNum +=1;
+					String projectTitle = r.getString("Name");
+					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
+					projects += "<div id=\"project-"+projectNum+"\" class=\"project-icon-container\">" + "\n"+
+							"<img src=\""+projectIcon+"\" class=\"project-icon\" alt=\""+projectTitle+"\" />" + "\n"+
+							"<p><a href=\"editor.jsp\">"+projectTitle+"</a></p>" + "\n"+
+							"<p><small><a href=\"\" class=\"warning\">Delete</a></small></p>" + "\n"+
+							"</div>" +
+							"\n";
+				}while(r.next());
+			}
+			return projects;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return projects;
+		//TODO change db to have unique usernames for accounts and names for both projects and videos in one project 
+		
+	}
 	public static Connection getDBConnection(){
 		try{
 			Context initCtx = new InitialContext();
@@ -127,6 +162,15 @@ public class OliveLogic {
 					"VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"' " +
 							", '"+user.getName()+"', '"+user.getEmail()+"');";
 			st.executeUpdate(s);
+			s = "SELECT AccountID FROM s3credentials WHERE username ="+user.getUsername()+";";
+			ResultSet r = st.executeQuery(s);
+			if(r.first()){
+				int id = r.getInt("AccountID");
+				user.setAccountID(id);
+			}
+			else{
+				//TODO Add error for rare case that it can't find the data
+			}	
 			closeConnection(conn);
 			return true;
 		}catch (Exception e) { e.printStackTrace(); }	

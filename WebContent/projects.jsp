@@ -73,54 +73,8 @@ New Project</button>
 <!-- end #controls -->
 
 <div class="clear"></div>
-
 <div id="project-clips">
-<div id="project-1" class="project-icon-container"><img
-	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
-<p><a href="editor.jsp">My Wedding</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-2" class="project-icon-container"><img
-	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
-<p><a href="editor.jsp">My Summer</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-3" class="project-icon-container"><img
-	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
-<p><a href="editor.jsp">My Vacation</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-4" class="project-icon-container"><img
-	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
-<p><a href="editor.jsp">My Other Wedding</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-5" class="project-icon-container"><img
-	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
-<p><a href="editor.jsp">My Other Summer</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-6" class="project-icon-container"><img
-	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
-<p><a href="editor.jsp">My Other Vacation</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-7" class="project-icon-container"><img
-	src="images/wedding.jpg" class="project-icon" alt="My Wedding" />
-<p><a href="editor.jsp">Yet Another Wedding</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-8" class="project-icon-container"><img
-	src="images/summer-flower.png" class="project-icon" alt="My Summer" />
-<p><a href="editor.jsp">Yet Another Summer</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-<div id="project-9" class="project-icon-container"><img
-	src="images/vacation.jpg" class="project-icon" alt="My Vacation" />
-<p><a href="editor.jsp">Yet Another Vacation</a></p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-
+<%=(String)session.getAttribute("projectsHTML")%>
 </div>
 <!-- end #project-clips --></div>
 <!-- end #projects-container --></div>
