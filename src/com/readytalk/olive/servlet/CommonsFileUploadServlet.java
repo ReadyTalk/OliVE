@@ -17,23 +17,30 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import com.readytalk.olive.logic.S3Uploader;
  
  
 public class CommonsFileUploadServlet extends HttpServlet {
-	private static final String TMP_DIR_PATH = "C:\\Users\\Alberto\\Desktop\\uploads";
+	private static final String TMP_DIR_PATH = "/temp/";
 	private File tmpDir;
-	private static final String DESTINATION_DIR_PATH ="C:\\Users\\Alberto\\Desktop\\uploads";
+	private static final String DESTINATION_DIR_PATH ="/temp/";
 	private File destinationDir;
 	private static Logger log = Logger.getLogger(CommonsFileUploadServlet.class.getName());
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		tmpDir = new File(TMP_DIR_PATH);
-		
+		String realPathTmp = getServletContext().getRealPath(TMP_DIR_PATH);
+		tmpDir = new File(realPathTmp);
+		//tmpDir = new File(TMP_DIR_PATH);
+		log.info(realPathTmp);
 		if(!tmpDir.isDirectory()) {
 			throw new ServletException(TMP_DIR_PATH + " is not a directory");
 		}
-		destinationDir = new File(DESTINATION_DIR_PATH);
+		String realPathDest = getServletContext().getRealPath(DESTINATION_DIR_PATH);
+		destinationDir = new File(realPathDest);
+		//destinationDir = new File(DESTINATION_DIR_PATH);
+		log.info(realPathDest);
 		if(!destinationDir.isDirectory()) {
 			throw new ServletException(DESTINATION_DIR_PATH+" is not a directory");
 		}
@@ -43,7 +50,7 @@ public class CommonsFileUploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    PrintWriter out = response.getWriter();
 	    response.setContentType("text/plain");
-	    out.println("<h1>Servlet File Upload Example using Commons File Upload</h1>");
+	    out.println("File uploaded. Please close this window and refresh the editor page.");
 	    out.println();
  
 		DiskFileItemFactory  fileItemFactory = new DiskFileItemFactory ();
@@ -81,6 +88,8 @@ public class CommonsFileUploadServlet extends HttpServlet {
 					 */
 					File file = new File(destinationDir,item.getName());
 					item.write(file);
+					S3Uploader.upLoadVideo(file);
+					
 				}
 				out.close();
 			}

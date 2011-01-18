@@ -67,7 +67,7 @@
 <!-- end #projects-title -->
 
 <div id="projects-controls">
-<button type="button" onclick="alert('Create New Project')">Create
+<button type="button" onclick="javascript:win1()">Create
 New Project</button>
 </div>
 <!-- end #controls -->

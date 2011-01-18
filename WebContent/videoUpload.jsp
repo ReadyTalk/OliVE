@@ -9,7 +9,7 @@
 <form id="UploadForm" action="CommonsFileUploadServlet" name="process" enctype="multipart/form-data" method="post" >
     <input type="hidden" name="FormName" value="UploadVideo"></input>
     <input type="file" name="file"  />
-    <input type="submit" />
+    <input type="submit"/>
  
 </form>
 </body>
