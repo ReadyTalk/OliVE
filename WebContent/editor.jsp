@@ -83,35 +83,17 @@
 <!-- end #videos-controls -->
 <div id="videos">
 
-<div id="video-1" class="video-icon-container"><img id="olive1"
-	class="video-icon" src="/olive/images/olive.png" alt="olive1" />
-<p>Video 1</p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-
-<div id="video-2" class="video-icon-container"><img id="olive2"
-	class="video-icon" src="/olive/images/olive.png" alt="olive2" />
-<p>Video 2</p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-
-<div id="video-3" class="video-icon-container"><img id="olive3"
-	class="video-icon" src="/olive/images/olive.png" alt="olive3" />
-<p>Video 3</p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
-
-<div id="video-4" class="video-icon-container"><img id="olive4"
-	class="video-icon" src="/olive/images/olive.png" alt="olive4" />
-<p>Video 4</p>
-<p><small><a href="" class="warning">Delete</a></small></p>
-</div>
+<!-- div id="video-1" class="video-icon-container"  img id="olive1"
+	class="video-icon" src="/olive/images/olive.png" alt="olive1" / 
+p Video 1 /p
+p small  a href="" class="warning" Delete /a  /small  /p 
+ /div--> 
 
 </div>
 <!-- end #videos -->
-<div id="player-videos-controls"><span id="videos-playpause">Play/pause</span>
-<span id="videos-volume-up">Volume up</span> <span
-	id="videos-volume-down">Volume down</span></div>
+<div id="player-videos-controls"><button id="videos-playpause">Play/pause</button>
+<button id="videos-volume-up">Volume up</button> <button
+	id="videos-volume-down">Volume down</button></div>
 </div>
 <!-- end #videos-container -->
 

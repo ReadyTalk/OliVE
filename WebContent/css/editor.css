@@ -40,13 +40,22 @@
 	position: absolute;
 	top: 20%;
 	right: 0%;
-	bottom: 0%;
+	bottom: 10%;
 	left: 0%;
 	text-align: left;
 	border: 1px solid gray;
 	overflow: auto;
 }
 
+#player-videos-controls {
+	position: absolute;
+	bottom: 0%;
+	left:0%;
+	right:0%;
+	height: 10%;
+}
+
+/*
 #videos-playpause {
 	position: absolute;
 	bottom: 0%;
@@ -73,7 +82,7 @@
 	height: 10%;
 	background-color: #ee22ff;
 }
-
+*/
 .video-icon-container {
 	float: left;
 	width: 175px;
