@@ -12,6 +12,7 @@
     session.removeAttribute("password");
     session.removeAttribute("editSuccesfully");
     session.removeAttribute("addSuccesfully");
+    session.removeAttribute("projectTitle");
     response.sendRedirect("index.jsp");
 %>
 </body>

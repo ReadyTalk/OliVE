@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.logic.OliveLogic" %>
+<%@ page import="com.readytalk.olive.model.User" %>
 <!doctype html>
 <html>
 <head>
@@ -43,15 +45,16 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} 
-	String user = (String) session.getAttribute("username");		
-			
+	String username = (String) session.getAttribute("username");	
+	String password = (String) session.getAttribute("password");
+	String projectsHTML = OliveLogic.populateProjects(new User(username,password));
 %>
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a href="logout.jsp">Logout</a></div>
+<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><a href="#">Help</a></div>
 </div>
 </div>
@@ -74,7 +77,7 @@ New Project</button>
 
 <div class="clear"></div>
 <div id="project-clips">
-<%=(String)session.getAttribute("projectsHTML")%>
+<%=projectsHTML%>
 </div>
 <!-- end #project-clips --></div>
 <!-- end #projects-container --></div>

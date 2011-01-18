@@ -14,6 +14,12 @@ public class Project {
 		this.user = user;
 		this.ProjectID = id;
 	}
+	
+	public Project(String title, User user) {
+		this.title = title;
+		this.user = user;
+	}
+
 	public String getProjectID() {
 		return ProjectID;
 	}

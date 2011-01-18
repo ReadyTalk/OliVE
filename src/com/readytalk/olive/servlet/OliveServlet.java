@@ -1,9 +1,11 @@
 package com.readytalk.olive.servlet;
 
 import com.readytalk.olive.logic.OliveLogic;
+import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -160,23 +162,6 @@ public class OliveServlet extends HttpServlet {
 			if (isAuthorized) {	// Take the user to the projects page.
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
-				
-				try {
-					Connection conn = OliveLogic.getDBConnection();
-					Statement st = conn.createStatement();
-					String s = "USE OliveData;";
-					st.executeUpdate(s);
-					s = "SELECT AccountID FROM Accounts WHERE username = '"+username+"';";
-					ResultSet r = st.executeQuery(s);
-					if(r.first()){
-						user.setAccountID(r.getInt("AccountID"));
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String projectsHTML = OliveLogic.populateProjects(user);
-				session.setAttribute("projectsHTML",projectsHTML);
 				response.sendRedirect("projects.jsp");
 			}
 			else {	// Keep the user on the same page.
@@ -205,11 +190,32 @@ public class OliveServlet extends HttpServlet {
 			session.setAttribute("addSuccesfully", addSuccesfully);
 			response.sendRedirect("index.jsp");
 		}
+		else if(id.equals("AddProject")){
+			PrintWriter out = response.getWriter();
+		    response.setContentType("text/plain");
+		    out.println("Project Created. Please close this window and refresh the projects page.");
+			log.info("This is a servlet announcing that the if was accessed succesfully");
+			String projectName = OliveLogic.sanitize(request.getParameter("ProjectName"));
+			User user = new User((String)session.getAttribute("username"),(String)session.getAttribute("password"));
+			Project project = new Project(projectName, user);
+			OliveLogic.AddProject(project, user);
+		}
 		
 		
 
-		
-
-		
+	}
+	//http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html		
+	@Override
+	protected void doGet(HttpServletRequest request,
+            HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setContentType("text/html");
+		HttpSession session = request.getSession();
+		session.setAttribute("projectTitle", OliveLogic.sanitize(request.getParameter("projectTitle")));
+		String page = OliveLogic.sanitize((String)request.getParameter("page"))+".jsp";
+		response.sendRedirect(page);
+	
+	
 	}
 }
+

@@ -18,6 +18,7 @@ public class User {
 		this.password = password;
 		this.email = email;
 		this.name = name;
+		this.AccountID = -1;
 	}
 
 	public User(String username, String password, String email, String name, int id) {
@@ -28,6 +29,12 @@ public class User {
 		this.AccountID = id;
 	}
 	
+	public User(String username, String password) {
+		this.username = username;
+		this.password = password;
+		this.AccountID = -1;
+	}
+	
 	public int getAccountID() {
 		return AccountID;
 	}
@@ -36,10 +43,7 @@ public class User {
 		AccountID = accountID;
 	}
 	
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
+	
 
 	public String getUsername() {
 		return username;

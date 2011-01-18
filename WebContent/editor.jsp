@@ -46,6 +46,10 @@
 		response.sendRedirect("index.jsp");
 	}
 	String user = (String) session.getAttribute("username");
+	String projectTitle = (String) session.getAttribute("projectTitle");
+	if(projectTitle==null){
+		response.sendRedirect("projects.jsp");
+	}
 %>
 <div id="header">
 <div id="header-left">
@@ -66,7 +70,7 @@
 
 <div id="videos-container">
 <div id="videos-title">
-<h3>My Vacation</h3>
+<h3><%=projectTitle%></h3>
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls">

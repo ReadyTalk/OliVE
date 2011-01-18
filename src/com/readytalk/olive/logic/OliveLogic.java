@@ -10,6 +10,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
 /**
@@ -114,6 +115,18 @@ public class OliveLogic {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			if(user.getAccountID()==-1){
+				s = "SELECT AccountID FROM Accounts WHERE username ='"+user.getUsername()+"';";
+				ResultSet r = st.executeQuery(s);
+				int accountID = -1;
+				if(r.first()){
+					accountID = r.getInt("AccountID");
+				}
+				if(accountID == -1){
+					throw new SQLException("There is no account for the username: "+user.getUsername());
+				}
+				user.setAccountID(accountID);
+			}
 			s  = "SELECT * FROM Projects WHERE AccountID = "+user.getAccountID()+";";
 			ResultSet r = st.executeQuery(s);
 			if(r.first()){
@@ -124,7 +137,7 @@ public class OliveLogic {
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
 					projects += "<div id=\"project-"+projectNum+"\" class=\"project-icon-container\">" + "\n"+
 							"<img src=\""+projectIcon+"\" class=\"project-icon\" alt=\""+projectTitle+"\" />" + "\n"+
-							"<p><a href=\"editor.jsp\">"+projectTitle+"</a></p>" + "\n"+
+							"<p><a href=\"OliveServlet?page=editor&projectTitle="+projectTitle+"\">"+projectTitle+"</a></p>" + "\n"+
 							"<p><small><a href=\"\" class=\"warning\">Delete</a></small></p>" + "\n"+
 							"</div>" +
 							"\n";
@@ -176,14 +189,23 @@ public class OliveLogic {
 		}catch (Exception e) { e.printStackTrace(); }	
 		return false;
 	}
-	public static void AddProject(String name, int AccountID, String icon){
+	public static void AddProject(Project p, User u){
 		try{
 			Connection conn = getDBConnection();
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			s = "SELECT AccountID FROM Accounts WHERE username ='"+u.getUsername()+"';";
+			ResultSet r = st.executeQuery(s);
+			int accountID = -1;
+			if(r.first()){
+				accountID = r.getInt("AccountID");
+			}
+			if(accountID == -1){
+				throw new SQLException("There is no account for the username: "+u.getUsername());
+			}
 			s = "INSERT INTO Projects (Name, AccountID, Icon)" +
-					"VALUES ('"+name+"', '"+AccountID+"' , '"+icon+"');";
+					"VALUES ('"+p.getTitle()+"', '"+accountID+"' , '');";
 			st.executeUpdate(s);
 			closeConnection(conn);
 		}catch (Exception e) { e.printStackTrace(); }	
