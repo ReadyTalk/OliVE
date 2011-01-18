@@ -47,6 +47,5 @@ public class S3Uploader {
         // Upload the data objects.
         s3Service.putObject(BUCKET_NAME, fileObject);     
   
-  
     }
 }

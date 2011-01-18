@@ -90,6 +90,7 @@ public class CommonsFileUploadServlet extends HttpServlet {
 					File file = new File(destinationDir,item.getName());
 					item.write(file);
 					S3Uploader.upLoadVideo(file);
+					file.delete();
 					
 				}
 				out.close();
