@@ -47,6 +47,10 @@
 	overflow: auto;
 }
 
+#videos span {
+	display: block;
+}
+
 #player-videos-controls {
 	position: absolute;
 	bottom: 0%;
@@ -85,12 +89,12 @@
 */
 .video-icon-container {
 	float: left;
-	width: 175px;
+	width: 100px;
 	padding-bottom: 40px;
 	padding-right: 40px;
 }
 
-#videos div img {
+#videos span img {
 	display: block;
 	padding: 5px;
 	border: 1px solid #000000;
@@ -136,12 +140,8 @@ video {
 	text-align: center;
 }
 
-#timeline-sortable li { /*float: left;*/
-	
-}
-
-#timeline-video span {
-	display: block;
+#timeline div {
+	float:left;
 }
 
 #export {
