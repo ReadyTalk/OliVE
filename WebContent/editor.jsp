@@ -38,18 +38,24 @@
 </head>
 <body>
 <%
+	String user = "";
+	String projectTitle = "";
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute("isAuthorized"); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
-	} else if (!isAuthorized) {
+	} 
+	else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	}
-	String user = (String) session.getAttribute("username");
-	String projectTitle = (String) session.getAttribute("projectTitle");
-	if (projectTitle == null) {
-		response.sendRedirect("projects.jsp");
+	else{
+		user = (String) session.getAttribute("username");
+		projectTitle = (String) session.getAttribute("projectTitle");
+		if (projectTitle == null) {
+			response.sendRedirect("projects.jsp");
+		}
 	}
+		
 %>
 <div id="header">
 <div id="header-left">

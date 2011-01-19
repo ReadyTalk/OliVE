@@ -115,15 +115,15 @@ public class OliveLogic {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			if(user==null){
+				return projects;
+			}
 			if(user.getAccountID()==-1){
 				s = "SELECT AccountID FROM Accounts WHERE username ='"+user.getUsername()+"';";
 				ResultSet r = st.executeQuery(s);
 				int accountID = -1;
 				if(r.first()){
 					accountID = r.getInt("AccountID");
-				}
-				if(accountID == -1){
-					throw new SQLException("There is no account for the username: "+user.getUsername());
 				}
 				user.setAccountID(accountID);
 			}
@@ -175,7 +175,7 @@ public class OliveLogic {
 					"VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"' " +
 							", '"+user.getName()+"', '"+user.getEmail()+"');";
 			st.executeUpdate(s);
-			s = "SELECT AccountID FROM s3credentials WHERE username ="+user.getUsername()+";";
+			s = "SELECT AccountID FROM Accounts WHERE username ='"+user.getUsername()+"';";
 			ResultSet r = st.executeQuery(s);
 			if(r.first()){
 				int id = r.getInt("AccountID");

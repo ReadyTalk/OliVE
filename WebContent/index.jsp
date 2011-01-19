@@ -80,7 +80,7 @@
 <div id="dialog-form" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
 <form id="register-form" action="OliveServlet" name="process" method="post">
-<fieldset><label for="name">Name</label> <input type="text"
+<fieldset><label for="name">Username</label> <input type="text"
 	name="name" id="register-name"
 	class="text ui-widget-content ui-corner-all" /> <label for="email">Email</label>
 <input type="text" name="email" id="register-email" value=""

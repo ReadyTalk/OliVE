@@ -180,21 +180,28 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("account.jsp");
 		}
 		else if(id.equals("AddUser")){
-			log.info("This is a servlet announcing that the if was accessed succesfully");
 			String username = OliveLogic.sanitize(request.getParameter("name"));
 			String password = OliveLogic.sanitize(request.getParameter("password"));
 			String email = OliveLogic.sanitize(request.getParameter("email"));
 			
 			User newUser = new User(username,password,email,username);
 			Boolean addSuccesfully = OliveLogic.AddAccount(newUser);
-			session.setAttribute("addSuccesfully", addSuccesfully);
-			response.sendRedirect("index.jsp");
+			if(addSuccesfully){
+				session.setAttribute("isAuthorized", true);
+				session.setAttribute("username", username);
+				session.setAttribute("password", password);
+				response.sendRedirect("projects.jsp");
+			}
+			else{
+				response.sendRedirect("index.jsp");
+				//TODO Add error message here
+			}
 		}
+			
 		else if(id.equals("AddProject")){
 			PrintWriter out = response.getWriter();
 		    response.setContentType("text/plain");
 		    out.println("Project Created. Please close this window and refresh the projects page.");
-			log.info("This is a servlet announcing that the if was accessed succesfully");
 			String projectName = OliveLogic.sanitize(request.getParameter("ProjectName"));
 			User user = new User((String)session.getAttribute("username"),(String)session.getAttribute("password"));
 			Project project = new Project(projectName, user);
