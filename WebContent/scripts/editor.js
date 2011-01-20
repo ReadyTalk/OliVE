@@ -30,7 +30,7 @@ jQuery(function($) {
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
-	$('.video-icon-container').draggable( {
+	$('.video-icon-container').draggable( { 
 		appendTo : 'body',
 		scroll : false,
 		connectToSortable : '#timeline-sortable',
@@ -46,7 +46,9 @@ jQuery(function($) {
 	$('#timeline-sortable').disableSelection();
 
 	$('#timeline').droppable( {
+		accept : '.video-icon-container',
 		drop : function() {
+			$(this).append($(ui.draggable).clone());
 			console.log('Dropped');
 		}
 	});
