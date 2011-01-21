@@ -1,5 +1,5 @@
 /*
- * This is Olive's JavaScript file for editor.jsp only.
+* This is Olive's JavaScript file for editor.jsp only.
  */
 
 var video; // Global
@@ -33,24 +33,20 @@ jQuery(function($) {
 	$('.video-icon-container').draggable( { 
 		appendTo : 'body',
 		scroll : false,
-		connectToSortable : '#timeline-sortable',
+		connectToSortable : '#timeline',
 		helper : 'clone',
 		revert : 'invalid',
 		snap : '#timeline'
 	});
 
-	$('#timeline-sortable').sortable( {
+	/*$('#timeline-sortable').sortable( {
 		revert : true
 	});
 
-	$('#timeline-sortable').disableSelection();
+	$('#timeline-sortable').disableSelection();*/
 
-	$('#timeline').droppable( {
-		accept : '.video-icon-container',
-		drop : function() {
-			$(this).append($(ui.draggable).clone());
-			console.log('Dropped');
-		}
+	$('#timeline').sortable( {
+		revert : true
 	});
 
 	/*
