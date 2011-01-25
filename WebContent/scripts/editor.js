@@ -64,6 +64,11 @@ jQuery(function($) {
           color: '#fff',
           backgroundColor: '#00c',
           border: 'none'
+        },
+        bindings: {
+          'split': function(t) {
+              alert('Split Video');
+          }
         }
       });
 
