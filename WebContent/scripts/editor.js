@@ -48,6 +48,25 @@ jQuery(function($) {
 	$('#timeline').sortable( {
 		revert : true
 	});
+	
+    $('.video-icon-container').contextMenu('videoMenu', {
+        menuStyle: {
+          border: '1px solid #000'
+        },
+        itemStyle: {
+          fontFamily : 'verdana',
+          backgroundColor : '#fff',
+          color: 'black',
+          border: 'none',
+          padding: '1px'
+        },
+        itemHoverStyle: {
+          color: '#fff',
+          backgroundColor: '#00c',
+          border: 'none'
+        }
+      });
+
 
 	/*
 	 * $('#olive1').bind('click', function() {
