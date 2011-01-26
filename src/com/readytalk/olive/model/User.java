@@ -1,7 +1,5 @@
 package com.readytalk.olive.model;
 
-import java.io.UnsupportedEncodingException;
-
 public class User {
 
 	private String username;
@@ -9,8 +7,8 @@ public class User {
 	private String email;
 	private String name;
 	private int AccountID;
-	
-	//TODO change the way the user is handled by using ID's to distinguish one user from another rather than using usernames
+
+	// TODO change the way the user is handled by using ID's to distinguish one user from another rather than using usernames
 
 	public User(String username, String password, String email, String name) {
 		super();
@@ -28,13 +26,13 @@ public class User {
 		this.name = name;
 		this.AccountID = id;
 	}
-	
+
 	public User(String username, String password) {
 		this.username = username;
 		this.password = password;
 		this.AccountID = -1;
 	}
-	
+
 	public int getAccountID() {
 		return AccountID;
 	}
@@ -42,8 +40,6 @@ public class User {
 	public void setAccountID(int accountID) {
 		AccountID = accountID;
 	}
-	
-	
 
 	public String getUsername() {
 		return username;
