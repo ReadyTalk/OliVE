@@ -1,5 +1,5 @@
 /*
- * This is Olive's JavaScript file for editor.jsp only.
+* This is Olive's JavaScript file for editor.jsp only.
  */
 
 var video; // Global
@@ -30,26 +30,48 @@ jQuery(function($) {
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
-	$('.video-icon-container').draggable( {
+	$('.video-icon-container').draggable( { 
 		appendTo : 'body',
 		scroll : false,
-		connectToSortable : '#timeline-sortable',
+		connectToSortable : '#timeline',
 		helper : 'clone',
 		revert : 'invalid',
 		snap : '#timeline'
 	});
 
-	$('#timeline-sortable').sortable( {
+	/*$('#timeline-sortable').sortable( {
 		revert : true
 	});
 
-	$('#timeline-sortable').disableSelection();
+	$('#timeline-sortable').disableSelection();*/
 
-	$('#timeline').droppable( {
-		drop : function() {
-			console.log('Dropped');
-		}
+	$('#timeline').sortable( {
+		revert : true
 	});
+	
+    $('.video-icon-container').contextMenu('videoMenu', {
+        menuStyle: {
+          border: '1px solid #000'
+        },
+        itemStyle: {
+          fontFamily : 'verdana',
+          backgroundColor : '#fff',
+          color: 'black',
+          border: 'none',
+          padding: '1px'
+        },
+        itemHoverStyle: {
+          color: '#fff',
+          backgroundColor: '#00c',
+          border: 'none'
+        },
+        bindings: {
+          'split': function(t) {
+              alert('Split Video');
+          }
+        }
+      });
+
 
 	/*
 	 * $('#olive1').bind('click', function() {

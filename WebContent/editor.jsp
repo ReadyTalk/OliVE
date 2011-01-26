@@ -35,6 +35,7 @@
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
+<script src="/olive/scripts/contextMenu.js"></script>
 </head>
 <body>
 <%
@@ -115,6 +116,13 @@ Video 4<br />
 </div>
 </div>
 <!-- end #videos-container -->
+
+<div class = "contextMenu" id = "videoMenu">
+	<ul>
+        <li id="split">Split Video</li>
+      </ul>
+</div>
+<!-- end #contextMenu -->
 
 <div id="player-div"><video id="player-video"
 	poster="/olive/images/bbb480.jpg" preload="preload"
