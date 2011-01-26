@@ -57,6 +57,7 @@ public class OliveServlet extends HttpServlet {
 			String newName = OliveLogic.sanitize(request.getParameter("new-name"));
 			String newEmail = OliveLogic.sanitize(request.getParameter("new-email"));
 			String newPassword = OliveLogic.sanitize(request.getParameter("new-password"));
+			log.info("WTF?????????????");
 			User updateUser = new User(username, newPassword, newEmail, newName);
 			Boolean editSuccesfully = OliveLogic.editAccount(updateUser);
 			session.setAttribute("editSuccesfully", editSuccesfully);
@@ -65,7 +66,6 @@ public class OliveServlet extends HttpServlet {
 			String username = OliveLogic.sanitize(request.getParameter("name"));
 			String password = OliveLogic.sanitize(request.getParameter("password"));
 			String email = OliveLogic.sanitize(request.getParameter("email"));
-
 			User newUser = new User(username, password, email, username);
 			Boolean addSuccesfully = OliveLogic.AddAccount(newUser);
 			if(addSuccesfully){

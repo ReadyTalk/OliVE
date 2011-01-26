@@ -288,7 +288,7 @@ public class OliveLogic {
 
 		// Remove the *really* bad stuff (which cause XSS attacks and SQL
 		// injections).
-		String[] illegalStrings = { "!", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",", "<", ">", "/", "?", "`", "~" };
+		String[] illegalStrings = { "!", "#", "$", "^", "&", "*", "(", ")", "-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",", "<", ">", "/", "?", "`", "~" };
 		for (int i = 0; i < illegalStrings.length; ++i) {
 			output = output.replace(illegalStrings[i], "");
 		}
@@ -297,7 +297,7 @@ public class OliveLogic {
 		String encoding = "UTF-8"; // This is recommended by the The World Wide Web Consortium Recommendation. See : http://download.oracle.com/javase/1.4.2/docs/api/java/net/URLEncoder.html#encode(java.lang.String, java.lang.String)
 									// Other encodings: http://download.oracle.com/javase/1.4.2/docs/api/java/nio/charset/Charset.html
 		try {
-			output = java.net.URLEncoder.encode(output, encoding);
+			output = java.net.URLDecoder.decode(output, encoding);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnsupportedEncodingException("Choose a different encoding than \"" + encoding + "\". " + e.getMessage());
 		}
