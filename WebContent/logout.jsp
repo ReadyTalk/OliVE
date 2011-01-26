@@ -6,14 +6,14 @@
 <title>Insert title here</title>
 </head>
 <body>
-<% 
+<%
 	session.removeAttribute("isAuthorized");
-    session.removeAttribute("username");
-    session.removeAttribute("password");
-    session.removeAttribute("editSuccesfully");
-    session.removeAttribute("addSuccesfully");
-    session.removeAttribute("projectTitle");
-    response.sendRedirect("index.jsp");
+	session.removeAttribute("username");
+	session.removeAttribute("password");
+	session.removeAttribute("editSuccesfully");
+	session.removeAttribute("addSuccesfully");
+	session.removeAttribute("projectTitle");
+	response.sendRedirect("index.jsp");
 %>
 </body>
 </html>

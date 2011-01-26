@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveLogic" %>
-<%@ page import="com.readytalk.olive.model.User" %>
+<%@ page import="com.readytalk.olive.logic.OliveLogic"%>
+<%@ page import="com.readytalk.olive.model.User"%>
 <!doctype html>
 <html>
 <head>
@@ -44,17 +44,19 @@
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
-	} 
-	String username = (String) session.getAttribute("username");	
+	}
+	String username = (String) session.getAttribute("username");
 	String password = (String) session.getAttribute("password");
-	String projectsHTML = OliveLogic.populateProjects(new User(username,password));
+	String projectsHTML = OliveLogic.populateProjects(new User(
+			username, password));
 %>
 <div id="header">
 <div id="header-left">
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a href="logout.jsp">Logout</a></div>
+<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
+	href="logout.jsp">Logout</a></div>
 <div><a href="#">Help</a></div>
 </div>
 </div>
@@ -70,15 +72,13 @@
 <!-- end #projects-title -->
 
 <div id="projects-controls">
-<button type="button" onclick="javascript:win1()">Create
-New Project</button>
+<button type="button" onclick="javascript:win1()">Create New
+Project</button>
 </div>
 <!-- end #controls -->
 
 <div class="clear"></div>
-<div id="project-clips">
-<%=projectsHTML%>
-</div>
+<div id="project-clips"><%=projectsHTML%></div>
 <!-- end #project-clips --></div>
 <!-- end #projects-container --></div>
 <!-- end #main -->
