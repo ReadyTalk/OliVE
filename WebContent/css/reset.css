@@ -60,12 +60,12 @@ a {
 
 ins {
 	background-color: #ff9;
-	color: # text-decoration :       none;
+	color: # text-decoration :         none;
 }
 
 mark {
 	background-color: #ff9;
-	color: # font-style :       italic;
+	color: # font-style :         italic;
 	font-weight: bold;
 }
 

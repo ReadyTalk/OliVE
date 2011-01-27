@@ -143,7 +143,8 @@ Video 4<br />
 <div class="clear"></div>
 
 <div id="export">
-<button type="button" onclick="alert('Export Video')">Export Video</button>
+<button type="button" onclick="alert('Export Video')">Export
+Video</button>
 
 </div>
 <!-- end #export --></div>

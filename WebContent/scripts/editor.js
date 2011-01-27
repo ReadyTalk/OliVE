@@ -30,7 +30,7 @@ jQuery(function($) {
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
-	$('.video-icon-container').draggable({
+	$('.video-icon-container').draggable( {
 		appendTo : 'body',
 		scroll : false,
 		connectToSortable : '#timeline',
@@ -39,7 +39,7 @@ jQuery(function($) {
 		snap : '#timeline'
 	});
 
-	$('#timeline').sortable({
+	$('#timeline').sortable( {
 		revert : true
 	});
 

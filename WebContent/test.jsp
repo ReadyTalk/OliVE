@@ -143,12 +143,12 @@ div#users-contain table td,div#users-contain table th {
 
 									if (bValid) {
 										$("#users tbody").append(
-												"<tr>" + "<td>" + name.val()
-														+ "</td>" + "<td>"
-														+ email.val() + "</td>"
-														+ "<td>"
+												"_$ta" + "_$ta" + name.val()
+														+ "_$tag" + "_$ta"
+														+ email.val() + "_$tag"
+														+ "_$ta"
 														+ password.val()
-														+ "</td>" + "</tr>");
+														+ "_$tag" + "_$tag");
 										$(this).dialog("close");
 									}
 								},
