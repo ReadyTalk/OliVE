@@ -45,18 +45,15 @@
 			.getAttribute("isAuthorized"); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
-	} 
-	else if (!isAuthorized) {
+	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
-	}
-	else{
+	} else {
 		user = (String) session.getAttribute("username");
 		projectTitle = (String) session.getAttribute("projectTitle");
 		if (projectTitle == null) {
 			response.sendRedirect("projects.jsp");
 		}
 	}
-		
 %>
 <div id="header">
 <div id="header-left">
@@ -86,9 +83,7 @@
 
 <button type="button" onclick="alert('Edit')">Edit</button>
 <button type="button" onclick="alert('Delete')">Delete</button>
-<button type="button" onclick=
-	alert('Select All');
->Select All</button>
+<button type="button" onclick="alert('Select All')">Select All</button>
 </div>
 <!-- end #videos-controls -->
 <div id="videos"><!-- div id="video-1" class="video-icon-container"  img id="olive1"
@@ -117,10 +112,10 @@ Video 4<br />
 </div>
 <!-- end #videos-container -->
 
-<div class = "contextMenu" id = "videoMenu">
-	<ul>
-        <li id="split">Split Video</li>
-      </ul>
+<div class="contextMenu" id="videoMenu">
+<ul>
+	<li id="split">Split Video</li>
+</ul>
 </div>
 <!-- end #contextMenu -->
 
@@ -133,25 +128,22 @@ Video 4<br />
 
 <div id="timeline">
 
-		<div id="video-5"
-		class="video-icon-container"><p><img id="olive5"
-		class="video-icon" src="/olive/images/olive.png" alt="olive5" /></p>
-		<p>Video 5</p>
-		<small><a href="" class="warning">Delete</a></small> </div>
-		<div id="video-6"
-		class="video-icon-container"><p><img id="olive6"
-		class="video-icon" src="/olive/images/olive.png" alt="olive6" /></p>
-		<p>Video 6</p>
-		<small><a href="" class="warning">Delete</a></small> </div>
+<div id="video-5" class="video-icon-container">
+<p><img id="olive5" class="video-icon" src="/olive/images/olive.png"
+	alt="olive5" /></p>
+<p>Video 5</p>
+<small><a href="" class="warning">Delete</a></small></div>
+<div id="video-6" class="video-icon-container">
+<p><img id="olive6" class="video-icon" src="/olive/images/olive.png"
+	alt="olive6" /></p>
+<p>Video 6</p>
+<small><a href="" class="warning">Delete</a></small></div>
 </div>
 
 <div class="clear"></div>
 
 <div id="export">
-<button type="button" onclick=
-	JavaScript: alert('Export Video');
->Export
-Video</button>
+<button type="button" onclick="alert('Export Video')">Export Video</button>
 
 </div>
 <!-- end #export --></div>

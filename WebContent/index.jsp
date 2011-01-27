@@ -70,8 +70,9 @@
 	name="username" id="login-username" size="32" maxlength="128" /></p>
 <p><label for="password">Password</label> <input type="password"
 	name="password" id="login-password" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="LoginUser"></input>
-<input type="submit"  value="Login" /> <span><%=loginMessage%> <a href="">Forgot password?</a></span></form>
+<input type="hidden" name="FormName" value="LoginUser"></input> <input
+	type="submit" value="Login" /> <span><%=loginMessage%> <a
+	href="">Forgot password?</a></span></form>
 <p>Don't have an account? <a id="create-user" href="javascript:;"
 	title="">Sign up for one now!</a></p>
 </div>
@@ -79,16 +80,16 @@
 
 <div id="dialog-form" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
-<form id="register-form" action="OliveServlet" name="process" method="post">
-<fieldset><label for="name">Username</label> <input type="text"
-	name="name" id="register-name"
+<form id="register-form" action="OliveServlet" name="process"
+	method="post">
+<fieldset><label for="name">Username</label> <input
+	type="text" name="name" id="register-name"
 	class="text ui-widget-content ui-corner-all" /> <label for="email">Email</label>
 <input type="text" name="email" id="register-email" value=""
 	class="text ui-widget-content ui-corner-all" /> <label for="password">Password</label>
 <input type="password" name="password" id="register-password" value=""
 	class="text ui-widget-content ui-corner-all" /></fieldset>
-<input type="hidden" name="FormName" value="AddUser"></input>
-</form>
+<input type="hidden" name="FormName" value="AddUser"></input></form>
 </div>
 <!-- end #dialog-form --></div>
 <!-- end #main -->
