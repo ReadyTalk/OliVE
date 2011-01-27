@@ -3,6 +3,10 @@
 	Editor page
 	----------------------------------------
 */
+#main {
+	min-width: 1000px;
+	}
+	
 #videos-container {
 	position: absolute;
 	top: 0px;
