@@ -35,7 +35,7 @@ public class S3Credentials {
 		 */
 
 		try {
-			Connection conn = OliveLogic.getDBConnection();
+			Connection conn = OliveDataApi.getDBConnection();
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
@@ -44,10 +44,10 @@ public class S3Credentials {
 			if (r.first()) {
 				AWS_ACCESS_KEY_PROPERTY_NAME = r.getString("AWSAccessKey");
 				AWS_SECRET_KEY_PROPERTY_NAME = r.getString("AWSSecretKey");
-				OliveLogic.closeConnection(conn);
+				OliveDataApi.closeConnection(conn);
 			} else {
 				// TODO Add error for rare case that it can't find the data
-				OliveLogic.closeConnection(conn);
+				OliveDataApi.closeConnection(conn);
 			}
 
 		} catch (Exception e) {

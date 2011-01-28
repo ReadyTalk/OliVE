@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.readytalk.olive.logic.OliveLogic;
+import com.readytalk.olive.logic.OliveDataApi;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
@@ -49,11 +49,11 @@ public class OliveServlet extends HttpServlet {
 		Boolean isAuthorized;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		if (OliveLogic.isSafe(username) && OliveLogic.isSafe(password)) {
+		if (OliveDataApi.isSafe(username) && OliveDataApi.isSafe(password)) {
 			session.setAttribute("isSafe", true);
-			User user = new User(username, password, OliveLogic
-					.getEmail(username), OliveLogic.getName(username));
-			isAuthorized = OliveLogic.isAuthorized(user);
+			User user = new User(username, password, OliveDataApi
+					.getEmail(username), OliveDataApi.getName(username));
+			isAuthorized = OliveDataApi.isAuthorized(user);
 			session.setAttribute("isAuthorized", isAuthorized); // Do not redisplay user name (XSS vulnerability).
 			if (isAuthorized) { // Take the user to the projects page.
 				session.setAttribute("username", user.getUsername());
@@ -81,13 +81,13 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		if (OliveLogic.isSafe(newName) && OliveLogic.isSafe(newEmail)
-				&& OliveLogic.isSafe(newPassword)
-				&& OliveLogic.isSafe(confirmNewPassword)) {
+		if (OliveDataApi.isSafe(newName) && OliveDataApi.isSafe(newEmail)
+				&& OliveDataApi.isSafe(newPassword)
+				&& OliveDataApi.isSafe(confirmNewPassword)) {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
-				Boolean editSuccessfully = OliveLogic.editAccount(updateUser);
+				Boolean editSuccessfully = OliveDataApi.editAccount(updateUser);
 				session.setAttribute("editSuccessfully", editSuccessfully);
 				session.setAttribute("passwordsMatch", true);
 				session.setAttribute("password", newPassword);
@@ -107,11 +107,11 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 		// The jQuery regex should catch malicious input, but sanitize just to be safe.
-		String username = OliveLogic.sanitize(request.getParameter("name"));
-		String password = OliveLogic.sanitize(request.getParameter("password"));
-		String email = OliveLogic.sanitize(request.getParameter("email"));
+		String username = OliveDataApi.sanitize(request.getParameter("name"));
+		String password = OliveDataApi.sanitize(request.getParameter("password"));
+		String email = OliveDataApi.sanitize(request.getParameter("email"));
 		User newUser = new User(username, password, email, username);
-		Boolean addSuccessfully = OliveLogic.AddAccount(newUser);
+		Boolean addSuccessfully = OliveDataApi.AddAccount(newUser);
 		if (addSuccessfully) {
 			session.setAttribute("isAuthorized", true);
 			session.setAttribute("username", username);
@@ -128,13 +128,13 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		String projectName = request.getParameter("ProjectName");
-		if (OliveLogic.isSafe(projectName)) {
+		if (OliveDataApi.isSafe(projectName)) {
 			session.setAttribute("isSafe", true);
 			// Adding the project information to the database
 			User user = new User((String) session.getAttribute("username"),
 					(String) session.getAttribute("password"));
 			Project project = new Project(projectName, user);
-			OliveLogic.AddProject(project, user);
+			OliveDataApi.AddProject(project, user);
 		} else {
 			session.setAttribute("isSafe", false);
 		}
@@ -149,8 +149,8 @@ public class OliveServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String projectTitle = request.getParameter("projectTitle");
 		if (projectTitle != null
-				&& OliveLogic.isSafe(projectTitle)
-				&& OliveLogic.projectExists(projectTitle, (String) session
+				&& OliveDataApi.isSafe(projectTitle)
+				&& OliveDataApi.projectExists(projectTitle, (String) session
 						.getAttribute("username"))) { // Short circuiting
 			session.setAttribute("projectTitle", projectTitle);
 			response.sendRedirect("editor.jsp");

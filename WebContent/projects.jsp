@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveLogic"%>
-<%@ page import="com.readytalk.olive.model.User"%>
+<%@ page import="com.readytalk.olive.logic.OliveDataApi>
+<%@ page import="cocom.readytalk.olive.model.User>
 <!doctype html>
 <html>
 <head>
@@ -38,8 +38,9 @@
 </head>
 <body>
 <%
+
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+	.getAttribute("isAuthorized"); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -47,8 +48,8 @@
 	}
 	String username = (String) session.getAttribute("username");
 	String password = (String) session.getAttribute("password");
-	String projectsHTML = OliveLogic.populateProjects(new User(
-			username, password));
+	String projectsHTML = OliveDataApi.populateProjects(new User(
+	username, password));
 %>
 <div id="header">
 <div id="header-left">

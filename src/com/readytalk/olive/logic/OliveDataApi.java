@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
-public class OliveLogic {
+public class OliveDataApi {
 	// CAUTION: Everytime a JDBC connection is created, it MUST be closed after the necessary information is retrieved.
 	
 	
