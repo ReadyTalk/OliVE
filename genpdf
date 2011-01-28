@@ -43,7 +43,7 @@ FILES="\
     WebContent/projects.jsp \
     WebContent/test.jsp \
     \
-    src/com/readytalk/olive/logic/OliveLogic.java \
+    src/com/readytalk/olive/logic/OliveDataAPI.java \
     src/com/readytalk/olive/model/Project.java \
     src/com/readytalk/olive/model/User.java \
     src/com/readytalk/olive/servlet/OliveServlet.java \
