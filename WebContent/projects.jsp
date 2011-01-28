@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveDataApi>
-<%@ page import="cocom.readytalk.olive.model.User>
+<%@ page import="com.readytalk.olive.logic.OliveDataApi"%>
+<%@ page import="com.readytalk.olive.model.User"%>
 <!doctype html>
 <html>
 <head>
