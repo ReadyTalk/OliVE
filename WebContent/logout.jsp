@@ -15,6 +15,8 @@
 	session.removeAttribute("projectTitle");
 	session.removeAttribute("passwordsMatch");
 	session.removeAttribute("isSafe");
+	session.removeAttribute("email");
+	session.removeAttribute("name");
 	response.sendRedirect("index.jsp");
 %>
 </body>

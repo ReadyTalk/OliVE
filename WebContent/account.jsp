@@ -63,7 +63,10 @@
 	session.removeAttribute("editSuccessfully");
 	session.removeAttribute("passwordsMatch");
 
-	String user = (String) session.getAttribute("username");
+	String username = (String) session.getAttribute("username");
+	String name = (String) session.getAttribute("name");
+	String email = (String) session.getAttribute("email");
+	String password = (String) session.getAttribute("password");
 %>
 <div id="header">
 <div id="header-left">
@@ -71,7 +74,7 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <%=user%>!&nbsp;<a href="logout.jsp">Logout</a></div>
+<div>Welcome, <%=username%>!&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
 	href="#">Help</a></div>
 </div>
@@ -83,19 +86,19 @@
 <div id="main">
 
 <div id="edit-account-container">
-<h2>Account information</h2>
+<h2>Edit account information</h2>
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
 <p><label for="new-name">Name</label> <input type="text"
-	name="new-name" id="new-name" value="" size="32" maxlength="128" /></p>
+	name="new-name" id="new-name" value="<%=name%>" size="32" maxlength="128" /></p>
 <p><label for="new-email">Email</label> <input type="text"
-	name="new-email" id="new-email" value="" size="32" maxlength="128" /></p>
+	name="new-email" id="new-email" value="<%=email%>" size="32" maxlength="128" /></p>
 <p><label for="new-password">Password</label> <input type="password"
-	name="new-password" id="new-password" value="" size="32"
+	name="new-password" id="new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
-	value="" size="32" maxlength="128" /></p>
+	value="<%=password%>" size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="EditUser"></input> <input
 	type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 

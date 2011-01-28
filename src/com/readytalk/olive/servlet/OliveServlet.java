@@ -42,12 +42,14 @@ public class OliveServlet extends HttpServlet {
 			String password = request.getParameter("password");
 			if (OliveLogic.isSafe(username) && OliveLogic.isSafe(password)) {
 				session.setAttribute("isSafe", true);
-				User user = new User(username, password);
+				User user = new User(username, password, OliveLogic.getEmail(username), OliveLogic.getName(username));
 				isAuthorized = OliveLogic.isAuthorized(user);
 				session.setAttribute("isAuthorized", isAuthorized); // Do not redisplay user name (XSS vulnerability).
 				if (isAuthorized) { // Take the user to the projects page.
-					session.setAttribute("username", username);
-					session.setAttribute("password", password);
+					session.setAttribute("username", user.getUsername());
+					session.setAttribute("password", user.getPassword());
+					session.setAttribute("email", user.getEmail());
+					session.setAttribute("name", user.getName());
 					session.removeAttribute("isSafe"); // Cleared so as to not interfere with any other form
 					response.sendRedirect("projects.jsp");
 				} else { // Keep the user on the same page.
@@ -76,6 +78,9 @@ public class OliveServlet extends HttpServlet {
 							.editAccount(updateUser);
 					session.setAttribute("editSuccessfully", editSuccessfully);
 					session.setAttribute("passwordsMatch", true);
+					session.setAttribute("password", newPassword);
+					session.setAttribute("email", newEmail);
+					session.setAttribute("name", newName);
 				} else {
 					session.setAttribute("editSuccessfully", false);
 					session.setAttribute("passwordsMatch", false);
@@ -97,6 +102,7 @@ public class OliveServlet extends HttpServlet {
 				session.setAttribute("isAuthorized", true);
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
+				session.setAttribute("email",email);
 				response.sendRedirect("projects.jsp");
 			} else {
 				response.sendRedirect("index.jsp");

@@ -329,4 +329,48 @@ public class OliveLogic {
 
 		return output;
 	}
+
+	public static String getName(String username) {
+		try {
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+
+			s = "SELECT Name FROM Accounts WHERE username ='" + username
+					+ "';";
+			ResultSet r = st.executeQuery(s);
+			String name = "";
+			if (r.first()) {
+				name = r.getString("Name");
+			} 
+			return name;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String getEmail(String username) {
+		try {
+			Connection conn = getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+
+			s = "SELECT Email FROM Accounts WHERE username ='" + username
+					+ "';";
+			ResultSet r = st.executeQuery(s);
+			String email = "";
+			if (r.first()) {
+				email = r.getString("Email");
+			} 
+			return email;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
