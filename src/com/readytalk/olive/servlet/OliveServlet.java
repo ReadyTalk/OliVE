@@ -61,6 +61,7 @@ public class OliveServlet extends HttpServlet {
 			Boolean editSuccesfully = OliveLogic.editAccount(updateUser);
 			session.setAttribute("editSuccesfully", editSuccesfully);
 			response.sendRedirect("account.jsp");
+			
 		} else if (id.equals("AddUser")) {
 			String username = OliveLogic.sanitize(request.getParameter("name"));
 			String password = OliveLogic.sanitize(request.getParameter("password"));

@@ -22,7 +22,7 @@ public class OliveLogic {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "SELECT Username FROM Accounts WHERE Username = '"
-					+ user.getUsername() + "' AND Password = '" + user.getPassword() + "';";
+					+ user.getUsername() + "' AND Password = Password('" + user.getPassword() + "');";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				closeConnection(conn);
@@ -36,51 +36,7 @@ public class OliveLogic {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/*
-		 * if (user.getUsername().equals("olive")
-		 * && user.getPassword().equals("evilo")) {
-		 * return true;
-		 * } else {
-		 * return false;
-		 * }
-		 */
-
-		/*
-		 * try { Statement stmt = null;
-		 * 
-		 * // Register the JDBC driver for MySQL.
-		 * Class.forName("com.mysql.jdbc.Driver");
-		 * 
-		 * // Define URL of database server for // database named mysql on the
-		 * localhost // with the default port number 3306. String url =
-		 * "jdbc:mysql://localhost:3306/testDB";
-		 * 
-		 * // Get a connection to the database for a // user named root with a
-		 * blank password. // This user is the default administrator // having
-		 * full privileges to do anything. Connection con =
-		 * DriverManager.getConnection(url, "root", "olive");
-		 * 
-		 * // Display URL and connection information System.out.println("URL: "
-		 * + url); System.out.println("Connection: " + con); stmt =
-		 * con.createStatement();
-		 * 
-		 * stmt.executeUpdate("CREATE TABLE myTable(test_id int," +
-		 * "test_val char(15) not null)");
-		 * stmt.executeUpdate("INSERT INTO myTable(test_id, " +
-		 * "test_val) VALUES(2,'Two')");
-		 * stmt.executeUpdate("INSERT INTO myTable(test_id, " +
-		 * "test_val) VALUES(3,'Three')");
-		 * stmt.executeUpdate("INSERT INTO myTable(test_id, " +
-		 * "test_val) VALUES(4,'Four')");
-		 * stmt.executeUpdate("INSERT INTO myTable(test_id, " +
-		 * "test_val) VALUES(5,'Five')");
-		 * 
-		 * try { stmt.executeUpdate("DROP TABLE myTable"); } catch (Exception e)
-		 * { System.out.print(e);
-		 * System.out.println("No existing table to delete"); }
-		 * 
-		 * } catch (Exception e) { e.printStackTrace(); }
-		 */
+		
 		return false; // Error!
 	}
 
@@ -155,7 +111,7 @@ public class OliveLogic {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "INSERT INTO Accounts (Username, Password, Name, Email)" +
-					"VALUES ('" + user.getUsername() + "', '" + user.getPassword() + "' " +
+					"VALUES ('" + user.getUsername() + "', Password('" + user.getPassword() + "') " +
 							", '" + user.getName() + "', '" + user.getEmail() + "');";
 			st.executeUpdate(s);
 			s = "SELECT AccountID FROM Accounts WHERE username ='"+user.getUsername()+"';";
@@ -268,7 +224,7 @@ public class OliveLogic {
 					"= '" + user.getUsername() + "'";
 			st.executeUpdate(s);
 
-			s = "UPDATE Accounts SET Password = '" + user.getPassword() + "' WHERE Username " +
+			s = "UPDATE Accounts SET Password = Password('" + user.getPassword() + "') WHERE Username " +
 					"= '" + user.getUsername() + "'";
 			st.executeUpdate(s);
 
@@ -297,7 +253,7 @@ public class OliveLogic {
 		String encoding = "UTF-8"; // This is recommended by the The World Wide Web Consortium Recommendation. See : http://download.oracle.com/javase/1.4.2/docs/api/java/net/URLEncoder.html#encode(java.lang.String, java.lang.String)
 									// Other encodings: http://download.oracle.com/javase/1.4.2/docs/api/java/nio/charset/Charset.html
 		try {
-			output = java.net.URLDecoder.decode(output, encoding);
+			output = java.net.URLEncoder.encode(output, encoding);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnsupportedEncodingException("Choose a different encoding than \"" + encoding + "\". " + e.getMessage());
 		}
