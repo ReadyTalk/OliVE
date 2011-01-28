@@ -10,9 +10,11 @@
 	session.removeAttribute("isAuthorized");
 	session.removeAttribute("username");
 	session.removeAttribute("password");
-	session.removeAttribute("editSuccesfully");
-	session.removeAttribute("addSuccesfully");
+	session.removeAttribute("editSuccessfully");
+	session.removeAttribute("addSuccessfully");
 	session.removeAttribute("projectTitle");
+	session.removeAttribute("passwordsMatch");
+	session.removeAttribute("isSafe");
 	response.sendRedirect("index.jsp");
 %>
 </body>

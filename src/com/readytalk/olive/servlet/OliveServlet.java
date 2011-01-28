@@ -1,7 +1,6 @@
 package com.readytalk.olive.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -31,63 +30,99 @@ public class OliveServlet extends HttpServlet {
 		 * You probably want to always use the .info method to log.
 		 */
 		String id = request.getParameter("FormName");
-		log.info("This is a servlet responding to an Http POST request from form: " + id);
+		log
+				.info("This is a servlet responding to an Http POST request from form: "
+						+ id);
 
 		Boolean isAuthorized;
 
 		if (id.equals("LoginUser")) {
-			String username = OliveLogic.sanitize(request.getParameter("username"));
-			String password = OliveLogic.sanitize(request.getParameter("password"));
 
-			User user = new User(username, password);
-
-			isAuthorized = OliveLogic.isAuthorized(user);
-
-			session.setAttribute("isAuthorized", isAuthorized); // Do not redisplay user name (XSS vulnerability).
-			if (isAuthorized) { // Take the user to the projects page.
-				session.setAttribute("username", username);
-				session.setAttribute("password", password);
-				response.sendRedirect("projects.jsp");
-			} else { // Keep the user on the same page.
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			if (OliveLogic.isSafe(username) && OliveLogic.isSafe(password)) {
+				session.setAttribute("isSafe", true);
+				User user = new User(username, password);
+				isAuthorized = OliveLogic.isAuthorized(user);
+				session.setAttribute("isAuthorized", isAuthorized); // Do not redisplay user name (XSS vulnerability).
+				if (isAuthorized) { // Take the user to the projects page.
+					session.setAttribute("username", username);
+					session.setAttribute("password", password);
+					session.removeAttribute("isSafe"); // Cleared so as to not interfere with any other form
+					response.sendRedirect("projects.jsp");
+				} else { // Keep the user on the same page.
+					response.sendRedirect("index.jsp");
+				}
+			} else {
+				session.setAttribute("isSafe", false);
+				session.setAttribute("isAuthorized", false);
 				response.sendRedirect("index.jsp");
 			}
+
 		} else if (id.equals("EditUser")) {
-			Object user = session.getAttribute("username");
-			String username = (String) user;
-			String newName = OliveLogic.sanitize(request.getParameter("new-name"));
-			String newEmail = OliveLogic.sanitize(request.getParameter("new-email"));
-			String newPassword = OliveLogic.sanitize(request.getParameter("new-password"));
-			User updateUser = new User(username, newPassword, newEmail, newName);
-			Boolean editSuccesfully = OliveLogic.editAccount(updateUser);
-			session.setAttribute("editSuccesfully", editSuccesfully);
+			String username = (String) session.getAttribute("username");
+			String newName = request.getParameter("new-name");
+			String newEmail = request.getParameter("new-email");
+			String newPassword = request.getParameter("new-password");
+			String confirmNewPassword = request
+					.getParameter("confirm-new-password");
+			if (OliveLogic.isSafe(newName) && OliveLogic.isSafe(newEmail)
+					&& OliveLogic.isSafe(newPassword)
+					&& OliveLogic.isSafe(confirmNewPassword)) {
+				if (newPassword.equals(confirmNewPassword)) {
+					User updateUser = new User(username, newPassword, newEmail,
+							newName);
+					Boolean editSuccessfully = OliveLogic
+							.editAccount(updateUser);
+					session.setAttribute("editSuccessfully", editSuccessfully);
+					session.setAttribute("passwordsMatch", true);
+				} else {
+					session.setAttribute("editSuccessfully", false);
+					session.setAttribute("passwordsMatch", false);
+				}
+			} else {
+				session.setAttribute("editSuccessfully", false);
+			}
 			response.sendRedirect("account.jsp");
-			
+
 		} else if (id.equals("AddUser")) {
+			// The jQuery regex should catch malicious input, but sanitize just to be safe.
 			String username = OliveLogic.sanitize(request.getParameter("name"));
-			String password = OliveLogic.sanitize(request.getParameter("password"));
+			String password = OliveLogic.sanitize(request
+					.getParameter("password"));
 			String email = OliveLogic.sanitize(request.getParameter("email"));
 			User newUser = new User(username, password, email, username);
-			Boolean addSuccesfully = OliveLogic.AddAccount(newUser);
-			if(addSuccesfully){
+			Boolean addSuccessfully = OliveLogic.AddAccount(newUser);
+			if (addSuccessfully) {
 				session.setAttribute("isAuthorized", true);
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
 				response.sendRedirect("projects.jsp");
-			}
-			else{
+			} else {
 				response.sendRedirect("index.jsp");
-				//TODO Add error message here
+				// TODO Add error message here
 			}
 		}
-			
-		else if(id.equals("AddProject")){
-			PrintWriter out = response.getWriter();
-			response.setContentType("text/plain");
-			out.println("Project Created. Please close this window and refresh the projects page.");
-			String projectName = OliveLogic.sanitize(request.getParameter("ProjectName"));
-			User user = new User((String) session.getAttribute("username"), (String) session.getAttribute("password"));
-			Project project = new Project(projectName, user);
-			OliveLogic.AddProject(project, user);
+
+		else if (id.equals("AddProject")) {
+			/*
+			 * PrintWriter out = response.getWriter();
+			 * response.setContentType("text/plain");
+			 * out.println("Project Created. Please close this window and refresh the projects page.");
+			 */
+			String projectName = request.getParameter("ProjectName");
+			if (OliveLogic.isSafe(projectName)) {
+				session.setAttribute("isSafe", true);
+				// Adding the project information to the database
+				User user = new User((String) session.getAttribute("username"),
+						(String) session.getAttribute("password"));
+				Project project = new Project(projectName, user);
+				OliveLogic.AddProject(project, user);
+			} else {
+				session.setAttribute("isSafe", false);
+			}
+			response.sendRedirect("newProjectForm.jsp");
+
 		}
 
 	}
@@ -95,13 +130,18 @@ public class OliveServlet extends HttpServlet {
 	// http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html
 	@Override
 	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response)
-			throws ServletException, IOException {
+			HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 		HttpSession session = request.getSession();
-		session.setAttribute("projectTitle", OliveLogic.sanitize(request.getParameter("projectTitle")));
-		String page = OliveLogic.sanitize(request.getParameter("page")) + ".jsp";
-		response.sendRedirect(page);
-
+		String projectTitle = request.getParameter("projectTitle");
+		if (projectTitle != null
+				&& OliveLogic.isSafe(projectTitle)
+				&& OliveLogic.projectExists(projectTitle, (String) session
+						.getAttribute("username"))) { // Short circuiting
+			session.setAttribute("projectTitle", projectTitle);
+			response.sendRedirect("editor.jsp");
+		} else {
+			response.sendRedirect("projects.jsp");
+		}
 	}
 }

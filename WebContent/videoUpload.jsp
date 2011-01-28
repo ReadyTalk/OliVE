@@ -6,6 +6,15 @@
 <title>Insert title here</title>
 </head>
 <body>
+<%
+	Boolean isAuthorized = (Boolean) session
+			.getAttribute("isAuthorized"); // Nasty cast
+	if (isAuthorized == null) {
+		response.sendRedirect("index.jsp");
+	} else if (!isAuthorized) {
+		response.sendRedirect("index.jsp");
+	}
+%>
 <form id="UploadForm" action="CommonsFileUploadServlet" name="process"
 	enctype="multipart/form-data" method="post"><input type="hidden"
 	name="FormName" value="UploadVideo"></input> <input type="file"

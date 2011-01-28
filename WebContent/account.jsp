@@ -43,16 +43,25 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	}
-	Boolean editSuccesfully = (Boolean) session
-			.getAttribute("editSuccesfully");
+
+	Boolean editSuccessfully = (Boolean) session
+			.getAttribute("editSuccessfully");
+	Boolean passwordsMatch = (Boolean) session
+			.getAttribute("passwordsMatch");
 	String editConfirmation;
-	if (editSuccesfully == null) {
-		editConfirmation = "Change any information here!";
-	} else if (editSuccesfully) {
-		editConfirmation = "Your information has been changed succesfully!";
+	if (editSuccessfully == null) {
+		editConfirmation = "";
+	} else if (editSuccessfully) {
+		editConfirmation = "Your information has been changed successfully.";
 	} else {
-		editConfirmation = "We are unable to change your information at the the time.";
+		if (passwordsMatch == null) { // Not safe
+			editConfirmation = "Invalid characters or length on one or more fields.";
+		} else { // Safe, but differing passwords
+			editConfirmation = "Passwords do not match.";
+		}
 	}
+	session.removeAttribute("editSuccessfully");
+	session.removeAttribute("passwordsMatch");
 
 	String user = (String) session.getAttribute("username");
 %>
