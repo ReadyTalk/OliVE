@@ -35,8 +35,8 @@
 				position : 'absolute',
 				zIndex : '500'
 			}).appendTo('body').bind('click', function(e) {
-				e.stopPropagation()
-			})
+				e.stopPropagation();
+			});
 		}
 		if (!shadow) {
 			shadow = $('<div></div>').css( {
@@ -44,40 +44,38 @@
 				position : 'absolute',
 				opacity : 0.2,
 				zIndex : 499
-			}).appendTo('body').hide()
+			}).appendTo('body').hide();
 		}
 		hash = hash || [];
-		hash
-				.push( {
-					id : id,
-					menuStyle : $.extend( {}, defaults.menuStyle,
-							options.menuStyle || {}),
-					itemStyle : $.extend( {}, defaults.itemStyle,
-							options.itemStyle || {}),
-					itemHoverStyle : $.extend( {}, defaults.itemHoverStyle,
-							options.itemHoverStyle || {}),
-					bindings : options.bindings || {},
-					shadow : options.shadow || options.shadow === false ? options.shadow
-							: defaults.shadow,
-					onContextMenu : options.onContextMenu
-							|| defaults.onContextMenu,
-					onShowMenu : options.onShowMenu || defaults.onShowMenu,
-					eventPosX : options.eventPosX || defaults.eventPosX,
-					eventPosY : options.eventPosY || defaults.eventPosY
-				});
+		hash.push( {
+				id : id,
+				menuStyle : $.extend( {}, defaults.menuStyle,
+						options.menuStyle || {}),
+				itemStyle : $.extend( {}, defaults.itemStyle,
+						options.itemStyle || {}),
+				itemHoverStyle : $.extend( {}, defaults.itemHoverStyle,
+						options.itemHoverStyle || {}),
+				bindings : options.bindings || {},
+				shadow : options.shadow || options.shadow === false ? options.shadow
+						: defaults.shadow,
+				onContextMenu : options.onContextMenu
+						|| defaults.onContextMenu,
+				onShowMenu : options.onShowMenu || defaults.onShowMenu,
+				eventPosX : options.eventPosX || defaults.eventPosX,
+				eventPosY : options.eventPosY || defaults.eventPosY
+			});
 		var index = hash.length - 1;
-		$(this)
-				.bind(
-						'contextmenu',
-						function(e) {
-							var bShowContext = (!!hash[index].onContextMenu) ? hash[index]
-									.onContextMenu(e)
-									: true;
-							if (bShowContext)
-								display(index, this, e, options);
-							return false
-						});
-		return this
+		$(this).bind(
+					'contextmenu',
+					function(e) {
+						var bShowContext = (!!hash[index].onContextMenu) ? hash[index]
+							.onContextMenu(e)
+							: true;
+						if (bShowContext)
+							display(index, this, e, options);
+						return false;
+					});
+		return this;
 	};
 
 	function display(index, trigger, e, options) {
@@ -85,9 +83,9 @@
 		content = $('#' + cur.id).find('ul:first').clone(true);
 		content.css(cur.menuStyle).find('li').css(cur.itemStyle).hover(
 				function() {
-					$(this).css(cur.itemHoverStyle)
+					$(this).css(cur.itemHoverStyle);
 				}, function() {
-					$(this).css(cur.itemStyle)
+					$(this).css(cur.itemStyle);
 				}).find('img').css( {
 			verticalAlign : 'middle',
 			paddingRight : '2px'
@@ -98,8 +96,8 @@
 		$.each(cur.bindings, function(id, func) {
 			$('#' + id, menu).bind('click', function(e) {
 				hide();
-				func(trigger, currentTarget)
-			})
+				func(trigger, currentTarget);
+			});
 		});
 		menu.css( {
 			'left' : e[cur.eventPosX],
@@ -112,23 +110,23 @@
 				left : e.pageX + 2,
 				top : e.pageY + 2
 			}).show();
-		$(document).one('click', hide)
+		$(document).one('click', hide);
 	}
 	function hide() {
 		menu.hide();
-		shadow.hide()
+		shadow.hide();
 	}
 	$.contextMenu = {
 		defaults : function(userDefaults) {
 			$.each(userDefaults, function(i, val) {
 				if (typeof val == 'object' && defaults[i]) {
-					$.extend(defaults[i], val)
+					$.extend(defaults[i], val);
 				} else
-					defaults[i] = val
-			})
+					defaults[i] = val;
+			});
 		}
-	}
+	};
 })(jQuery);
 $(function() {
-	$('div.contextMenu').hide()
+	$('div.contextMenu').hide();
 });

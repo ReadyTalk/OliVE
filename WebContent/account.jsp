@@ -90,9 +90,11 @@
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
 <p><label for="new-name">Name</label> <input type="text"
-	name="new-name" id="new-name" value="<%=name%>" size="32" maxlength="128" /></p>
+	name="new-name" id="new-name" value="<%=name%>" size="32"
+	maxlength="128" /></p>
 <p><label for="new-email">Email</label> <input type="text"
-	name="new-email" id="new-email" value="<%=email%>" size="32" maxlength="128" /></p>
+	name="new-email" id="new-email" value="<%=email%>" size="32"
+	maxlength="128" /></p>
 <p><label for="new-password">Password</label> <input type="password"
 	name="new-password" id="new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>

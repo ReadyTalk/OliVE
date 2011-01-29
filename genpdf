@@ -31,8 +31,10 @@ FILES="\
     WebContent/account.jsp \
     WebContent/editor.jsp \
     WebContent/index.jsp \
+    WebContent/logout.jsp \
+    WebContent/newProjectForm.jsp \
     WebContent/projects.jsp \
-    WebContent/test.jsp \
+    WebContent/videoUpload.jsp \
     \
     src/com/readytalk/olive/logic/HttpSenderReceiver.java \
     src/com/readytalk/olive/logic/OliveDataApi.java \

@@ -38,9 +38,8 @@
 </head>
 <body>
 <%
-
 	Boolean isAuthorized = (Boolean) session
-	.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute("isAuthorized"); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -49,7 +48,7 @@
 	String username = (String) session.getAttribute("username");
 	String password = (String) session.getAttribute("password");
 	String projectsHTML = OliveDataApi.populateProjects(new User(
-	username, password));
+			username, password));
 %>
 <div id="header">
 <div id="header-left">
