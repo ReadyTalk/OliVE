@@ -22,6 +22,8 @@ FILES="\
     WebContent/doc/favicon_notes.txt \
     WebContent/doc/longDirectory.txt \
         \
+    WebContent/temp/test.txt \
+        \
     WebContent/scripts/account.js \
     WebContent/scripts/editor.js \
     WebContent/scripts/index.js \
