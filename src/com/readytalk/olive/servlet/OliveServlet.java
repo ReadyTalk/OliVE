@@ -10,20 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDataApi;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
 public class OliveServlet extends HttpServlet {
-
-	
-
 	// Don't store anything as a member variable in the Servlet.
 	// private Object dontDoThis;
 
-	//Private static variables are ok
+	// Private static variables are ok
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-		
+
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -39,6 +37,10 @@ public class OliveServlet extends HttpServlet {
 			addUserHandler(request, response, session);
 		} else if (id.equals("AddProject")) {
 			addProjectHandler(request, response, session);
+		} else if (id.equals("SplitVideo")) {
+			splitVideoHandler(request, response, session);
+		} else {
+			// TODO Add a condition here for unknown forms.
 		}
 
 	}
@@ -51,16 +53,23 @@ public class OliveServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		if (OliveDataApi.isSafe(username) && OliveDataApi.isSafe(password)) {
 			session.setAttribute("isSafe", true);
-			User user = new User(username, password, OliveDataApi
-					.getEmail(username), OliveDataApi.getName(username));
+			User user = new User(username, password,
+					OliveDataApi.getEmail(username),
+					OliveDataApi.getName(username));
 			isAuthorized = OliveDataApi.isAuthorized(user);
-			session.setAttribute("isAuthorized", isAuthorized); // Do not redisplay user name (XSS vulnerability).
+			session.setAttribute("isAuthorized", isAuthorized); // Do not
+																// redisplay
+																// user name
+																// (XSS
+																// vulnerability).
 			if (isAuthorized) { // Take the user to the projects page.
 				session.setAttribute("username", user.getUsername());
 				session.setAttribute("password", user.getPassword());
 				session.setAttribute("email", user.getEmail());
 				session.setAttribute("name", user.getName());
-				session.removeAttribute("isSafe"); // Cleared so as to not interfere with any other form
+				session.removeAttribute("isSafe"); // Cleared so as to not
+													// interfere with any other
+													// form
 				response.sendRedirect("projects.jsp");
 			} else { // Keep the user on the same page.
 				response.sendRedirect("index.jsp");
@@ -102,13 +111,15 @@ public class OliveServlet extends HttpServlet {
 		}
 		response.sendRedirect("account.jsp");
 	}
-	
+
 	private void addUserHandler(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
-		// The jQuery regex should catch malicious input, but sanitize just to be safe.
+		// The jQuery regex should catch malicious input, but sanitize just to
+		// be safe.
 		String username = OliveDataApi.sanitize(request.getParameter("name"));
-		String password = OliveDataApi.sanitize(request.getParameter("password"));
+		String password = OliveDataApi.sanitize(request
+				.getParameter("password"));
 		String email = OliveDataApi.sanitize(request.getParameter("email"));
 		User newUser = new User(username, password, email, username);
 		Boolean addSuccessfully = OliveDataApi.AddAccount(newUser);
@@ -140,7 +151,7 @@ public class OliveServlet extends HttpServlet {
 		}
 		response.sendRedirect("newProjectForm.jsp");
 	}
-	
+
 	// http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html
 	@Override
 	protected void doGet(HttpServletRequest request,
@@ -150,12 +161,19 @@ public class OliveServlet extends HttpServlet {
 		String projectTitle = request.getParameter("projectTitle");
 		if (projectTitle != null
 				&& OliveDataApi.isSafe(projectTitle)
-				&& OliveDataApi.projectExists(projectTitle, (String) session
-						.getAttribute("username"))) { // Short circuiting
+				&& OliveDataApi.projectExists(projectTitle,
+						(String) session.getAttribute("username"))) { // Short-circuiting
 			session.setAttribute("projectTitle", projectTitle);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
+	}
+
+	private void splitVideoHandler(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws IOException {
+		HttpSenderReceiver.split();
+		response.sendRedirect("editor.jsp");
 	}
 }

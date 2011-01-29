@@ -78,12 +78,16 @@
 <h3><%=projectTitle%></h3>
 </div>
 <!-- end #videos-title -->
-<div id="videos-controls">
-<button type="button" onclick="javascript:win1()">Upload New</button>
+<div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
 
-<button type="button" onclick="alert('Edit')">Edit</button>
-<button type="button" onclick="alert('Delete')">Delete</button>
-<button type="button" onclick="alert('Select All')">Select All</button>
+<!-- This should be refactored to be multiple forms, but then the CSS should be
+	changed so the buttons all stay on the same line. -->
+<form id="split-form" action="OliveServlet" name="process" method="post">
+<input type="button" value="Upload New" onclick="javascript:win1();" />
+<input type="submit" value="Split" onclick="alert('Split');" /> <input
+	type="hidden" name="FormName" value="SplitVideo"></input> <input
+	type="button" value="Delete" onclick="alert('Delete');" /> <input
+	type="button" value="Select All" onclick="alert('Select All');" /></form>
 </div>
 <!-- end #videos-controls -->
 <div id="videos"><!-- div id="video-1" class="video-icon-container"  img id="olive1"

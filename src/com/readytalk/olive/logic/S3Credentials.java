@@ -12,28 +12,6 @@ public class S3Credentials {
 	public static String AWS_SECRET_KEY_PROPERTY_NAME = "";
 
 	public static AWSCredentials loadAWSCredentials() throws IOException {
-		/*
-		 * InputStream propertiesIS =
-		 * ClassLoader.class.getResourceAsStream(SAMPLES_PROPERTIES_NAME);
-		 * 
-		 * if (propertiesIS == null) {
-		 * throw new RuntimeException("Unable to load test properties file from classpath: "
-		 * + SAMPLES_PROPERTIES_NAME);
-		 * }
-		 * 
-		 * Properties testProperties = new Properties();
-		 * testProperties.load(propertiesIS);
-		 * 
-		 * if (!testProperties.containsKey(AWS_ACCESS_KEY_PROPERTY_NAME)) {
-		 * throw new RuntimeException(
-		 * "Properties file 'test.properties' does not contain required property: " + AWS_ACCESS_KEY_PROPERTY_NAME);
-		 * }
-		 * if (!testProperties.containsKey(AWS_SECRET_KEY_PROPERTY_NAME)) {
-		 * throw new RuntimeException(
-		 * "Properties file 'test.properties' does not contain required property: " + AWS_SECRET_KEY_PROPERTY_NAME);
-		 * }
-		 */
-
 		try {
 			Connection conn = OliveDataApi.getDBConnection();
 			Statement st = conn.createStatement();

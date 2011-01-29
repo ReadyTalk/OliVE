@@ -166,6 +166,7 @@ div#users-contain table td,div#users-contain table th {
 	});
 </script>
 
+<script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
 
