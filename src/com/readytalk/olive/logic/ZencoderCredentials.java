@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class ZencoderCredentials {
-	
+
 	public static String getZencoderApiKey() {
 		String zencoderApiKey = "";
 		try {
@@ -22,7 +22,6 @@ public class ZencoderCredentials {
 				// TODO Add error for rare case that it can't find the data
 				OliveDataApi.closeConnection(conn);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

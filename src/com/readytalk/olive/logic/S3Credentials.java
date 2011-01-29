@@ -27,7 +27,6 @@ public class S3Credentials {
 				// TODO Add error for rare case that it can't find the data
 				OliveDataApi.closeConnection(conn);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

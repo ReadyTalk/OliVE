@@ -8,7 +8,8 @@ public class User {
 	private String name;
 	private int AccountID;
 
-	// TODO change the way the user is handled by using ID's to distinguish one user from another rather than using usernames
+	// TODO change the way the user is handled by using ID's to distinguish one
+	// user from another rather than using usernames
 
 	public User(String username, String password, String email, String name) {
 		super();
@@ -19,7 +20,8 @@ public class User {
 		this.AccountID = -1;
 	}
 
-	public User(String username, String password, String email, String name, int id) {
+	public User(String username, String password, String email, String name,
+			int id) {
 		this.username = username;
 		this.password = password;
 		this.email = email;

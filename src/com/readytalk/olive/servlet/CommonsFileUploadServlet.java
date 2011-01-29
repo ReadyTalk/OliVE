@@ -27,7 +27,8 @@ public class CommonsFileUploadServlet extends HttpServlet {
 	private File tmpDir;
 	private static final String DESTINATION_DIR_PATH = "/temp/";
 	private File destinationDir;
-	private static Logger log = Logger.getLogger(CommonsFileUploadServlet.class.getName());
+	private static Logger log = Logger.getLogger(CommonsFileUploadServlet.class
+			.getName());
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -39,31 +40,31 @@ public class CommonsFileUploadServlet extends HttpServlet {
 		if (!tmpDir.isDirectory()) {
 			throw new ServletException(TMP_DIR_PATH + " is not a directory");
 		}
-		String realPathDest = getServletContext().getRealPath(DESTINATION_DIR_PATH);
+		String realPathDest = getServletContext().getRealPath(
+				DESTINATION_DIR_PATH);
 		destinationDir = new File(realPathDest);
 		// destinationDir = new File(DESTINATION_DIR_PATH);
 		log.info(realPathDest);
 		if (!destinationDir.isDirectory()) {
-			throw new ServletException(DESTINATION_DIR_PATH + " is not a directory");
+			throw new ServletException(DESTINATION_DIR_PATH
+					+ " is not a directory");
 		}
-
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		response.setContentType("text/plain");
 		out.println("File uploaded. Please close this window and refresh the editor page.");
 		out.println();
 
 		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-		/*
-		 * Set the size threshold, above which content will be stored on disk.
-		 */
+
+		// Set the size threshold, above which content will be stored on disk.
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
-		/*
-		 * Set the temporary directory to store the uploaded files of size above threshold.
-		 */
+
+		// Set the temporary directory to store the uploaded files of size above threshold.
 		fileItemFactory.setRepository(tmpDir);
 
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
@@ -79,13 +80,14 @@ public class CommonsFileUploadServlet extends HttpServlet {
 				 * Handle Form Fields.
 				 */
 				if (item.isFormField()) {
-					log.info("File Name = " + item.getFieldName() + ", Value = " + item.getString());
+					log.info("File Name = " + item.getFieldName()
+							+ ", Value = " + item.getString());
 				} else {
 					// Handle Uploaded files.
-					log.info("Field Name = " + item.getFieldName() +
-							", File Name = " + item.getName() +
-							", Content type = " + item.getContentType() +
-							", File Size = " + item.getSize());
+					log.info("Field Name = " + item.getFieldName()
+							+ ", File Name = " + item.getName()
+							+ ", Content type = " + item.getContentType()
+							+ ", File Size = " + item.getSize());
 					/*
 					 * Write file to the ultimate location.
 					 */

@@ -42,7 +42,6 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			// TODO Add a condition here for unknown forms.
 		}
-
 	}
 
 	private void loginHandler(HttpServletRequest request,
@@ -57,22 +56,16 @@ public class OliveServlet extends HttpServlet {
 					OliveDataApi.getEmail(username),
 					OliveDataApi.getName(username));
 			isAuthorized = OliveDataApi.isAuthorized(user);
-			session.setAttribute("isAuthorized", isAuthorized); // Do not
-																// redisplay
-																// user name
-																// (XSS
-																// vulnerability).
+			session.setAttribute("isAuthorized", isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				session.setAttribute("username", user.getUsername());
 				session.setAttribute("password", user.getPassword());
 				session.setAttribute("email", user.getEmail());
 				session.setAttribute("name", user.getName());
-				session.removeAttribute("isSafe"); // Cleared so as to not
-													// interfere with any other
-													// form
+				session.removeAttribute("isSafe"); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
-			} else { // Keep the user on the same page.
-				response.sendRedirect("index.jsp");
+			} else {
+				response.sendRedirect("index.jsp"); // Keep the user on the same page.
 			}
 		} else {
 			session.setAttribute("isSafe", false);

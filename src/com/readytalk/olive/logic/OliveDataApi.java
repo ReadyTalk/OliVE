@@ -14,14 +14,14 @@ import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
 public class OliveDataApi {
-	// CAUTION: Everytime a JDBC connection is created, it MUST be closed after the necessary information is retrieved.
-	
-	
+	// CAUTION: Every time a JDBC connection is created, it MUST be closed after
+	// the necessary information is retrieved.
+
 	// Why some characters are allowed: http://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-email-address
 	private static final String[] illegalStrings = { "!", "&", "*", "(", ")",
 			"-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",",
 			"<", ">", "/", "?", "`" };
-	
+
 	public static Connection getDBConnection() {
 		try {
 			Context initCtx = new InitialContext();
@@ -41,7 +41,7 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Boolean isAuthorized(User user) {
 		try {
 			Connection conn = getDBConnection();
@@ -59,11 +59,9 @@ public class OliveDataApi {
 				closeConnection(conn);
 				return false;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return false; // Error!
 	}
 
@@ -94,7 +92,7 @@ public class OliveDataApi {
 		}
 		return false;
 	}
-	
+
 	public static String getName(String username) {
 		try {
 			Connection conn = getDBConnection();
@@ -102,16 +100,14 @@ public class OliveDataApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 
-			s = "SELECT Name FROM Accounts WHERE username ='" + username
-					+ "';";
+			s = "SELECT Name FROM Accounts WHERE username ='" + username + "';";
 			ResultSet r = st.executeQuery(s);
 			String name = "";
 			if (r.first()) {
 				name = r.getString("Name");
-			} 
+			}
 			closeConnection(conn);
 			return name;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,13 +130,12 @@ public class OliveDataApi {
 			}
 			closeConnection(conn);
 			return email;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	public static Boolean editAccount(User user) {
 		try {
 			Connection conn = getDBConnection();
@@ -166,7 +161,7 @@ public class OliveDataApi {
 		}
 		return false;
 	}
-	
+
 	public static void deleteAccount(User user) {
 		try {
 			Connection conn = getDBConnection();
@@ -181,9 +176,8 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 	}
-	
-	public static String populateProjects(User user) {
 
+	public static String populateProjects(User user) {
 		String projects = "";
 		try {
 			Connection conn = getDBConnection();
@@ -239,8 +233,8 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 		return projects;
-		// TODO change db to have unique usernames for accounts and names for both projects and videos in one project
-
+		// TODO change db to have unique usernames for accounts and names for
+		// both projects and videos in one project
 	}
 
 	public static boolean projectExists(String projectTitle, String username) {
@@ -271,14 +265,11 @@ public class OliveDataApi {
 				closeConnection(conn);
 				return false;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-
-	
 
 	public static void AddProject(Project p, User u) {
 		try {
@@ -320,7 +311,7 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void AddVideo(String name, String URL, int ProjectID,
 			String icon) {
 		try {
@@ -352,8 +343,6 @@ public class OliveDataApi {
 		}
 	}
 
-	
-
 	// TODO Create multiple methods for different kinds of input
 	public static boolean isSafe(String input)
 			throws UnsupportedEncodingException {
@@ -367,7 +356,6 @@ public class OliveDataApi {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -386,5 +374,4 @@ public class OliveDataApi {
 		return output;
 	}
 
-	
 }
