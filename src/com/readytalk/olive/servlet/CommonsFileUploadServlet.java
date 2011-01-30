@@ -58,7 +58,7 @@ public class CommonsFileUploadServlet extends HttpServlet {
 		response.setContentType("text/plain");
 		out.println("File uploaded. Please close this window and refresh the editor page.");
 		out.println();
-
+		log.info("This is a servlet responding to an Http POST request from form: Upload Video");
 		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 
 		// Set the size threshold, above which content will be stored on disk.
