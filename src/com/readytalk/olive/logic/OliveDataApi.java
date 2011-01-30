@@ -1,5 +1,6 @@
 package com.readytalk.olive.logic;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,6 +10,8 @@ import java.sql.Statement;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
@@ -342,7 +345,58 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 	}
+	private static String AWS_ACCESS_KEY_PROPERTY_NAME = "";
+	private static String AWS_SECRET_KEY_PROPERTY_NAME = "";
+	
+	public static AWSCredentials loadAWSCredentials() throws IOException {
+		try {
+			Connection conn = OliveDataApi.getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT * FROM s3credentials;";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				AWS_ACCESS_KEY_PROPERTY_NAME = r.getString("AWSAccessKey");
+				AWS_SECRET_KEY_PROPERTY_NAME = r.getString("AWSSecretKey");
+				OliveDataApi.closeConnection(conn);
+			} else {
+				// TODO Add error for rare case that it can't find the data
+				OliveDataApi.closeConnection(conn);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		AWSCredentials awsCredentials = new AWSCredentials(
+				AWS_ACCESS_KEY_PROPERTY_NAME, AWS_SECRET_KEY_PROPERTY_NAME);
+
+		return awsCredentials;
+	}
+	
+	public static String getZencoderApiKey() {
+		String zencoderApiKey = "";
+		try {
+			Connection conn = OliveDataApi.getDBConnection();
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT * FROM ZencoderCredentials;";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				zencoderApiKey = r.getString("ZencoderAPIKey");
+				OliveDataApi.closeConnection(conn);
+			} else {
+				// TODO Add error for rare case that it can't find the data
+				OliveDataApi.closeConnection(conn);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return zencoderApiKey;
+	}
+		
 	// TODO Create multiple methods for different kinds of input
 	public static boolean isSafe(String input)
 			throws UnsupportedEncodingException {

@@ -52,7 +52,7 @@ public class HttpSenderReceiver {
 	private static String getJson() {
 		// Hard-coded for now.
 		String data = "{\"api_key\": \""
-				+ ZencoderCredentials.getZencoderApiKey()
+				+ OliveDataApi.getZencoderApiKey()
 				+ "\",\"input\": \"https://s3.amazonaws.com/test-bucket-Olive/Wildlife.wmv\","
 				+ "\"output\": [{\"base_url\": \"https://s3.amazonaws.com/test-bucket-Olive/\","
 				+ "\"filename\": \"Wildlife0-3.wmv\"," + "\"start_clip\": 6,"

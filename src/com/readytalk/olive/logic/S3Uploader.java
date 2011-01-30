@@ -10,7 +10,7 @@ public class S3Uploader {
 	private static final String BUCKET_NAME = "test-bucket-Olive";
 
 	public static void upLoadVideo(File video) throws Exception {
-		AWSCredentials awsCredentials = S3Credentials.loadAWSCredentials();
+		AWSCredentials awsCredentials = OliveDataApi.loadAWSCredentials();
 
 		RestS3Service s3Service = new RestS3Service(awsCredentials);
 
