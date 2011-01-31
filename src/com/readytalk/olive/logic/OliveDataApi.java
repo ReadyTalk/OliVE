@@ -24,6 +24,8 @@ public class OliveDataApi {
 	private static final String[] illegalStrings = { "!", "&", "*", "(", ")",
 			"-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",",
 			"<", ">", "/", "?", "`" };
+	private static String AWS_ACCESS_KEY_PROPERTY_NAME = "";
+	private static String AWS_SECRET_KEY_PROPERTY_NAME = "";
 
 	public static Connection getDBConnection() {
 		try {
@@ -345,8 +347,6 @@ public class OliveDataApi {
 			e.printStackTrace();
 		}
 	}
-	private static String AWS_ACCESS_KEY_PROPERTY_NAME = "";
-	private static String AWS_SECRET_KEY_PROPERTY_NAME = "";
 	
 	public static AWSCredentials loadAWSCredentials() throws IOException {
 		try {
