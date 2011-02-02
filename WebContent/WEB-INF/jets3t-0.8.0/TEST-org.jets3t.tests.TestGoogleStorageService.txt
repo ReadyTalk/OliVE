@@ -1,0 +1,23 @@
+Testsuite: org.jets3t.tests.TestGoogleStorageService
+Tests run: 16, Failures: 0, Errors: 0, Time elapsed: 96.269 sec
+------------- Standard Error -----------------
+log4j:WARN No appenders could be found for logger (org.apache.commons.httpclient.params.DefaultHttpParams).
+log4j:WARN Please initialize the log4j system properly.
+------------- ---------------- ---------------
+
+Testcase: testListBuckets took 3.811 sec
+Testcase: testBucketManagement took 2.763 sec
+Testcase: testBucketStatusLookup took 1.842 sec
+Testcase: testObjectManagement took 7.513 sec
+Testcase: testDirectoryPlaceholderObjects took 4.494 sec
+Testcase: testCopyObjects took 20.302 sec
+Testcase: testUnicodeData took 4.685 sec
+Testcase: testACLManagement took 8.112 sec
+Testcase: testACLManagementViaRestHeaders took 2.787 sec
+Testcase: testObjectListing took 10.32 sec
+Testcase: testHashVerifiedUploads took 2.484 sec
+Testcase: testIsObjectInBucket took 2.713 sec
+Testcase: testThreadedStorageService took 6.685 sec
+Testcase: testSimpleThreadedStorageService took 6.497 sec
+Testcase: testRecognizeDnsFriendlyBucketNames took 0.002 sec
+Testcase: testFileComparer took 10.766 sec
