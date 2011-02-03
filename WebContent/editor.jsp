@@ -64,7 +64,7 @@
 <div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="#">Help</a></div>
+	href="#" onclick="javascript:helpWin()">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -157,7 +157,7 @@ Video</button>
 <div class="clear"></div>
 
 <div id="footer">
-<div id="footer-left"><a href="#">About Us</a></div>
+<div id="footer-left"><a href="about.jsp">About Us</a></div>
 <div id="footer-right">&copy; 2010 ReadyTalk</div>
 </div>
 </body>

@@ -52,7 +52,7 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="#">Help</a></div>
+<div id="header-right"><a href="#" onclick="javascript:helpWin()">Help</a></div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -95,7 +95,7 @@
 <!-- end #main -->
 
 <div id="footer">
-<div id="footer-left"><a href="#">About Us</a></div>
+<div id="footer-left"><a href="about.jsp">About Us</a></div>
 <div id="footer-right">&copy; 2010 ReadyTalk</div>
 </div>
 </body>

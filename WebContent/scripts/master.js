@@ -7,3 +7,8 @@
 jQuery(function($) {
 
 });
+
+function helpWin() {
+	window.open("help.jsp", "HelpWindow",
+			"menubar=no,width=500,height=500,toolbar=no");
+}
