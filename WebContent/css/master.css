@@ -14,7 +14,7 @@ body {
 	 * is fixed. It's better to express font-size in terms of percentages, and
 	 * this is a neat way to do that.
 	 */
-	font-size: 62.5%;
+	font-size: 100%;
 	line-height: 20px;
 	font-family: Helvetica, Arial, sans-serif;
 	text-align: left;
@@ -55,7 +55,7 @@ h6 {
 }
 
 p {
-	font-size: 160%; /* 16px */
+	font-size: 120%; /* 16px */
 }
 
 table {

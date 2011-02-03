@@ -57,7 +57,7 @@
 <div id="header-right">
 <div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><a href="#">Help</a></div>
+<div><a href="#" onclick="javascript:helpWin()">Help</a></div>
 </div>
 </div>
 
@@ -86,7 +86,7 @@ Project</button>
 <div class="clear"></div>
 
 <div id="footer">
-<div id="footer-left"><a href="#">About Us</a></div>
+<div id="footer-left"><a href="about.jsp">About Us</a></div>
 <div id="footer-right">&copy; 2010 ReadyTalk</div>
 </div>
 </body>

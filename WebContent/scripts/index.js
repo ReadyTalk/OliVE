@@ -35,7 +35,7 @@ jQuery(function($) {
 			return true;
 		}
 	}
-
+	
 	$("#dialog-form").dialog({
 		autoOpen : false,
 		height : 350,
@@ -64,6 +64,7 @@ jQuery(function($) {
 				bValid = bValid && checkRegexp(password,
 								/^([0-9a-zA-Z])+$/,
 								"Password field only allow : a-z 0-9");
+							
 				if (bValid) {
 					$("#register-form").submit();
 					$(this).dialog("close");
@@ -78,7 +79,7 @@ jQuery(function($) {
 			allFields.val("").removeClass("ui-state-error");
 		}
 	});
-
+	
 	$("#create-user").button().click(function() {
 		$("#dialog-form").dialog("open");
 	});
