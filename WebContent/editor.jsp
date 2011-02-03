@@ -135,12 +135,12 @@ Video 4<br />
 <div id="video-5" class="video-icon-container">
 <p><img id="olive5" class="video-icon" src="/olive/images/olive.png"
 	alt="olive5" /></p>
-<p>Video 5</p>
+Video 5<br />
 <small><a href="" class="warning">Delete</a></small></div>
 <div id="video-6" class="video-icon-container">
 <p><img id="olive6" class="video-icon" src="/olive/images/olive.png"
 	alt="olive6" /></p>
-<p>Video 6</p>
+Video 6<br />
 <small><a href="" class="warning">Delete</a></small></div>
 </div>
 
