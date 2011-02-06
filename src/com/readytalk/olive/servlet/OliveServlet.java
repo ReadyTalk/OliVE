@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDataApi;
+import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
@@ -19,7 +20,9 @@ public class OliveServlet extends HttpServlet {
 	// Don't store anything as a member variable in the Servlet.
 	// private Object dontDoThis;
 
-	// Private static variables are ok
+	// Generated using Eclipse's "Add generated serial version ID" refactoring.
+	private static final long serialVersionUID = -6820792513104430238L;
+	// Private static variables are okay, though.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
 
 	@Override
@@ -50,7 +53,8 @@ public class OliveServlet extends HttpServlet {
 		Boolean isAuthorized;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		if (OliveDataApi.isSafe(username) && OliveDataApi.isSafe(password)) {
+		if (Security.isSafeUsername(username)
+				&& Security.isSafePassword(password)) {
 			session.setAttribute("isSafe", true);
 			User user = new User(username, password,
 					OliveDataApi.getEmail(username),
@@ -83,9 +87,9 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		if (OliveDataApi.isSafe(newName) && OliveDataApi.isSafe(newEmail)
-				&& OliveDataApi.isSafe(newPassword)
-				&& OliveDataApi.isSafe(confirmNewPassword)) {
+		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
+				&& Security.isSafePassword(newPassword)
+				&& Security.isSafePassword(confirmNewPassword)) {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
@@ -110,10 +114,12 @@ public class OliveServlet extends HttpServlet {
 			throws IOException {
 		// The jQuery regex should catch malicious input, but sanitize just to
 		// be safe.
-		String username = OliveDataApi.sanitize(request.getParameter("name"));
-		String password = OliveDataApi.sanitize(request
+		String username = Security.stripOutIllegalCharacters(request
+				.getParameter("name"));
+		String password = Security.stripOutIllegalCharacters(request
 				.getParameter("password"));
-		String email = OliveDataApi.sanitize(request.getParameter("email"));
+		String email = Security.stripOutIllegalCharacters(request
+				.getParameter("email"));
 		User newUser = new User(username, password, email, username);
 		Boolean addSuccessfully = OliveDataApi.AddAccount(newUser);
 		if (addSuccessfully) {
@@ -132,7 +138,7 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		String projectName = request.getParameter("ProjectName");
-		if (OliveDataApi.isSafe(projectName)) {
+		if (Security.isSafeProjectName(projectName)) {
 			session.setAttribute("isSafe", true);
 			// Adding the project information to the database
 			User user = new User((String) session.getAttribute("username"),
@@ -153,7 +159,7 @@ public class OliveServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String projectTitle = request.getParameter("projectTitle");
 		if (projectTitle != null
-				&& OliveDataApi.isSafe(projectTitle)
+				&& Security.isSafeProjectName(projectTitle)
 				&& OliveDataApi.projectExists(projectTitle,
 						(String) session.getAttribute("username"))) { // Short-circuiting
 			session.setAttribute("projectTitle", projectTitle);

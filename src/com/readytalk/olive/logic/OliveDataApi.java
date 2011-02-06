@@ -1,7 +1,6 @@
 package com.readytalk.olive.logic;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,10 +19,6 @@ public class OliveDataApi {
 	// CAUTION: Every time a JDBC connection is created, it MUST be closed after
 	// the necessary information is retrieved.
 
-	// Why some characters are allowed: http://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-email-address
-	private static final String[] illegalStrings = { "!", "&", "*", "(", ")",
-			"-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",",
-			"<", ">", "/", "?", "`" };
 	private static String AWS_ACCESS_KEY_PROPERTY_NAME = "";
 	private static String AWS_SECRET_KEY_PROPERTY_NAME = "";
 
@@ -396,36 +391,4 @@ public class OliveDataApi {
 
 		return zencoderApiKey;
 	}
-		
-	// TODO Create multiple methods for different kinds of input
-	public static boolean isSafe(String input)
-			throws UnsupportedEncodingException {
-		if (input.length() < 5 || input.length() > 15) {
-			return false;
-		}
-		// Remove the *really* bad stuff (which cause XSS attacks and SQL
-		// injections).
-		for (int i = 0; i < illegalStrings.length; ++i) {
-			if (input.contains(illegalStrings[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	// The registration modal form does its own regular expression checking,
-	// which should prevent any bad characters from getting in. This is just a
-	// safety check for if the JavaScript got hacked and a bad character got in.
-	public static String sanitize(String input) {
-		String output = input;
-
-		// Remove the *really* bad stuff (which cause XSS attacks and SQL
-		// injections).
-		for (int i = 0; i < illegalStrings.length; ++i) {
-			output = output.replace(illegalStrings[i], "");
-		}
-
-		return output;
-	}
-
 }

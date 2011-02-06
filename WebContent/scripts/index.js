@@ -38,8 +38,8 @@ jQuery(function($) {
 
 	$("#dialog-form").dialog({
 		autoOpen : false,
-		height : 350,
-		width : 350,
+		height : 450,
+		width : 400,
 		modal : true,
 		buttons : {
 			"Create an account" : function() {
@@ -49,9 +49,9 @@ jQuery(function($) {
 				bValid = bValid && checkLength(name,
 								"register-username", 3, 16);
 				bValid = bValid && checkLength(email, "register-email",
-								6, 80);
+								6, 64);
 				bValid = bValid && checkLength(password,
-								"register-password", 5, 16);
+								"register-password", 5, 128);
 				bValid = bValid && checkRegexp(name,
 								/^[a-z]([0-9a-z_])+$/i,
 								"Username may consist of a-z, 0-9, underscores, begin with a letter.");

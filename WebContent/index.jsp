@@ -67,7 +67,7 @@
 
 <form id="login-form" action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
-	name="username" id="login-username" size="32" maxlength="128" /></p>
+	name="username" id="login-username" size="32" maxlength="16" /></p>
 <p><label for="password">Password</label> <input type="password"
 	name="password" id="login-password" size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="LoginUser"></input> <input
@@ -84,11 +84,13 @@
 	method="post">
 <fieldset><label for="name">Username</label> <input
 	type="text" name="name" id="register-name"
-	class="text ui-widget-content ui-corner-all" /> <label for="email">Email</label>
-<input type="text" name="email" id="register-email" value=""
-	class="text ui-widget-content ui-corner-all" /> <label for="password">Password</label>
-<input type="password" name="password" id="register-password" value=""
-	class="text ui-widget-content ui-corner-all" /></fieldset>
+	class="text ui-widget-content ui-corner-all" maxlength="16" /> <label
+	for="email">Email</label> <input type="text" name="email"
+	id="register-email" value=""
+	class="text ui-widget-content ui-corner-all" maxlength="64" /> <label
+	for="password">Password</label> <input type="password" name="password"
+	id="register-password" value=""
+	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
 <input type="hidden" name="FormName" value="AddUser"></input></form>
 </div>
 <!-- end #dialog-form --></div>

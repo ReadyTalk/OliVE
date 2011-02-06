@@ -91,11 +91,11 @@
 	method="post">
 <p><label for="new-name">Name</label><br />
 <input type="text" name="new-name" id="new-name" value="<%=name%>"
-	size="32" maxlength="128" /></p>
+	size="32" maxlength="32" /></p>
 <br />
 <p><label for="new-email">Email</label><br />
 <input type="text" name="new-email" id="new-email" value="<%=email%>"
-	size="32" maxlength="128" /></p>
+	size="32" maxlength="64" /></p>
 <br />
 <p><label for="new-password">Password</label><br />
 <input type="password" name="new-password" id="new-password"
