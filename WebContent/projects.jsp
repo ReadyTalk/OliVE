@@ -57,7 +57,8 @@
 <div id="header-right">
 <div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><a href="#" onclick="javascript:helpWin()">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
+	href="#" onclick="helpWin();">Help</a></div>
 </div>
 </div>
 
@@ -72,7 +73,7 @@
 <!-- end #projects-title -->
 
 <div id="projects-controls">
-<button type="button" onclick="javascript:win1()">Create New
+<button type="button" onclick="win1()">Create New
 Project</button>
 </div>
 <!-- end #controls -->

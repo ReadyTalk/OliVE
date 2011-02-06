@@ -64,7 +64,7 @@
 <div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="#" onclick="javascript:helpWin()">Help</a></div>
+	href="#" onclick="helpWin();">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -83,7 +83,7 @@
 <!-- This should be refactored to be multiple forms, but then the CSS should be
 	changed so the buttons all stay on the same line. -->
 <form id="split-form" action="OliveServlet" name="process" method="post">
-<input type="button" value="Upload New" onclick="javascript:win1();" />
+<input type="button" value="Upload New" onclick="win1();" />
 <input type="submit" value="Split" onclick="alert('Split');" /> <input
 	type="hidden" name="FormName" value="SplitVideo"></input> <input
 	type="button" value="Delete" onclick="alert('Delete');" /> <input
@@ -107,13 +107,7 @@ Video 3<br />
 	src="/olive/images/olive.png" alt="olive4" /><br />
 Video 4<br />
 <small><a href="" class="warning">Delete</a></small> </span></div>
-<!-- end #videos -->
-<div id="player-videos-controls">
-<button id="videos-playpause">Play/pause</button>
-<button id="videos-volume-up">Volume up</button>
-<button id="videos-volume-down">Volume down</button>
-</div>
-</div>
+<!-- end #videos --></div>
 <!-- end #videos-container -->
 
 <div class="contextMenu" id="videoMenu">
@@ -123,9 +117,16 @@ Video 4<br />
 </div>
 <!-- end #contextMenu -->
 
-<div id="player-div"><video id="player-video"
+<div id="player-div">
+<div id="player-container"><video id="player-video"
 	poster="/olive/images/bbb480.jpg" preload="preload"
 	src="/olive/videos/bbb_trailer_iphone.m4v"></video></div>
+<div id="player-controls">
+<button id="videos-playpause">Play/pause</button>
+<button id="videos-volume-down">Volume down</button>
+<button id="videos-volume-up" disabled="disabled">Volume up</button>
+</div>
+</div>
 <!-- end #player -->
 
 <div class="clear"></div>

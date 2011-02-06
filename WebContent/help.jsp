@@ -50,6 +50,7 @@
 
 <div id=about-title">
 <h1>Help</h1>
+<p>There are no help files at this time.</p>
 </div>
 <!-- end #about-title --></div>
 <!-- end #main -->

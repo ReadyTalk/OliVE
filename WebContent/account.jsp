@@ -76,7 +76,7 @@
 <div id="header-right">
 <div>Welcome, <%=username%>!&nbsp;<a href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="#" onclick="javascript:helpWin()">Help</a></div>
+	href="#" onclick="helpWin();">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->

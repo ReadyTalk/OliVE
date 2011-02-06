@@ -24,12 +24,11 @@ body {
 
 h1,h2,h3,h4,h5,h6 {
 	color: #92bd6a; /* The Olive color */
-	font-family: Georgia, serif;
+	font-family: Cambria, Helvetica, Arial, sans-serif;
 }
 
 h1 {
 	font-size: 320%; /* 32px */
-	font-family: serif;
 	/*margin: .67em 0;*/
 	padding: 20px;
 }
@@ -139,6 +138,8 @@ small {
 	right: 0px;
 	bottom: 50px;
 	left: 0px;
+	min-width: 1000px;
+	min-height: 200px;
 }
 
 #footer {

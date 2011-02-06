@@ -52,7 +52,7 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="#" onclick="javascript:helpWin()">Help</a></div>
+<div id="header-right"><a href="#" onclick="helpWin();">Help</a></div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 

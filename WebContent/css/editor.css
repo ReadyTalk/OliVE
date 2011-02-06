@@ -3,10 +3,6 @@
 	Editor page
 	----------------------------------------
 */
-#main {
-	min-width: 1000px;
-}
-
 #videos-container {
 	position: absolute;
 	top: 0px;
@@ -45,7 +41,7 @@
 	position: absolute;
 	top: 20%;
 	right: 0%;
-	bottom: 10%;
+	bottom: 0%;
 	left: 0%;
 	text-align: left;
 	border: 1px solid gray;
@@ -56,42 +52,6 @@
 	display: block;
 }
 
-#player-videos-controls {
-	position: absolute;
-	bottom: 0%;
-	left: 0%;
-	right: 0%;
-	height: 10%;
-}
-
-/*
-#videos-playpause {
-	position: absolute;
-	bottom: 0%;
-	left: 0%;
-	right: 50%;
-	height: 10%;
-	background-color: #66aaff;
-}
-
-#videos-volume-up {
-	position: absolute;
-	bottom: 0%;
-	right: 25%;
-	left: 50%;
-	height: 10%;
-	background-color: #aa66ff;
-}
-
-#videos-volume-down {
-	position: absolute;
-	bottom: 0%;
-	right: 0%;
-	left: 75%;
-	height: 10%;
-	background-color: #ee22ff;
-}
-*/
 .video-icon-container {
 	float: left;
 	width: 100px;
@@ -127,6 +87,23 @@
 	left: 30%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
+}
+
+#player-container {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	bottom: 10%;
+	left: 0%;
+}
+
+#player-controls {
+	position: absolute;
+	bottom: 0%;
+	left: 0%;
+	right: 0%;
+	height: 10%;
+	text-align: center;
 }
 
 video {

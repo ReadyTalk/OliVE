@@ -40,7 +40,7 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="#" onclick="javascript:helpWin()">Help</a></div>
+<div id="header-right"><a href="#" onclick="helpWin();">Help</a></div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -50,6 +50,7 @@
 
 <div id=about-title">
 <h1>About Us</h1>
+<p>Olive makes it easy to edit your videos.</p>
 </div>
 <!-- end #about-title --></div>
 <!-- end #main -->
