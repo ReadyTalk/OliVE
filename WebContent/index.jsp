@@ -68,11 +68,14 @@
 <form id="login-form" action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
 	name="username" id="login-username" size="32" maxlength="16" /></p>
+<br />
 <p><label for="password">Password</label> <input type="password"
 	name="password" id="login-password" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="LoginUser"></input> <input
-	type="submit" value="Login" /> <span><%=loginMessage%> <a
-	href="forgot.jsp">Forgot password?</a></span></form>
+<br />
+<input type="hidden" name="FormName" value="LoginUser"></input>
+<input type="submit" value="Login" /><br />
+<span><%=loginMessage%> <a href="forgot.jsp">Forgot password?</a></span></form>
+<br />
 <p>Don't have an account? <a id="create-user" href="javascript:;"
 	title="">Sign up for one now!</a></p>
 </div>

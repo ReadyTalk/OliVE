@@ -5,12 +5,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// The regular expressions were taken from the JavaScript, but with A-Z appended
+// to all a-z's, to account for case sensitivity that the JavaScript usually
+// accounts for using /i at the end of the regular expression.
 public class Security {
 
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
 			int maxLength) {
-		return input.length() < minLength || input.length() > maxLength;
+		return minLength <= input.length() && input.length() <= maxLength;
 	}
 
 	// Input must match database and JavaScript value requirements!
@@ -22,63 +25,63 @@ public class Security {
 		return matcher.matches();
 	}
 
-	public static boolean isSafeUsername(String input)
+	public static boolean isSafeUsername(String username)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 3, 16)
-				&& isSafeValue(input, "^[a-z]([0-9a-z_])+$"); // TODO Make case-insensitive with /i: http://www.regular-expressions.info/javascript.html
+		return isSafeLength(username, 3, 16)
+				&& isSafeValue(username, "^[a-zA-z]([0-9a-z_A-z])+$");
 	}
 
-	public static boolean isSafeEmail(String input)
+	public static boolean isSafeEmail(String email)
 			throws UnsupportedEncodingException {
 		// TODO Make case-insensitive with /i: http://www.regular-expressions.info/javascript.html
-		return isSafeLength(input, 6, 64)
+		return isSafeLength(email, 6, 64)
 				&& isSafeValue(
-						input,
-						"^((([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.?$");
+						email,
+						"^((([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.?$");
 	}
 
-	public static boolean isSafePassword(String input)
+	public static boolean isSafePassword(String password)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 5, 128)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$");
+		return isSafeLength(password, 5, 128)
+				&& isSafeValue(password, "^([0-9a-zA-Z])+$");
 	}
 
-	public static boolean isSafeName(String input)
+	public static boolean isSafeName(String name)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 1, 32)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$"); // Same as password's regex
+		return isSafeLength(name, 1, 32)
+				&& isSafeValue(name, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeProjectName(String input)
+	public static boolean isSafeProjectName(String projectName)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 1, 32)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$"); // Same as password's regex
+		return isSafeLength(projectName, 1, 32)
+				&& isSafeValue(projectName, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeVideoName(String input)
+	public static boolean isSafeVideoName(String videoName)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 1, 20)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$"); // Same as password's regex
+		return isSafeLength(videoName, 1, 20)
+				&& isSafeValue(videoName, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeSecurityQuestion(String input)
+	public static boolean isSafeSecurityQuestion(String securityQuestion)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 1, 20)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$"); // Same as password's regex
+		return isSafeLength(securityQuestion, 1, 20)
+				&& isSafeValue(securityQuestion, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeSecurityAnswer(String input)
+	public static boolean isSafeSecurityAnswer(String securityAnswer)
 			throws UnsupportedEncodingException {
-		return isSafeLength(input, 1, 20)
-				&& isSafeValue(input, "^([0-9a-zA-Z])+$"); // Same as password's regex
+		return isSafeLength(securityAnswer, 1, 20)
+				&& isSafeValue(securityAnswer, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeProjectIcon(File icon)
+	public static boolean isSafeProjectIcon(File projectIcon)
 			throws UnsupportedEncodingException {
 		return false; // TODO Implement this
 	}
 
-	public static boolean isSafeVideoIcon(File icon)
+	public static boolean isSafeVideoIcon(File videoIcon)
 			throws UnsupportedEncodingException {
 		return false; // TODO Implement this
 	}
