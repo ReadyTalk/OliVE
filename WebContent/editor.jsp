@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
 <head>
@@ -42,14 +43,16 @@
 	String user = "";
 	String projectTitle = "";
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} else {
-		user = (String) session.getAttribute("username");
-		projectTitle = (String) session.getAttribute("projectTitle");
+		user = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
+		projectTitle = (String) session
+				.getAttribute(Attribute.PROJECT_TITLE.toString());
 		if (projectTitle == null) {
 			response.sendRedirect("projects.jsp");
 		}
@@ -83,8 +86,8 @@
 <!-- This should be refactored to be multiple forms, but then the CSS should be
 	changed so the buttons all stay on the same line. -->
 <form id="split-form" action="OliveServlet" name="process" method="post">
-<input type="button" value="Upload New" onclick="win1();" /> <input
-	type="submit" value="Split" onclick="alert('Split');" /> <input
+<input type="button" value="Upload New" onclick="openNewVideoForm();" />
+<input type="submit" value="Split" onclick="alert('Split');" /> <input
 	type="hidden" name="FormName" value="SplitVideo"></input> <input
 	type="button" value="Delete" onclick="alert('Delete');" /> <input
 	type="button" value="Select All" onclick="alert('Select All');" /></form>

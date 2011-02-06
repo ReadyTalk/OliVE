@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
 <head>
@@ -37,7 +38,7 @@
 <body>
 <%
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	String loginMessage;
 	if (isAuthorized == null) {
 		loginMessage = "Please log in.";

@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
 <head>
@@ -37,7 +38,7 @@
 <body>
 <%
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -45,9 +46,9 @@
 	}
 
 	Boolean editSuccessfully = (Boolean) session
-			.getAttribute("editSuccessfully");
+			.getAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
 	Boolean passwordsMatch = (Boolean) session
-			.getAttribute("passwordsMatch");
+			.getAttribute(Attribute.PASSWORDS_MATCH.toString());
 	String editConfirmation;
 	if (editSuccessfully == null) {
 		editConfirmation = "";
@@ -63,10 +64,10 @@
 	session.removeAttribute("editSuccessfully");
 	session.removeAttribute("passwordsMatch");
 
-	String username = (String) session.getAttribute("username");
-	String name = (String) session.getAttribute("name");
-	String email = (String) session.getAttribute("email");
-	String password = (String) session.getAttribute("password");
+	String username = (String) session.getAttribute(Attribute.USERNAME.toString());
+	String name = (String) session.getAttribute(Attribute.NAME.toString());
+	String email = (String) session.getAttribute(Attribute.EMAIL.toString());
+	String password = (String) session.getAttribute(Attribute.PASSWORD.toString());
 %>
 <div id="header">
 <div id="header-left">

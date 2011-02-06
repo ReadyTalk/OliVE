@@ -8,7 +8,7 @@ jQuery(function($) {
 
 });
 
-function win1() {
-	window.open("new-project-form.jsp", "Window1",
+function openNewProjectForm() {
+	window.open("new-project-form.jsp", "newProjectForm",
 			"menubar=no,width=320,height=200,toolbar=no");
 }

@@ -15,6 +15,7 @@ import com.readytalk.olive.logic.OliveDataApi;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.util.Attribute;
 
 public class OliveServlet extends HttpServlet {
 	// Don't store anything as a member variable in the Servlet.
@@ -43,7 +44,7 @@ public class OliveServlet extends HttpServlet {
 		} else if (id.equals("SplitVideo")) {
 			splitVideoHandler(request, response, session);
 		} else {
-			// TODO Add a condition here for unknown forms.
+			log.severe("Unknown form performing POST request.");
 		}
 	}
 
@@ -55,25 +56,25 @@ public class OliveServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		if (Security.isSafeUsername(username)
 				&& Security.isSafePassword(password)) {
-			session.setAttribute("isSafe", true);
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			User user = new User(username, password,
 					OliveDataApi.getEmail(username),
 					OliveDataApi.getName(username));
 			isAuthorized = OliveDataApi.isAuthorized(user);
-			session.setAttribute("isAuthorized", isAuthorized);
+			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
-				session.setAttribute("username", user.getUsername());
-				session.setAttribute("password", user.getPassword());
-				session.setAttribute("email", user.getEmail());
-				session.setAttribute("name", user.getName());
-				session.removeAttribute("isSafe"); // Cleared so as to not interfere with any other form.
+				session.setAttribute(Attribute.USERNAME.toString(), user.getUsername());
+				session.setAttribute(Attribute.PASSWORD.toString(), user.getPassword());
+				session.setAttribute(Attribute.EMAIL.toString(), user.getEmail());
+				session.setAttribute(Attribute.NAME.toString(), user.getName());
+				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
 				response.sendRedirect("index.jsp"); // Keep the user on the same page.
 			}
 		} else {
-			session.setAttribute("isSafe", false);
-			session.setAttribute("isAuthorized", false);
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), false);
 			response.sendRedirect("index.jsp");
 		}
 	}
@@ -81,7 +82,7 @@ public class OliveServlet extends HttpServlet {
 	private void editUserHandler(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
-		String username = (String) session.getAttribute("username");
+		String username = (String) session.getAttribute(Attribute.USERNAME.toString());
 		String newName = request.getParameter("new-name");
 		String newEmail = request.getParameter("new-email");
 		String newPassword = request.getParameter("new-password");
@@ -94,17 +95,17 @@ public class OliveServlet extends HttpServlet {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
 				Boolean editSuccessfully = OliveDataApi.editAccount(updateUser);
-				session.setAttribute("editSuccessfully", editSuccessfully);
-				session.setAttribute("passwordsMatch", true);
-				session.setAttribute("password", newPassword);
-				session.setAttribute("email", newEmail);
-				session.setAttribute("name", newName);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), editSuccessfully);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
+				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
+				session.setAttribute(Attribute.NAME.toString(), newName);
 			} else {
-				session.setAttribute("editSuccessfully", false);
-				session.setAttribute("passwordsMatch", false);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), false);
 			}
 		} else {
-			session.setAttribute("editSuccessfully", false);
+			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
 		}
 		response.sendRedirect("account.jsp");
 	}
@@ -123,10 +124,10 @@ public class OliveServlet extends HttpServlet {
 		User newUser = new User(username, password, email, username);
 		Boolean addSuccessfully = OliveDataApi.AddAccount(newUser);
 		if (addSuccessfully) {
-			session.setAttribute("isAuthorized", true);
-			session.setAttribute("username", username);
-			session.setAttribute("password", password);
-			session.setAttribute("email", email);
+			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
+			session.setAttribute(Attribute.USERNAME.toString(), username);
+			session.setAttribute(Attribute.PASSWORD.toString(), password);
+			session.setAttribute(Attribute.EMAIL.toString(), email);
 			response.sendRedirect("projects.jsp");
 		} else {
 			response.sendRedirect("index.jsp");
@@ -139,14 +140,14 @@ public class OliveServlet extends HttpServlet {
 			throws UnsupportedEncodingException, IOException {
 		String projectName = request.getParameter("ProjectName");
 		if (Security.isSafeProjectName(projectName)) {
-			session.setAttribute("isSafe", true);
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			// Adding the project information to the database
-			User user = new User((String) session.getAttribute("username"),
-					(String) session.getAttribute("password"));
+			User user = new User((String) session.getAttribute(Attribute.USERNAME.toString()),
+					(String) session.getAttribute(Attribute.PASSWORD.toString()));
 			Project project = new Project(projectName, user);
 			OliveDataApi.AddProject(project, user);
 		} else {
-			session.setAttribute("isSafe", false);
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
 		response.sendRedirect("new-project-form.jsp");
 	}
@@ -161,8 +162,8 @@ public class OliveServlet extends HttpServlet {
 		if (projectTitle != null
 				&& Security.isSafeProjectName(projectTitle)
 				&& OliveDataApi.projectExists(projectTitle,
-						(String) session.getAttribute("username"))) { // Short-circuiting
-			session.setAttribute("projectTitle", projectTitle);
+						(String) session.getAttribute(Attribute.USERNAME.toString()))) { // Short-circuiting
+			session.setAttribute(Attribute.PROJECT_TITLE.toString(), projectTitle);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");

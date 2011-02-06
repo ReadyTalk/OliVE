@@ -23,6 +23,8 @@ import com.readytalk.olive.logic.S3Uploader;
 //Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
 //Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
 public class CommonsFileUploadServlet extends HttpServlet {
+	// Generated using Eclipse's "Add generated serial version ID" refactoring.
+	private static final long serialVersionUID = 7352933214620763515L;
 	private static final String TMP_DIR_PATH = "/temp/";
 	private File tmpDir;
 	private static final String DESTINATION_DIR_PATH = "/temp/";
@@ -95,7 +97,6 @@ public class CommonsFileUploadServlet extends HttpServlet {
 					item.write(file);
 					S3Uploader.upLoadVideo(file);
 					file.delete();
-
 				}
 				out.close();
 			}
@@ -104,7 +105,5 @@ public class CommonsFileUploadServlet extends HttpServlet {
 		} catch (Exception ex) {
 			log("Error encountered while uploading file", ex);
 		}
-
 	}
-
 }

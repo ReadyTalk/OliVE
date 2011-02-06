@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="com.readytalk.olive.logic.OliveDataApi"%>
 <%@ page import="com.readytalk.olive.model.User"%>
+<%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
 <head>
@@ -39,14 +40,16 @@
 <body>
 <%
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	}
-	String username = (String) session.getAttribute("username");
-	String password = (String) session.getAttribute("password");
+	String username = (String) session.getAttribute(Attribute.USERNAME
+			.toString());
+	String password = (String) session.getAttribute(Attribute.PASSWORD
+			.toString());
 	String projectsHTML = OliveDataApi.populateProjects(new User(
 			username, password));
 %>
@@ -73,7 +76,8 @@
 <!-- end #projects-title -->
 
 <div id="projects-controls">
-<button type="button" onclick="win1()">Create New Project</button>
+<button type="button" onclick="openNewProjectForm()">Create New
+Project</button>
 </div>
 <!-- end #controls -->
 

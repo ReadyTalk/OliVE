@@ -76,7 +76,7 @@ jQuery(function($) {
 	});
 
 });
-function win1() {
-	window.open("new-video-form.jsp", "Window1",
-			"menubar=no,width=320,height=55,toolbar=no");
+function openNewVideoForm() {
+	window.open("new-video-form.jsp", "videoUploadForm",
+			"menubar=no,width=320,height=200,toolbar=no");
 }
