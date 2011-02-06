@@ -38,7 +38,7 @@ jQuery(function($) {
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
-	$('.video-icon-container').draggable( {
+	$('.video-container').draggable( {
 		appendTo : 'body',
 		scroll : false,
 		connectToSortable : '#timeline',
@@ -51,7 +51,7 @@ jQuery(function($) {
 		revert : true
 	});
 
-	$('.video-icon-container').contextMenu('videoMenu', {
+	$('.video-container').contextMenu('videoMenu', {
 		menuStyle : {
 			border : '1px solid #000'
 		},
