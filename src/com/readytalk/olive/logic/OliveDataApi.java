@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -12,22 +13,15 @@ import javax.sql.DataSource;
 
 import org.jets3t.service.security.AWSCredentials;
 
-import sun.util.logging.resources.logging;
-
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.servlet.OliveServlet;
 
 public class OliveDataApi {
-	// CAUTION: Every time a JDBC connection is created, it MUST be closed after
-	// the necessary information is retrieved. Otherwise you get the error:
-	// "SEVERE: A web application registered the JBDC driver
-	// [com.mysql.jdbc.Driver] but failed to unregister it when the web
-	// application was stopped. To prevent a memory leak, the JDBC Driver
-	// has been forcibly unregistered."
 
-	private static String AWS_ACCESS_KEY_PROPERTY_NAME = "";
-	private static String AWS_SECRET_KEY_PROPERTY_NAME = "";
-
+	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
+	
+	// CAUTION: closeConnection() must be called sometime after this method.
 	public static Connection getDBConnection() {
 		try {
 			Context initCtx = new InitialContext();
@@ -359,6 +353,8 @@ public class OliveDataApi {
 	}
 
 	public static AWSCredentials loadAWSCredentials() throws IOException {
+		String awsAccessKeyPropertyName = "";
+		String awsSecretKeyPropertyName = "";
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -367,11 +363,10 @@ public class OliveDataApi {
 			s = "SELECT * FROM S3Credentials;";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
-				AWS_ACCESS_KEY_PROPERTY_NAME = r.getString("AWSAccessKey");
-				AWS_SECRET_KEY_PROPERTY_NAME = r.getString("AWSSecretKey");
+				awsAccessKeyPropertyName = r.getString("AWSAccessKey");
+				awsSecretKeyPropertyName = r.getString("AWSSecretKey");
 			} else {
-				System.err.println("Cannot locate AWS credentials");
-				// TODO Use logging for this for the rare case that it can't find the data
+				log.severe("Cannot locate AWS credentials");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -380,7 +375,7 @@ public class OliveDataApi {
 		}
 
 		AWSCredentials awsCredentials = new AWSCredentials(
-				AWS_ACCESS_KEY_PROPERTY_NAME, AWS_SECRET_KEY_PROPERTY_NAME);
+				awsAccessKeyPropertyName, awsSecretKeyPropertyName);
 
 		return awsCredentials;
 	}
@@ -397,8 +392,7 @@ public class OliveDataApi {
 			if (r.first()) {
 				zencoderApiKey = r.getString("ZencoderAPIKey");
 			} else {
-				System.err.println("Cannot locate Zencoder credentials");
-				// TODO Use logging for this for the rare case that it can't find the data
+				log.severe("Cannot locate Zencoder credentials");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
