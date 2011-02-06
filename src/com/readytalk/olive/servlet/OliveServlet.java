@@ -35,7 +35,7 @@ public class OliveServlet extends HttpServlet {
 
 	// Generated using Eclipse's "Add generated serial version ID" refactoring.
 	private static final long serialVersionUID = -6820792513104430238L;
-	// Private static variables are okay, though.
+	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
 	private static final String TMP_DIR_PATH = "/temp/";
 	private static File tmpDir;
@@ -227,16 +227,23 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("new-project-form.jsp");
 	}
 
-	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
-	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
 	private static void handleUploadVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
+		storeInS3(request, response, session);
+		// downloadFileFromS3();
+	}
+
+	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
+	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
+	private static void storeInS3(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws IOException {
 		PrintWriter out = response.getWriter();
+		out.println("Uploading file...");
+		
 		response.setContentType("text/plain");
-		out.println("File uploaded. Please close this window and refresh the editor page.");
-		out.println();
-		log.info("This is a servlet responding to an Http POST request from form: Upload Video");
+
 		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 		// Set the size threshold, above which content will be stored on disk.
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
@@ -257,32 +264,38 @@ public class OliveServlet extends HttpServlet {
 				 * Handle Form Fields.
 				 */
 				if (item.isFormField()) {
-					log.info("File Name = " + item.getFieldName()
-							+ ", Value = " + item.getString());
+					log.info("Form Name = \"" + item.getFieldName()
+							+ "\", Value = \"" + item.getString() + "\"");
 				} else {
 					// Handle Uploaded files.
-					log.info("Field Name = " + item.getFieldName()
-							+ ", File Name = " + item.getName()
-							+ ", Content type = " + item.getContentType()
-							+ ", File Size = " + item.getSize());
+					log.info("Field Name = \"" + item.getFieldName()
+							+ "\", File Name = \"" + item.getName()
+							+ "\", Content type = \"" + item.getContentType()
+							+ "\", File Size (bytes) = \"" + item.getSize()
+							+ "\"");
 					/*
 					 * Write file to the ultimate location.
 					 */
 					File file = new File(destinationDir, item.getName());
 					item.write(file);
-					S3Uploader.upLoadVideo(file);
+					S3Uploader.uploadFile(file);
 					file.delete();
 				}
-				out.close();
 			}
+			out.println("File uploaded. Please close this window and refresh the editor page.");
+			out.println();
+			out.close();
 		} catch (FileUploadException e) {
-			log.severe("Error encountered while parsing the request");
+			log.severe("Error encountered while parsing the request in the upload handler");
+			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
-			log.severe("File too large");
+			log.severe("Invalid file size");
+			out.println("Upload failed (invalid file size)");
 			e.printStackTrace();
 		} catch (Exception e) {
-			log.severe("Error encountered while uploading file");
+			log.severe("Unknown error encountered while uploading file");
+			out.println("Upload failed (unknown reason).");
 			e.printStackTrace();
 		}
 	}
