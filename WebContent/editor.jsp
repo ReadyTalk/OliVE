@@ -61,7 +61,7 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="preferences.jsp"><%=user%>!</a>&nbsp;<a
+<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
 	href="" onclick="openHelpWindow();">Help</a></div>

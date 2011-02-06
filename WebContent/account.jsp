@@ -89,20 +89,25 @@
 <h2>Edit account information</h2>
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
-<p><label for="new-name">Name</label> <input type="text"
-	name="new-name" id="new-name" value="<%=name%>" size="32"
-	maxlength="128" /></p>
-<p><label for="new-email">Email</label> <input type="text"
-	name="new-email" id="new-email" value="<%=email%>" size="32"
-	maxlength="128" /></p>
-<p><label for="new-password">Password</label> <input type="password"
-	name="new-password" id="new-password" value="<%=password%>" size="32"
-	maxlength="128" /></p>
-<p><label for="confirm-new-password">Confirm password</label> <input
-	type="password" name="confirm-new-password" id="confirm-new-password"
+<p><label for="new-name">Name</label><br />
+<input type="text" name="new-name" id="new-name" value="<%=name%>"
+	size="32" maxlength="128" /></p>
+<br />
+<p><label for="new-email">Email</label><br />
+<input type="text" name="new-email" id="new-email" value="<%=email%>"
+	size="32" maxlength="128" /></p>
+<br />
+<p><label for="new-password">Password</label><br />
+<input type="password" name="new-password" id="new-password"
 	value="<%=password%>" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="EditUser"></input> <input
-	type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
+<br />
+<p><label for="confirm-new-password">Confirm password</label><br />
+<input type="password" name="confirm-new-password"
+	id="confirm-new-password" value="<%=password%>" size="32"
+	maxlength="128" /></p>
+<br />
+<input type="hidden" name="FormName" value="EditUser"></input><br />
+<input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 
 </div>
 <!-- end #login-form-container --></div>

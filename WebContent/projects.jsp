@@ -55,7 +55,7 @@
 <h1>Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, <a href="preferences.jsp"><%=username%>!</a>&nbsp;<a
+<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
 	href="" onclick="openHelpWindow();">Help</a></div>
