@@ -38,7 +38,7 @@ jQuery(function($) {
 
 	$("#dialog-form").dialog({
 		autoOpen : false,
-		height : 450,
+		height : 500,
 		width : 400,
 		modal : true,
 		buttons : {

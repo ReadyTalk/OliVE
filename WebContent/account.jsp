@@ -64,10 +64,14 @@
 	session.removeAttribute("editSuccessfully");
 	session.removeAttribute("passwordsMatch");
 
-	String username = (String) session.getAttribute(Attribute.USERNAME.toString());
-	String name = (String) session.getAttribute(Attribute.NAME.toString());
-	String email = (String) session.getAttribute(Attribute.EMAIL.toString());
-	String password = (String) session.getAttribute(Attribute.PASSWORD.toString());
+	String username = (String) session.getAttribute(Attribute.USERNAME
+			.toString());
+	String name = (String) session.getAttribute(Attribute.NAME
+			.toString());
+	String email = (String) session.getAttribute(Attribute.EMAIL
+			.toString());
+	String password = (String) session.getAttribute(Attribute.PASSWORD
+			.toString());
 %>
 <div id="header">
 <div id="header-left">
@@ -76,8 +80,17 @@
 <!-- end #header-left -->
 <div id="header-right">
 <div>Welcome, <%=username%>!&nbsp;<a href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="" onclick="openHelpWindow();">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div id="help-dialog" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -93,20 +106,16 @@
 <p><label for="new-name">Name</label><br />
 <input type="text" name="new-name" id="new-name" value="<%=name%>"
 	size="32" maxlength="32" /></p>
-<br />
 <p><label for="new-email">Email</label><br />
 <input type="text" name="new-email" id="new-email" value="<%=email%>"
 	size="32" maxlength="64" /></p>
-<br />
 <p><label for="new-password">Password</label><br />
 <input type="password" name="new-password" id="new-password"
 	value="<%=password%>" size="32" maxlength="128" /></p>
-<br />
 <p><label for="confirm-new-password">Confirm password</label><br />
 <input type="password" name="confirm-new-password"
 	id="confirm-new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>
-<br />
 <input type="hidden" name="FormName" value="EditUser"></input><br />
 <input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 

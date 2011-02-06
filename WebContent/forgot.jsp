@@ -40,7 +40,17 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="" onclick="openHelpWindow();">Help</a></div>
+<div id="header-right"><span
+	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div id="help-dialog" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -55,7 +65,6 @@
 <!-- end #about-title --></div>
 <!-- end #main -->
 
-<div id="footer">
-</div>
+<div id="footer"></div>
 </body>
 </html>

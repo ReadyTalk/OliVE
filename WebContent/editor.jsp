@@ -66,8 +66,17 @@
 <div id="header-right">
 <div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="" onclick="openHelpWindow();">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div id="help-dialog" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -151,8 +160,8 @@ Video 6<br />
 <div class="clear"></div>
 
 <div id="export">
-<button type="button" onclick="alert('Export Video')">Export
-Video</button>
+<button type="button" onclick="alert('Export Video')">Export to
+Computer</button>
 
 </div>
 <!-- end #export --></div>

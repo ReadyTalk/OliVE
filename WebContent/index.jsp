@@ -53,7 +53,17 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="" onclick="openHelpWindow();">Help</a></div>
+<div id="header-right"><span id="help-dialog-opener"><a
+	href="">Help</a></span></div>
+<div id="help-dialog" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -69,16 +79,13 @@
 <form id="login-form" action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
 	name="username" id="login-username" size="32" maxlength="16" /></p>
-<br />
 <p><label for="password">Password</label> <input type="password"
 	name="password" id="login-password" size="32" maxlength="128" /></p>
-<br />
-<input type="hidden" name="FormName" value="LoginUser"></input>
-<input type="submit" value="Login" /><br />
+<input type="hidden" name="FormName" value="LoginUser"></input> <input
+	type="submit" value="Login" /><br />
 <span><%=loginMessage%> <a href="forgot.jsp">Forgot password?</a></span></form>
-<br />
 <p>Don't have an account? <a id="create-user" href="javascript:;"
-	title="">Sign up for one now!</a></p>
+	title="">Sign up!</a></p>
 </div>
 <!-- end #login-form-container -->
 
