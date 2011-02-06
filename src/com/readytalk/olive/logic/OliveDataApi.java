@@ -20,7 +20,7 @@ import com.readytalk.olive.servlet.OliveServlet;
 public class OliveDataApi {
 
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	
+
 	// CAUTION: closeConnection() must be called sometime after this method.
 	public static Connection getDBConnection() {
 		try {
@@ -83,7 +83,7 @@ public class OliveDataApi {
 				int id = r.getInt("AccountID");
 				user.setAccountID(id);
 			} else {
-				// TODO Add error for rare case that it can't find the data
+				log.severe("Cannot locate AccountID with Username \"" + user.getUsername() + "\"");
 			}
 			return true;
 		} catch (Exception e) {
@@ -216,11 +216,13 @@ public class OliveDataApi {
 							+ projectNum
 							+ "\" class=\"project-icon-container\">"
 							+ "\n"
-							+ "<img src=\""
+							+ "<a href=\"OliveServlet?projectTitle="
+							+ projectTitle
+							+ "\"><img src=\""
 							+ projectIcon
 							+ "\" class=\"project-icon\" alt=\""
 							+ projectTitle
-							+ "\" />"
+							+ "\" /></a>"
 							+ "\n"
 							+ "<p><a href=\"OliveServlet?projectTitle="
 							+ projectTitle

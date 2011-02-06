@@ -54,7 +54,7 @@ jQuery(function($) {
 								"register-password", 5, 128);
 				bValid = bValid && checkRegexp(name,
 								/^[a-z]([0-9a-z_])+$/i,
-								"Username may consist of a-z, 0-9, underscores, begin with a letter.");
+								"Username may consist of a-z, 0-9, underscores; and must begin with a letter.");
 				// From jquery.validate.js (by joern),
 				// contributed by Scott Gonzalez:
 				// http://projects.scottsplayground.com/email_address_validation/

@@ -148,7 +148,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			session.setAttribute("isSafe", false);
 		}
-		response.sendRedirect("newProjectForm.jsp");
+		response.sendRedirect("new-project-form.jsp");
 	}
 
 	// http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html

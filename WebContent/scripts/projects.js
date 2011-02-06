@@ -9,6 +9,6 @@ jQuery(function($) {
 });
 
 function win1() {
-	window.open("newProjectForm.jsp", "Window1",
+	window.open("new-project-form.jsp", "Window1",
 			"menubar=no,width=320,height=200,toolbar=no");
 }

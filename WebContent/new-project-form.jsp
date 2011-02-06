@@ -24,7 +24,7 @@
 		// Syntax: http://www.infimum.dk/HTML/JSwindows.html
 		safeMessage = "<script> window.opener.location.reload(); window.close(); </script>";
 	} else {
-		safeMessage = "Invalid project name.";
+		safeMessage = "Length of project name must be between 1 and 32. Project name may consist of a-z, 0-9, underscores; and must begin with a letter.";
 	}
 
 	session.removeAttribute("isSafe");

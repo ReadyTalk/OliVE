@@ -34,9 +34,9 @@ FILES="\
     WebContent/editor.jsp \
     WebContent/index.jsp \
     WebContent/logout.jsp \
-    WebContent/newProjectForm.jsp \
+    WebContent/new-project-form.jsp \
     WebContent/projects.jsp \
-    WebContent/videoUpload.jsp \
+    WebContent/new-video-form.jsp \
     \
     src/com/readytalk/olive/logic/HttpSenderReceiver.java \
     src/com/readytalk/olive/logic/OliveDataApi.java \
