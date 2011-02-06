@@ -30,7 +30,7 @@ FILES="\
     WebContent/scripts/master.js \
     WebContent/scripts/projects.js \
         \
-    WebContent/account.jsp \
+    WebContent/preferences.jsp \
     WebContent/editor.jsp \
     WebContent/index.jsp \
     WebContent/logout.jsp \

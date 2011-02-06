@@ -102,7 +102,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			session.setAttribute("editSuccessfully", false);
 		}
-		response.sendRedirect("account.jsp");
+		response.sendRedirect("preferences.jsp");
 	}
 
 	private void addUserHandler(HttpServletRequest request,
