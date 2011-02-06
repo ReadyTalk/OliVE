@@ -17,7 +17,7 @@ import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 import com.readytalk.olive.servlet.OliveServlet;
 
-public class OliveDataApi {
+public class OliveDatabaseApi {
 
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
 
@@ -384,7 +384,7 @@ public class OliveDataApi {
 
 	public static String getZencoderApiKey() {
 		String zencoderApiKey = "";
-		Connection conn = OliveDataApi.getDBConnection();
+		Connection conn = OliveDatabaseApi.getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";

@@ -38,7 +38,7 @@ public class S3Uploader {
 		}
 
 		try {
-			AWSCredentials awsCredentials = OliveDataApi.loadAWSCredentials();
+			AWSCredentials awsCredentials = OliveDatabaseApi.loadAWSCredentials();
 
 			// RestS3Service is similar to HttpClient
 			RestS3Service s3Service = new RestS3Service(awsCredentials);

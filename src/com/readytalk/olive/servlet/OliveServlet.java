@@ -21,7 +21,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.readytalk.olive.logic.HttpSenderReceiver;
-import com.readytalk.olive.logic.OliveDataApi;
+import com.readytalk.olive.logic.OliveDatabaseApi;
 import com.readytalk.olive.logic.S3Uploader;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
@@ -103,7 +103,7 @@ public class OliveServlet extends HttpServlet {
 		String projectTitle = request.getParameter("projectTitle");
 		if (projectTitle != null
 				&& Security.isSafeProjectName(projectTitle)
-				&& OliveDataApi.projectExists(projectTitle, (String) session
+				&& OliveDatabaseApi.projectExists(projectTitle, (String) session
 						.getAttribute(Attribute.USERNAME.toString()))) { // Short-circuiting
 			session.setAttribute(Attribute.PROJECT_TITLE.toString(),
 					projectTitle);
@@ -123,9 +123,9 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(password)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			User user = new User(username, password,
-					OliveDataApi.getEmail(username),
-					OliveDataApi.getName(username));
-			isAuthorized = OliveDataApi.isAuthorized(user);
+					OliveDatabaseApi.getEmail(username),
+					OliveDatabaseApi.getName(username));
+			isAuthorized = OliveDatabaseApi.isAuthorized(user);
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(),
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
@@ -164,7 +164,7 @@ public class OliveServlet extends HttpServlet {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
-				Boolean editSuccessfully = OliveDataApi.editAccount(updateUser);
+				Boolean editSuccessfully = OliveDatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
@@ -195,7 +195,7 @@ public class OliveServlet extends HttpServlet {
 		String email = Security.stripOutIllegalCharacters(request
 				.getParameter("email"));
 		User newUser = new User(username, password, email, username);
-		Boolean addSuccessfully = OliveDataApi.AddAccount(newUser);
+		Boolean addSuccessfully = OliveDatabaseApi.AddAccount(newUser);
 		if (addSuccessfully) {
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
 			session.setAttribute(Attribute.USERNAME.toString(), username);
@@ -220,7 +220,7 @@ public class OliveServlet extends HttpServlet {
 							.getAttribute(Attribute.USERNAME.toString()),
 					(String) session.getAttribute(Attribute.PASSWORD.toString()));
 			Project project = new Project(projectName, user);
-			OliveDataApi.AddProject(project, user);
+			OliveDatabaseApi.AddProject(project, user);
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
@@ -230,27 +230,18 @@ public class OliveServlet extends HttpServlet {
 	private static void handleUploadVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
-		storeInS3(request, response, session);
-		// downloadFileFromS3();
-	}
-
-	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
-	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
-	private static void storeInS3(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws IOException {
 		PrintWriter out = response.getWriter();
 		out.println("Uploading file...");
 		
 		response.setContentType("text/plain");
-
+		
 		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 		// Set the size threshold, above which content will be stored on disk.
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
-
+		
 		// Set the temporary directory to store the uploaded files of size above threshold.
 		fileItemFactory.setRepository(tmpDir);
-
+		
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 		try {
 			/*

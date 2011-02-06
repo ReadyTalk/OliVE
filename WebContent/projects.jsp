@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveDataApi"%>
+<%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
 <%@ page import="com.readytalk.olive.model.User"%>
 <%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
@@ -50,7 +50,7 @@
 			.toString());
 	String password = (String) session.getAttribute(Attribute.PASSWORD
 			.toString());
-	String projectsHTML = OliveDataApi.populateProjects(new User(
+	String projectsHTML = OliveDatabaseApi.populateProjects(new User(
 			username, password));
 %>
 <div id="header">
