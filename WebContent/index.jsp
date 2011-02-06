@@ -52,7 +52,7 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="#" onclick="helpWin();">Help</a></div>
+<div id="header-right"><a href="" onclick="openHelpWindow();">Help</a></div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -72,7 +72,7 @@
 	name="password" id="login-password" size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="LoginUser"></input> <input
 	type="submit" value="Login" /> <span><%=loginMessage%> <a
-	href="">Forgot password?</a></span></form>
+	href="forgot.jsp">Forgot password?</a></span></form>
 <p>Don't have an account? <a id="create-user" href="javascript:;"
 	title="">Sign up for one now!</a></p>
 </div>
@@ -94,9 +94,6 @@
 <!-- end #dialog-form --></div>
 <!-- end #main -->
 
-<div id="footer">
-<div id="footer-left"><a href="about.jsp">About Us</a></div>
-<div id="footer-right">&copy; 2010 ReadyTalk</div>
-</div>
+<div id="footer"></div>
 </body>
 </html>

@@ -40,7 +40,7 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><a href="#">Help</a></div>
+<div id="header-right"></div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -55,9 +55,6 @@
 <!-- end #about-title --></div>
 <!-- end #main -->
 
-<div id="footer">
-<div id="footer-left"><a href="#">About Us</a></div>
-<div id="footer-right">&copy; 2010 ReadyTalk</div>
-</div>
+<div id="footer"></div>
 </body>
 </html>

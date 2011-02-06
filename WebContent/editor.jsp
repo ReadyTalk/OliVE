@@ -64,7 +64,7 @@
 <div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="#" onclick="helpWin();">Help</a></div>
+	href="" onclick="openHelpWindow();">Help</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -83,8 +83,8 @@
 <!-- This should be refactored to be multiple forms, but then the CSS should be
 	changed so the buttons all stay on the same line. -->
 <form id="split-form" action="OliveServlet" name="process" method="post">
-<input type="button" value="Upload New" onclick="win1();" />
-<input type="submit" value="Split" onclick="alert('Split');" /> <input
+<input type="button" value="Upload New" onclick="win1();" /> <input
+	type="submit" value="Split" onclick="alert('Split');" /> <input
 	type="hidden" name="FormName" value="SplitVideo"></input> <input
 	type="button" value="Delete" onclick="alert('Delete');" /> <input
 	type="button" value="Select All" onclick="alert('Select All');" /></form>
@@ -121,7 +121,7 @@ Video 4<br />
 <div id="player-container"><video id="player-video"
 	poster="/olive/images/bbb480.jpg" preload="preload"
 	src="/olive/videos/bbb_trailer_iphone.m4v"></video></div>
-<div id="player-controls">
+<div id="player-controls" class="center-text">
 <button id="videos-playpause">Play/pause</button>
 <button id="videos-volume-down">Volume down</button>
 <button id="videos-volume-up" disabled="disabled">Volume up</button>
@@ -157,9 +157,6 @@ Video</button>
 
 <div class="clear"></div>
 
-<div id="footer">
-<div id="footer-left"><a href="about.jsp">About Us</a></div>
-<div id="footer-right">&copy; 2010 ReadyTalk</div>
-</div>
+<div id="footer"></div>
 </body>
 </html>
