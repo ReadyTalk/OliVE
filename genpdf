@@ -46,7 +46,6 @@ FILES="\
     src/com/readytalk/olive/model/Project.java \
     src/com/readytalk/olive/model/User.java \
     src/com/readytalk/olive/model/Video.java \
-    src/com/readytalk/olive/servlet/CommonsFileUploadServlet.java \
     src/com/readytalk/olive/servlet/OliveServlet.java \
     "
 

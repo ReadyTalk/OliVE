@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Create new project | Olive</title>
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
@@ -17,7 +17,8 @@
 		response.sendRedirect("index.jsp");
 	}
 
-	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE.toString()); // Nasty cast
+	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE
+			.toString()); // Nasty cast
 	String safeMessage;
 	if (isSafe == null) {
 		safeMessage = "";

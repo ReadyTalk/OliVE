@@ -1,21 +1,33 @@
 package com.readytalk.olive.servlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDataApi;
+import com.readytalk.olive.logic.S3Uploader;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 import com.readytalk.olive.util.Attribute;
+import com.readytalk.olive.util.InvalidFileSizeException;
 
 public class OliveServlet extends HttpServlet {
 	// Don't store anything as a member variable in the Servlet.
@@ -25,30 +37,83 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Private static variables are okay, though.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
+	private static final String TMP_DIR_PATH = "/temp/";
+	private static File tmpDir;
+	private static final String DESTINATION_DIR_PATH = "/temp/";
+	private static File destinationDir;
+
+	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
+	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		String realPathTmp = getServletContext().getRealPath(TMP_DIR_PATH);
+		tmpDir = new File(realPathTmp);
+		// tmpDir = new File(TMP_DIR_PATH);
+		log.info(realPathTmp);
+		if (!tmpDir.isDirectory()) {
+			throw new ServletException(TMP_DIR_PATH + " is not a directory");
+		}
+		String realPathDest = getServletContext().getRealPath(
+				DESTINATION_DIR_PATH);
+		destinationDir = new File(realPathDest);
+		// destinationDir = new File(DESTINATION_DIR_PATH);
+		log.info(realPathDest);
+		if (!destinationDir.isDirectory()) {
+			throw new ServletException(DESTINATION_DIR_PATH
+					+ " is not a directory");
+		}
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		String id = request.getParameter("FormName");
-		log.info("This is a servlet responding to "
-				+ "an Http POST request from form: " + id);
-		if (id.equals("LoginUser")) {
-			loginHandler(request, response, session);
-		} else if (id.equals("EditUser")) {
-			editUserHandler(request, response, session);
-		} else if (id.equals("AddUser")) {
-			addUserHandler(request, response, session);
-		} else if (id.equals("AddProject")) {
-			addProjectHandler(request, response, session);
-		} else if (id.equals("SplitVideo")) {
-			splitVideoHandler(request, response, session);
+		if (request.getContentType().contains("multipart/form-data")) { // Full value: "multipart/form-data; boundary=----WebKitFormBoundaryjAGjLWGWeI3ltfBe"
+			handleUploadVideo(request, response, session);
+		} else if (request.getContentType().contains(
+				"application/x-www-form-urlencoded")) { // Full value: "application/x-www-form-urlencoded"
+			String id = request.getParameter("FormName");
+			log.info("The servlet is responding to an "
+					+ "HTTP POST request from form: " + id);
+			if (id.equals("LoginUser")) {
+				handleLogin(request, response, session);
+			} else if (id.equals("EditUser")) {
+				handleEditUser(request, response, session);
+			} else if (id.equals("AddUser")) {
+				handleAddUser(request, response, session);
+			} else if (id.equals("AddProject")) {
+				handleAddProject(request, response, session);
+			} else if (id.equals("SplitVideo")) {
+				handleSplitVideo(request, response, session);
+			} else {
+				log.severe("HTTP POST request coming from unknown form: " + id);
+			}
 		} else {
-			log.severe("Unknown form performing POST request.");
+			log.severe("Unknown content type");
 		}
 	}
 
-	private void loginHandler(HttpServletRequest request,
+	// http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html
+	@Override
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+		HttpSession session = request.getSession();
+		String projectTitle = request.getParameter("projectTitle");
+		if (projectTitle != null
+				&& Security.isSafeProjectName(projectTitle)
+				&& OliveDataApi.projectExists(projectTitle, (String) session
+						.getAttribute(Attribute.USERNAME.toString()))) { // Short-circuiting
+			session.setAttribute(Attribute.PROJECT_TITLE.toString(),
+					projectTitle);
+			response.sendRedirect("editor.jsp");
+		} else {
+			response.sendRedirect("projects.jsp");
+		}
+	}
+
+	private void handleLogin(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		Boolean isAuthorized;
@@ -61,11 +126,15 @@ public class OliveServlet extends HttpServlet {
 					OliveDataApi.getEmail(username),
 					OliveDataApi.getName(username));
 			isAuthorized = OliveDataApi.isAuthorized(user);
-			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), isAuthorized);
+			session.setAttribute(Attribute.IS_AUTHORIZED.toString(),
+					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
-				session.setAttribute(Attribute.USERNAME.toString(), user.getUsername());
-				session.setAttribute(Attribute.PASSWORD.toString(), user.getPassword());
-				session.setAttribute(Attribute.EMAIL.toString(), user.getEmail());
+				session.setAttribute(Attribute.USERNAME.toString(),
+						user.getUsername());
+				session.setAttribute(Attribute.PASSWORD.toString(),
+						user.getPassword());
+				session.setAttribute(Attribute.EMAIL.toString(),
+						user.getEmail());
 				session.setAttribute(Attribute.NAME.toString(), user.getName());
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
@@ -79,10 +148,11 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
-	private void editUserHandler(HttpServletRequest request,
+	private void handleEditUser(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
-		String username = (String) session.getAttribute(Attribute.USERNAME.toString());
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
 		String newName = request.getParameter("new-name");
 		String newEmail = request.getParameter("new-email");
 		String newPassword = request.getParameter("new-password");
@@ -95,14 +165,17 @@ public class OliveServlet extends HttpServlet {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
 				Boolean editSuccessfully = OliveDataApi.editAccount(updateUser);
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), editSuccessfully);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 			} else {
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), false);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+						false);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+						false);
 			}
 		} else {
 			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
@@ -110,7 +183,7 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("account.jsp");
 	}
 
-	private void addUserHandler(HttpServletRequest request,
+	private void handleAddUser(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 		// The jQuery regex should catch malicious input, but sanitize just to
@@ -135,14 +208,16 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
-	private void addProjectHandler(HttpServletRequest request,
+	private void handleAddProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		String projectName = request.getParameter("ProjectName");
 		if (Security.isSafeProjectName(projectName)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			// Adding the project information to the database
-			User user = new User((String) session.getAttribute(Attribute.USERNAME.toString()),
+			User user = new User(
+					(String) session
+							.getAttribute(Attribute.USERNAME.toString()),
 					(String) session.getAttribute(Attribute.PASSWORD.toString()));
 			Project project = new Project(projectName, user);
 			OliveDataApi.AddProject(project, user);
@@ -152,25 +227,67 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("new-project-form.jsp");
 	}
 
-	// http://www.apl.jhu.edu/~hall/java/Servlet-Tutorial/Servlet-Tutorial-Form-Data.html
-	@Override
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
-		HttpSession session = request.getSession();
-		String projectTitle = request.getParameter("projectTitle");
-		if (projectTitle != null
-				&& Security.isSafeProjectName(projectTitle)
-				&& OliveDataApi.projectExists(projectTitle,
-						(String) session.getAttribute(Attribute.USERNAME.toString()))) { // Short-circuiting
-			session.setAttribute(Attribute.PROJECT_TITLE.toString(), projectTitle);
-			response.sendRedirect("editor.jsp");
-		} else {
-			response.sendRedirect("projects.jsp");
+	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
+	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
+	private static void handleUploadVideo(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws IOException {
+		PrintWriter out = response.getWriter();
+		response.setContentType("text/plain");
+		out.println("File uploaded. Please close this window and refresh the editor page.");
+		out.println();
+		log.info("This is a servlet responding to an Http POST request from form: Upload Video");
+		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+		// Set the size threshold, above which content will be stored on disk.
+		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
+
+		// Set the temporary directory to store the uploaded files of size above threshold.
+		fileItemFactory.setRepository(tmpDir);
+
+		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
+		try {
+			/*
+			 * Parse the request
+			 */
+			List items = uploadHandler.parseRequest(request);
+			Iterator itr = items.iterator();
+			while (itr.hasNext()) {
+				FileItem item = (FileItem) itr.next();
+				/*
+				 * Handle Form Fields.
+				 */
+				if (item.isFormField()) {
+					log.info("File Name = " + item.getFieldName()
+							+ ", Value = " + item.getString());
+				} else {
+					// Handle Uploaded files.
+					log.info("Field Name = " + item.getFieldName()
+							+ ", File Name = " + item.getName()
+							+ ", Content type = " + item.getContentType()
+							+ ", File Size = " + item.getSize());
+					/*
+					 * Write file to the ultimate location.
+					 */
+					File file = new File(destinationDir, item.getName());
+					item.write(file);
+					S3Uploader.upLoadVideo(file);
+					file.delete();
+				}
+				out.close();
+			}
+		} catch (FileUploadException e) {
+			log.severe("Error encountered while parsing the request");
+			e.printStackTrace();
+		} catch (InvalidFileSizeException e) {
+			log.severe("File too large");
+			e.printStackTrace();
+		} catch (Exception e) {
+			log.severe("Error encountered while uploading file");
+			e.printStackTrace();
 		}
 	}
 
-	private void splitVideoHandler(HttpServletRequest request,
+	private void handleSplitVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 		HttpSenderReceiver.split();
