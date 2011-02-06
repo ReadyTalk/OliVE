@@ -143,7 +143,11 @@ Video 4<br />
 
 <div class="clear"></div>
 
-<div id="timeline"></div>
+<div id="timeline">
+<div id="ticks-container">
+<div id="tick-anchor"></div>
+</div>
+</div>
 
 <div class="clear"></div>
 

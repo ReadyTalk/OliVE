@@ -7,7 +7,7 @@
 	position: absolute;
 	top: 0px;
 	right: 70%;
-	bottom: 150px;
+	bottom: 160px;
 	left: 0px;
 	text-align: center;
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
@@ -52,6 +52,7 @@
 	margin: 10px;
 	padding: 10px;
 	border: 1px solid green;
+	background-color: #FEFEFE;
 	text-align: center;
 }
 
@@ -69,7 +70,7 @@
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	bottom: 150px;
+	bottom: 160px;
 	left: 30%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
@@ -102,9 +103,17 @@ video {
 	right: 200px;
 	bottom: 0px;
 	left: 0px;
-	height: 150px;
+	height: 160px;
 	border: 1px solid gray;
 	overflow-x: auto;
+}
+
+#tick-anchor {
+	position: absolute;
+	top: 50%;
+	height: 0px;
+	width: 100%;
+	border-top: 1px solid blue;
 }
 
 #export {
