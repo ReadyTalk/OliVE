@@ -1,7 +1,6 @@
 package com.readytalk.olive.logic;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,14 +24,12 @@ public class Security {
 		return matcher.matches();
 	}
 
-	public static boolean isSafeUsername(String username)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeUsername(String username) {
 		return isSafeLength(username, 3, 16)
 				&& isSafeValue(username, "^[a-zA-z]([0-9a-z_A-z])+$");
 	}
 
-	public static boolean isSafeEmail(String email)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeEmail(String email) {
 		// TODO Make case-insensitive with /i: http://www.regular-expressions.info/javascript.html
 		return isSafeLength(email, 6, 64)
 				&& isSafeValue(
@@ -40,54 +37,45 @@ public class Security {
 						"^((([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.?$");
 	}
 
-	public static boolean isSafePassword(String password)
-			throws UnsupportedEncodingException {
+	public static boolean isSafePassword(String password) {
 		return isSafeLength(password, 5, 128)
 				&& isSafeValue(password, "^([0-9a-zA-Z])+$");
 	}
 
-	public static boolean isSafeName(String name)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeName(String name) {
 		return isSafeLength(name, 1, 32)
 				&& isSafeValue(name, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeProjectName(String projectName)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeProjectName(String projectName) {
 		return isSafeLength(projectName, 1, 32)
 				&& isSafeValue(projectName, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeVideoName(String videoName)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeVideoName(String videoName) {
 		return isSafeLength(videoName, 1, 20)
 				&& isSafeValue(videoName, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeSecurityQuestion(String securityQuestion)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeSecurityQuestion(String securityQuestion) {
 		return isSafeLength(securityQuestion, 1, 20)
 				&& isSafeValue(securityQuestion, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeSecurityAnswer(String securityAnswer)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeSecurityAnswer(String securityAnswer) {
 		return isSafeLength(securityAnswer, 1, 20)
 				&& isSafeValue(securityAnswer, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeProjectIcon(File projectIcon)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeProjectIcon(File projectIcon) {
 		return false; // TODO Implement this
 	}
 
-	public static boolean isSafeVideoIcon(File videoIcon)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeVideoIcon(File videoIcon) {
 		return false; // TODO Implement this
 	}
 
-	public static boolean isSafeVideo(File video)
-			throws UnsupportedEncodingException {
+	public static boolean isSafeVideo(File video) {
 		return false; // TODO Implement this
 	}
 

@@ -1,20 +1,15 @@
 package com.readytalk.olive.logic;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
-import com.readytalk.olive.servlet.OliveServlet;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
 // Java code samples: https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java

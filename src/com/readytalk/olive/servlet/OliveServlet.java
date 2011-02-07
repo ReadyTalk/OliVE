@@ -236,7 +236,7 @@ public class OliveServlet extends HttpServlet {
 					.getAttribute(Attribute.USERNAME.toString());
 			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
 			String icon = ""; // TODO Get this from user input.
-			Project project = new Project(-1, projectName, accountId, icon);
+			Project project = new Project(projectName, accountId, icon);
 			OliveDatabaseApi.AddProject(project);
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);

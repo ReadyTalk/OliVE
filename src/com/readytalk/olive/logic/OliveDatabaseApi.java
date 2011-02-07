@@ -54,9 +54,8 @@ public class OliveDatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -97,11 +96,11 @@ public class OliveDatabaseApi {
 			s = "SELECT " + unknownLabel + " FROM " + table + " WHERE "
 					+ knownLabel + " = '" + knownValue + "';";
 			ResultSet r = st.executeQuery(s);
-			String name = "";
+			String unknownValue = "";
 			if (r.first()) {
-				name = r.getString(unknownLabel);
+				unknownValue = r.getString(unknownLabel);
 			}
-			return name;
+			return unknownValue;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -162,14 +161,32 @@ public class OliveDatabaseApi {
 		return false;
 	}
 
-	public static void deleteAccount(User user) {
+	public static void deleteAccount(int accountId) {
+		// TODO implement
+		
+		//int projectId = getProjectId(name, accountId);
+		//int videoId = getVideoId(name, projectId, accountId);
+		
+		int projectId = -1;
+		int videoId = -1;
+		
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "DELETE FROM Accounts WHERE username = '" + user.getUsername()
-					+ "';"; // Need to add error checking
+			
+			// TODO Broken
+			// Delete all videos associated with all projects associated with the account.
+			s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
+			st.executeUpdate(s);
+
+			// Delete all projects associated with the account.
+			s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
+			st.executeUpdate(s);
+			
+			// Delete the account itself.
+			s = "DELETE FROM Accounts WHERE AccountId = '" + accountId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -178,9 +195,26 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static int getProjectId(String name) {
-		return Integer.parseInt(getUnknownValueFromTable("ProjectId",
-				"Projects", "Name", name));
+	public static int getProjectId(String projectName, int accountId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT ProjectID FROM Projects WHERE Name = '" + projectName
+					+ "' AND AccountID = '" + accountId + "';";
+			ResultSet r = st.executeQuery(s);
+			int projectId = -1;
+			if (r.first()) {
+				projectId = Integer.parseInt(r.getString("ProjectID"));
+			}
+			return projectId;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1;
 	}
 
 	public static String populateProjects(int accountId) {
@@ -253,9 +287,8 @@ public class OliveDatabaseApi {
 			r = st.executeQuery(s);
 			if (r.first()) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -281,20 +314,48 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static void deleteProject(String name, int accountId) {
+	public static void deleteProject(int projectId) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "DELETE FROM Projects WHERE Name = '" + name
-					+ "' AND AccountID = '" + accountId + "';"; // Need to add error checking
+			
+			// Delete all videos associated with the project.
+			s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
+			st.executeUpdate(s);
+
+			// Delete the project itself.
+			s = "DELETE FROM Projects WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(conn);
 		}
+	}
+
+	public static int getVideoId(String videoName, int projectId, int accountId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT VideoID FROM Videos WHERE Name = '" + videoName
+					+ "' AND ProjectID = '" + projectId + "' AND AccountID = '"
+					+ accountId + "';";
+			ResultSet r = st.executeQuery(s);
+			int videoId = -1;
+			if (r.first()) {
+				videoId = Integer.parseInt(r.getString("VideoID"));
+			}
+			return videoId;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1;
 	}
 
 	public static String populateVideos(int projectId) {
@@ -328,7 +389,8 @@ public class OliveDatabaseApi {
 							+ videoName
 							+ "<br />"
 							+ "\n"
-							+ "<small><a href=\"\" class=\"warning\">Delete</a></small> </span>";
+							+ "<small><a href=\"\" class=\"warning\">Delete</a></small> </span>"
+							+ "\n";
 				} while (r.next());
 			}
 			return videos;
@@ -360,13 +422,13 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static void deleteVideo(String url) {
+	public static void deleteVideo(int videoId) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "DELETE FROM Videos WHERE URL = '" + url + "';"; // Need to add error checking
+			s = "DELETE FROM Videos WHERE VideoID = '" + videoId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -375,7 +437,7 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static AWSCredentials loadAWSCredentials() throws IOException {
+	public static AWSCredentials loadAWSCredentials() {
 		String awsAccessKeyPropertyName = "";
 		String awsSecretKeyPropertyName = "";
 		Connection conn = getDBConnection();

@@ -6,7 +6,7 @@ public class Project {
 	private int accountId;
 	private String icon;
 
-	public Project(int projectId, String name, int accountId, String icon) {
+	public Project(String name, int accountId, String icon) {
 		this.name = name;
 		this.accountId = accountId;
 		this.icon = icon;

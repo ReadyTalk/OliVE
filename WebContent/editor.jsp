@@ -41,7 +41,7 @@
 </head>
 <body>
 <%
-	String user = "";
+	String username = "";
 	String projectTitle = "";
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
@@ -52,7 +52,7 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} else {
-		user = (String) session.getAttribute(Attribute.USERNAME
+		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		projectTitle = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
@@ -62,7 +62,8 @@
 
 		projectName = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = OliveDatabaseApi.getProjectId(projectName);
+		int accountId = OliveDatabaseApi.getAccountId(username);
+		int projectId = OliveDatabaseApi.getProjectId(projectName, accountId);
 		videosHtml = OliveDatabaseApi.populateVideos(projectId);
 	}
 %>
@@ -72,7 +73,7 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
+<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 <div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
 	id="help-dialog-opener"><a href="">Help</a></span></div>
