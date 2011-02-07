@@ -81,7 +81,7 @@ public class OliveDatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				int id = r.getInt("AccountID");
-				user.setAccountID(id);
+				user.setAccountId(id);
 			} else {
 				log.severe("Cannot locate AccountID with Username \""
 						+ user.getUsername() + "\"");
@@ -194,7 +194,7 @@ public class OliveDatabaseApi {
 			if (user == null) {
 				return projects;
 			}
-			if (user.getAccountID() == -1) {
+			if (user.getAccountId() == -1) {
 				s = "SELECT AccountID FROM Accounts WHERE Username = '"
 						+ user.getUsername() + "';";
 				ResultSet r = st.executeQuery(s);
@@ -202,10 +202,10 @@ public class OliveDatabaseApi {
 				if (r.first()) {
 					accountID = r.getInt("AccountID");
 				}
-				user.setAccountID(accountID);
+				user.setAccountId(accountID);
 			}
 			s = "SELECT * FROM Projects WHERE AccountID = "
-					+ user.getAccountID() + ";";
+					+ user.getAccountId() + ";";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				int projectNum = 0;
@@ -297,7 +297,7 @@ public class OliveDatabaseApi {
 						+ u.getUsername());
 			}
 			s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
-					+ p.getTitle() + "', '" + accountID + "' , '" + "" + "');";
+					+ p.getName() + "', '" + accountID + "' , '" + "" + "');";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -321,7 +321,7 @@ public class OliveDatabaseApi {
 			closeConnection(conn);
 		}
 	}
-
+	
 	public static void AddVideo(String name, String URL, int ProjectID,
 			String icon) {
 		Connection conn = getDBConnection();

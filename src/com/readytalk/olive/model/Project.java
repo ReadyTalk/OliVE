@@ -1,45 +1,38 @@
 package com.readytalk.olive.model;
 
 public class Project {
-	private String title;
-	private String icon;
+
+	private int projectId;
+	private String name;
 	private User user;
-	private String ProjectID;
+	private String icon;
 
-	public Project(String title, String icon, User user, String id) {
-		this.title = title;
-		this.icon = icon;
+	public Project(int projectId, String name, User user, String icon) {
+		this.projectId = projectId;
+		this.name = name;
 		this.user = user;
-		this.ProjectID = id;
-	}
-
-	public Project(String title, User user) {
-		this.title = title;
-		this.user = user;
-	}
-
-	public String getProjectID() {
-		return ProjectID;
-	}
-
-	public void setProjectID(String projectID) {
-		ProjectID = projectID;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+	public int getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public User getUser() {
@@ -50,8 +43,11 @@ public class Project {
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return title;
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 }

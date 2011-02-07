@@ -75,6 +75,7 @@ jQuery(function($) {
 		}
 	});
 
+	// Perform a deleteProject request (to test POST commands)
 	$('#export').click(function () {
 		// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 		var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';

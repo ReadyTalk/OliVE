@@ -9,12 +9,12 @@ out of the context of any form.
 // Ignore createUser(...) because a form already does this for us.
 getUsername()
 
-getProjects()
+getProjects(String userName)
 createProject(String projectName, File icon)
 deleteProjects(String[] projectNames)
 renameProject(String oldProjectName, String newProjectName)
 
-getVideos()
+getVideos(String projectName)
 createVideo(String videoName, File icon, File videoFile)
 deleteVideos(String[] videoNames)
 renameVideo(String oldVideoName, String newVideoName)
