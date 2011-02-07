@@ -76,16 +76,6 @@ public class OliveDatabaseApi {
 					+ user.getPassword() + "') " + ", '" + user.getName()
 					+ "', '" + user.getEmail() + "');";
 			st.executeUpdate(s);
-			s = "SELECT AccountID FROM Accounts WHERE Username = '"
-					+ user.getUsername() + "';";
-			ResultSet r = st.executeQuery(s);
-			if (r.first()) {
-				int id = r.getInt("AccountID");
-				user.setAccountId(id);
-			} else {
-				log.severe("Cannot locate AccountID with Username \""
-						+ user.getUsername() + "\"");
-			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,7 +182,7 @@ public class OliveDatabaseApi {
 		return Integer.parseInt(getUnknownValueFromTable("ProjectId",
 				"Projects", "Name", name));
 	}
-	
+
 	public static String populateProjects(int accountId) {
 		String projects = "";
 		Connection conn = getDBConnection();

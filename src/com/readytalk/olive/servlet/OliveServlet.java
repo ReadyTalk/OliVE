@@ -178,7 +178,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)) {
 			if (newPassword.equals(confirmNewPassword)) {
-				User updateUser = new User(-1, username, newPassword, newEmail,
+				User updateUser = new User(username, newPassword, newEmail,
 						newName);
 				Boolean editSuccessfully = OliveDatabaseApi
 						.editAccount(updateUser);
@@ -211,7 +211,7 @@ public class OliveServlet extends HttpServlet {
 				.getParameter("password"));
 		String email = Security.stripOutIllegalCharacters(request
 				.getParameter("email"));
-		User newUser = new User(-1, username, password, email, username);
+		User newUser = new User(username, password, email, username);
 		Boolean addSuccessfully = OliveDatabaseApi.AddAccount(newUser);
 		if (addSuccessfully) {
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);

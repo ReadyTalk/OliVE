@@ -2,18 +2,12 @@ package com.readytalk.olive.model;
 
 public class User {
 
-	private int accountId;
 	private String username;
 	private String password;
 	private String name;
 	private String email;
 
-	// TODO change the way the user is handled by using ID's to distinguish one
-	// user from another rather than using usernames
-
-	public User(int accountId, String username, String password, String name,
-			String email) {
-		this.accountId = accountId;
+	public User(String username, String password, String name, String email) {
 		this.username = username;
 		this.password = password;
 		this.name = name;
@@ -23,14 +17,6 @@ public class User {
 	@Override
 	public String toString() {
 		return username;
-	}
-
-	public int getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
 	}
 
 	public String getUsername() {
