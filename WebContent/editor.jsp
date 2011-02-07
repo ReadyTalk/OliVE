@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
 <%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
@@ -44,6 +45,8 @@
 	String projectTitle = "";
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
+	String projectName = "";
+	String videosHtml = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -56,6 +59,11 @@
 		if (projectTitle == null) {
 			response.sendRedirect("projects.jsp");
 		}
+
+		projectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(projectName);
+		videosHtml = OliveDatabaseApi.populateVideos(projectId);
 	}
 %>
 <div id="header">
@@ -102,23 +110,7 @@
 	type="button" value="Select All" onclick="alert('Select All');" /></form>
 </div>
 <!-- end #videos-controls -->
-<div id="videos"><!-- div id="video-1" class="video-container"  img id="olive1"
-	class="video-icon" src="/olive/images/olive.png" alt="olive1" / 
-p Video 1 /p
-p small  a href="" class="warning" Delete /a  /small  /p 
- /div--> <span id="video-2" class="video-container"><img
-	id="olive2" class="video-icon" src="/olive/images/olive.png"
-	alt="olive2" /><br />
-Video 2<br />
-<small><a href="" class="warning">Delete</a></small> </span> <span id="video-3"
-	class="video-container"><img id="olive3" class="video-icon"
-	src="/olive/images/olive.png" alt="olive3" /><br />
-Video 3<br />
-<small><a href="" class="warning">Delete</a></small> </span> <span id="video-4"
-	class="video-container"><img id="olive4" class="video-icon"
-	src="/olive/images/olive.png" alt="olive4" /><br />
-Video 4<br />
-<small><a href="" class="warning">Delete</a></small> </span></div>
+<div id="videos"><%=videosHtml%></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
 
@@ -152,8 +144,7 @@ Video 4<br />
 <div class="clear"></div>
 
 <div id="export">
-<button type="button">Export to
-Computer</button>
+<button type="button">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>

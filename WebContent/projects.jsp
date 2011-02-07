@@ -42,7 +42,7 @@
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	String username = "";
-	String projectsHTML = "";
+	String projectsHtml = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -51,7 +51,7 @@
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		int accountId = OliveDatabaseApi.getAccountId(username);
-		projectsHTML = OliveDatabaseApi.populateProjects(accountId);
+		projectsHtml = OliveDatabaseApi.populateProjects(accountId);
 	}
 %>
 <div id="header">
@@ -92,7 +92,7 @@ Project</button>
 <!-- end #controls -->
 
 <div class="clear"></div>
-<div id="project-clips"><%=projectsHTML%></div>
+<div id="project-clips"><%=projectsHtml%></div>
 <!-- end #project-clips --></div>
 <!-- end #projects-container --></div>
 <!-- end #main -->

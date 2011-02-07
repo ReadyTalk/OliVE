@@ -188,6 +188,11 @@ public class OliveDatabaseApi {
 		}
 	}
 
+	public static int getProjectId(String name) {
+		return Integer.parseInt(getUnknownValueFromTable("ProjectId",
+				"Projects", "Name", name));
+	}
+	
 	public static String populateProjects(int accountId) {
 		String projects = "";
 		Connection conn = getDBConnection();
@@ -201,24 +206,24 @@ public class OliveDatabaseApi {
 				int projectNum = 0;
 				do {
 					projectNum += 1;
-					String projectTitle = r.getString("Name");
+					String projectName = r.getString("Name");
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
 					projects += "<div id=\"project-"
 							+ projectNum
 							+ "\" class=\"project-icon-container\">"
 							+ "\n"
 							+ "<a href=\"OliveServlet?projectTitle="
-							+ projectTitle
+							+ projectName
 							+ "\"><img src=\""
 							+ projectIcon
 							+ "\" class=\"project-icon\" alt=\""
-							+ projectTitle
+							+ projectName
 							+ "\" /></a>"
 							+ "\n"
 							+ "<p><a href=\"OliveServlet?projectTitle="
-							+ projectTitle
+							+ projectName
 							+ "\">"
-							+ projectTitle
+							+ projectName
 							+ "</a></p>"
 							+ "\n"
 							+ "<p><small><a href=\"\" class=\"warning\">Delete</a></small></p>"
@@ -300,6 +305,51 @@ public class OliveDatabaseApi {
 		} finally {
 			closeConnection(conn);
 		}
+	}
+
+	public static String populateVideos(int projectId) {
+		String videos = "";
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT * FROM Videos WHERE ProjectID = '" + projectId + "';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				int videoNum = 0;
+				do {
+					videoNum += 1;
+					String videoName = r.getString("Name");
+					String videoIcon = "/olive/images/olive.png";
+
+					videos += "<span id=\"video-"
+							+ videoNum
+							+ "\" class=\"video-container\"><img id=\"olive"
+							+ videoNum
+							+ "\" class=\"video-icon\""
+							+ "\n"
+							+ "src=\""
+							+ videoIcon
+							+ "\" alt=\"olive"
+							+ videoNum
+							+ "\" /><br />"
+							+ "\n"
+							+ videoName
+							+ "<br />"
+							+ "\n"
+							+ "<small><a href=\"\" class=\"warning\">Delete</a></small> </span>";
+				} while (r.next());
+			}
+			return videos;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return videos;
+		// TODO change db to have unique usernames for accounts and names for
+		// both projects and videos in one project
 	}
 
 	public static void AddVideo(String name, String url, int projectId,
