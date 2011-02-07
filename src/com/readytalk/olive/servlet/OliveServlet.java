@@ -111,6 +111,11 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
+		PrintWriter out = response.getWriter();
+		out.println("File uploaded. Please close this window and refresh the editor page.");
+		out.println();
+		out.println("More.");
+		out.close();
 	}
 
 	private void handleLogin(HttpServletRequest request,

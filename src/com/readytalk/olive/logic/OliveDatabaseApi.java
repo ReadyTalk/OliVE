@@ -83,7 +83,8 @@ public class OliveDatabaseApi {
 				int id = r.getInt("AccountID");
 				user.setAccountID(id);
 			} else {
-				log.severe("Cannot locate AccountID with Username \"" + user.getUsername() + "\"");
+				log.severe("Cannot locate AccountID with Username \""
+						+ user.getUsername() + "\"");
 			}
 			return true;
 		} catch (Exception e) {

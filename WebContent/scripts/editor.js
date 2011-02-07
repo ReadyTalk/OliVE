@@ -18,23 +18,23 @@ jQuery(function($) {
 	});
 
 	$('#videos-volume-up').click(function() {
-		if (video.volume < 0.85) {	// Account for rounding errors
+		if (video.volume < 0.85) { // Account for rounding errors
 			video.volume += 0.1;
 		} else {
-			video.volume = 1.0;	// Don't allow rounding errors
-			$('#videos-volume-up').attr('disabled', 'disabled');	// Disable
+			video.volume = 1.0; // Don't allow rounding errors
+			$('#videos-volume-up').attr('disabled', 'disabled'); // Disable
 		}
-		$('#videos-volume-down').removeAttr('disabled');			// Enable
+		$('#videos-volume-down').removeAttr('disabled'); // Enable
 	});
 
 	$('#videos-volume-down').click(function() {
-		if (video.volume > 0.15) {	// Account for rounding errors
+		if (video.volume > 0.15) { // Account for rounding errors
 			video.volume -= 0.1;
 		} else {
-			video.volume = 0.0;	// Don't allow rounding errors
-			$('#videos-volume-down').attr('disabled', 'disabled');	// Disable
+			video.volume = 0.0; // Don't allow rounding errors
+			$('#videos-volume-down').attr('disabled', 'disabled'); // Disable
 		}
-		$('#videos-volume-up').removeAttr('disabled');				// Enable
+		$('#videos-volume-up').removeAttr('disabled'); // Enable
 	});
 
 	// Modified from: http://jqueryui.com/demos/draggable/
@@ -75,6 +75,16 @@ jQuery(function($) {
 		}
 	});
 
+	$('#export').click(function () {
+		var url = 'http://localhost:8080/olive/OliveServlet';
+		var data = '{"command":"deleteProject","arguments":{"video":"video4"}}';
+		console.log('begin');
+		$.post(url, data, function (data) {
+				console.log(data);
+			}
+		);
+		console.log('end');
+	});
 });
 function openNewVideoForm() {
 	window.open("new-video-form.jsp", "videoUploadForm",

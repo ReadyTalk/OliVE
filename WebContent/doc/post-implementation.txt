@@ -1,0 +1,41 @@
+Updated February 6, 2011 by Terry
+
+These are possible POST requests (a list to keep track of them before they're
+implemented). They are written like Java methods, but will be implemented in
+JSON. Note that these exclude the usual POST requests submitted via forms. These
+are simply the POST requests that jQuery will call from within the JavaScript,
+out of the context of any form.
+
+// Ignore createUser(...) because a form already does this for us.
+getUsername()
+
+getProjects()
+createProject(String projectName, File icon)
+deleteProjects(String[] projectNames)
+renameProject(String oldProjectName, String newProjectName)
+
+getVideos()
+createVideo(String videoName, File icon, File videoFile)
+deleteVideos(String[] videoNames)
+renameVideo(String oldVideoName, String newVideoName)
+addToTimeline(String[] videoNames)
+removeFromTimeline(String[] videoNames)
+addToSelected(String[] videoNames)
+removeFromSelected(String[] videoNames)
+splitVideo(String[] videoName, float splitPointInSeconds)
+combineVideos(String[] videoNames)	// In order
+
+Example JSON format of the splitVideo(...) command:
+{
+    "command" : "splitVideo",
+    "arguments" : {
+        "videos" : [
+            "video1",
+            "video2",
+            "video3" 
+        ],
+        "splitPointInSeconds" : 5.3 
+    }
+}
+
+See: http://www.jsonlint.com/
