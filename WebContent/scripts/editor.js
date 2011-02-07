@@ -9,7 +9,7 @@ var video; // Global
 jQuery(function($) {
 	video = document.getElementById('player-video');
 
-	$('#videos-playpause').click(function() {
+	$('#videos-playpause').click(function () {
 		if (video.paused) {
 			video.play();
 		} else {
@@ -17,7 +17,7 @@ jQuery(function($) {
 		}
 	});
 
-	$('#videos-volume-up').click(function() {
+	$('#videos-volume-up').click(function () {
 		if (video.volume < 0.85) { // Account for rounding errors
 			video.volume += 0.1;
 		} else {
@@ -27,7 +27,7 @@ jQuery(function($) {
 		$('#videos-volume-down').removeAttr('disabled'); // Enable
 	});
 
-	$('#videos-volume-down').click(function() {
+	$('#videos-volume-down').click(function () {
 		if (video.volume > 0.15) { // Account for rounding errors
 			video.volume -= 0.1;
 		} else {
@@ -68,7 +68,7 @@ jQuery(function($) {
 			border : 'none'
 		},
 		bindings : {
-			'split' : function(t) {
+			'split' : function (t) {
 				alert('Split Video');
 				console.log('Split');
 			}
@@ -76,14 +76,25 @@ jQuery(function($) {
 	});
 
 	$('#export').click(function () {
-		var url = 'http://localhost:8080/olive/OliveServlet';
-		var data = '{"command":"deleteProject","arguments":{"video":"video4"}}';
-		console.log('begin');
-		$.post(url, data, function (data) {
+		// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
+		var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
+		var postData = '{"command":"deleteProject","arguments":[{"project":"Project4"},{"project":"Project5"}]}';
+		// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
+		$.ajax({
+			type: 'POST',
+			url: postUrl,
+			contentType: 'application/json; charset=utf-8',
+			data: postData,
+			success: function (data) {
 				console.log(data);
+				console.log('Project deleted successfully.');
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				// console.log(XMLHttpRequest.responseText);
+				console.log(XMLHttpRequest.responseText);
+				console.log('Could not delete project.');
 			}
-		);
-		console.log('end');
+		});
 	});
 });
 function openNewVideoForm() {

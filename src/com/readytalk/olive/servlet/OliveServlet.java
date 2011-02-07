@@ -20,6 +20,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.gson.Gson;
+import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
 import com.readytalk.olive.logic.S3Uploader;
@@ -69,10 +71,9 @@ public class OliveServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		if (request.getContentType().contains("multipart/form-data")) { // Full value: "multipart/form-data; boundary=----WebKitFormBoundaryjAGjLWGWeI3ltfBe"
-			handleUploadVideo(request, response, session);
-		} else if (request.getContentType().contains(
+		if (request.getContentType().contains(
 				"application/x-www-form-urlencoded")) { // Full value: "application/x-www-form-urlencoded"
+			// This is a regular text form.
 			String id = request.getParameter("FormName");
 			log.info("The servlet is responding to an "
 					+ "HTTP POST request from form: " + id);
@@ -89,6 +90,17 @@ public class OliveServlet extends HttpServlet {
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
+		} else if (request.getContentType().contains("multipart/form-data")) { // Full value: "multipart/form-data; boundary=----WebKitFormBoundaryjAGjLWGWeI3ltfBe"
+			// This is a file upload form.
+			log.info("The servlet is responding to an "
+					+ "HTTP POST request from a file upload form");
+			handleUploadVideo(request, response, session);
+		} else if (request.getContentType().contains("application/json")) {
+			// This is not a form, but a custom POST request with JSON in it.
+			log.info("responding to a custom POST");
+			log.info("The servlet is responding to an "
+					+ "HTTP POST request in JSON format");
+			handleJsonPostRequest(request, response, session);
 		} else {
 			log.severe("Unknown content type");
 		}
@@ -103,8 +115,9 @@ public class OliveServlet extends HttpServlet {
 		String projectTitle = request.getParameter("projectTitle");
 		if (projectTitle != null
 				&& Security.isSafeProjectName(projectTitle)
-				&& OliveDatabaseApi.projectExists(projectTitle, (String) session
-						.getAttribute(Attribute.USERNAME.toString()))) { // Short-circuiting
+				&& OliveDatabaseApi.projectExists(projectTitle,
+						(String) session.getAttribute(Attribute.USERNAME
+								.toString()))) { // Short-circuiting
 			session.setAttribute(Attribute.PROJECT_TITLE.toString(),
 					projectTitle);
 			response.sendRedirect("editor.jsp");
@@ -169,7 +182,8 @@ public class OliveServlet extends HttpServlet {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newEmail,
 						newName);
-				Boolean editSuccessfully = OliveDatabaseApi.editAccount(updateUser);
+				Boolean editSuccessfully = OliveDatabaseApi
+						.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
@@ -237,16 +251,16 @@ public class OliveServlet extends HttpServlet {
 			throws IOException {
 		PrintWriter out = response.getWriter();
 		out.println("Uploading file...");
-		
+
 		response.setContentType("text/plain");
-		
+
 		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 		// Set the size threshold, above which content will be stored on disk.
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
-		
+
 		// Set the temporary directory to store the uploaded files of size above threshold.
 		fileItemFactory.setRepository(tmpDir);
-		
+
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 		try {
 			/*
@@ -272,15 +286,14 @@ public class OliveServlet extends HttpServlet {
 					/*
 					 * Write file to the ultimate location.
 					 */
-					File file = new File(destinationDir, item.getName());
-					item.write(file);
+					File file = new File(destinationDir, item.getName()); // Allocate the space
+					item.write(file); // Save the file to the allocated space
 					S3Uploader.uploadFile(file);
 					file.delete();
 				}
 			}
 			out.println("File uploaded. Please close this window and refresh the editor page.");
 			out.println();
-			out.close();
 		} catch (FileUploadException e) {
 			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
@@ -293,6 +306,8 @@ public class OliveServlet extends HttpServlet {
 			log.severe("Unknown error encountered while uploading file");
 			out.println("Upload failed (unknown reason).");
 			e.printStackTrace();
+		} finally {
+			out.close();
 		}
 	}
 
@@ -301,5 +316,28 @@ public class OliveServlet extends HttpServlet {
 			throws IOException {
 		HttpSenderReceiver.split();
 		response.sendRedirect("editor.jsp");
+	}
+
+	// Gson help: http://code.google.com/p/google-gson/
+	// http://stackoverflow.com/questions/338586/a-better-java-json-library
+	// http://stackoverflow.com/questions/1688099/converting-json-to-java/1688182#1688182
+	private void handleJsonPostRequest(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws IOException {
+		
+		DeleteProjectRequest deleteProjectRequest = new Gson().fromJson(
+				request.getReader(), DeleteProjectRequest.class);
+
+		response.setContentType("text/plain");
+		//response.setStatus(HttpServletResponse.SC_OK);	// Unnecessary
+		
+		PrintWriter out = response.getWriter();
+		out.println("{\"command\":\"" + deleteProjectRequest.command
+				+ "\",\"arguments\":[{\"project\":\""
+				+ deleteProjectRequest.arguments[0].project
+				+ "\"},{\"project\":\""
+				+ deleteProjectRequest.arguments[1].project + "\"}]}");
+		out.println("success");
+		out.close();
 	}
 }

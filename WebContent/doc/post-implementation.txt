@@ -39,3 +39,9 @@ Example JSON format of the splitVideo(...) command:
 }
 
 See: http://www.jsonlint.com/
+
+Use:
+response.setContentType("text/html");
+response.setContentType("application/json");
+See: http://stackoverflow.com/questions/2010990/how-do-you-return-a-json-object-from-a-java-servlet
+See: http://stackoverflow.com/questions/477816/the-right-json-content-type
