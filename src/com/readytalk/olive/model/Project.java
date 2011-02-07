@@ -4,13 +4,13 @@ public class Project {
 
 	private int projectId;
 	private String name;
-	private User user;
+	private int accountId;
 	private String icon;
 
-	public Project(int projectId, String name, User user, String icon) {
+	public Project(int projectId, String name, int accountId, String icon) {
 		this.projectId = projectId;
 		this.name = name;
-		this.user = user;
+		this.accountId = accountId;
 		this.icon = icon;
 	}
 
@@ -35,12 +35,12 @@ public class Project {
 		this.name = name;
 	}
 
-	public User getUser() {
-		return user;
+	public int getAccountId() {
+		return accountId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
 	}
 
 	public String getIcon() {

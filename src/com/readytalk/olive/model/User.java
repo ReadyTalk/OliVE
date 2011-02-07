@@ -11,13 +11,6 @@ public class User {
 	// TODO change the way the user is handled by using ID's to distinguish one
 	// user from another rather than using usernames
 
-	public User(String username, String password, String email, String name) {
-		this.username = username;
-		this.password = password;
-		this.email = email;
-		this.name = name;
-	}
-
 	public User(int accountId, String username, String password, String name,
 			String email) {
 		this.accountId = accountId;

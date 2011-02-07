@@ -52,7 +52,7 @@
 		user = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		projectTitle = (String) session
-				.getAttribute(Attribute.PROJECT_TITLE.toString());
+				.getAttribute(Attribute.PROJECT_NAME.toString());
 		if (projectTitle == null) {
 			response.sendRedirect("projects.jsp");
 		}

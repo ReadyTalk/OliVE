@@ -41,17 +41,18 @@
 <%
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
+	String username = "";
+	String projectsHTML = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
+	} else {
+		username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
+		int accountId = OliveDatabaseApi.getAccountId(username);
+		projectsHTML = OliveDatabaseApi.populateProjects(accountId);
 	}
-	String username = (String) session.getAttribute(Attribute.USERNAME
-			.toString());
-	String password = (String) session.getAttribute(Attribute.PASSWORD
-			.toString());
-	String projectsHTML = OliveDatabaseApi.populateProjects(new User(
-			username, password));
 %>
 <div id="header">
 <div id="header-left">

@@ -61,8 +61,8 @@
 			editConfirmation = "Passwords do not match.";
 		}
 	}
-	session.removeAttribute("editSuccessfully");
-	session.removeAttribute("passwordsMatch");
+	session.removeAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
+	session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
 
 	String username = (String) session.getAttribute(Attribute.USERNAME
 			.toString());

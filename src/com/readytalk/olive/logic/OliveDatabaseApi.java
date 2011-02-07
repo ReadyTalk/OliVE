@@ -15,11 +15,11 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
-import com.readytalk.olive.servlet.OliveServlet;
 
 public class OliveDatabaseApi {
 
-	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
+	private static Logger log = Logger.getLogger(OliveDatabaseApi.class
+			.getName());
 
 	// CAUTION: closeConnection() must be called sometime after this method.
 	public static Connection getDBConnection() {
@@ -31,6 +31,7 @@ public class OliveDatabaseApi {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// TODO Close the connection here on error.
 		return null;
 	}
 
@@ -42,15 +43,14 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static Boolean isAuthorized(User user) {
+	public static Boolean isAuthorized(String username, String password) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "SELECT Username FROM Accounts WHERE Username = '"
-					+ user.getUsername() + "' AND Password = Password('"
-					+ user.getPassword() + "');";
+			s = "SELECT AccountId FROM Accounts WHERE Username = '" + username
+					+ "' AND Password = Password('" + password + "');";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				return true;
@@ -95,19 +95,21 @@ public class OliveDatabaseApi {
 		return false;
 	}
 
-	public static String getName(String username) {
+	// Used for the general query: SELECT W FROM X WHERE Y = Z
+	public static String getUnknownValueFromTable(String unknownLabel,
+			String table, String knownLabel, String knownValue) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 
-			s = "SELECT Name FROM Accounts WHERE Username = '" + username
-					+ "';";
+			s = "SELECT " + unknownLabel + " FROM " + table + " WHERE "
+					+ knownLabel + " = '" + knownValue + "';";
 			ResultSet r = st.executeQuery(s);
 			String name = "";
 			if (r.first()) {
-				name = r.getString("Name");
+				name = r.getString(unknownLabel);
 			}
 			return name;
 		} catch (Exception e) {
@@ -118,27 +120,29 @@ public class OliveDatabaseApi {
 		return null;
 	}
 
-	public static String getEmail(String username) {
-		Connection conn = getDBConnection();
-		try {
-			Statement st = conn.createStatement();
-			String s = "USE OliveData;";
-			st.executeUpdate(s);
+	public static int getAccountId(String username) {
+		return Integer.parseInt(getUnknownValueFromTable("AccountId",
+				"Accounts", "Username", username));
+	}
 
-			s = "SELECT Email FROM Accounts WHERE Username = '" + username
-					+ "';";
-			ResultSet r = st.executeQuery(s);
-			String email = "";
-			if (r.first()) {
-				email = r.getString("Email");
-			}
-			return email;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(conn);
-		}
-		return null;
+	public static String getUsername(int accountId) {
+		return getUnknownValueFromTable("Username", "Accounts", "AccountId",
+				Integer.toString(accountId));
+	}
+
+	public static String getPassword(int accountId) {
+		return getUnknownValueFromTable("Password", "Accounts", "AccountId",
+				Integer.toString(accountId));
+	}
+
+	public static String getAccountName(int accountId) {
+		return getUnknownValueFromTable("Name", "Accounts", "AccountId",
+				Integer.toString(accountId));
+	}
+
+	public static String getEmail(int accountId) {
+		return getUnknownValueFromTable("Email", "Accounts", "AccountId",
+				Integer.toString(accountId));
 	}
 
 	public static Boolean editAccount(User user) {
@@ -184,28 +188,14 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static String populateProjects(User user) {
+	public static String populateProjects(int accountId) {
 		String projects = "";
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			if (user == null) {
-				return projects;
-			}
-			if (user.getAccountId() == -1) {
-				s = "SELECT AccountID FROM Accounts WHERE Username = '"
-						+ user.getUsername() + "';";
-				ResultSet r = st.executeQuery(s);
-				int accountID = -1;
-				if (r.first()) {
-					accountID = r.getInt("AccountID");
-				}
-				user.setAccountId(accountID);
-			}
-			s = "SELECT * FROM Projects WHERE AccountID = "
-					+ user.getAccountId() + ";";
+			s = "SELECT * FROM Projects WHERE AccountID = '" + accountId + "';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				int projectNum = 0;
@@ -246,7 +236,7 @@ public class OliveDatabaseApi {
 		// both projects and videos in one project
 	}
 
-	public static boolean projectExists(String projectTitle, String username) {
+	public static boolean projectExists(String projectName, String username) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -263,7 +253,7 @@ public class OliveDatabaseApi {
 				return false; // Username does not exist.
 			}
 
-			s = "SELECT Name FROM Projects WHERE Name = '" + projectTitle
+			s = "SELECT Name FROM Projects WHERE Name = '" + projectName
 					+ "' AND AccountID = '" + accountID + "';";
 			r = st.executeQuery(s);
 			if (r.first()) {
@@ -279,25 +269,15 @@ public class OliveDatabaseApi {
 		return false;
 	}
 
-	public static void AddProject(Project p, User u) {
+	public static void AddProject(Project project) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "SELECT AccountID FROM Accounts WHERE Username = '"
-					+ u.getUsername() + "';";
-			ResultSet r = st.executeQuery(s);
-			int accountID = -1;
-			if (r.first()) {
-				accountID = r.getInt("AccountID");
-			}
-			if (accountID == -1) {
-				throw new SQLException("There is no account for the username: "
-						+ u.getUsername());
-			}
 			s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
-					+ p.getName() + "', '" + accountID + "' , '" + "" + "');";
+					+ project.getName() + "', '" + project.getAccountId()
+					+ "' , '" + project.getIcon() + "');";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -306,14 +286,14 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static void deleteProject(String name, int AccountID) {
+	public static void deleteProject(String name, int accountId) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "DELETE FROM Projects WHERE Name = '" + name
-					+ "' AND AccountID = '" + AccountID + "';"; // Need to add error checking
+					+ "' AND AccountID = '" + accountId + "';"; // Need to add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -321,8 +301,8 @@ public class OliveDatabaseApi {
 			closeConnection(conn);
 		}
 	}
-	
-	public static void AddVideo(String name, String URL, int ProjectID,
+
+	public static void AddVideo(String name, String url, int projectId,
 			String icon) {
 		Connection conn = getDBConnection();
 		try {
@@ -330,7 +310,7 @@ public class OliveDatabaseApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon) VALUES ('"
-					+ name + "', '" + URL + "', '" + ProjectID + "' , '" + icon
+					+ name + "', '" + url + "', '" + projectId + "' , '" + icon
 					+ "');";
 			st.executeUpdate(s);
 		} catch (Exception e) {
@@ -340,13 +320,13 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static void deleteVideo(String URL) {
+	public static void deleteVideo(String url) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "DELETE FROM Videos WHERE URL = '" + URL + "';"; // Need to add error checking
+			s = "DELETE FROM Videos WHERE URL = '" + url + "';"; // Need to add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();

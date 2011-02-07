@@ -29,7 +29,7 @@
 		safeMessage = "Project name must be between 1 and 32 characters; must consist of a-z, 0-9, underscores; and must begin with a letter.";
 	}
 
-	session.removeAttribute("isSafe");
+	session.removeAttribute(Attribute.IS_SAFE.toString());
 %>
 <form id="add-project-form" action="OliveServlet" name="process"
 	method="post">

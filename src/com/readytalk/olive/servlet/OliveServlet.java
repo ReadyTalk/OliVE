@@ -118,7 +118,7 @@ public class OliveServlet extends HttpServlet {
 				&& OliveDatabaseApi.projectExists(projectTitle,
 						(String) session.getAttribute(Attribute.USERNAME
 								.toString()))) { // Short-circuiting
-			session.setAttribute(Attribute.PROJECT_TITLE.toString(),
+			session.setAttribute(Attribute.PROJECT_NAME.toString(),
 					projectTitle);
 			response.sendRedirect("editor.jsp");
 		} else {
@@ -140,20 +140,18 @@ public class OliveServlet extends HttpServlet {
 		if (Security.isSafeUsername(username)
 				&& Security.isSafePassword(password)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			User user = new User(username, password,
-					OliveDatabaseApi.getEmail(username),
-					OliveDatabaseApi.getName(username));
-			isAuthorized = OliveDatabaseApi.isAuthorized(user);
+			isAuthorized = OliveDatabaseApi.isAuthorized(username, password);
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(),
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
+				int accountId = OliveDatabaseApi.getAccountId(username);
 				session.setAttribute(Attribute.USERNAME.toString(),
-						user.getUsername());
-				session.setAttribute(Attribute.PASSWORD.toString(),
-						user.getPassword());
+						OliveDatabaseApi.getUsername(accountId));
+				session.setAttribute(Attribute.PASSWORD.toString(), password);
 				session.setAttribute(Attribute.EMAIL.toString(),
-						user.getEmail());
-				session.setAttribute(Attribute.NAME.toString(), user.getName());
+						OliveDatabaseApi.getEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(),
+						OliveDatabaseApi.getAccountName(accountId));
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
@@ -180,7 +178,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)) {
 			if (newPassword.equals(confirmNewPassword)) {
-				User updateUser = new User(username, newPassword, newEmail,
+				User updateUser = new User(-1, username, newPassword, newEmail,
 						newName);
 				Boolean editSuccessfully = OliveDatabaseApi
 						.editAccount(updateUser);
@@ -213,7 +211,7 @@ public class OliveServlet extends HttpServlet {
 				.getParameter("password"));
 		String email = Security.stripOutIllegalCharacters(request
 				.getParameter("email"));
-		User newUser = new User(username, password, email, username);
+		User newUser = new User(-1, username, password, email, username);
 		Boolean addSuccessfully = OliveDatabaseApi.AddAccount(newUser);
 		if (addSuccessfully) {
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
@@ -233,13 +231,13 @@ public class OliveServlet extends HttpServlet {
 		String projectName = request.getParameter("ProjectName");
 		if (Security.isSafeProjectName(projectName)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			// Adding the project information to the database
-			User user = new User(
-					(String) session
-							.getAttribute(Attribute.USERNAME.toString()),
-					(String) session.getAttribute(Attribute.PASSWORD.toString()));
-			Project project = new Project(projectName, user);
-			OliveDatabaseApi.AddProject(project, user);
+
+			String sessionUsername = (String) session
+					.getAttribute(Attribute.USERNAME.toString());
+			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+			String icon = ""; // TODO Get this from user input.
+			Project project = new Project(-1, projectName, accountId, icon);
+			OliveDatabaseApi.AddProject(project);
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
@@ -324,13 +322,13 @@ public class OliveServlet extends HttpServlet {
 	private void handleJsonPostRequest(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
-		
+
 		DeleteProjectRequest deleteProjectRequest = new Gson().fromJson(
 				request.getReader(), DeleteProjectRequest.class);
 
 		response.setContentType("text/plain");
-		//response.setStatus(HttpServletResponse.SC_OK);	// Unnecessary
-		
+		// response.setStatus(HttpServletResponse.SC_OK); // Unnecessary
+
 		PrintWriter out = response.getWriter();
 		out.println("{\"command\":\"" + deleteProjectRequest.command
 				+ "\",\"arguments\":[{\"project\":\""
