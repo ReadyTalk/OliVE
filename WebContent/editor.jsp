@@ -145,7 +145,7 @@
 <div class="clear"></div>
 
 <div id="export">
-<button type="button" onclick="alert('Export');">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled" onclick="alert('Export');">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>

@@ -51,7 +51,10 @@ jQuery(function($) {
 	});
 
 	$('#timeline').sortable( {
-		revert : true
+		revert : true,
+		sort: function() {
+			$('#export-button').removeAttr('disabled');
+		}
 	});
 
 	$('.video-container').contextMenu('videoMenu', {
