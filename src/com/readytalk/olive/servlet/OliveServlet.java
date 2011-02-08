@@ -171,6 +171,9 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
+		String securityQuestion = request.getParameter("security_questions");
+		String securityAnswer = request.getParameter("security_answer");
+		log.info("Security question: "+securityQuestion+". Security Answer: "+securityAnswer);
 		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)) {

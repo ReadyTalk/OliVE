@@ -50,7 +50,7 @@ jQuery(function($) {
 			.dialog(
 					{
 						autoOpen : false,
-						height : 500,
+						height : 525,
 						width : 400,
 						modal : true,
 						buttons : {

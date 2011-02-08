@@ -91,7 +91,7 @@ function attachDeleteVideoHandlers() {
 	$('#confirm-delete-video-dialog').dialog({
 		autoOpen: false,
 		resizable: false,
-		height: 250,
+		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {
