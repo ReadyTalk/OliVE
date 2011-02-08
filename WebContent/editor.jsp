@@ -83,6 +83,9 @@
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
+<div id="confirm-delete-video-dialog" title="Warning!">
+	<p>Delete video?</p>
+</div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->

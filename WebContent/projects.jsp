@@ -71,8 +71,8 @@
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
-<div id="confirm-delete-project-dialog" title="Delete this project?">
-	<p>This will also delete any of the project's videos.</p>
+<div id="confirm-delete-project-dialog" title="Warning!">
+	<p>Delete project? This will also delete the project's videos.</p>
 </div>
 </div>
 </div>

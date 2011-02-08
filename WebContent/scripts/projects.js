@@ -2,19 +2,18 @@
  * This is Olive's JavaScript file for projects.jsp only.
  */
 
-// TODO Remove this global variable.
-var deleteDialogContext;
+var deleteProjectDialogContext;	// TODO Remove this global variable.
 
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
-	attachDeleteHandlers();
+	attachDeleteProjectHandlers();
 });
 
-function attachDeleteHandlers() {
+function attachDeleteProjectHandlers() {
 	$('.delete-project').click(function () {
 		$('#confirm-delete-project-dialog').dialog('open');
-		deleteDialogContext = this;	// This is a global variable.
+		deleteProjectDialogContext = this;	// This is a global variable.
 	});
 	
 	$('#confirm-delete-project-dialog').dialog({
@@ -24,7 +23,7 @@ function attachDeleteHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteProject.call(deleteDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteProject.call(deleteProjectDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
 				$(this).dialog('close');
 			},
 			Cancel: function () {

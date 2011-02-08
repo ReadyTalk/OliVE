@@ -336,8 +336,14 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 
+		// TODO Make this more general (not just a deleteProjectRequest).
 		DeleteProjectRequest deleteProjectRequest = new Gson().fromJson(
 				request.getReader(), DeleteProjectRequest.class);
+
+		if (!deleteProjectRequest.command.equals("deleteProject")) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
 
 		response.setContentType("text/plain");
 		// response.setStatus(HttpServletResponse.SC_OK); // Unnecessary
