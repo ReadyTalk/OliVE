@@ -113,22 +113,18 @@ public class OliveServlet extends HttpServlet {
 		log.info("The servlet is responding to an HTTP GET request");
 		response.setContentType("text/html");
 		HttpSession session = request.getSession();
-		String projectTitle = request.getParameter("projectTitle");
-		if (projectTitle != null
-				&& Security.isSafeProjectName(projectTitle)
-				&& OliveDatabaseApi.projectExists(projectTitle,
-						(String) session.getAttribute(Attribute.USERNAME
-								.toString()))) { // Short-circuiting
-			session.setAttribute(Attribute.PROJECT_NAME.toString(),
-					projectTitle);
+		String projectName = request.getParameter("projectName");
+		int accountId = OliveDatabaseApi.getAccountId((String) session
+				.getAttribute(Attribute.USERNAME.toString()));
+		if (projectName != null && Security.isSafeProjectName(projectName)
+				&& OliveDatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
+			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
 		out.println("File uploaded. Please close this window and refresh the editor page.");
-		out.println();
-		out.println("More.");
 		out.close();
 	}
 
@@ -335,14 +331,17 @@ public class OliveServlet extends HttpServlet {
 		out.println("{\"command\":\"" + deleteProjectRequest.command
 				+ "\",\"arguments\":[{\"project\":\""
 				+ deleteProjectRequest.arguments[0].project + "\"}]}");
-		
-		String sessionUsername = (String) session.getAttribute(Attribute.USERNAME.toString());
+
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
 		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
 		String firstProjectToDelete = deleteProjectRequest.arguments[0].project;
-		int projectId = OliveDatabaseApi.getProjectId(firstProjectToDelete, accountId);
+		int projectId = OliveDatabaseApi.getProjectId(firstProjectToDelete,
+				accountId);
 		OliveDatabaseApi.deleteProject(projectId);
-		
-		out.println(deleteProjectRequest.arguments[0].project + " deleted successfully.");
+
+		out.println(deleteProjectRequest.arguments[0].project
+				+ " deleted successfully.");
 		out.close();
 	}
 }

@@ -83,7 +83,7 @@ public class OliveDatabaseApi {
 		return false;
 	}
 
-	// Used for the general query: SELECT W FROM X WHERE Y = Z
+	// Used for the general query: "SELECT W FROM X WHERE Y = Z;"
 	public static String getUnknownValueFromTable(String unknownLabel,
 			String table, String knownLabel, String knownValue) {
 		Connection conn = getDBConnection();
@@ -235,7 +235,7 @@ public class OliveDatabaseApi {
 							+ projectNum
 							+ "\" class=\"project-icon-container\">"
 							+ "\n"
-							+ "<a href=\"OliveServlet?projectTitle="
+							+ "<a href=\"OliveServlet?projectName="
 							+ projectName
 							+ "\"><img src=\""
 							+ projectIcon
@@ -243,7 +243,7 @@ public class OliveDatabaseApi {
 							+ projectName
 							+ "\" /></a>"
 							+ "\n"
-							+ "<p><a href=\"OliveServlet?projectTitle="
+							+ "<p><a href=\"OliveServlet?projectName="
 							+ projectName
 							+ "\">"
 							+ projectName
@@ -266,26 +266,16 @@ public class OliveDatabaseApi {
 		// both projects and videos in one project
 	}
 
-	public static boolean projectExists(String projectName, String username) {
+	public static boolean projectExists(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 
-			s = "SELECT AccountID FROM Accounts WHERE Username = '" + username
-					+ "';";
-			ResultSet r = st.executeQuery(s);
-			int accountID = -1;
-			if (r.first()) {
-				accountID = r.getInt("AccountID");
-			} else {
-				return false; // Username does not exist.
-			}
-
 			s = "SELECT Name FROM Projects WHERE Name = '" + projectName
-					+ "' AND AccountID = '" + accountID + "';";
-			r = st.executeQuery(s);
+					+ "' AND AccountID = '" + accountId + "';";
+			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				return true;
 			}
@@ -440,7 +430,7 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static AWSCredentials loadAWSCredentials() {
+	public static AWSCredentials getAwsCredentials() {
 		String awsAccessKeyPropertyName = "";
 		String awsSecretKeyPropertyName = "";
 		Connection conn = getDBConnection();
@@ -462,10 +452,8 @@ public class OliveDatabaseApi {
 			closeConnection(conn);
 		}
 
-		AWSCredentials awsCredentials = new AWSCredentials(
-				awsAccessKeyPropertyName, awsSecretKeyPropertyName);
-
-		return awsCredentials;
+		return new AWSCredentials(awsAccessKeyPropertyName,
+				awsSecretKeyPropertyName);
 	}
 
 	public static String getZencoderApiKey() {

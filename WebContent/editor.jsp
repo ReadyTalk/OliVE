@@ -42,7 +42,6 @@
 <body>
 <%
 	String username = "";
-	String projectTitle = "";
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	String projectName = "";
@@ -54,14 +53,12 @@
 	} else {
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
-		projectTitle = (String) session
+		projectName = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
-		if (projectTitle == null) {
+		if (projectName == null) {
 			response.sendRedirect("projects.jsp");
 		}
 
-		projectName = (String) session
-				.getAttribute(Attribute.PROJECT_NAME.toString());
 		int accountId = OliveDatabaseApi.getAccountId(username);
 		int projectId = OliveDatabaseApi.getProjectId(projectName, accountId);
 		videosHtml = OliveDatabaseApi.populateVideos(projectId);
@@ -96,7 +93,7 @@
 
 <div id="videos-container">
 <div id="videos-title">
-<h3><%=projectTitle%></h3>
+<h3><%=projectName%></h3>
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
