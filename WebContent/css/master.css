@@ -104,6 +104,8 @@ small {
 
 .warning {
 	color: red;
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 /* 

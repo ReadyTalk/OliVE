@@ -74,30 +74,8 @@ jQuery(function($) {
 			}
 		}
 	});
-
-	// Perform a deleteProject request (to test POST commands)
-	$('#export').click(function () {
-		// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
-		var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
-		var postData = '{"command":"deleteProject","arguments":[{"project":"Project4"},{"project":"Project5"}]}';
-		// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
-		$.ajax({
-			type: 'POST',
-			url: postUrl,
-			contentType: 'application/json; charset=utf-8',
-			data: postData,
-			success: function (data) {
-				console.log(data);
-				console.log('Project deleted successfully.');
-			},
-			error: function (XMLHttpRequest, textStatus, errorThrown) {
-				// console.log(XMLHttpRequest.responseText);
-				console.log(XMLHttpRequest.responseText);
-				console.log('Could not delete project.');
-			}
-		});
-	});
 });
+
 function openNewVideoForm() {
 	window.open("new-video-form.jsp", "videoUploadForm",
 			"menubar=no,width=320,height=200,toolbar=no");

@@ -110,6 +110,7 @@ public class OliveServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		log.info("The servlet is responding to an HTTP GET request");
 		response.setContentType("text/html");
 		HttpSession session = request.getSession();
 		String projectTitle = request.getParameter("projectTitle");
@@ -330,12 +331,18 @@ public class OliveServlet extends HttpServlet {
 		// response.setStatus(HttpServletResponse.SC_OK); // Unnecessary
 
 		PrintWriter out = response.getWriter();
+
 		out.println("{\"command\":\"" + deleteProjectRequest.command
 				+ "\",\"arguments\":[{\"project\":\""
-				+ deleteProjectRequest.arguments[0].project
-				+ "\"},{\"project\":\""
-				+ deleteProjectRequest.arguments[1].project + "\"}]}");
-		out.println("success");
+				+ deleteProjectRequest.arguments[0].project + "\"}]}");
+		
+		String sessionUsername = (String) session.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String firstProjectToDelete = deleteProjectRequest.arguments[0].project;
+		int projectId = OliveDatabaseApi.getProjectId(firstProjectToDelete, accountId);
+		OliveDatabaseApi.deleteProject(projectId);
+		
+		out.println(deleteProjectRequest.arguments[0].project + " deleted successfully.");
 		out.close();
 	}
 }

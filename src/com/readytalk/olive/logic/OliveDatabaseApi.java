@@ -1,6 +1,5 @@
 package com.readytalk.olive.logic;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -163,19 +162,19 @@ public class OliveDatabaseApi {
 
 	public static void deleteAccount(int accountId) {
 		// TODO implement
-		
-		//int projectId = getProjectId(name, accountId);
-		//int videoId = getVideoId(name, projectId, accountId);
-		
+
+		// int projectId = getProjectId(name, accountId);
+		// int videoId = getVideoId(name, projectId, accountId);
+
 		int projectId = -1;
-		int videoId = -1;
-		
+		// int videoId = -1;
+
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			
+
 			// TODO Broken
 			// Delete all videos associated with all projects associated with the account.
 			s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
@@ -184,7 +183,7 @@ public class OliveDatabaseApi {
 			// Delete all projects associated with the account.
 			s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
-			
+
 			// Delete the account itself.
 			s = "DELETE FROM Accounts WHERE AccountId = '" + accountId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
@@ -250,7 +249,9 @@ public class OliveDatabaseApi {
 							+ projectName
 							+ "</a></p>"
 							+ "\n"
-							+ "<p><small><a href=\"\" class=\"warning\">Delete</a></small></p>"
+							+ "<p><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ projectName
+							+ "\" class=\"warning delete-project\">Delete</a></small></p>"
 							+ "\n" + "</div>" + "\n";
 				} while (r.next());
 			}
@@ -320,7 +321,7 @@ public class OliveDatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			
+
 			// Delete all videos associated with the project.
 			s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
@@ -389,7 +390,9 @@ public class OliveDatabaseApi {
 							+ videoName
 							+ "<br />"
 							+ "\n"
-							+ "<small><a href=\"\" class=\"warning\">Delete</a></small> </span>"
+							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ videoName
+							+ "\" class=\"warning delete-video\">Delete</a></small> </span>"
 							+ "\n";
 				} while (r.next());
 			}

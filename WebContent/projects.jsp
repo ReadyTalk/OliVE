@@ -1,6 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
-<%@ page import="com.readytalk.olive.model.User"%>
 <%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
@@ -71,6 +70,9 @@
 	<li>4. Edit your videos.</li>
 	<li>5. Export to your computer.</li>
 </ul>
+</div>
+<div id="confirm-delete-project-dialog" title="Delete this project?">
+	<p>This will also delete any of the project's videos.</p>
 </div>
 </div>
 </div>
