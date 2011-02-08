@@ -1,24 +1,20 @@
 package com.readytalk.olive.model;
 
 public class Video {
+
 	private String name;
-	private String URL;
+	private String url;
 	private String icon;
-	private Project project;
+	private int projectId;
+	private int startTimeStoryboard;
 
-	public Video(String name, String uRL, String icon, Project p) {
+	public Video(String name, String url, String icon, int projectId,
+			int startTimeStoryboard) {
 		this.name = name;
-		URL = uRL;
+		this.url = url;
 		this.icon = icon;
-		this.project = p;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
+		this.projectId = projectId;
+		this.setStartTimeStoryboard(startTimeStoryboard);
 	}
 
 	public String getName() {
@@ -29,12 +25,12 @@ public class Video {
 		this.name = name;
 	}
 
-	public String getURL() {
-		return URL;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setURL(String uRL) {
-		URL = uRL;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public String getIcon() {
@@ -43,6 +39,22 @@ public class Video {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	public int getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(int project) {
+		this.projectId = project;
+	}
+
+	public void setStartTimeStoryboard(int startTimeStoryboard) {
+		this.startTimeStoryboard = startTimeStoryboard;
+	}
+
+	public int getStartTimeStoryboard() {
+		return startTimeStoryboard;
 	}
 
 }

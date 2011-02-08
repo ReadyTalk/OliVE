@@ -1,37 +1,36 @@
 package com.readytalk.olive.model;
 
 public class Project {
-	private String title;
+
+	private String name;
+	private int accountId;
 	private String icon;
-	private User user;
-	private String ProjectID;
 
-	public Project(String title, String icon, User user, String id) {
-		this.title = title;
+	public Project(String name, int accountId, String icon) {
+		this.name = name;
+		this.accountId = accountId;
 		this.icon = icon;
-		this.user = user;
-		this.ProjectID = id;
 	}
 
-	public Project(String title, User user) {
-		this.title = title;
-		this.user = user;
+	@Override
+	public String toString() {
+		return name;
 	}
 
-	public String getProjectID() {
-		return ProjectID;
+	public String getName() {
+		return name;
 	}
 
-	public void setProjectID(String projectID) {
-		ProjectID = projectID;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getTitle() {
-		return title;
+	public int getAccountId() {
+		return accountId;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
 	}
 
 	public String getIcon() {
@@ -40,18 +39,5 @@ public class Project {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	@Override
-	public String toString() {
-		return title;
 	}
 }

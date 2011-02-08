@@ -1,0 +1,6 @@
+package com.readytalk.olive.util;
+
+public enum Attribute {
+	IS_AUTHORIZED, USERNAME, PASSWORD, EDIT_SUCCESSFULLY, ADD_SUCCESSFULLY,
+	PROJECT_NAME, PASSWORDS_MATCH, IS_SAFE, EMAIL, NAME
+}

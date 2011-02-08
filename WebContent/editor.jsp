@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
+<%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
 <head>
@@ -39,20 +41,27 @@
 </head>
 <body>
 <%
-	String user = "";
-	String projectTitle = "";
+	String username = "";
 	Boolean isAuthorized = (Boolean) session
-			.getAttribute("isAuthorized"); // Nasty cast
+			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
+	String projectName = "";
+	String videosHtml = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} else {
-		user = (String) session.getAttribute("username");
-		projectTitle = (String) session.getAttribute("projectTitle");
-		if (projectTitle == null) {
+		username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
+		projectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		if (projectName == null) {
 			response.sendRedirect("projects.jsp");
 		}
+
+		int accountId = OliveDatabaseApi.getAccountId(username);
+		int projectId = OliveDatabaseApi.getProjectId(projectName, accountId);
+		videosHtml = OliveDatabaseApi.populateVideos(projectId);
 	}
 %>
 <div id="header">
@@ -61,10 +70,22 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=user%>!</a>&nbsp;<a
+<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<a
-	href="#" onclick="javascript:helpWin()">Help</a></div>
+<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div id="help-dialog" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
+<div id="confirm-delete-video-dialog" title="Warning!">
+	<p>Delete video?</p>
+</div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -75,7 +96,7 @@
 
 <div id="videos-container">
 <div id="videos-title">
-<h3><%=projectTitle%></h3>
+<h3><%=projectName%></h3>
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
@@ -83,37 +104,15 @@
 <!-- This should be refactored to be multiple forms, but then the CSS should be
 	changed so the buttons all stay on the same line. -->
 <form id="split-form" action="OliveServlet" name="process" method="post">
-<input type="button" value="Upload New" onclick="javascript:win1();" />
+<input type="button" value="Upload New" onclick="openNewVideoForm();" />
 <input type="submit" value="Split" onclick="alert('Split');" /> <input
 	type="hidden" name="FormName" value="SplitVideo"></input> <input
 	type="button" value="Delete" onclick="alert('Delete');" /> <input
 	type="button" value="Select All" onclick="alert('Select All');" /></form>
 </div>
 <!-- end #videos-controls -->
-<div id="videos"><!-- div id="video-1" class="video-icon-container"  img id="olive1"
-	class="video-icon" src="/olive/images/olive.png" alt="olive1" / 
-p Video 1 /p
-p small  a href="" class="warning" Delete /a  /small  /p 
- /div--> <span id="video-2" class="video-icon-container"><img
-	id="olive2" class="video-icon" src="/olive/images/olive.png"
-	alt="olive2" /><br />
-Video 2<br />
-<small><a href="" class="warning">Delete</a></small> </span> <span id="video-3"
-	class="video-icon-container"><img id="olive3" class="video-icon"
-	src="/olive/images/olive.png" alt="olive3" /><br />
-Video 3<br />
-<small><a href="" class="warning">Delete</a></small> </span> <span id="video-4"
-	class="video-icon-container"><img id="olive4" class="video-icon"
-	src="/olive/images/olive.png" alt="olive4" /><br />
-Video 4<br />
-<small><a href="" class="warning">Delete</a></small> </span></div>
-<!-- end #videos -->
-<div id="player-videos-controls">
-<button id="videos-playpause">Play/pause</button>
-<button id="videos-volume-up">Volume up</button>
-<button id="videos-volume-down">Volume down</button>
-</div>
-</div>
+<div id="videos"><%=videosHtml%></div>
+<!-- end #videos --></div>
 <!-- end #videos-container -->
 
 <div class="contextMenu" id="videoMenu">
@@ -123,32 +122,30 @@ Video 4<br />
 </div>
 <!-- end #contextMenu -->
 
-<div id="player-div"><video id="player-video"
+<div id="player-div">
+<div id="player-container"><video id="player-video"
 	poster="/olive/images/bbb480.jpg" preload="preload"
 	src="/olive/videos/bbb_trailer_iphone.m4v"></video></div>
+<div id="player-controls" class="center-text">
+<button id="videos-playpause">Play/pause</button>
+<button id="videos-volume-down">Volume down</button>
+<button id="videos-volume-up" disabled="disabled">Volume up</button>
+</div>
+</div>
 <!-- end #player -->
 
 <div class="clear"></div>
 
 <div id="timeline">
-
-<div id="video-5" class="video-icon-container">
-<p><img id="olive5" class="video-icon" src="/olive/images/olive.png"
-	alt="olive5" /></p>
-Video 5<br />
-<small><a href="" class="warning">Delete</a></small></div>
-<div id="video-6" class="video-icon-container">
-<p><img id="olive6" class="video-icon" src="/olive/images/olive.png"
-	alt="olive6" /></p>
-Video 6<br />
-<small><a href="" class="warning">Delete</a></small></div>
+<div id="ticks-container">
+<div id="tick-anchor"></div>
+</div>
 </div>
 
 <div class="clear"></div>
 
 <div id="export">
-<button type="button" onclick="alert('Export Video')">Export
-Video</button>
+<button type="button" onclick="alert('Export');">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>
@@ -156,9 +153,6 @@ Video</button>
 
 <div class="clear"></div>
 
-<div id="footer">
-<div id="footer-left"><a href="about.jsp">About Us</a></div>
-<div id="footer-right">&copy; 2010 ReadyTalk</div>
-</div>
+<div id="footer"></div>
 </body>
 </html>

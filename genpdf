@@ -34,19 +34,18 @@ FILES="\
     WebContent/editor.jsp \
     WebContent/index.jsp \
     WebContent/logout.jsp \
-    WebContent/newProjectForm.jsp \
+    WebContent/new-project-form.jsp \
     WebContent/projects.jsp \
-    WebContent/videoUpload.jsp \
+    WebContent/new-video-form.jsp \
     \
     src/com/readytalk/olive/logic/HttpSenderReceiver.java \
-    src/com/readytalk/olive/logic/OliveDataApi.java \
+    src/com/readytalk/olive/logic/OliveDatabaseApi.java \
     src/com/readytalk/olive/logic/S3Credentials.java \
     src/com/readytalk/olive/logic/S3Uploader.java \
     src/com/readytalk/olive/logic/ZencoderCredentials.java \
     src/com/readytalk/olive/model/Project.java \
     src/com/readytalk/olive/model/User.java \
     src/com/readytalk/olive/model/Video.java \
-    src/com/readytalk/olive/servlet/CommonsFileUploadServlet.java \
     src/com/readytalk/olive/servlet/OliveServlet.java \
     "
 
