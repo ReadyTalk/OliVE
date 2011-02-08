@@ -101,6 +101,9 @@
 	class="text ui-widget-content ui-corner-all" maxlength="64" /> <label
 	for="password">Password</label> <input type="password" name="password"
 	id="register-password" value=""
+	class="text ui-widget-content ui-corner-all" maxlength="128" /> <label
+	for="confirm_password">Confirm Password</label> <input type="password" name="confirm_password"
+	id="confirm-register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
 <input type="hidden" name="FormName" value="AddUser"></input></form>
 </div>
