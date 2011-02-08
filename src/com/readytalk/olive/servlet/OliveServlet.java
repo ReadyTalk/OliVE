@@ -283,7 +283,23 @@ public class OliveServlet extends HttpServlet {
 					 */
 					File file = new File(destinationDir, item.getName()); // Allocate the space
 					item.write(file); // Save the file to the allocated space
-					S3Uploader.uploadFile(file);
+
+					String sessionUsername = (String) session
+							.getAttribute(Attribute.USERNAME.toString());
+					int accountId = OliveDatabaseApi
+							.getAccountId(sessionUsername);
+					String projectName = (String) session
+							.getAttribute(Attribute.PROJECT_NAME.toString());
+					int projectId = OliveDatabaseApi.getProjectId(projectName,
+							accountId);
+					String videoName = file.getName().split("[.]")[0]; // Strip extensions
+					if (Security.isSafeVideoName(videoName)
+							&& S3Uploader.uploadFile(file)) { // Short-circuiting for efficiency
+						String icon = ""; // TODO Obtain this from S3.
+						OliveDatabaseApi.AddVideo(videoName, "http", projectId,
+								icon);
+					}
+
 					file.delete();
 				}
 			}

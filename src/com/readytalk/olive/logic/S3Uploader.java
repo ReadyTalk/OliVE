@@ -22,7 +22,7 @@ public class S3Uploader {
 
 	private static Logger log = Logger.getLogger(S3Uploader.class.getName());
 
-	public static void uploadFile(File file) throws InvalidFileSizeException {
+	public static boolean uploadFile(File file) throws InvalidFileSizeException {
 		if (file.length() > MAX_SIZE_IN_BYTES) {
 			throw new InvalidFileSizeException("File larger than "
 					+ MAX_SIZE_IN_BYTES + " bytes");
@@ -43,6 +43,8 @@ public class S3Uploader {
 
 			// Upload the data objects.
 			s3Service.putObject(BUCKET_NAME, fileAsS3Object);
+			
+			return true;
 		} catch (IOException e) {
 			log.severe("Error connecting with S3");
 			e.printStackTrace();
@@ -53,6 +55,7 @@ public class S3Uploader {
 			log.severe("Error creating S3Object object");
 			e.printStackTrace();
 		}
+		return false;	// Error
 	}
 
 	public static File downloadFile(String fileName,
