@@ -19,16 +19,22 @@
 
 	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE
 			.toString()); // Nasty cast
+	Boolean addedSuccesfully = (Boolean) session
+			.getAttribute(Attribute.ADD_SUCCESSFULLY.toString());
 	String safeMessage;
 	if (isSafe == null) {
 		safeMessage = "";
 	} else if (isSafe) {
-		// Syntax: http://www.infimum.dk/HTML/JSwindows.html
-		safeMessage = "<script> window.opener.location.reload(); window.close(); </script>";
+		if(addedSuccesfully){
+			// Syntax: http://www.infimum.dk/HTML/JSwindows.html
+			safeMessage = "<script> window.opener.location.reload(); window.close(); </script>";	
+		}
+		safeMessage = "Project already exists";
+		
 	} else {
 		safeMessage = "Project name must be between 1 and 32 characters; must consist of a-z, 0-9, underscores; and must begin with a letter.";
 	}
-
+	session.removeAttribute(Attribute.ADD_SUCCESSFULLY.toString());
 	session.removeAttribute(Attribute.IS_SAFE.toString());
 %>
 <form id="add-project-form" action="OliveServlet" name="process"

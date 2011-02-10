@@ -296,21 +296,32 @@ public class OliveDatabaseApi {
 		return false;
 	}
 
-	public static void AddProject(Project project) {
+	public static boolean AddProject(Project project) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
-					+ project.getName() + "', '" + project.getAccountId()
-					+ "' , '" + project.getIcon() + "');";
-			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT ProjectID FROM Projects WHERE Name = '" + project.getName()
+			+ "' AND AccountID = '" + project.getAccountId() + "';";
+			r = st.executeQuery(s);
+			if(r.first()){
+				return false;
+			}
+			else{
+				s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
+				+ project.getName() + "', '" + project.getAccountId()
+				+ "' , '" + project.getIcon() + "');";
+				st.executeUpdate(s);
+				return true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(conn);
 		}
+		return false;
 	}
 
 	public static void deleteProject(int projectId) {

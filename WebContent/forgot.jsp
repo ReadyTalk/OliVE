@@ -58,6 +58,8 @@
 		editConfirmation = "";
 		response.sendRedirect("new-password-form.jsp");
 	}
+	session.removeAttribute(Attribute.IS_SAFE.toString());
+	session.removeAttribute(Attribute.IS_CORRECT.toString());
 %>
 <div id="header">
 <div id="header-left">

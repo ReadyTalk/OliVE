@@ -303,7 +303,13 @@ public class OliveServlet extends HttpServlet {
 			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
 			String icon = ""; // TODO Get this from user input.
 			Project project = new Project(projectName, accountId, icon);
-			OliveDatabaseApi.AddProject(project);
+			Boolean added = OliveDatabaseApi.AddProject(project);
+			if(!added){
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(), false);
+			}
+			else{
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(), true);
+			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}

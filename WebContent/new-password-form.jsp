@@ -62,6 +62,10 @@
 		confirmation = "Congratulations. Your new password has been set. You" 
 							+ "may now sign in to <a href = "+index+">Olive</a>";
 	}
+	
+	session.removeAttribute(Attribute.IS_SAFE.toString());
+	session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
+	session.removeAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
 %>
 <div id="header">
 <div id="header-left">
