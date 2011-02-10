@@ -72,6 +72,9 @@
 			.toString());
 	String password = (String) session.getAttribute(Attribute.PASSWORD
 			.toString());
+	String securityQuestion = (String) session.getAttribute(Attribute.SECURITY_QUESTION.toString());
+	String securityAnswer = (String) session.getAttribute(Attribute.SECURITY_ANSWER.toString());
+	
 %>
 <div id="header">
 <div id="header-left">
@@ -116,20 +119,13 @@
 <input type="password" name="confirm-new-password"
 	id="confirm-new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>
-<p><label for="security_questions">Security Question</label></p>	
-<select name="security_questions">
-<option selected="selected">Please select a security Question</option>
-<option>What is your first pet's name?</option>
-<option>What is your maternal grandmother's maiden name?</option>
-<option>What was your dream job as a child?</option>
-<option>What city or town did your parents meet?</option>
-<option>What is favorite childhood superhero?</option>
-<option>In what town was your first job?</option>
-<option>What is the last name of your fourth grade teacher?</option>
-</select>
+<p><label for="security_question">Security Question</label><br />	
+<input type="text" name="security_question"
+	id="security_question" value="<%=securityQuestion%>" size="32"
+	maxlength="128" /></p>
 <p><label for="security_answer">Security Answer</label><br />
 <input type="text" name="security_answer"
-	id="security_question_answer" value="" size="32"
+	id="security_question_answer" value="<%=securityAnswer%>" size="32"
 	maxlength="128" /></p>
 <input type="hidden" name="FormName" value="EditUser"></input><br />
 <input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>

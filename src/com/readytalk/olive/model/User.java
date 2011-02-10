@@ -6,12 +6,25 @@ public class User {
 	private String password;
 	private String name;
 	private String email;
-
+	private String securityQuestion;
+	private String securityAnswer;
+	
+	
 	public User(String username, String password, String name, String email) {
 		this.username = username;
 		this.password = password;
 		this.name = name;
 		this.email = email;
+	}
+
+	public User(String username, String password, String name,
+			String email, String securityQuestion, String securityAnswer) {
+		this.username = username;
+		this.password = password;
+		this.name = name;
+		this.email = email;
+		this.setSecurityQuestion(securityQuestion);
+		this.setSecurityAnswer(securityAnswer);
 	}
 
 	@Override
@@ -49,5 +62,21 @@ public class User {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public void setSecurityQuestion(String securityQuestion) {
+		this.securityQuestion = securityQuestion;
+	}
+
+	public String getSecurityQuestion() {
+		return securityQuestion;
+	}
+
+	public void setSecurityAnswer(String securityAnswer) {
+		this.securityAnswer = securityAnswer;
+	}
+
+	public String getSecurityAnswer() {
+		return securityAnswer;
 	}
 }

@@ -38,25 +38,29 @@
 <body>
 <% 
 	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE.toString());
-	Boolean isCorrect = (Boolean) session.getAttribute(Attribute.IS_CORRECT.toString());
-	String editConfirmation = "";
-	if(isCorrect == null){
-		editConfirmation = "";
+	Boolean passwordsMatch = (Boolean) session.getAttribute(Attribute.PASSWORDS_MATCH.toString());
+	Boolean editSuccess = (Boolean) session.getAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
+	String confirmation = "";
+	String index = "'index.jsp'";
+	if(editSuccess == null){
+		confirmation = "";
 	}
-	else if(isCorrect == false){
-		if(isSafe == null){
-			editConfirmation = "";
-		}
-		else if(isSafe){
-			editConfirmation = "Question or answer do not match database records";	
+	else if(editSuccess == false){
+		if(isSafe){
+			if(passwordsMatch){
+				confirmation = "We're sorry, there is an error in inputing to the database. Please try again";	
+			}
+			else{
+				confirmation = "Passwords do not match";
+			}
 		}
 		else{
-			editConfirmation = "Unsafe input";		
+			confirmation = "Unsafe input";		
 		}
 	}
-	else if(isCorrect){
-		editConfirmation = "";
-		response.sendRedirect("new-password-form.jsp");
+	else if(editSuccess){
+		confirmation = "Congratulations. Your new password has been set. You" 
+							+ "may now sign in to <a href = "+index+">Olive</a>";
 	}
 %>
 <div id="header">
@@ -64,8 +68,8 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div id="header-right"><span id="help-dialog-opener"><a
+	href="">Help</a></span></div>
 <div id="help-dialog" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
@@ -82,26 +86,20 @@
 
 <div id="main">
 <div id="edit-account-container">
-<h2>Forgot Password?</h2>
-<p> Please enter your username and your security question and answer. Thank you</p>
+<h2>New Password</h2>
+<p>Please enter a new password for your account</p>
 <!-- end #about-title -->
 
-<form id="security-question-form" action="OliveServlet" name="process"
+<form id="password-form" action="OliveServlet" name="process"
 	method="post">
-	<p><label for="username">Username</label><br />
-<input type="text" name="username" id="username" value=""
-	size="32" maxlength="32" /></p>
-	<p><label for="security_question">Security Question</label><br />	
-<input type="text" name="security_question"
-	id="security_question" value="" size="32"
-	maxlength="128" /></p>
-<p><label for="security_answer">Security Answer</label><br />
-<input type="text" name="security_answer"
-	id="security_question_answer" value="" size="32"
-	maxlength="128" /></p>
-<input type="hidden" name="FormName" value="security-question-form"></input><br />
-<input type="submit" value="Recover Password" /><span><%=editConfirmation%></span>
-</form>
+<p><label for="password">Password</label><br />
+<input type="password" name="password" id="password" value="" size="32"
+	maxlength="32" /></p>
+<p><label for="password">Confirm Password</label><br />
+<input type="password" name="confirm_password" id="confirm_password"
+	value="" size="32" maxlength="128" /></p>
+<input type="hidden" name="FormName" value="new_password"></input><br />
+<input type="submit" value="Submit New Password" /><span><%=confirmation%></span></form>
 </div>
 <!-- end #main --></div>
 

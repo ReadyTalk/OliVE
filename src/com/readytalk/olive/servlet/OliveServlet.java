@@ -87,6 +87,10 @@ public class OliveServlet extends HttpServlet {
 				handleAddProject(request, response, session);
 			} else if (id.equals("SplitVideo")) {
 				handleSplitVideo(request, response, session);
+			} else if (id.equals("security-question-form")) {
+				handleSecurityQuestion(request, response, session);
+			} else if (id.equals("new_password")) {
+				handleNewPassword(request, response, session);
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
@@ -103,6 +107,64 @@ public class OliveServlet extends HttpServlet {
 			handleJsonPostRequest(request, response, session);
 		} else {
 			log.severe("Unknown content type");
+		}
+	}
+
+	private void handleNewPassword(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws UnsupportedEncodingException, IOException {
+		// TODO Auto-generated method stub
+		String newPassword = request.getParameter("password");
+		String confirmNewPassword = request.getParameter("confirm_password");
+		Boolean newPasswordSet;
+		if(Security.isSafePassword(newPassword)
+				&& Security.isSafePassword(confirmNewPassword)){
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+			if(newPassword.equals(confirmNewPassword)){
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+				newPasswordSet = OliveDatabaseApi.editPassword(username,newPassword);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), newPasswordSet);
+			}
+			else{
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), false);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+			}
+		}
+		else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+		}
+		response.sendRedirect("new-password-form.jsp");
+		session.removeAttribute(Attribute.USERNAME.toString());
+	}
+
+	private void handleSecurityQuestion(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws UnsupportedEncodingException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String securityQuestion = request.getParameter("security_question");
+		String securityAnswer = request.getParameter("security_answer");
+		Boolean isCorrect;
+		if (Security.isSafeUsername(username)
+				&& Security.isSafeSecurityQuestion(securityQuestion)
+				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+			isCorrect = OliveDatabaseApi.isCorrectSecurityInfo(username,securityQuestion, securityAnswer);
+			session.setAttribute(Attribute.IS_CORRECT.toString(), isCorrect);
+			if(isCorrect){
+				session.setAttribute(Attribute.USERNAME.toString(), username);
+				response.sendRedirect("new-password-form.jsp");
+				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
+			}
+			else {
+				response.sendRedirect("forgot.jsp");
+			}
+		} else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+			session.setAttribute(Attribute.IS_CORRECT.toString(), false);
+			response.sendRedirect("forgot.jsp");
 		}
 	}
 
@@ -171,15 +233,17 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		String securityQuestion = request.getParameter("security_questions");
+		String securityQuestion = request.getParameter("security_question");
 		String securityAnswer = request.getParameter("security_answer");
 		log.info("Security question: "+securityQuestion+". Security Answer: "+securityAnswer);
 		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
 				&& Security.isSafePassword(newPassword)
-				&& Security.isSafePassword(confirmNewPassword)) {
+				&& Security.isSafePassword(confirmNewPassword)
+				&& Security.isSafeSecurityQuestion(securityQuestion)
+				&& Security.isSafeSecurityAnswer(securityAnswer)) {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newName,
-						newEmail);
+						newEmail, securityQuestion, securityAnswer);
 				Boolean editSuccessfully = OliveDatabaseApi
 						.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
@@ -188,6 +252,8 @@ public class OliveServlet extends HttpServlet {
 				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
+				session.setAttribute(Attribute.SECURITY_QUESTION.toString(), securityQuestion);
+				session.setAttribute(Attribute.SECURITY_ANSWER.toString(), securityAnswer);
 			} else {
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						false);

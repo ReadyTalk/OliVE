@@ -151,6 +151,14 @@ public class OliveDatabaseApi {
 			s = "UPDATE Accounts SET Email = '" + user.getEmail()
 					+ "' WHERE Username = '" + user.getUsername() + "';";
 			st.executeUpdate(s);
+			
+			s = "UPDATE Accounts SET SecurityQuestion = '" + user.getSecurityQuestion()
+					+ "' WHERE Username = '" + user.getUsername() + "';";
+			st.executeUpdate(s);
+	
+			s = "UPDATE Accounts SET SecurityAnswer = '" + user.getSecurityAnswer()
+					+ "' WHERE Username = '" + user.getUsername() + "';";
+			st.executeUpdate(s);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -477,5 +485,49 @@ public class OliveDatabaseApi {
 		}
 
 		return zencoderApiKey;
+	}
+
+	
+	public static Boolean isCorrectSecurityInfo(String username,
+			String securityQuestion, String securityAnswer) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT AccountId FROM Accounts WHERE Username = '" + username
+					+ "' AND SecurityQuestion = '" + securityQuestion 
+					+ "' AND SecurityAnswer = '" + securityAnswer+"';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false; // Error!
+	}
+	
+
+	public static Boolean editPassword(String username, String newPassword) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Accounts SET Password = Password('"
+				+ newPassword + "') WHERE Username = '"
+				+ username + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
 	}
 }
