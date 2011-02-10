@@ -53,7 +53,11 @@ jQuery(function($) {
 	$('#timeline').sortable( {
 		revert : true,
 		sort: function() {
-			$('#export-button').removeAttr('disabled');
+			if($('#timeline').sortable('items').length > 0){
+				$('#export-button').removeAttr('disabled');
+			} else {
+				$('#export-button').attr('disabled', 'disabled');
+			}
 		}
 	});
 
