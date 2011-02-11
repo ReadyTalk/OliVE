@@ -49,7 +49,7 @@ public class Security {
 
 	public static boolean isSafeProjectName(String projectName) {
 		return isSafeLength(projectName, 1, 32)
-				&& isSafeValue(projectName, "^([0-9a-zA-Z])+$"); // Same as password's regex
+				&& isSafeValue(projectName, "^([0-9a-zA-Z ])+$"); // Same as password's regex
 	}
 
 	public static boolean isSafeVideoName(String videoName) {
@@ -59,12 +59,12 @@ public class Security {
 
 	public static boolean isSafeSecurityQuestion(String securityQuestion) {
 		return isSafeLength(securityQuestion, 1, 20)
-				&& isSafeValue(securityQuestion, "^([0-9a-zA-Z])+$"); // Same as password's regex
+				&& isSafeValue(securityQuestion, "^[0-9a-zA-Z .,]+[?.]*$");
 	}
 
 	public static boolean isSafeSecurityAnswer(String securityAnswer) {
 		return isSafeLength(securityAnswer, 1, 20)
-				&& isSafeValue(securityAnswer, "^([0-9a-zA-Z])+$"); // Same as password's regex
+				&& isSafeValue(securityAnswer, "^([0-9a-zA-Z .,])+$");
 	}
 
 	public static boolean isSafeProjectIcon(File projectIcon) {
