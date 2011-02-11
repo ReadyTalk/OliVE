@@ -91,6 +91,8 @@ public class OliveServlet extends HttpServlet {
 				handleSecurityQuestion(request, response, session);
 			} else if (id.equals("new_password")) {
 				handleNewPassword(request, response, session);
+			} else if (id.equals("DeleteAccount")) {
+				handleDeleteAccount(request, response, session);
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
@@ -110,6 +112,15 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
+	private void handleDeleteAccount(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+	throws UnsupportedEncodingException, IOException {
+		String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(username);
+		OliveDatabaseApi.deleteAccount(accountId);
+		response.sendRedirect("logout.jsp");
+	}
+	
 	private void handleNewPassword(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {

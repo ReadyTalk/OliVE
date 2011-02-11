@@ -29,8 +29,9 @@
 			// Syntax: http://www.infimum.dk/HTML/JSwindows.html
 			safeMessage = "<script> window.opener.location.reload(); window.close(); </script>";	
 		}
-		safeMessage = "Project already exists";
-		
+		else{
+			safeMessage = "Project already exists";	
+		}
 	} else {
 		safeMessage = "Project name must be between 1 and 32 characters; must consist of a-z, 0-9, underscores; and must begin with a letter.";
 	}

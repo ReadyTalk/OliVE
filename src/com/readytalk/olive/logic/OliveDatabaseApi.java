@@ -174,7 +174,7 @@ public class OliveDatabaseApi {
 		// int projectId = getProjectId(name, accountId);
 		// int videoId = getVideoId(name, projectId, accountId);
 
-		int projectId = -1;
+		//int projectId = -1;
 		// int videoId = -1;
 
 		Connection conn = getDBConnection();
@@ -182,15 +182,22 @@ public class OliveDatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-
+			ResultSet r;
+			s = "SELECT ProjectId FROM Projects WHERE AccountId = "+ accountId+";";
+			r = st.executeQuery(s);
+			if(r.first()){
+				do{
+					deleteProject(r.getInt("ProjectId"));
+				}while(r.next());
+			}
 			// TODO Broken
 			// Delete all videos associated with all projects associated with the account.
-			s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
-			st.executeUpdate(s);
+			//s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
+			//st.executeUpdate(s);
 
 			// Delete all projects associated with the account.
-			s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
-			st.executeUpdate(s);
+			//s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
+			//st.executeUpdate(s);
 
 			// Delete the account itself.
 			s = "DELETE FROM Accounts WHERE AccountId = '" + accountId + "';"; // TODO Add error checking
@@ -302,11 +309,8 @@ public class OliveDatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			ResultSet r;
-			s = "SELECT ProjectID FROM Projects WHERE Name = '" + project.getName()
-			+ "' AND AccountID = '" + project.getAccountId() + "';";
-			r = st.executeQuery(s);
-			if(r.first()){
+			Boolean exists = projectExists(project.getName(),project.getAccountId());
+			if(exists){
 				return false;
 			}
 			else{

@@ -72,9 +72,10 @@
 			.toString());
 	String password = (String) session.getAttribute(Attribute.PASSWORD
 			.toString());
-	String securityQuestion = (String) session.getAttribute(Attribute.SECURITY_QUESTION.toString());
-	String securityAnswer = (String) session.getAttribute(Attribute.SECURITY_ANSWER.toString());
-	
+	String securityQuestion = (String) session
+			.getAttribute(Attribute.SECURITY_QUESTION.toString());
+	String securityAnswer = (String) session
+			.getAttribute(Attribute.SECURITY_ANSWER.toString());
 %>
 <div id="header">
 <div id="header-left">
@@ -119,17 +120,20 @@
 <input type="password" name="confirm-new-password"
 	id="confirm-new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>
-<p><label for="security_question">Security Question</label><br />	
-<input type="text" name="security_question"
-	id="security_question" value="<%=securityQuestion%>" size="32"
-	maxlength="128" /></p>
+<p><label for="security_question">Security Question</label><br />
+<input type="text" name="security_question" id="security_question"
+	value="<%=securityQuestion%>" size="32" maxlength="128" /></p>
 <p><label for="security_answer">Security Answer</label><br />
-<input type="text" name="security_answer"
-	id="security_question_answer" value="<%=securityAnswer%>" size="32"
-	maxlength="128" /></p>
+<input type="text" name="security_answer" id="security_question_answer"
+	value="<%=securityAnswer%>" size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="EditUser"></input><br />
 <input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
-
+<form id="delete-account" action="OliveServlet" name="process"
+	method="post">
+	<input type="hidden" name="FormName" value="DeleteAccount"></input><br />
+	<input type="submit" value="Delete Account" />
+	<!-- TODO: Add a "Are you sure you want to delete your account window?" here  -->		
+	</form>
 </div>
 <!-- end #login-form-container --></div>
 <!-- end #main -->
