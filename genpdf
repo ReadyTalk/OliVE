@@ -21,6 +21,7 @@ FILES="\
         \
     WebContent/doc/favicon_notes.txt \
     WebContent/doc/longDirectory.txt \
+    WebContent/doc/post-implementation.txt \
         \
     WebContent/temp/maintainer.txt \
         \
@@ -32,21 +33,27 @@ FILES="\
         \
     WebContent/account.jsp \
     WebContent/editor.jsp \
+    WebContent/footer.jsp \
+    WebContent/forgot.jsp \
+    WebContent/header.jsp \
     WebContent/index.jsp \
     WebContent/logout.jsp \
+    WebContent/new-password-form.jsp \
     WebContent/new-project-form.jsp \
-    WebContent/projects.jsp \
     WebContent/new-video-form.jsp \
+    WebContent/projects.jsp \
     \
+    src/com/readytalk/olive/json/DeleteProjectRequest.java \
     src/com/readytalk/olive/logic/HttpSenderReceiver.java \
     src/com/readytalk/olive/logic/OliveDatabaseApi.java \
-    src/com/readytalk/olive/logic/S3Credentials.java \
     src/com/readytalk/olive/logic/S3Uploader.java \
-    src/com/readytalk/olive/logic/ZencoderCredentials.java \
+    src/com/readytalk/olive/logic/Security.java \
     src/com/readytalk/olive/model/Project.java \
     src/com/readytalk/olive/model/User.java \
     src/com/readytalk/olive/model/Video.java \
     src/com/readytalk/olive/servlet/OliveServlet.java \
+    src/com/readytalk/olive/util/Attribute.java \
+    src/com/readytalk/olive/util/InvalidFileSizeException.java \
     "
 
 # Remove any old PostScript or PDF versions lying around.
