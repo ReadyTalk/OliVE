@@ -151,13 +151,15 @@ public class OliveDatabaseApi {
 			s = "UPDATE Accounts SET Email = '" + user.getEmail()
 					+ "' WHERE Username = '" + user.getUsername() + "';";
 			st.executeUpdate(s);
-			
-			s = "UPDATE Accounts SET SecurityQuestion = '" + user.getSecurityQuestion()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
+
+			s = "UPDATE Accounts SET SecurityQuestion = '"
+					+ user.getSecurityQuestion() + "' WHERE Username = '"
+					+ user.getUsername() + "';";
 			st.executeUpdate(s);
-	
-			s = "UPDATE Accounts SET SecurityAnswer = '" + user.getSecurityAnswer()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
+
+			s = "UPDATE Accounts SET SecurityAnswer = '"
+					+ user.getSecurityAnswer() + "' WHERE Username = '"
+					+ user.getUsername() + "';";
 			st.executeUpdate(s);
 			return true;
 		} catch (Exception e) {
@@ -174,7 +176,7 @@ public class OliveDatabaseApi {
 		// int projectId = getProjectId(name, accountId);
 		// int videoId = getVideoId(name, projectId, accountId);
 
-		//int projectId = -1;
+		// int projectId = -1;
 		// int videoId = -1;
 
 		Connection conn = getDBConnection();
@@ -183,21 +185,22 @@ public class OliveDatabaseApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			ResultSet r;
-			s = "SELECT ProjectId FROM Projects WHERE AccountId = "+ accountId+";";
+			s = "SELECT ProjectId FROM Projects WHERE AccountId = " + accountId
+					+ ";";
 			r = st.executeQuery(s);
-			if(r.first()){
-				do{
+			if (r.first()) {
+				do {
 					deleteProject(r.getInt("ProjectId"));
-				}while(r.next());
+				} while (r.next());
 			}
 			// TODO Broken
 			// Delete all videos associated with all projects associated with the account.
-			//s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
-			//st.executeUpdate(s);
+			// s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
+			// st.executeUpdate(s);
 
 			// Delete all projects associated with the account.
-			//s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
-			//st.executeUpdate(s);
+			// s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
+			// st.executeUpdate(s);
 
 			// Delete the account itself.
 			s = "DELETE FROM Accounts WHERE AccountId = '" + accountId + "';"; // TODO Add error checking
@@ -309,14 +312,15 @@ public class OliveDatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			Boolean exists = projectExists(project.getName(),project.getAccountId());
-			if(exists){
+			Boolean exists = projectExists(project.getName(),
+					project.getAccountId());
+			if (exists) {
 				return false;
-			}
-			else{
-				s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
-				+ project.getName() + "', '" + project.getAccountId()
-				+ "' , '" + project.getIcon() + "');";
+			} else {
+				s = "INSERT INTO Projects (Name, AccountID, Icon) "
+						+ "VALUES ('" + project.getName() + "', '"
+						+ project.getAccountId() + "' , '" + project.getIcon()
+						+ "');";
 				st.executeUpdate(s);
 				return true;
 			}
@@ -349,15 +353,16 @@ public class OliveDatabaseApi {
 		}
 	}
 
-	public static int getVideoId(String videoName, int projectId, int accountId) {
+	// You don't need the accountId if you have the projectId. The projectId was
+	// calculated using the accountId.
+	public static int getVideoId(String videoName, int projectId) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "SELECT VideoID FROM Videos WHERE Name = '" + videoName
-					+ "' AND ProjectID = '" + projectId + "' AND AccountID = '"
-					+ accountId + "';";
+					+ "' AND ProjectID = '" + projectId + "';";
 			ResultSet r = st.executeQuery(s);
 			int videoId = -1;
 			if (r.first()) {
@@ -502,7 +507,6 @@ public class OliveDatabaseApi {
 		return zencoderApiKey;
 	}
 
-	
 	public static Boolean isCorrectSecurityInfo(String username,
 			String securityQuestion, String securityAnswer) {
 		Connection conn = getDBConnection();
@@ -511,8 +515,8 @@ public class OliveDatabaseApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			s = "SELECT AccountId FROM Accounts WHERE Username = '" + username
-					+ "' AND SecurityQuestion = '" + securityQuestion 
-					+ "' AND SecurityAnswer = '" + securityAnswer+"';";
+					+ "' AND SecurityQuestion = '" + securityQuestion
+					+ "' AND SecurityAnswer = '" + securityAnswer + "';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				return true;
@@ -525,7 +529,6 @@ public class OliveDatabaseApi {
 		}
 		return false; // Error!
 	}
-	
 
 	public static Boolean editPassword(String username, String newPassword) {
 		Connection conn = getDBConnection();
@@ -533,9 +536,8 @@ public class OliveDatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Accounts SET Password = Password('"
-				+ newPassword + "') WHERE Username = '"
-				+ username + "';";
+			s = "UPDATE Accounts SET Password = Password('" + newPassword
+					+ "') WHERE Username = '" + username + "';";
 			st.executeUpdate(s);
 			return true;
 		} catch (Exception e) {

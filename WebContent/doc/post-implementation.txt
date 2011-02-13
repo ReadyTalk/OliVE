@@ -18,10 +18,13 @@ getVideos(String projectName)
 createVideo(String videoName, File icon, File videoFile)
 deleteVideo(String videoName)
 renameVideo(String oldVideoName, String newVideoName)
+
 addToTimeline(String videoName)
 removeFromTimeline(String videoName)
+
 addToSelected(String videoName)
 removeFromSelected(String videoName)
+
 splitVideo(String videoName, float splitPointInSeconds)
 combineVideos(String videoName0, String videoName1)
 

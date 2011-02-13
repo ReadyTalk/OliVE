@@ -33,18 +33,15 @@ function attachDeleteProjectHandlers() {
 	});
 }
 
-// Perform a deleteProject request (to test POST commands)
+// Perform a deleteProject request
 function deleteProject() {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
 	var postData = '{'
 				+    '"command" : "deleteProject",'
-				+    '"arguments" : '
-				+      '['
-				+        '{'
-				+          '"project" : "' + $(this).attr('id') + '"'
-				+        '}'
-				+      ']'
+				+    '"arguments" : {'
+				+        '"project" : "' + $(this).attr('id') + '"'
+				+      '}'
 				+  '}';
 	// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
 	$.ajax({
@@ -53,15 +50,11 @@ function deleteProject() {
 		contentType: 'application/json; charset=utf-8',
 		data: postData,
 		success: function (data) {
-			console.log(data);
-			console.log('Project deleted successfully.');
+			//console.log(data);	// Erased on page reload anyway
 			location.reload();
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			// console.log(XMLHttpRequest.responseText);
 			console.log(XMLHttpRequest.responseText);
-			console.log('Could not delete project.');
-			location.reload();
 		}
 	});
 }

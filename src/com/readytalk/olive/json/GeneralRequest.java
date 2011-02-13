@@ -1,9 +1,9 @@
 package com.readytalk.olive.json;
 
-public class DeleteProjectRequest {
+public class GeneralRequest {
 
 	// No-args constructor
-	public DeleteProjectRequest() {
+	public GeneralRequest() {
 
 	}
 
@@ -18,7 +18,5 @@ public class DeleteProjectRequest {
 		public Arguments() {
 
 		}
-		
-		public String project;
 	}
 }
