@@ -1,6 +1,6 @@
-Updated February 6, 2011 by Terry
+Updated February 13, 2011 by Terry Smith
 
-These are possible POST requests (a list to keep track of them before they're
+This is a list of possible POST requests (to keep track of them before they're
 implemented). They are written like Java methods, but will be implemented in
 JSON. Note that these exclude the usual POST requests submitted via forms. These
 are simply the POST requests that jQuery will call from within the JavaScript,
@@ -11,29 +11,25 @@ getUsername()
 
 getProjects(String userName)
 createProject(String projectName, File icon)
-deleteProjects(String[] projectNames)
+deleteProject(String projectName)
 renameProject(String oldProjectName, String newProjectName)
 
 getVideos(String projectName)
 createVideo(String videoName, File icon, File videoFile)
-deleteVideos(String[] videoNames)
+deleteVideo(String videoName)
 renameVideo(String oldVideoName, String newVideoName)
-addToTimeline(String[] videoNames)
-removeFromTimeline(String[] videoNames)
-addToSelected(String[] videoNames)
-removeFromSelected(String[] videoNames)
-splitVideo(String[] videoName, float splitPointInSeconds)
-combineVideos(String[] videoNames)	// In order
+addToTimeline(String videoName)
+removeFromTimeline(String videoName)
+addToSelected(String videoName)
+removeFromSelected(String videoName)
+splitVideo(String videoName, float splitPointInSeconds)
+combineVideos(String videoName0, String videoName1)
 
 Example JSON format of the splitVideo(...) command:
 {
     "command" : "splitVideo",
     "arguments" : {
-        "videos" : [
-            "video1",
-            "video2",
-            "video3" 
-        ],
+        "video" : "video0",
         "splitPointInSeconds" : 5.3 
     }
 }
