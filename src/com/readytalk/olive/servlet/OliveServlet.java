@@ -26,7 +26,7 @@ import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
-import com.readytalk.olive.logic.S3Uploader;
+import com.readytalk.olive.logic.S3Api;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
@@ -41,8 +41,8 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	private static final String TMP_DIR_PATH = "/temp/";
-	private static File tmpDir;
+	private static final String TEMP_DIR_PATH = "/temp/";
+	private static File tempDir;
 	private static final String DESTINATION_DIR_PATH = "/temp/";
 	private static File destinationDir;
 
@@ -51,18 +51,18 @@ public class OliveServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		String realPathTmp = getServletContext().getRealPath(TMP_DIR_PATH);
-		tmpDir = new File(realPathTmp);
-		// tmpDir = new File(TMP_DIR_PATH);
-		log.info(realPathTmp);
-		if (!tmpDir.isDirectory()) {
-			throw new ServletException(TMP_DIR_PATH + " is not a directory");
+		createTempDirectories();
+	}
+
+	private void createTempDirectories() throws ServletException {
+		String realPathTemp = getServletContext().getRealPath(TEMP_DIR_PATH);
+		tempDir = new File(realPathTemp);
+		if (!tempDir.isDirectory()) {
+			throw new ServletException(TEMP_DIR_PATH + " is not a directory");
 		}
 		String realPathDest = getServletContext().getRealPath(
 				DESTINATION_DIR_PATH);
 		destinationDir = new File(realPathDest);
-		// destinationDir = new File(DESTINATION_DIR_PATH);
-		log.info(realPathDest);
 		if (!destinationDir.isDirectory()) {
 			throw new ServletException(DESTINATION_DIR_PATH
 					+ " is not a directory");
@@ -349,7 +349,7 @@ public class OliveServlet extends HttpServlet {
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
 
 		// Set the temporary directory to store the uploaded files of size above threshold.
-		fileItemFactory.setRepository(tmpDir);
+		fileItemFactory.setRepository(tempDir);
 
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 		try {
@@ -358,14 +358,23 @@ public class OliveServlet extends HttpServlet {
 			 */
 			List items = uploadHandler.parseRequest(request);
 			Iterator itr = items.iterator();
+
+			/*
+			 * The two items in the form
+			 */
+			FileItem videoNameItem = null;
+			FileItem fileItem = null;
 			while (itr.hasNext()) {
 				FileItem item = (FileItem) itr.next();
 				/*
 				 * Handle Form Fields.
 				 */
-				if (item.isFormField()) {
+				if (item.isFormField()
+						&& item.getFieldName().equals("VideoName")) { // Short-circuitry
+					// Handle text fields
 					log.info("Form Name = \"" + item.getFieldName()
 							+ "\", Value = \"" + item.getString() + "\"");
+					videoNameItem = item;
 				} else {
 					// Handle Uploaded files.
 					log.info("Field Name = \"" + item.getFieldName()
@@ -373,31 +382,49 @@ public class OliveServlet extends HttpServlet {
 							+ "\", Content type = \"" + item.getContentType()
 							+ "\", File Size (bytes) = \"" + item.getSize()
 							+ "\"");
-					/*
-					 * Write file to the ultimate location.
-					 */
-					File file = new File(destinationDir, item.getName()); // Allocate the space
-					item.write(file); // Save the file to the allocated space
-
-					String sessionUsername = (String) session
-							.getAttribute(Attribute.USERNAME.toString());
-					int accountId = OliveDatabaseApi
-							.getAccountId(sessionUsername);
-					String projectName = (String) session
-							.getAttribute(Attribute.PROJECT_NAME.toString());
-					int projectId = OliveDatabaseApi.getProjectId(projectName,
-							accountId);
-					String videoName = file.getName().split("[.]")[0]; // Strip extensions
-					if (Security.isSafeVideoName(videoName)
-							&& S3Uploader.uploadFile(file)) { // Short-circuiting for efficiency
-						String icon = ""; // TODO Obtain this from S3.
-						OliveDatabaseApi.AddVideo(videoName, "http", projectId,
-								icon);
-					}
-
-					file.delete();
+					fileItem = item;
 				}
 			}
+
+			if (videoNameItem == null) {
+				log.severe("Video name field not found in video upload form");
+				return;
+			}
+			if (fileItem == null) {
+				log.severe("File field not found in video upload form");
+				return;
+			}
+
+			/*
+			 * Write file to the ultimate location.
+			 */
+			File file = new File(destinationDir, fileItem.getName()); // Allocate the space
+			fileItem.write(file); // Save the file to the allocated space
+
+			String sessionUsername = (String) session
+					.getAttribute(Attribute.USERNAME.toString());
+			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+			String projectName = (String) session
+					.getAttribute(Attribute.PROJECT_NAME.toString());
+			int projectId = OliveDatabaseApi.getProjectId(projectName,
+					accountId);
+			String videoName = videoNameItem.getString();
+			if (Security.isSafeVideoName(videoName)) {
+				String videoUrl = S3Api.uploadFile(file);
+				if (videoUrl != null) {
+					String icon = ""; // TODO Obtain this from S3.
+					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
+							icon);
+					//File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder.
+				} else {
+					out.println("Error uploading video to the cloud.");
+				}
+			} else {
+				out.println("Video name is invalid.");
+			}
+
+			file.delete();
+
 			out.println("File uploaded. Please close this window and refresh the editor page.");
 			out.println();
 		} catch (FileUploadException e) {

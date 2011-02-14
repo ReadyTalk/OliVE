@@ -41,7 +41,7 @@
 <form id="add-project-form" action="OliveServlet" name="process"
 	method="post">
 <p><label for="ProjectName">Project Name</label> <input type="text"
-	name="ProjectName" id="ProjectName" value="" size="32" maxlength="128" />
+	name="ProjectName" id="ProjectName" value="" size="32" maxlength="32" />
 </p>
 <p><%=safeMessage%></p>
 <input type="hidden" name="FormName" value="AddProject"></input> <input

@@ -316,14 +316,14 @@ public class OliveDatabaseApi {
 					project.getAccountId());
 			if (exists) {
 				return false;
-			} else {
-				s = "INSERT INTO Projects (Name, AccountID, Icon) "
-						+ "VALUES ('" + project.getName() + "', '"
-						+ project.getAccountId() + "' , '" + project.getIcon()
-						+ "');";
-				st.executeUpdate(s);
-				return true;
 			}
+			
+			s = "INSERT INTO Projects (Name, AccountID, Icon) "
+					+ "VALUES ('" + project.getName() + "', '"
+					+ project.getAccountId() + "' , '" + project.getIcon()
+					+ "');";
+			st.executeUpdate(s);
+			return true;	
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
