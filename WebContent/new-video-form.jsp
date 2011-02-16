@@ -20,6 +20,9 @@
 <form id="UploadForm" action="OliveServlet" name="process"
 	enctype="multipart/form-data" method="post"><input type="hidden"
 	name="FormName" value="UploadVideo"></input> <input type="file"
-	name="file" /> <input type="submit" /></form>
+	name="file" />
+<p><label for="VideoName">Video Name</label> <input type="text"
+	name="VideoName" id="VideoName" value="" size="32" maxlength="32" /></p>
+<input type="submit" /></form>
 </body>
 </html>

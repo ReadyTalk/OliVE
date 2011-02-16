@@ -98,7 +98,7 @@
 	method="post">
 <p><label for="password">Password</label><br />
 <input type="password" name="password" id="password" value="" size="32"
-	maxlength="32" /></p>
+	maxlength="128" /></p>
 <p><label for="password">Confirm Password</label><br />
 <input type="password" name="confirm_password" id="confirm_password"
 	value="" size="32" maxlength="128" /></p>

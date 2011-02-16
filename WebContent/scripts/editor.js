@@ -109,18 +109,15 @@ function attachDeleteVideoHandlers() {
 	});
 }
 
-// Perform a deleteVideo request (to test POST commands)
+// Perform a deleteVideo request
 function deleteVideo() {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
 	var postData = '{'
 				+    '"command" : "deleteVideo",'
-				+    '"arguments" : '
-				+      '['
-				+        '{'
-				+          '"video" : "' + $(this).attr('id') + '"'
-				+        '}'
-				+      ']'
+				+    '"arguments" : {'
+				+        '"video" : "' + $(this).attr('id') + '"'
+				+      '}'
 				+  '}';
 	// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
 	$.ajax({
@@ -129,13 +126,11 @@ function deleteVideo() {
 		contentType: 'application/json; charset=utf-8',
 		data: postData,
 		success: function (data) {
-			location.reload();	// Reload the page.
-			console.log(data);
+			//console.log(data);	// Erased on page reload anyway
+			location.reload();
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			// Don't reload on error so the message can be seen unaltered.
 			console.log(XMLHttpRequest.responseText);
-			alert('Video deletion not yet implemented.');
 		}
 	});
 }

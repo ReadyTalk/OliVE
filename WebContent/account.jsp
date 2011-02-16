@@ -138,6 +138,8 @@
 <!-- end #login-form-container --></div>
 <!-- end #main -->
 
+<div class="clear"></div>
+
 <div id="footer"></div>
 </body>
 </html>

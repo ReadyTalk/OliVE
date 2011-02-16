@@ -22,9 +22,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
 import com.readytalk.olive.json.DeleteProjectRequest;
+import com.readytalk.olive.json.DeleteVideoRequest;
+import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
-import com.readytalk.olive.logic.S3Uploader;
+import com.readytalk.olive.logic.S3Api;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
@@ -39,8 +41,8 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	private static final String TMP_DIR_PATH = "/temp/";
-	private static File tmpDir;
+	private static final String TEMP_DIR_PATH = "/temp/";
+	private static File tempDir;
 	private static final String DESTINATION_DIR_PATH = "/temp/";
 	private static File destinationDir;
 
@@ -49,18 +51,18 @@ public class OliveServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		String realPathTmp = getServletContext().getRealPath(TMP_DIR_PATH);
-		tmpDir = new File(realPathTmp);
-		// tmpDir = new File(TMP_DIR_PATH);
-		log.info(realPathTmp);
-		if (!tmpDir.isDirectory()) {
-			throw new ServletException(TMP_DIR_PATH + " is not a directory");
+		createTempDirectories();
+	}
+
+	private void createTempDirectories() throws ServletException {
+		String realPathTemp = getServletContext().getRealPath(TEMP_DIR_PATH);
+		tempDir = new File(realPathTemp);
+		if (!tempDir.isDirectory()) {
+			throw new ServletException(TEMP_DIR_PATH + " is not a directory");
 		}
 		String realPathDest = getServletContext().getRealPath(
 				DESTINATION_DIR_PATH);
 		destinationDir = new File(realPathDest);
-		// destinationDir = new File(DESTINATION_DIR_PATH);
-		log.info(realPathDest);
 		if (!destinationDir.isDirectory()) {
 			throw new ServletException(DESTINATION_DIR_PATH
 					+ " is not a directory");
@@ -86,7 +88,7 @@ public class OliveServlet extends HttpServlet {
 			} else if (id.equals("AddProject")) {
 				handleAddProject(request, response, session);
 			} else if (id.equals("SplitVideo")) {
-				handleSplitVideo(request, response, session);
+				handleSplitVideoWithZencoder(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestion(request, response, session);
 			} else if (id.equals("new_password")) {
@@ -103,7 +105,6 @@ public class OliveServlet extends HttpServlet {
 			handleUploadVideo(request, response, session);
 		} else if (request.getContentType().contains("application/json")) {
 			// This is not a form, but a custom POST request with JSON in it.
-			log.info("responding to a custom POST");
 			log.info("The servlet is responding to an "
 					+ "HTTP POST request in JSON format");
 			handleJsonPostRequest(request, response, session);
@@ -114,13 +115,14 @@ public class OliveServlet extends HttpServlet {
 
 	private void handleDeleteAccount(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-	throws UnsupportedEncodingException, IOException {
-		String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+			throws UnsupportedEncodingException, IOException {
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
 		int accountId = OliveDatabaseApi.getAccountId(username);
 		OliveDatabaseApi.deleteAccount(accountId);
 		response.sendRedirect("logout.jsp");
 	}
-	
+
 	private void handleNewPassword(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
@@ -128,21 +130,24 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("password");
 		String confirmNewPassword = request.getParameter("confirm_password");
 		Boolean newPasswordSet;
-		if(Security.isSafePassword(newPassword)
-				&& Security.isSafePassword(confirmNewPassword)){
+		if (Security.isSafePassword(newPassword)
+				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			if(newPassword.equals(confirmNewPassword)){
+			if (newPassword.equals(confirmNewPassword)) {
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-				String username = (String)session.getAttribute(Attribute.USERNAME.toString());
-				newPasswordSet = OliveDatabaseApi.editPassword(username,newPassword);
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), newPasswordSet);
+				String username = (String) session
+						.getAttribute(Attribute.USERNAME.toString());
+				newPasswordSet = OliveDatabaseApi.editPassword(username,
+						newPassword);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+						newPasswordSet);
+			} else {
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+						false);
+				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+						false);
 			}
-			else{
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), false);
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
-			}
-		}
-		else {
+		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
 		}
@@ -162,14 +167,14 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafeSecurityQuestion(securityQuestion)
 				&& Security.isSafeSecurityAnswer(securityAnswer)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			isCorrect = OliveDatabaseApi.isCorrectSecurityInfo(username,securityQuestion, securityAnswer);
+			isCorrect = OliveDatabaseApi.isCorrectSecurityInfo(username,
+					securityQuestion, securityAnswer);
 			session.setAttribute(Attribute.IS_CORRECT.toString(), isCorrect);
-			if(isCorrect){
+			if (isCorrect) {
 				session.setAttribute(Attribute.USERNAME.toString(), username);
 				response.sendRedirect("new-password-form.jsp");
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
-			}
-			else {
+			} else {
 				response.sendRedirect("forgot.jsp");
 			}
 		} else {
@@ -246,7 +251,8 @@ public class OliveServlet extends HttpServlet {
 				.getParameter("confirm-new-password");
 		String securityQuestion = request.getParameter("security_question");
 		String securityAnswer = request.getParameter("security_answer");
-		log.info("Security question: "+securityQuestion+". Security Answer: "+securityAnswer);
+		log.info("Security question: " + securityQuestion
+				+ ". Security Answer: " + securityAnswer);
 		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)
@@ -263,8 +269,10 @@ public class OliveServlet extends HttpServlet {
 				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
-				session.setAttribute(Attribute.SECURITY_QUESTION.toString(), securityQuestion);
-				session.setAttribute(Attribute.SECURITY_ANSWER.toString(), securityAnswer);
+				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
+						securityQuestion);
+				session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
+						securityAnswer);
 			} else {
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						false);
@@ -315,11 +323,12 @@ public class OliveServlet extends HttpServlet {
 			String icon = ""; // TODO Get this from user input.
 			Project project = new Project(projectName, accountId, icon);
 			Boolean added = OliveDatabaseApi.AddProject(project);
-			if(!added){
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(), false);
-			}
-			else{
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(), true);
+			if (!added) {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						false);
+			} else {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						true);
 			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
@@ -340,7 +349,7 @@ public class OliveServlet extends HttpServlet {
 		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
 
 		// Set the temporary directory to store the uploaded files of size above threshold.
-		fileItemFactory.setRepository(tmpDir);
+		fileItemFactory.setRepository(tempDir);
 
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 		try {
@@ -349,14 +358,23 @@ public class OliveServlet extends HttpServlet {
 			 */
 			List items = uploadHandler.parseRequest(request);
 			Iterator itr = items.iterator();
+
+			/*
+			 * The two items in the form
+			 */
+			FileItem videoNameItem = null;
+			FileItem fileItem = null;
 			while (itr.hasNext()) {
 				FileItem item = (FileItem) itr.next();
 				/*
 				 * Handle Form Fields.
 				 */
-				if (item.isFormField()) {
+				if (item.isFormField()
+						&& item.getFieldName().equals("VideoName")) { // Short-circuitry
+					// Handle text fields
 					log.info("Form Name = \"" + item.getFieldName()
 							+ "\", Value = \"" + item.getString() + "\"");
+					videoNameItem = item;
 				} else {
 					// Handle Uploaded files.
 					log.info("Field Name = \"" + item.getFieldName()
@@ -364,31 +382,49 @@ public class OliveServlet extends HttpServlet {
 							+ "\", Content type = \"" + item.getContentType()
 							+ "\", File Size (bytes) = \"" + item.getSize()
 							+ "\"");
-					/*
-					 * Write file to the ultimate location.
-					 */
-					File file = new File(destinationDir, item.getName()); // Allocate the space
-					item.write(file); // Save the file to the allocated space
-
-					String sessionUsername = (String) session
-							.getAttribute(Attribute.USERNAME.toString());
-					int accountId = OliveDatabaseApi
-							.getAccountId(sessionUsername);
-					String projectName = (String) session
-							.getAttribute(Attribute.PROJECT_NAME.toString());
-					int projectId = OliveDatabaseApi.getProjectId(projectName,
-							accountId);
-					String videoName = file.getName().split("[.]")[0]; // Strip extensions
-					if (Security.isSafeVideoName(videoName)
-							&& S3Uploader.uploadFile(file)) { // Short-circuiting for efficiency
-						String icon = ""; // TODO Obtain this from S3.
-						OliveDatabaseApi.AddVideo(videoName, "http", projectId,
-								icon);
-					}
-
-					file.delete();
+					fileItem = item;
 				}
 			}
+
+			if (videoNameItem == null) {
+				log.severe("Video name field not found in video upload form");
+				return;
+			}
+			if (fileItem == null) {
+				log.severe("File field not found in video upload form");
+				return;
+			}
+
+			/*
+			 * Write file to the ultimate location.
+			 */
+			File file = new File(destinationDir, fileItem.getName()); // Allocate the space
+			fileItem.write(file); // Save the file to the allocated space
+
+			String sessionUsername = (String) session
+					.getAttribute(Attribute.USERNAME.toString());
+			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+			String projectName = (String) session
+					.getAttribute(Attribute.PROJECT_NAME.toString());
+			int projectId = OliveDatabaseApi.getProjectId(projectName,
+					accountId);
+			String videoName = videoNameItem.getString();
+			if (Security.isSafeVideoName(videoName)) {
+				String videoUrl = S3Api.uploadFile(file);
+				if (videoUrl != null) {
+					String icon = ""; // TODO Obtain this from S3.
+					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
+							icon);
+					//File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder.
+				} else {
+					out.println("Error uploading video to the cloud.");
+				}
+			} else {
+				out.println("Video name is invalid.");
+			}
+
+			file.delete();
+
 			out.println("File uploaded. Please close this window and refresh the editor page.");
 			out.println();
 		} catch (FileUploadException e) {
@@ -408,7 +444,7 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
-	private void handleSplitVideo(HttpServletRequest request,
+	private void handleSplitVideoWithZencoder(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 		HttpSenderReceiver.split();
@@ -421,35 +457,181 @@ public class OliveServlet extends HttpServlet {
 	private void handleJsonPostRequest(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
+		String line;
+		String json = "";
+		while ((line = request.getReader().readLine()) != null) {
+			json += line;
+		}
+		request.getReader().close();
 
-		// TODO Make this more general (not just a deleteProjectRequest).
-		DeleteProjectRequest deleteProjectRequest = new Gson().fromJson(
-				request.getReader(), DeleteProjectRequest.class);
+		GeneralRequest generalRequest = new Gson().fromJson(json,
+				GeneralRequest.class);
 
-		if (!deleteProjectRequest.command.equals("deleteProject")) {
+		if (generalRequest.command.equals("getProjects")) {
+			handleGetProjects(request, response, session, json);
+		} else if (generalRequest.command.equals("createProject")) {
+			handleCreateProject(request, response, session, json);
+		} else if (generalRequest.command.equals("deleteProject")) {
+			handleDeleteProject(request, response, session, json);
+		} else if (generalRequest.command.equals("renameProject")) {
+			handleRenameProject(request, response, session, json);
+		} else if (generalRequest.command.equals("getVideos")) {
+			handleGetVideos(request, response, session, json);
+		} else if (generalRequest.command.equals("createVideo")) {
+			handleCreateVideo(request, response, session, json);
+		} else if (generalRequest.command.equals("deleteVideo")) {
+			handleDeleteVideo(request, response, session, json);
+		} else if (generalRequest.command.equals("renameVideo")) {
+			handleRenameVideo(request, response, session, json);
+		} else if (generalRequest.command.equals("addToTimeline")) {
+			handleAddToTimeline(request, response, session, json);
+		} else if (generalRequest.command.equals("removeFromTimeline")) {
+			handleRemoveFromTimeline(request, response, session, json);
+		} else if (generalRequest.command.equals("addToSelected")) {
+			handleAddToSelected(request, response, session, json);
+		} else if (generalRequest.command.equals("removeFromSelected")) {
+			handleRemoveFromSelected(request, response, session, json);
+		} else if (generalRequest.command.equals("splitVideo")) {
+			handleSplitVideo(request, response, session, json);
+		} else if (generalRequest.command.equals("combineVideos")) {
+			handleCombineVideos(request, response, session, json);
+		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+	}
+
+	private void handleGetProjects(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleCreateProject(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleDeleteProject(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		DeleteProjectRequest deleteProjectRequest = new Gson().fromJson(json,
+				DeleteProjectRequest.class);
 
 		response.setContentType("text/plain");
 		// response.setStatus(HttpServletResponse.SC_OK); // Unnecessary
 
 		PrintWriter out = response.getWriter();
 
-		out.println("{\"command\":\"" + deleteProjectRequest.command
-				+ "\",\"arguments\":[{\"project\":\""
-				+ deleteProjectRequest.arguments[0].project + "\"}]}");
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String projectToDelete = deleteProjectRequest.arguments.project;
+		int projectId = OliveDatabaseApi.getProjectId(projectToDelete,
+				accountId);
+		OliveDatabaseApi.deleteProject(projectId);
+
+		out.println(deleteProjectRequest.arguments.project
+				+ " deleted successfully.");
+		out.close();
+	}
+
+	private void handleRenameProject(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleGetVideos(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleCreateVideo(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleDeleteVideo(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		DeleteVideoRequest deleteVideoRequest = new Gson().fromJson(json,
+				DeleteVideoRequest.class);
+
+		response.setContentType("text/plain");
+
+		PrintWriter out = response.getWriter();
 
 		String sessionUsername = (String) session
 				.getAttribute(Attribute.USERNAME.toString());
 		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-		String firstProjectToDelete = deleteProjectRequest.arguments[0].project;
-		int projectId = OliveDatabaseApi.getProjectId(firstProjectToDelete,
+		String sessionProjectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
 				accountId);
-		OliveDatabaseApi.deleteProject(projectId);
+		int videoId = OliveDatabaseApi.getVideoId(
+				deleteVideoRequest.arguments.video, projectId);
+		OliveDatabaseApi.deleteVideo(videoId);
 
-		out.println(deleteProjectRequest.arguments[0].project
+		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
 		out.close();
+	}
+
+	private void handleRenameVideo(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleAddToTimeline(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleRemoveFromTimeline(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleAddToSelected(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleRemoveFromSelected(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleSplitVideo(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void handleCombineVideos(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		// TODO Auto-generated method stub
+
 	}
 }
