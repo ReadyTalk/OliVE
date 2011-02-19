@@ -415,7 +415,7 @@ public class OliveServlet extends HttpServlet {
 					String icon = ""; // TODO Obtain this from S3.
 					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
 							icon);
-					//File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder.
+					//File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 				} else {
 					out.println("Error uploading video to the cloud.");
 				}
