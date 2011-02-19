@@ -10,27 +10,13 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.6.custom/css/ui-lightness/jquery-ui-1.8.6.custom.css" />
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/ui-lightness/jquery-ui-1.8.9.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
 
-<script src="/olive/scripts/jquery-1.4.4.js"></script>
+<script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.core.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.widget.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.mouse.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.button.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.position.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.draggable.js"></script>
-<script
-	src="/olive/scripts/jquery-ui-1.8.6.custom/development-bundle/ui/jquery.ui.droppable.js"></script>
+	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/account.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
@@ -129,11 +115,10 @@
 <input type="hidden" name="FormName" value="EditUser"></input><br />
 <input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 <form id="delete-account" action="OliveServlet" name="process"
-	method="post">
-	<input type="hidden" name="FormName" value="DeleteAccount"></input><br />
-	<input type="submit" value="Delete Account" />
-	<!-- TODO: Add a "Are you sure you want to delete your account window?" here  -->		
-	</form>
+	method="post"><input type="hidden" name="FormName"
+	value="DeleteAccount"></input><br />
+<input type="submit" value="Delete Account" /> <!-- TODO: Add a "Are you sure you want to delete your account window?" here  -->
+</form>
 </div>
 <!-- end #login-form-container --></div>
 <!-- end #main -->
