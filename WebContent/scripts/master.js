@@ -38,3 +38,24 @@ function openHelpWindow() {
 	window.open("help.jsp", "HelpWindow",
 			"menubar=no,width=500,height=500,toolbar=no");
 }
+
+function makeAjaxPostRequest(postData) {
+	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
+	// E.g. 'http:' + '//' + 'olive.readytalk.com' + '/olive/OliveServlet'
+	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
+	
+	// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
+	$.ajax({
+		type: 'POST',
+		url: postUrl,
+		contentType: 'application/json; charset=utf-8',
+		data: postData,
+		success: function (data) {
+			//console.log(data);	// Erased on page reload anyway
+			location.reload();
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log(XMLHttpRequest.responseText);
+		}
+	});
+}

@@ -44,7 +44,8 @@
 		}
 
 		int accountId = OliveDatabaseApi.getAccountId(username);
-		int projectId = OliveDatabaseApi.getProjectId(projectName, accountId);
+		int projectId = OliveDatabaseApi.getProjectId(projectName,
+				accountId);
 		videosHtml = OliveDatabaseApi.populateVideos(projectId);
 	}
 %>
@@ -68,7 +69,7 @@
 </ul>
 </div>
 <div id="confirm-delete-video-dialog" title="Warning!">
-	<p>Delete video?</p>
+<p>Delete video?</p>
 </div>
 </div>
 <!-- end #header-right --></div>
@@ -84,27 +85,20 @@
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
-
-<!-- This should be refactored to be multiple forms, but then the CSS should be
-	changed so the buttons all stay on the same line. -->
-<form id="split-form" action="OliveServlet" name="process" method="post">
-<input type="button" value="Upload New" onclick="openNewVideoForm();" />
-<input type="submit" value="Split" onclick="alert('Split');" /> <input
-	type="hidden" name="FormName" value="SplitVideo"></input> <input
-	type="button" value="Delete" onclick="alert('Delete');" /> <input
-	type="button" value="Select All" onclick="alert('Select All');" /></form>
+<button id="upload-new-button" type="button">Upload New</button>
+<button id="select-all-button" type="button">Select All</button>
 </div>
 <!-- end #videos-controls -->
 <div id="videos"><%=videosHtml%></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
 
-<div class="contextMenu" id="videoMenu">
+<div class="contextMenu" id="video-context-menu">
 <ul>
-	<li id="split">Split Video</li>
+	<li id="split-video-menu-item">Split Video</li>
 </ul>
 </div>
-<!-- end #contextMenu -->
+<!-- end #context-menu -->
 
 <div id="player-div">
 <div id="player-container"><video id="player-video"
@@ -129,7 +123,8 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled" onclick="alert('Export');">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled"
+	onclick="alert('Export');">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>

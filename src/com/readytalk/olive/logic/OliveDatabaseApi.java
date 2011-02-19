@@ -317,13 +317,12 @@ public class OliveDatabaseApi {
 			if (exists) {
 				return false;
 			}
-			
-			s = "INSERT INTO Projects (Name, AccountID, Icon) "
-					+ "VALUES ('" + project.getName() + "', '"
-					+ project.getAccountId() + "' , '" + project.getIcon()
-					+ "');";
+
+			s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
+					+ project.getName() + "', '" + project.getAccountId()
+					+ "' , '" + project.getIcon() + "');";
 			st.executeUpdate(s);
-			return true;	
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -375,6 +374,27 @@ public class OliveDatabaseApi {
 			closeConnection(conn);
 		}
 		return -1;
+	}
+
+	public static String getVideoUrl(int videoId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT URL FROM Videos WHERE VideoId = '" + videoId + "';";
+			ResultSet r = st.executeQuery(s);
+			String url = null;
+			if (r.first()) {
+				url = r.getString("URL");
+			}
+			return url;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
 	}
 
 	public static String populateVideos(int projectId) {

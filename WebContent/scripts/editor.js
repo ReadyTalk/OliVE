@@ -1,5 +1,6 @@
 /*
  * This is Olive's JavaScript file for editor.jsp only.
+ * Dependencies: "/olive/scripts/master.js"
  */
 
 var deleteVideoDialogContext;	// TODO Remove this global variable.
@@ -9,7 +10,46 @@ var video; // Global
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteVideoHandlers();
+	attachVideoMenuHandlers();
+	attachPlayerHandlers();
+	enableDragAndDrop();
+	attachContextMenuHandlers();
+});
+
+function attachDeleteVideoHandlers() {
+	$('.delete-video').click(function () {
+		$('#confirm-delete-video-dialog').dialog('open');
+		deleteVideoDialogContext = this;	// This is a global variable.
+	});
 	
+	$('#confirm-delete-video-dialog').dialog({
+		autoOpen: false,
+		resizable: false,
+		height: 275,
+		modal: true,
+		buttons: {
+			'Delete': function () {
+				deleteVideo.call(deleteVideoDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				$(this).dialog('close');
+			},
+			Cancel: function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+}
+
+function attachVideoMenuHandlers() {
+	$('#upload-new-button').click(function () {
+		openNewVideoForm();
+	});
+	
+	$('#select-all-button').click(function () {
+		console.log('Select All');
+	});
+}
+
+function attachPlayerHandlers() {
 	video = document.getElementById('player-video');
 
 	$('#videos-playpause').click(function () {
@@ -39,7 +79,9 @@ jQuery(function($) {
 		}
 		$('#videos-volume-up').removeAttr('disabled'); // Enable
 	});
+}
 
+function enableDragAndDrop() {
 	// Modified from: http://jqueryui.com/demos/draggable/
 	$('.video-container').draggable( {
 		appendTo : 'body',
@@ -49,7 +91,7 @@ jQuery(function($) {
 		revert : 'invalid',
 		snap : '#timeline'
 	});
-
+	
 	$('#timeline').sortable( {
 		revert : true,
 		sort: function() {
@@ -60,13 +102,15 @@ jQuery(function($) {
 			}
 		}
 	});
+}
 
-	$('.video-container').contextMenu('videoMenu', {
+function attachContextMenuHandlers() {
+	$('.video-container').contextMenu('video-context-menu', {
 		menuStyle : {
 			border : '1px solid #000'
 		},
 		itemStyle : {
-			fontFamily : 'verdana',
+			fontFamily : 'Arial',
 			backgroundColor : '#fff',
 			color : 'black',
 			border : 'none',
@@ -78,32 +122,8 @@ jQuery(function($) {
 			border : 'none'
 		},
 		bindings : {
-			'split' : function (t) {
-				alert('Split Video');
-				console.log('Split');
-			}
-		}
-	});
-});
-
-function attachDeleteVideoHandlers() {
-	$('.delete-video').click(function () {
-		$('#confirm-delete-video-dialog').dialog('open');
-		deleteVideoDialogContext = this;	// This is a global variable.
-	});
-	
-	$('#confirm-delete-video-dialog').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 275,
-		modal: true,
-		buttons: {
-			'Delete': function () {
-				deleteVideo.call(deleteVideoDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
-				$(this).dialog('close');
-			},
-			Cancel: function () {
-				$(this).dialog('close');
+			'split-video-menu-item' : function (t) {
+				splitVideo();
 			}
 		}
 	});
@@ -111,28 +131,25 @@ function attachDeleteVideoHandlers() {
 
 // Perform a deleteVideo request
 function deleteVideo() {
-	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
-	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
-	var postData = '{'
-				+    '"command" : "deleteVideo",'
-				+    '"arguments" : {'
-				+        '"video" : "' + $(this).attr('id') + '"'
-				+      '}'
-				+  '}';
-	// Encoding: http://stackoverflow.com/questions/26620/how-to-set-encoding-in-getjson-jquery
-	$.ajax({
-		type: 'POST',
-		url: postUrl,
-		contentType: 'application/json; charset=utf-8',
-		data: postData,
-		success: function (data) {
-			//console.log(data);	// Erased on page reload anyway
-			location.reload();
-		},
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log(XMLHttpRequest.responseText);
-		}
-	});
+	var data = '{'
+			+    '"command" : "deleteVideo",'
+			+    '"arguments" : {'
+			+        '"video" : "' + $(this).attr('id') + '"'
+			+      '}'
+			+  '}';
+	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+}
+
+//Perform a splitVideo request
+function splitVideo() {
+	var data = '{'
+			+    '"command" : "splitVideo",'
+			+    '"arguments" : {'
+			+        '"video" : "' + 'valid' + '",'
+			+        '"splitTimeInSeconds" : ' + 1.5 + ''
+			+      '}'
+			+  '}';
+	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewVideoForm() {

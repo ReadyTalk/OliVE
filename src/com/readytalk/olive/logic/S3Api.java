@@ -24,7 +24,7 @@ import com.readytalk.olive.util.InvalidFileSizeException;
 // JavaDocs: http://jets3t.s3.amazonaws.com/api/org/jets3t/service/model/StorageObject.html
 public class S3Api {
 	private static final String BUCKET_NAME = "test-bucket-Olive";
-	private static final String AWS_URL_PREFIX = "https://s3.amazonaws.com/"
+	public static final String AWS_URL_PREFIX = "https://s3.amazonaws.com/"
 			+ BUCKET_NAME + "/";
 	private static final long MAX_SIZE_IN_BYTES = 31457280L; // 30 MB
 	private static final long MIN_SIZE_IN_BYTES = 1L; // ~0 MB
@@ -64,7 +64,7 @@ public class S3Api {
 			// Set Content-Length automatically based on the file's extension.
 			fileAsS3Object = new S3Object(file);
 
-			String fileNameOnS3 = S3Api.getTime();
+			String fileNameOnS3 = S3Api.getTime() + "-" + file.getName(); // TODO Make sure this isn't too big.
 
 			fileAsS3Object.setName(fileNameOnS3);
 
@@ -90,7 +90,7 @@ public class S3Api {
 	}
 
 	public static File downloadFile(String videoUrl) throws IOException {
-		String fileName = videoUrl.substring(AWS_URL_PREFIX.length());
+		String fileName = getNameFromUrl(videoUrl);
 		S3Object s3Object = null;
 		try {
 			RestS3Service s3Service = getS3Service();
@@ -112,6 +112,15 @@ public class S3Api {
 		}
 		log.severe("The function downloadFile returned null instead of a file");
 		return null; // Error
+	}
+
+	public static String getNameFromUrl(String videoUrl) {
+		return videoUrl.substring(AWS_URL_PREFIX.length());
+	}
+
+	public static String getNameFromUrlWithNewTimeStamp(String videoUrl) {
+		return S3Api.getTime()
+				+ getNameFromUrl(videoUrl).substring(S3Api.getTime().length()); // TODO Fix fugly code
 	}
 
 	private static File getFileFromInputStream(InputStream inputStream,

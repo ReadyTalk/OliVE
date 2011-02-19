@@ -24,12 +24,14 @@ import com.google.gson.Gson;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
+import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
 import com.readytalk.olive.logic.S3Api;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.model.Video;
 import com.readytalk.olive.util.Attribute;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
@@ -87,8 +89,6 @@ public class OliveServlet extends HttpServlet {
 				handleAddUser(request, response, session);
 			} else if (id.equals("AddProject")) {
 				handleAddProject(request, response, session);
-			} else if (id.equals("SplitVideo")) {
-				handleSplitVideoWithZencoder(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestion(request, response, session);
 			} else if (id.equals("new_password")) {
@@ -415,7 +415,7 @@ public class OliveServlet extends HttpServlet {
 					String icon = ""; // TODO Obtain this from S3.
 					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
 							icon);
-					//File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
+					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 				} else {
 					out.println("Error uploading video to the cloud.");
 				}
@@ -442,13 +442,6 @@ public class OliveServlet extends HttpServlet {
 		} finally {
 			out.close();
 		}
-	}
-
-	private void handleSplitVideoWithZencoder(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws IOException {
-		HttpSenderReceiver.split();
-		response.sendRedirect("editor.jsp");
 	}
 
 	// Gson help: http://code.google.com/p/google-gson/
@@ -624,8 +617,34 @@ public class OliveServlet extends HttpServlet {
 	private void handleSplitVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
+		SplitVideoRequest splitVideoRequest = new Gson().fromJson(json,
+				SplitVideoRequest.class);
 
+		response.setContentType("text/plain");
+
+		PrintWriter out = response.getWriter();
+
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String sessionProjectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
+				accountId);
+		int videoId = OliveDatabaseApi.getVideoId(
+				splitVideoRequest.arguments.video, projectId);
+		Video[] videos = HttpSenderReceiver.split(videoId,
+				splitVideoRequest.arguments.splitTimeInSeconds);
+
+		for (Video video : videos) { // For each video in videos
+			OliveDatabaseApi.AddVideo(video.getName(), video.getUrl(),
+					projectId, video.getIcon()); // projectId not computed by Zencoder
+		}
+
+		out.println(splitVideoRequest.arguments.video + " split at "
+				+ splitVideoRequest.arguments.splitTimeInSeconds
+				+ " seconds successfully.");
+		out.close();
 	}
 
 	private void handleCombineVideos(HttpServletRequest request,
