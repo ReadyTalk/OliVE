@@ -189,46 +189,44 @@ function attachSplitHandlers() {
 		}
 	}
 	
-	$('#split-video-dialog-form')
-			.dialog(
-					{
-						autoOpen : false,
-						height : 400,
-						width : 400,
-						modal : true,
-						buttons : {
-							'Split a video' : function() {
-								var bValid = true;
-								allFields.removeClass('ui-state-error');
+	$('#split-video-dialog-form').dialog({
+		autoOpen : false,
+		height : 400,
+		width : 400,
+		modal : true,
+		buttons : {
+			'Split video' : function() {
+				var bValid = true;
+				allFields.removeClass('ui-state-error');
 
-								bValid = bValid
-										&& checkLength(videoName,
-												'video-name', 1, 32);
-								bValid = bValid
-										&& checkLength(splitTimeInSeconds, 'split-time-in-seconds',
-												0, 14400);
-								bValid = bValid
-										&& checkRegexp(videoName,
-												/^[a-z]([0-9a-z_])+$/i,
-												'Video name may consist of a-z, 0-9, underscores; and must begin with a letter.');
-								bValid = bValid
-										&& checkRegexp(splitTimeInSeconds,
-												/^([0-9]*[.]?[0-9]+)$/,
-												'Split time must be a number');
-								if (bValid) {
-									$('#split-video-form').submit();
-									$(this).dialog("close");
-								}
-							},
-							Cancel : function() {
-								window.location.reload(true);
-								$(this).dialog('close');
-							}
-						},
-						close : function() {
-							allFields.val('').removeClass('ui-state-error');
-						}
-					});
+				bValid = bValid
+						&& checkLength(videoName,
+								'video-name', 1, 32);
+				bValid = bValid
+						&& checkLength(splitTimeInSeconds, 'split-time-in-seconds',
+								0, 14400);
+				bValid = bValid
+						&& checkRegexp(videoName,
+								/^[a-z]([0-9a-z_])+$/i,
+								'Video name may consist of a-z, 0-9, underscores; and must begin with a letter.');
+				bValid = bValid
+						&& checkRegexp(splitTimeInSeconds,
+								/^([0-9]*[.]?[0-9]+)$/,
+								'Split time must be a number');
+				if (bValid) {
+					$('#split-video-form').submit();
+					$(this).dialog("close");
+				}
+			},
+			Cancel : function() {
+				window.location.reload(true);
+				$(this).dialog('close');
+			}
+		},
+		close : function() {
+			allFields.val('').removeClass('ui-state-error');
+		}
+	});
 }
 
 function openNewVideoForm() {
