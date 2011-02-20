@@ -128,7 +128,7 @@ function attachContextMenuHandlers() {
 		},
 		bindings : {
 			'split-video-menu-item' : function (t) {
-				splitVideo();
+				$('#split-video-dialog-form').dialog('open');
 			}
 		}
 	});
@@ -146,12 +146,12 @@ function deleteVideo() {
 }
 
 //Perform a splitVideo request
-function splitVideo() {
+function splitVideo(videoName, splitTimeInSeconds) {
 	var data = '{'
 			+    '"command" : "splitVideo",'
 			+    '"arguments" : {'
-			+        '"video" : "' + 'valid' + '",'	// TODO Make dynamic
-			+        '"splitTimeInSeconds" : ' + 1.5 + ''	// TODO Make dynamic
+			+        '"video" : "' + videoName + '",'
+			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+      '}'
 			+  '}';
 	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
@@ -214,7 +214,7 @@ function attachSplitHandlers() {
 								/^([0-9]*[.]?[0-9]+)$/,
 								'Split time must be a number');
 				if (bValid) {
-					$('#split-video-form').submit();
+					splitVideo(videoName.val(), splitTimeInSeconds.val());
 					$(this).dialog("close");
 				}
 			},

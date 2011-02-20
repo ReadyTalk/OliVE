@@ -128,8 +128,9 @@
 	onclick="alert('Export');">Export to Computer</button>
 
 </div>
-<!-- end #export -->
-
+<!-- end #export --> <!--
+type="number", min, and max are in HTML5:
+http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" title="Split video">
 <p class="validateTips">All form fields are required.</p>
 <form id="split-video-form" action="OliveServlet" name="process"
