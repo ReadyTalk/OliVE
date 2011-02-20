@@ -86,6 +86,7 @@
 <!-- end #videos-title -->
 <div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
 <button id="upload-new-button" type="button">Upload New</button>
+<button id="split-button" type="button">Split</button>
 <button id="select-all-button" type="button">Select All</button>
 </div>
 <!-- end #videos-controls -->
@@ -127,7 +128,22 @@
 	onclick="alert('Export');">Export to Computer</button>
 
 </div>
-<!-- end #export --></div>
+<!-- end #export -->
+
+<div id="split-video-dialog-form" title="Split video">
+<p class="validateTips">All form fields are required.</p>
+<form id="split-video-form" action="OliveServlet" name="process"
+	method="post">
+<fieldset><label for="video-name">Video name</label> <input
+	type="text" name="video-name" id="video-name"
+	class="text ui-widget-content ui-corner-all" maxlength="32" /> <label
+	for="split-time-in-seconds">Split time (in seconds)</label> <input
+	type="number" min=0 max=14400 name="split-time-in-seconds"
+	id="split-time-in-seconds" value=""
+	class="text ui-widget-content ui-corner-all" /></fieldset>
+<input type="hidden" name="FormName" value="SplitVideo"></input></form>
+</div>
+<!-- end #dialog-form --></div>
 <!-- end #main -->
 
 <div class="clear"></div>

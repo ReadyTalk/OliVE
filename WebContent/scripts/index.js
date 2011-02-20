@@ -5,6 +5,10 @@
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
+	attachRegistrationHandlers();
+});
+
+function attachRegistrationHandlers() {
 	var name = $("#register-name"), email = $("#register-email"), password = $("#register-password"), cPassword = $("#confirm-register-password"), allFields = $(
 			[]).add(name).add(email).add(password).add(cPassword), tips = $(".validateTips");
 
@@ -102,7 +106,7 @@ jQuery(function($) {
 						}
 					});
 
-	$("#create-user").button().click(function() {
+	$("#create-user").click(function() {
 		$("#dialog-form").dialog("open");
 	});
-});
+}
