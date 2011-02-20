@@ -13,7 +13,11 @@ import java.util.logging.Logger;
 
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
+import org.jets3t.service.acl.AccessControlList;
+import org.jets3t.service.acl.EmailAddressGrantee;
+import org.jets3t.service.acl.Permission;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
+import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
@@ -47,7 +51,7 @@ public class S3Api {
 	}
 
 	public static String uploadFile(File file) throws InvalidFileSizeException,
-			IOException {
+			IOException, ServiceException {
 		if (file.length() > MAX_SIZE_IN_BYTES) {
 			throw new InvalidFileSizeException("File larger than "
 					+ MAX_SIZE_IN_BYTES + " bytes");
@@ -68,7 +72,11 @@ public class S3Api {
 
 			fileAsS3Object.setName(fileNameOnS3);
 
-			// Upload the data objects.
+			// Grant Zencoder the same permissions on this object as in the
+			// bucket the object will be placed in.
+			fileAsS3Object.setAcl(s3Service.getBucketAcl(BUCKET_NAME));
+
+			// Upload the data object.
 			s3Service.putObject(BUCKET_NAME, fileAsS3Object);
 
 			String videoUrl = AWS_URL_PREFIX + fileNameOnS3;
