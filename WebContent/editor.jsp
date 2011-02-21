@@ -91,8 +91,7 @@
 
 <div id="player-div">
 <div id="player-container"><video id="player-video"
-	poster="/olive/images/bbb480.jpg" preload="preload"
-	src="/olive/videos/bbb_trailer_iphone.m4v"></video></div>
+	preload="preload"></video></div>
 <div id="player-controls" class="center-text">
 <button id="videos-playpause">Play/pause</button>
 <button id="videos-volume-down">Volume down</button>

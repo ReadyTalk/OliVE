@@ -379,7 +379,7 @@ public class OliveServlet extends HttpServlet {
 					// Handle Uploaded files.
 					log.info("Field Name = \"" + item.getFieldName()
 							+ "\", File Name = \"" + item.getName()
-							+ "\", Content type = \"" + item.getContentType()
+							+ "\", Content type = \"" + item.getContentType()	// TODO Save this
 							+ "\", File Size (bytes) = \"" + item.getSize()
 							+ "\"");
 					fileItem = item;
@@ -497,15 +497,13 @@ public class OliveServlet extends HttpServlet {
 	private void handleGetProjects(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleGetProjects has not yet been implemented.");
 	}
 
 	private void handleCreateProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleCreateProject has not yet been implemented.");
 	}
 
 	private void handleDeleteProject(HttpServletRequest request,
@@ -535,22 +533,19 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRenameProject has not yet been implemented.");
 	}
 
 	private void handleGetVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleGetVideos has not yet been implemented.");
 	}
 
 	private void handleCreateVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleCreateVideo has not yet been implemented.");
 	}
 
 	private void handleDeleteVideo(HttpServletRequest request,
@@ -582,36 +577,31 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRenameVideo has not yet been implemented.");
 	}
 
 	private void handleAddToTimeline(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleAddToTimeline has not yet been implemented.");
 	}
 
 	private void handleRemoveFromTimeline(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRemoveFromTimeline has not yet been implemented.");
 	}
 
 	private void handleAddToSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleAddToSelected has not yet been implemented.");
 	}
 
 	private void handleRemoveFromSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRemoveFromSelected has not yet been implemented.");
 	}
 
 	private void handleSplitVideo(HttpServletRequest request,
@@ -650,7 +640,6 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 }

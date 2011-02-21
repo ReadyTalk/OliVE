@@ -246,11 +246,11 @@ public class OliveDatabaseApi {
 			if (r.first()) {
 				int projectNum = 0;
 				do {
-					projectNum += 1;
+					projectNum += 1;	// TODO This is never used.
 					String projectName = r.getString("Name");
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
-					projects += "<div id=\"project-"
-							+ projectNum
+					projects += "<div id=\""
+							+ projectName
 							+ "\" class=\"project-icon-container\">"
 							+ "\n"
 							+ "<a href=\"OliveServlet?projectName="
@@ -409,12 +409,12 @@ public class OliveDatabaseApi {
 			if (r.first()) {
 				int videoNum = 0;
 				do {
-					videoNum += 1;
+					videoNum += 1;	// TODO This is inconsistent with projects.
 					String videoName = r.getString("Name");
 					String videoIcon = "/olive/images/olive.png";
 
-					videos += "<span id=\"video-"
-							+ videoNum
+					videos += "<span id=\""
+							+ videoName
 							+ "\" class=\"video-container\"><img id=\"olive"
 							+ videoNum
 							+ "\" class=\"video-icon\""

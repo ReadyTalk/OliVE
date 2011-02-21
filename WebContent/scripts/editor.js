@@ -11,6 +11,7 @@ var video; // Global
 jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
+	attachVideoClickHandlers();
 	attachPlayerHandlers();
 	enableDragAndDrop();
 	attachContextMenuHandlers();
@@ -50,8 +51,79 @@ function attachVideoMenuHandlers() {
 	});
 	
 	$('#select-all-button').click(function () {
-		console.log('Select All');
+		$('.video-container').click();
 	});
+}
+
+function attachVideoClickHandlers() {
+	$('.video-container').click(function () {
+		var id = $(this).attr('id');
+		if ($(this).data('isSelected')) {
+			$(this).data('isSelected', false);
+			$(this).css( {
+				border: '1px solid green'
+			});
+			removeFromSelected(id);
+			swapOutVideoInPlayer();
+		} else {
+			$(this).data('isSelected', true);
+			$(this).css( {
+				border: '1px solid blue'
+			});
+			addToSelected(id);
+			swapOutVideoInPlayer();
+		}
+	});
+}
+
+//Perform an addToSelected request
+function addToSelected(id) {
+	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+	var data = '{'
+		+    '"command" : "addToSelected",'
+		+    '"arguments" : {'
+		+        '"video" : "' + videoName + '"'
+		+      '}'
+		+  '}';
+	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
+}
+
+// Perform a removeFromSelected request
+function removeFromSelected(id) {
+	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+	var data = '{'
+		+    '"command" : "removeFromSelected",'
+		+    '"arguments" : {'
+		+        '"video" : "' + videoName + '"'
+		+      '}'
+		+  '}';
+	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
+}
+
+// Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
+// Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
+function swapOutVideoInPlayer() {
+	if (hasVideoChanged()) {
+		$('#player-video').attr('type', getType());
+		$('#player-video').attr('poster', getPoster());
+		$('#player-video').attr('src', getSrc());
+	}
+}
+
+function hasVideoChanged() {
+	return true;	// TODO Calculate this.
+}
+
+function getType() {
+	return 'video/mp4';
+}
+
+function getPoster() {
+	return '/olive/images/bbb480.jpg';
+}
+
+function getSrc() {
+	return '/olive/videos/bbb_trailer_iphone.m4v';
 }
 
 function attachPlayerHandlers() {
@@ -64,7 +136,7 @@ function attachPlayerHandlers() {
 			video.pause();
 		}
 	});
-
+	
 	$('#videos-volume-up').click(function () {
 		if (video.volume < 0.85) { // Account for rounding errors
 			video.volume += 0.1;
@@ -142,7 +214,7 @@ function deleteVideo() {
 			+        '"video" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
@@ -154,7 +226,7 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitHandlers() {

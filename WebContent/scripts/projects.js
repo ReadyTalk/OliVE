@@ -42,7 +42,7 @@ function deleteProject() {
 			+        '"project" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewProjectForm() {
