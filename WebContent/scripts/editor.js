@@ -49,10 +49,6 @@ function attachVideoMenuHandlers() {
 	$('#split-button').click(function() {
 		$('#split-video-dialog-form').dialog('open');
 	});
-	
-	$('#select-all-button').click(function () {
-		$('.video-container').click();
-	});
 }
 
 function attachVideoClickHandlers() {
@@ -61,14 +57,14 @@ function attachVideoClickHandlers() {
 		if ($(this).data('isSelected')) {
 			$(this).data('isSelected', false);
 			$(this).css( {
-				border: '1px solid green'
+				'background-color': ''
 			});
 			removeFromSelected(id);
 			swapOutVideoInPlayer();
 		} else {
 			$(this).data('isSelected', true);
 			$(this).css( {
-				border: '1px solid blue'
+				'background-color': '#eeeeee'
 			});
 			addToSelected(id);
 			swapOutVideoInPlayer();
