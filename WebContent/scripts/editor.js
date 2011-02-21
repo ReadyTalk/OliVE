@@ -54,23 +54,31 @@ function attachVideoMenuHandlers() {
 
 function attachVideoClickHandlers() {
 	$('.video-container').click(function () {
-		var id = $(this).attr('id');
 		if ($(this).data('isSelected')) {
-			$(this).data('isSelected', false);
-			$(this).css( {
-				'background-color': ''
-			});
-			removeFromSelected(id);
-			swapOutVideoInPlayer();
+			unselect(this);
 		} else {
-			$(this).data('isSelected', true);
-			$(this).css( {
-				'background-color': '#edf4e6'	// A lighter version of the Olive color
-			});
-			addToSelected(id);
-			swapOutVideoInPlayer();
+			unselect('.video-container');	// Unselect all
+			select(this);
 		}
 	});
+	
+	function select(element) {
+		$(element).data('isSelected', true);
+		$(element).css( {
+			'background-color': '#edf4e6'	// A lighter version of the Olive color
+		});
+		addToSelected($(element).attr('id'));
+		swapOutVideoInPlayer();
+	}
+	
+	function unselect(element) {
+		$(element).data('isSelected', false);
+		$(element).css( {
+			'background-color': ''
+		});
+		removeFromSelected('all');
+		swapOutVideoInPlayer();
+	}
 }
 
 //Perform an addToSelected request
