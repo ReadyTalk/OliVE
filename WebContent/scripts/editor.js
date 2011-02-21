@@ -15,6 +15,7 @@ jQuery(function($) {
 	attachPlayerHandlers();
 	enableDragAndDrop();
 	attachContextMenuHandlers();
+	downloadVideosToTemp();
 });
 
 function attachDeleteVideoHandlers() {
@@ -64,7 +65,7 @@ function attachVideoClickHandlers() {
 		} else {
 			$(this).data('isSelected', true);
 			$(this).css( {
-				'background-color': '#eeeeee'
+				'background-color': '#edf4e6'	// A lighter version of the Olive color
 			});
 			addToSelected(id);
 			swapOutVideoInPlayer();
@@ -295,6 +296,13 @@ function attachSplitHandlers() {
 			allFields.val('').removeClass('ui-state-error');
 		}
 	});
+}
+
+function downloadVideosToTemp() {
+	var data = '{'
+		+    '"command" : "downloadVideosToTemp"'
+		+  '}';
+	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewVideoForm() {

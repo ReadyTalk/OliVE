@@ -44,9 +44,9 @@ public class OliveServlet extends HttpServlet {
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
 	private static final String TEMP_DIR_PATH = "/temp/";
-	private static File tempDir;
+	public static File tempDir; // TODO Make a getter for this.
 	private static final String DESTINATION_DIR_PATH = "/temp/";
-	private static File destinationDir;
+	public static File destinationDir; // TODO Make a getter for this.
 
 	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
 	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
@@ -379,7 +379,8 @@ public class OliveServlet extends HttpServlet {
 					// Handle Uploaded files.
 					log.info("Field Name = \"" + item.getFieldName()
 							+ "\", File Name = \"" + item.getName()
-							+ "\", Content type = \"" + item.getContentType()	// TODO Save this
+							+ "\", Content type = \""
+							+ item.getContentType() // TODO Save this
 							+ "\", File Size (bytes) = \"" + item.getSize()
 							+ "\"");
 					fileItem = item;
@@ -443,7 +444,7 @@ public class OliveServlet extends HttpServlet {
 			out.close();
 		}
 	}
-	
+
 	// Gson help: http://code.google.com/p/google-gson/
 	// http://stackoverflow.com/questions/338586/a-better-java-json-library
 	// http://stackoverflow.com/questions/1688099/converting-json-to-java/1688182#1688182
@@ -488,6 +489,8 @@ public class OliveServlet extends HttpServlet {
 			handleSplitVideo(request, response, session, json);
 		} else if (generalRequest.command.equals("combineVideos")) {
 			handleCombineVideos(request, response, session, json);
+		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
+			handleDownloadVideosToTemp(request, response, session, json);
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -641,5 +644,19 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
 		log.severe("handleCombineVideos has not yet been implemented.");
+	}
+
+	private void handleDownloadVideosToTemp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String sessionProjectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
+				accountId);
+		
+		S3Api.downloadVideosToTemp(projectId);
 	}
 }

@@ -73,8 +73,8 @@
 </div>
 <!-- end #videos-title -->
 <div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
-<button id="upload-new-button" type="button">Upload New</button>
-<button id="split-button" type="button">Split</button>
+<button id="upload-new-button" type="button">Upload New Video</button>
+<button id="split-button" type="button">Split Video</button>
 </div>
 <!-- end #videos-controls -->
 <div id="videos"><%=videosHtml%></div>

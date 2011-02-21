@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.naming.Context;
@@ -223,7 +225,7 @@ public class OliveDatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			int projectId = -1;
 			if (r.first()) {
-				projectId = Integer.parseInt(r.getString("ProjectID"));
+				projectId = r.getInt("ProjectID");
 			}
 			return projectId;
 		} catch (Exception e) {
@@ -246,7 +248,7 @@ public class OliveDatabaseApi {
 			if (r.first()) {
 				int projectNum = 0;
 				do {
-					projectNum += 1;	// TODO This is never used.
+					projectNum += 1; // TODO This is never used.
 					String projectName = r.getString("Name");
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
 					projects += "<div id=\""
@@ -365,7 +367,7 @@ public class OliveDatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			int videoId = -1;
 			if (r.first()) {
-				videoId = Integer.parseInt(r.getString("VideoID"));
+				videoId = r.getInt("VideoID");
 			}
 			return videoId;
 		} catch (Exception e) {
@@ -409,7 +411,7 @@ public class OliveDatabaseApi {
 			if (r.first()) {
 				int videoNum = 0;
 				do {
-					videoNum += 1;	// TODO This is inconsistent with projects.
+					videoNum += 1; // TODO This is inconsistent with projects.
 					String videoName = r.getString("Name");
 					String videoIcon = "/olive/images/olive.png";
 
@@ -443,6 +445,37 @@ public class OliveDatabaseApi {
 		return videos;
 		// TODO change db to have unique usernames for accounts and names for
 		// both projects and videos in one project
+	}
+
+	public static String[] getVideoUrls(int projectId) {
+		Connection conn = getDBConnection();
+		List<String> videoUrls = new LinkedList<String>();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT URL FROM Videos WHERE ProjectId = " + projectId + ";";
+			r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					videoUrls.add(r.getString("URL"));
+				} while (r.next());
+			}
+			
+			// Convert the List to a String array.
+			String[] videoUrlsAsStringArray = new String[videoUrls.size()];
+			for (int i = 0; i < videoUrls.size(); ++i) {
+				videoUrlsAsStringArray[i] = videoUrls.get(i);
+			}
+			
+			return videoUrlsAsStringArray;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
 	}
 
 	public static void AddVideo(String name, String url, int projectId,
