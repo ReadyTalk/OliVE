@@ -43,10 +43,10 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	private static final String TEMP_DIR_PATH = "/temp/";
-	private static File tempDir;
-	private static final String DESTINATION_DIR_PATH = "/temp/";
-	private static File destinationDir;
+	public static final String TEMP_DIR_PATH = "/temp/"; // TODO Make a getter for this.
+	public static File tempDir; // TODO Make a getter for this.
+	public static final String DESTINATION_DIR_PATH = "/temp/"; // TODO Make a getter for this.
+	public static File destinationDir; // TODO Make a getter for this.
 
 	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
 	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
@@ -336,7 +336,7 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("new-project-form.jsp");
 	}
 
-	private static void handleUploadVideo(HttpServletRequest request,
+	private void handleUploadVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
 		PrintWriter out = response.getWriter();
@@ -379,7 +379,8 @@ public class OliveServlet extends HttpServlet {
 					// Handle Uploaded files.
 					log.info("Field Name = \"" + item.getFieldName()
 							+ "\", File Name = \"" + item.getName()
-							+ "\", Content type = \"" + item.getContentType()
+							+ "\", Content type = \""
+							+ item.getContentType() // TODO Save this
 							+ "\", File Size (bytes) = \"" + item.getSize()
 							+ "\"");
 					fileItem = item;
@@ -400,7 +401,6 @@ public class OliveServlet extends HttpServlet {
 			 */
 			File file = new File(destinationDir, fileItem.getName()); // Allocate the space
 			fileItem.write(file); // Save the file to the allocated space
-
 			String sessionUsername = (String) session
 					.getAttribute(Attribute.USERNAME.toString());
 			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
@@ -443,7 +443,7 @@ public class OliveServlet extends HttpServlet {
 			out.close();
 		}
 	}
-	
+
 	// Gson help: http://code.google.com/p/google-gson/
 	// http://stackoverflow.com/questions/338586/a-better-java-json-library
 	// http://stackoverflow.com/questions/1688099/converting-json-to-java/1688182#1688182
@@ -488,6 +488,8 @@ public class OliveServlet extends HttpServlet {
 			handleSplitVideo(request, response, session, json);
 		} else if (generalRequest.command.equals("combineVideos")) {
 			handleCombineVideos(request, response, session, json);
+		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
+			handleDownloadVideosToTemp(request, response, session, json);
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -497,15 +499,13 @@ public class OliveServlet extends HttpServlet {
 	private void handleGetProjects(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleGetProjects has not yet been implemented.");
 	}
 
 	private void handleCreateProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleCreateProject has not yet been implemented.");
 	}
 
 	private void handleDeleteProject(HttpServletRequest request,
@@ -535,22 +535,19 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRenameProject has not yet been implemented.");
 	}
 
 	private void handleGetVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleGetVideos has not yet been implemented.");
 	}
 
 	private void handleCreateVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleCreateVideo has not yet been implemented.");
 	}
 
 	private void handleDeleteVideo(HttpServletRequest request,
@@ -582,36 +579,31 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRenameVideo has not yet been implemented.");
 	}
 
 	private void handleAddToTimeline(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleAddToTimeline has not yet been implemented.");
 	}
 
 	private void handleRemoveFromTimeline(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRemoveFromTimeline has not yet been implemented.");
 	}
 
 	private void handleAddToSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleAddToSelected has not yet been implemented.");
 	}
 
 	private void handleRemoveFromSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		log.severe("handleRemoveFromSelected has not yet been implemented.");
 	}
 
 	private void handleSplitVideo(HttpServletRequest request,
@@ -650,7 +642,26 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		// TODO Auto-generated method stub
+		log.severe("handleCombineVideos has not yet been implemented.");
+	}
 
+	private void handleDownloadVideosToTemp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String sessionProjectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
+				accountId);
+
+		String videoString = S3Api.downloadVideosToTemp(projectId);
+		System.out.println(videoString);
+		
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(videoString);
+		out.close();
 	}
 }
