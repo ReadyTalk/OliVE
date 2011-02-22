@@ -490,6 +490,8 @@ public class OliveServlet extends HttpServlet {
 			handleCombineVideos(request, response, session, json);
 		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
 			handleDownloadVideosToTemp(request, response, session, json);
+		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
+			handleDownloadVideosToTemp(request, response, session, json);
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -656,6 +658,13 @@ public class OliveServlet extends HttpServlet {
 		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
 				accountId);
 
+		String videoString = S3Api.downloadVideosToTemp(projectId);
+		System.out.println(videoString);
+		
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(videoString);
+		out.close();
 		String videoString = S3Api.downloadVideosToTemp(projectId);
 		System.out.println(videoString);
 		

@@ -39,7 +39,7 @@ function openHelpWindow() {
 			"menubar=no,width=500,height=500,toolbar=no");
 }
 
-function makeAjaxPostRequest(postData) {
+function makeAjaxPostRequest(requestData, onSuccess, onError) {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	// E.g. 'http:' + '//' + 'olive.readytalk.com' + '/olive/OliveServlet'
 	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
@@ -49,13 +49,16 @@ function makeAjaxPostRequest(postData) {
 		type: 'POST',
 		url: postUrl,
 		contentType: 'application/json; charset=utf-8',
-		data: postData,
-		success: function (data) {
-			//console.log(data);	// Erased on page reload anyway
-			location.reload();
+		data: requestData,
+		success: function (responseData) {
+			if (onSuccess) {
+				onSuccess(responseData);
+			}
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log(XMLHttpRequest.responseText);
+			if (onError) {
+				onError(XMLHttpRequest, textStatus, errorThrown);
+			}
 		}
 	});
 }

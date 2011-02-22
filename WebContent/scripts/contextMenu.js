@@ -1,4 +1,5 @@
-//JQuery plug-in to allow creation of right-click context menus
+// jQuery plug-in to allow creation of right-click context menus
+// http://www.trendskitchens.co.nz/jquery/contextmenu/
 (function($) {
 	var menu, shadow, trigger, content, hash, currentTarget;
 	var defaults = {

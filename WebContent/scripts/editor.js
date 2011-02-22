@@ -11,9 +11,11 @@ var video; // Global
 jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
+	attachVideoClickHandlers();
 	attachPlayerHandlers();
 	enableDragAndDrop();
 	attachContextMenuHandlers();
+	downloadVideosToTemp();
 });
 
 function attachDeleteVideoHandlers() {
@@ -48,10 +50,81 @@ function attachVideoMenuHandlers() {
 	$('#split-button').click(function() {
 		$('#split-video-dialog-form').dialog('open');
 	});
-	
-	$('#select-all-button').click(function () {
-		console.log('Select All');
+}
+
+function attachVideoClickHandlers() {
+	$('.video-container').click(function () {
+		if ($(this).data('isSelected')) {
+			unselect(this);
+		} else {
+			unselect('.video-container');	// Unselect all
+			select(this);
+		}
 	});
+	
+	function select(element) {
+		$(element).data('isSelected', true);
+		$(element).css( {
+			'background-color': '#edf4e6'	// A lighter version of the Olive color
+		});
+		addToSelected($(element).attr('id'));
+		swapOutVideoInPlayer(element);
+	}
+	
+	function unselect(element) {
+		$(element).data('isSelected', false);
+		$(element).css( {
+			'background-color': ''
+		});
+		removeFromSelected('all');
+		swapOutVideoInPlayer(element);
+	}
+}
+
+//Perform an addToSelected request
+function addToSelected(id) {
+	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+	var requestData = '{'
+		+    '"command" : "addToSelected",'
+		+    '"arguments" : {'
+		+        '"video" : "' + videoName + '"'
+		+      '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+}
+
+// Perform a removeFromSelected request
+function removeFromSelected(id) {
+	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+	var requestData = '{'
+		+    '"command" : "removeFromSelected",'
+		+    '"arguments" : {'
+		+        '"video" : "' + videoName + '"'
+		+      '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+}
+
+// Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
+// Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
+function swapOutVideoInPlayer(element) {
+	if (hasVideoChanged()) {
+		$('#player-video').attr('type', getType());
+		$('#player-video').attr('poster', getPoster());
+		$('#player-video').attr('src', $(element).data('url'));
+	}
+}
+
+function hasVideoChanged() {
+	return true;	// TODO Calculate this.
+}
+
+function getType() {
+	return 'video/mp4';
+}
+
+function getPoster() {
+	return '/olive/images/bbb480.jpg';
 }
 
 function attachPlayerHandlers() {
@@ -64,7 +137,7 @@ function attachPlayerHandlers() {
 			video.pause();
 		}
 	});
-
+	
 	$('#videos-volume-up').click(function () {
 		if (video.volume < 0.85) { // Account for rounding errors
 			video.volume += 0.1;
@@ -136,25 +209,25 @@ function attachContextMenuHandlers() {
 
 // Perform a deleteVideo request
 function deleteVideo() {
-	var data = '{'
+	var requestData = '{'
 			+    '"command" : "deleteVideo",'
 			+    '"arguments" : {'
 			+        '"video" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
 function splitVideo(videoName, splitTimeInSeconds) {
-	var data = '{'
+	var requestData = '{'
 			+    '"command" : "splitVideo",'
 			+    '"arguments" : {'
 			+        '"video" : "' + videoName + '",'
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitHandlers() {
@@ -227,6 +300,19 @@ function attachSplitHandlers() {
 			allFields.val('').removeClass('ui-state-error');
 		}
 	});
+}
+
+function downloadVideosToTemp() {
+	var requestData = '{'
+		+    '"command" : "downloadVideosToTemp"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		for (var i = 0; i < responseData.length; ++i) {
+			$('#' + responseData[i].name).data('url', responseData[i].url);
+			$('#' + responseData[i].name).data('icon', responseData[i].icon);
+			$('#' + responseData[i].name).data('startTimeStoryboard', responseData[i].startTimeStoryboard);
+		}
+	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewVideoForm() {
