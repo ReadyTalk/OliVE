@@ -43,9 +43,9 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	private static final String TEMP_DIR_PATH = "/temp/";
+	public static final String TEMP_DIR_PATH = "/temp/"; // TODO Make a getter for this.
 	public static File tempDir; // TODO Make a getter for this.
-	private static final String DESTINATION_DIR_PATH = "/temp/";
+	public static final String DESTINATION_DIR_PATH = "/temp/"; // TODO Make a getter for this.
 	public static File destinationDir; // TODO Make a getter for this.
 
 	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
@@ -656,7 +656,13 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.PROJECT_NAME.toString());
 		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
 				accountId);
+
+		String videoString = S3Api.downloadVideosToTemp(projectId);
+		System.out.println(videoString);
 		
-		S3Api.downloadVideosToTemp(projectId);
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(videoString);
+		out.close();
 	}
 }

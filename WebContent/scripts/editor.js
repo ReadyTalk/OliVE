@@ -68,7 +68,7 @@ function attachVideoClickHandlers() {
 			'background-color': '#edf4e6'	// A lighter version of the Olive color
 		});
 		addToSelected($(element).attr('id'));
-		swapOutVideoInPlayer();
+		swapOutVideoInPlayer(element);
 	}
 	
 	function unselect(element) {
@@ -77,41 +77,41 @@ function attachVideoClickHandlers() {
 			'background-color': ''
 		});
 		removeFromSelected('all');
-		swapOutVideoInPlayer();
+		swapOutVideoInPlayer(element);
 	}
 }
 
 //Perform an addToSelected request
 function addToSelected(id) {
 	var videoName = id;	// TODO This works by definition (but the definition should probably change).
-	var data = '{'
+	var requestData = '{'
 		+    '"command" : "addToSelected",'
 		+    '"arguments" : {'
 		+        '"video" : "' + videoName + '"'
 		+      '}'
 		+  '}';
-	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Perform a removeFromSelected request
 function removeFromSelected(id) {
 	var videoName = id;	// TODO This works by definition (but the definition should probably change).
-	var data = '{'
+	var requestData = '{'
 		+    '"command" : "removeFromSelected",'
 		+    '"arguments" : {'
 		+        '"video" : "' + videoName + '"'
 		+      '}'
 		+  '}';
-	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
-function swapOutVideoInPlayer() {
+function swapOutVideoInPlayer(element) {
 	if (hasVideoChanged()) {
 		$('#player-video').attr('type', getType());
 		$('#player-video').attr('poster', getPoster());
-		$('#player-video').attr('src', getSrc());
+		$('#player-video').attr('src', $(element).data('url'));
 	}
 }
 
@@ -125,10 +125,6 @@ function getType() {
 
 function getPoster() {
 	return '/olive/images/bbb480.jpg';
-}
-
-function getSrc() {
-	return '/olive/videos/bbb_trailer_iphone.m4v';
 }
 
 function attachPlayerHandlers() {
@@ -213,25 +209,25 @@ function attachContextMenuHandlers() {
 
 // Perform a deleteVideo request
 function deleteVideo() {
-	var data = '{'
+	var requestData = '{'
 			+    '"command" : "deleteVideo",'
 			+    '"arguments" : {'
 			+        '"video" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
 function splitVideo(videoName, splitTimeInSeconds) {
-	var data = '{'
+	var requestData = '{'
 			+    '"command" : "splitVideo",'
 			+    '"arguments" : {'
 			+        '"video" : "' + videoName + '",'
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitHandlers() {
@@ -307,10 +303,16 @@ function attachSplitHandlers() {
 }
 
 function downloadVideosToTemp() {
-	var data = '{'
+	var requestData = '{'
 		+    '"command" : "downloadVideosToTemp"'
 		+  '}';
-	makeAjaxPostRequest(data, false);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {
+		for (var i = 0; i < responseData.length; ++i) {
+			$('#' + responseData[i].name).data('url', responseData[i].url);
+			$('#' + responseData[i].name).data('icon', responseData[i].icon);
+			$('#' + responseData[i].name).data('startTimeStoryboard', responseData[i].startTimeStoryboard);
+		}
+	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewVideoForm() {

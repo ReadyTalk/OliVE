@@ -6,4 +6,5 @@ in OliveServlet.java
 
 This is the directory where our temp files are staged to be pushed to the S3 bucket from the server.
 
-C:\Users\Alberto\Documents\workspace-sts-2.3.2.RELEASE\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\olive
+C:\Users\Alberto\Documents\workspace-sts-2.3.2.RELEASE\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\olive\temp
+C:\Users\Terry\Documents\workspace-sts-2.5.0.M3\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\olive\temp

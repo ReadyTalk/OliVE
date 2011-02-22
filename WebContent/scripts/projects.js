@@ -36,13 +36,13 @@ function attachDeleteProjectHandlers() {
 
 // Perform a deleteProject request
 function deleteProject() {
-	var data = '{'
+	var requestData = '{'
 			+    '"command" : "deleteProject",'
 			+    '"arguments" : {'
 			+        '"project" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(data, true);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function openNewProjectForm() {

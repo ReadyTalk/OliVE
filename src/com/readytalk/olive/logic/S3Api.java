@@ -26,6 +26,8 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
+import com.google.gson.Gson;
+import com.readytalk.olive.model.Video;
 import com.readytalk.olive.servlet.OliveServlet;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
@@ -153,9 +155,10 @@ public class S3Api {
 	}
 
 	// Modified from: http://msdn.microsoft.com/en-us/library/aa478985.aspx
-	public static void downloadVideosToTemp(int projectId) throws IOException {
+	public static String downloadVideosToTemp(int projectId) throws IOException {
 		String[] videoUrls = OliveDatabaseApi.getVideoUrls(projectId);
 		File tempDir = OliveServlet.tempDir;
+		Video[] videos = new Video[videoUrls.length];
 		log.info("Downloading " + videoUrls.length
 				+ " file(s) from S3 (may take a while)...");
 		for (int urlIndex = 0; urlIndex < videoUrls.length; ++urlIndex) {
@@ -164,10 +167,22 @@ public class S3Api {
 					getNameFromUrl(videoUrls[urlIndex]));
 			outFile.deleteOnExit(); // Delete the file when the JVM exits (cannot be undone).
 			S3Api.saveFileToDisk(inFile, outFile);
+
+			// TODO Get all these dynamically from database.
+			String videoName = "valid";
+			String videoUrl = "/olive" + OliveServlet.TEMP_DIR_PATH
+					+ getNameFromUrl(videoUrls[urlIndex]);	// TODO Distinguish this URL from the S3 URL!
+			String videoIcon = "http://icon";
+			int startTimeStoryboard = 1;
+			videos[urlIndex] = new Video(videoName, videoUrl, videoIcon,
+					projectId, startTimeStoryboard);
+			
 			log.info((videoUrls.length - 1 - urlIndex)
 					+ " file(s) remaining)...");
 		}
 		log.info("Downloaded " + videoUrls.length + " file(s) from S3.");
+
+		return new Gson().toJson(videos);
 	}
 
 	// Modified from: http://java.sun.com/docs/books/performance/1st_edition/html/JPIOPerformance.fm.html#11078
