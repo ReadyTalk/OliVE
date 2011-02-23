@@ -55,9 +55,16 @@ function attachVideoMenuHandlers() {
 function attachVideoClickHandlers() {
 	$('.video-container').click(function () {
 		if ($(this).data('isSelected')) {
+			console.log('unselecting this');
 			unselect(this);
 		} else {
-			unselect('.video-container');	// Unselect all
+			console.log('selecting this');
+			// First, unselect all
+			$('.video-container').each(function () {
+				console.log(this);
+				unselect(this);	// 'this' is a different 'this' than outside .each()
+			});
+			// Then, select this
 			select(this);
 		}
 	});
@@ -76,8 +83,8 @@ function attachVideoClickHandlers() {
 		$(element).css( {
 			'background-color': ''
 		});
-		removeFromSelected(element);	// TODO Think of a way to removeAll
-		updatePlayerWithNewElement();	// TODO Think of better way to unUpdate
+		removeFromSelected($(element).attr('id'));
+		updatePlayerWithNoElements();
 	}
 }
 
@@ -108,14 +115,15 @@ function removeFromSelected(id) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	if (typeof id === 'undefined') {	// Not passed in as an argument
-		$('#player-video').attr('type', '');
-		$('#player-video').attr('poster', '');
-		$('#player-video').attr('src', '');
-	}
 	$('#player-video').attr('type', 'video/mp4');	// TODO Get this from the database.
 	$('#player-video').attr('poster', $(element).data('icon'));
 	$('#player-video').attr('src', $(element).data('url'));
+}
+
+function updatePlayerWithNoElements() {
+	$('#player-video').removeAttr('type');
+	$('#player-video').removeAttr('poster');
+	$('#player-video').removeAttr('src');
 }
 
 function attachPlayerHandlers() {
