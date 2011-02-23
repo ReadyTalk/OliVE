@@ -1,13 +1,9 @@
 package com.readytalk.olive.logic;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,11 +14,7 @@ import java.util.logging.Logger;
 
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
-import org.jets3t.service.acl.AccessControlList;
-import org.jets3t.service.acl.EmailAddressGrantee;
-import org.jets3t.service.acl.Permission;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
@@ -156,31 +148,35 @@ public class S3Api {
 
 	// Modified from: http://msdn.microsoft.com/en-us/library/aa478985.aspx
 	public static String downloadVideosToTemp(int projectId) throws IOException {
-		String[] videoUrls = OliveDatabaseApi.getVideoUrls(projectId);
+		int[] videoIds = OliveDatabaseApi.getVideoIds(projectId);
 		File tempDir = OliveServlet.tempDir;
-		Video[] videos = new Video[videoUrls.length];
-		log.info("Downloading " + videoUrls.length
+		Video[] videos = new Video[videoIds.length];
+		log.info("Downloading " + videoIds.length
 				+ " file(s) from S3 (may take a while)...");
-		for (int urlIndex = 0; urlIndex < videoUrls.length; ++urlIndex) {
-			File inFile = S3Api.getFileFromS3(videoUrls[urlIndex]);
-			File outFile = new File(tempDir,
-					getNameFromUrl(videoUrls[urlIndex]));
+		log.info("Download directory: " + tempDir);
+		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
+			String videoUrl = OliveDatabaseApi
+					.getVideoUrl(videoIds[videoIndex]);
+			File inFile = S3Api.getFileFromS3(videoUrl);
+			File outFile = new File(tempDir, getNameFromUrl(videoUrl));
 			outFile.deleteOnExit(); // Delete the file when the JVM exits (cannot be undone).
 			S3Api.saveFileToDisk(inFile, outFile);
 
-			// TODO Get all these dynamically from database.
-			String videoName = "valid";
-			String videoUrl = "/olive" + OliveServlet.TEMP_DIR_PATH
-					+ getNameFromUrl(videoUrls[urlIndex]);	// TODO Distinguish this URL from the S3 URL!
-			String videoIcon = "http://icon";
-			int startTimeStoryboard = 1;
-			videos[urlIndex] = new Video(videoName, videoUrl, videoIcon,
-					projectId, startTimeStoryboard);
-			
-			log.info((videoUrls.length - 1 - urlIndex)
+			String videoName = OliveDatabaseApi
+					.getVideoName(videoIds[videoIndex]);
+			String videoTempUrl = "/olive" + OliveServlet.TEMP_DIR_PATH
+					+ getNameFromUrl(videoUrl);
+			String videoTempIcon = OliveDatabaseApi
+					.getVideoIcon(videoIds[videoIndex]);
+			int startTimeStoryboard = OliveDatabaseApi
+					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
+			videos[videoIndex] = new Video(videoName, videoTempUrl,
+					videoTempIcon, projectId, startTimeStoryboard); // TODO Distinguish these urls from the S3 urls!
+
+			log.info((videoIds.length - 1 - videoIndex)
 					+ " file(s) remaining)...");
 		}
-		log.info("Downloaded " + videoUrls.length + " file(s) from S3.");
+		log.info("Downloaded " + videoIds.length + " file(s) from S3.");
 
 		return new Gson().toJson(videos);
 	}

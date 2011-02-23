@@ -115,12 +115,12 @@ public class OliveDatabaseApi {
 				"Accounts", "Username", username));
 	}
 
-	public static String getUsername(int accountId) {
+	public static String getAccountUsername(int accountId) {
 		return getUnknownValueFromTable("Username", "Accounts", "AccountId",
 				Integer.toString(accountId));
 	}
 
-	public static String getPassword(int accountId) {
+	public static String getAccountPassword(int accountId) {
 		return getUnknownValueFromTable("Password", "Accounts", "AccountId",
 				Integer.toString(accountId));
 	}
@@ -130,9 +130,19 @@ public class OliveDatabaseApi {
 				Integer.toString(accountId));
 	}
 
-	public static String getEmail(int accountId) {
+	public static String getAccountEmail(int accountId) {
 		return getUnknownValueFromTable("Email", "Accounts", "AccountId",
 				Integer.toString(accountId));
+	}
+
+	public static String getAccountSecurityQuestion(int accountId) {
+		return getUnknownValueFromTable("SecurityQuestion", "Accounts",
+				"AccountId", Integer.toString(accountId));
+	}
+
+	public static String getAccountSecurityAnswer(int accountId) {
+		return getUnknownValueFromTable("SecurityAnswer", "Accounts",
+				"AccountId", Integer.toString(accountId));
 	}
 
 	public static Boolean editAccount(User user) {
@@ -234,6 +244,21 @@ public class OliveDatabaseApi {
 			closeConnection(conn);
 		}
 		return -1;
+	}
+
+	public static String getProjectName(int projectId) {
+		return getUnknownValueFromTable("Name", "Projects", "ProjectID",
+				Integer.toString(projectId));
+	}
+
+	public static int getProjectAccountId(int projectId) {
+		return Integer.parseInt(getUnknownValueFromTable("AccountID",
+				"Projects", "ProjectID", Integer.toString(projectId)));
+	}
+
+	public static String getProjectIcon(int projectId) {
+		return getUnknownValueFromTable("Icon", "Projects", "ProjectID",
+				Integer.toString(projectId));
 	}
 
 	public static String populateProjects(int accountId) {
@@ -378,25 +403,34 @@ public class OliveDatabaseApi {
 		return -1;
 	}
 
+	public static String getVideoName(int videoId) {
+		return getUnknownValueFromTable("Name", "Videos", "VideoID",
+				Integer.toString(videoId));
+	}
+
 	public static String getVideoUrl(int videoId) {
-		Connection conn = getDBConnection();
-		try {
-			Statement st = conn.createStatement();
-			String s = "USE OliveData;";
-			st.executeUpdate(s);
-			s = "SELECT URL FROM Videos WHERE VideoId = '" + videoId + "';";
-			ResultSet r = st.executeQuery(s);
-			String url = null;
-			if (r.first()) {
-				url = r.getString("URL");
-			}
-			return url;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(conn);
+		return getUnknownValueFromTable("URL", "Videos", "VideoID",
+				Integer.toString(videoId));
+	}
+
+	public static String getVideoIcon(int videoId) {
+		return getUnknownValueFromTable("Icon", "Videos", "VideoID",
+				Integer.toString(videoId));
+	}
+
+	public static int getVideoProjectId(int videoId) {
+		return Integer.parseInt(getUnknownValueFromTable("ProjectID", "Videos",
+				"VideoID", Integer.toString(videoId)));
+	}
+
+	public static int getVideoStartTimeStoryboard(int videoId) {
+		String videoStartTimeStoryboard = getUnknownValueFromTable(
+				"StartTimeStoryboard", "Videos", "VideoID",
+				Integer.toString(videoId));
+		if (videoStartTimeStoryboard == null) {
+			return -1;	// TODO Is this a good idea?
 		}
-		return null;
+		return Integer.parseInt(videoStartTimeStoryboard);
 	}
 
 	public static String populateVideos(int projectId) {
@@ -447,29 +481,30 @@ public class OliveDatabaseApi {
 		// both projects and videos in one project
 	}
 
-	public static String[] getVideoUrls(int projectId) {
+	public static int[] getVideoIds(int projectId) {
 		Connection conn = getDBConnection();
-		List<String> videoUrls = new LinkedList<String>();
+		List<Integer> videoIds = new LinkedList<Integer>();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			ResultSet r;
-			s = "SELECT URL FROM Videos WHERE ProjectId = " + projectId + ";";
+			s = "SELECT VideoID FROM Videos WHERE ProjectID = " + projectId
+					+ ";";
 			r = st.executeQuery(s);
 			if (r.first()) {
 				do {
-					videoUrls.add(r.getString("URL"));
+					videoIds.add(r.getInt("VideoID"));
 				} while (r.next());
 			}
-			
-			// Convert the List to a String array.
-			String[] videoUrlsAsStringArray = new String[videoUrls.size()];
-			for (int i = 0; i < videoUrls.size(); ++i) {
-				videoUrlsAsStringArray[i] = videoUrls.get(i);
+
+			// Convert the List to an int array.
+			int[] videoIdsAsIntArray = new int[videoIds.size()];
+			for (int i = 0; i < videoIds.size(); ++i) {
+				videoIdsAsIntArray[i] = videoIds.get(i);
 			}
-			
-			return videoUrlsAsStringArray;
+
+			return videoIdsAsIntArray;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

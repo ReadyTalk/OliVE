@@ -221,10 +221,10 @@ public class OliveServlet extends HttpServlet {
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = OliveDatabaseApi.getAccountId(username);
 				session.setAttribute(Attribute.USERNAME.toString(),
-						OliveDatabaseApi.getUsername(accountId));
+						OliveDatabaseApi.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
 				session.setAttribute(Attribute.EMAIL.toString(),
-						OliveDatabaseApi.getEmail(accountId));
+						OliveDatabaseApi.getAccountEmail(accountId));
 				session.setAttribute(Attribute.NAME.toString(),
 						OliveDatabaseApi.getAccountName(accountId));
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
@@ -658,13 +658,6 @@ public class OliveServlet extends HttpServlet {
 		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
 				accountId);
 
-		String videoString = S3Api.downloadVideosToTemp(projectId);
-		System.out.println(videoString);
-		
-		response.setContentType("application/json; charset=utf-8");
-		PrintWriter out = response.getWriter();
-		out.println(videoString);
-		out.close();
 		String videoString = S3Api.downloadVideosToTemp(projectId);
 		System.out.println(videoString);
 		
