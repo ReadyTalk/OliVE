@@ -55,13 +55,10 @@ function attachVideoMenuHandlers() {
 function attachVideoClickHandlers() {
 	$('.video-container').click(function () {
 		if ($(this).data('isSelected')) {
-			console.log('unselecting this');
 			unselect(this);
 		} else {
-			console.log('selecting this');
 			// First, unselect all
 			$('.video-container').each(function () {
-				console.log(this);
 				unselect(this);	// 'this' is a different 'this' than outside .each()
 			});
 			// Then, select this
