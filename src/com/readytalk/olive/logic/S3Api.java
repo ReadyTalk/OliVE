@@ -21,8 +21,8 @@ import com.google.gson.Gson;
 import com.readytalk.olive.model.Video;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
-// JetS3t code samples (Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
-// JetS3t code samples (HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
+// JetS3t code samples (in Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
+// JetS3t code samples (in HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
 // JetS3t JavaDocs: http://jets3t.s3.amazonaws.com/api/org/jets3t/service/model/StorageObject.html
 public class S3Api {
 	private static final String BUCKET_NAME = "test-bucket-Olive";
@@ -67,7 +67,7 @@ public class S3Api {
 			// Set Content-Length automatically based on the file's extension.
 			fileAsS3Object = new S3Object(file);
 
-			String fileNameOnS3 = S3Api.getTime() + "-" + file.getName(); // TODO Make sure this isn't too big.
+			String fileNameOnS3 = S3Api.getTime() + "-" + file.getName(); // TODO Make sure this isn't too long.
 
 			fileAsS3Object.setName(fileNameOnS3);
 
@@ -101,6 +101,13 @@ public class S3Api {
 		}
 	}
 
+	public static void deleteFileInS3(String fileName) {
+		log.severe("deleteFileInS3 has not yet been implemented.");
+		// Do something like this:
+		// RestS3Service s3Service = getS3Service();
+		// s3Service.deleteObject(BUCKET_NAME, objectKey); // TODO Store objectKey in the database
+	}
+
 	public static String getNameFromUrl(String videoUrl) {
 		return videoUrl.substring(AWS_URL_PREFIX.length());
 	}
@@ -113,7 +120,7 @@ public class S3Api {
 	public static String getVideoInformation(int projectId) {
 		int[] videoIds = OliveDatabaseApi.getVideoIds(projectId);
 		Video[] videos = new Video[videoIds.length];
-		
+
 		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
 			String videoName = OliveDatabaseApi
 					.getVideoName(videoIds[videoIndex]);
@@ -123,9 +130,9 @@ public class S3Api {
 					.getVideoIcon(videoIds[videoIndex]);
 			int startTimeStoryboard = OliveDatabaseApi
 					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
-			
-			videos[videoIndex] = new Video(videoName, videoUrl,
-					videoIcon, projectId, startTimeStoryboard);
+
+			videos[videoIndex] = new Video(videoName, videoUrl, videoIcon,
+					projectId, startTimeStoryboard);
 		}
 
 		return new Gson().toJson(videos);

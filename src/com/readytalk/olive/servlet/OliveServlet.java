@@ -580,6 +580,8 @@ public class OliveServlet extends HttpServlet {
 				deleteVideoRequest.arguments.video, projectId);
 		OliveDatabaseApi.deleteVideo(videoId);
 
+		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
+		
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
 		out.close();
