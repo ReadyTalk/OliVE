@@ -1,12 +1,7 @@
 package com.readytalk.olive.logic;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,11 +19,10 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.google.gson.Gson;
 import com.readytalk.olive.model.Video;
-import com.readytalk.olive.servlet.OliveServlet;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
-// JetS3t code samples (Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
-// JetS3t code samples (HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
+// JetS3t code samples (in Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
+// JetS3t code samples (in HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
 // JetS3t JavaDocs: http://jets3t.s3.amazonaws.com/api/org/jets3t/service/model/StorageObject.html
 public class S3Api {
 	private static final String BUCKET_NAME = "test-bucket-Olive";
@@ -38,8 +32,6 @@ public class S3Api {
 	private static final long MAX_SIZE_IN_BYTES = 31457280L; // 30 MB
 	private static final long MIN_SIZE_IN_BYTES = 1L; // ~0 MB
 	private static final String DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
-	private static final int BUFFER_SIZE = 100000; // 100 KB
-	private static final byte[] buffer = new byte[BUFFER_SIZE];
 	private static Logger log = Logger.getLogger(S3Api.class.getName());
 
 	private static RestS3Service getS3Service() throws S3ServiceException {
@@ -75,7 +67,7 @@ public class S3Api {
 			// Set Content-Length automatically based on the file's extension.
 			fileAsS3Object = new S3Object(file);
 
-			String fileNameOnS3 = S3Api.getTime() + "-" + file.getName(); // TODO Make sure this isn't too big.
+			String fileNameOnS3 = S3Api.getTime() + "-" + file.getName(); // TODO Make sure this isn't too long.
 
 			fileAsS3Object.setName(fileNameOnS3);
 
@@ -109,29 +101,11 @@ public class S3Api {
 		}
 	}
 
-	public static File getFileFromS3(String videoUrl) throws IOException {
-		String fileName = getNameFromUrl(videoUrl);
-		S3Object s3Object = null;
-		try {
-			RestS3Service s3Service = getS3Service();
-
-			s3Object = s3Service.getObject(BUCKET_NAME, fileName);
-
-			return getFileFromInputStream(s3Object.getDataInputStream(),
-					fileName);
-		} catch (S3ServiceException e) {
-			log.severe("Error accessing object \"" + fileName
-					+ "\" in S3 bucket \"" + BUCKET_NAME + "\"");
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			log.severe("Error accessing S3Object input stream for file \""
-					+ fileName + "\" in S3 bucket \"" + BUCKET_NAME + "\"");
-			e.printStackTrace();
-		} finally {
-			s3Object.closeDataInputStream();
-		}
-		log.severe("The function downloadFile returned null instead of a file");
-		return null; // Error
+	public static void deleteFileInS3(String fileName) {
+		log.severe("deleteFileInS3 has not yet been implemented.");
+		// Do something like this:
+		// RestS3Service s3Service = getS3Service();
+		// s3Service.deleteObject(BUCKET_NAME, objectKey); // TODO Store objectKey in the database
 	}
 
 	public static String getNameFromUrl(String videoUrl) {
@@ -143,78 +117,24 @@ public class S3Api {
 				+ getNameFromUrl(videoUrl).substring(S3Api.getTime().length()); // TODO Fix fugly code
 	}
 
-	private static File getFileFromInputStream(InputStream inputStream,
-			String name) throws FileNotFoundException, IOException {
-		File file = new File(name);
-		OutputStream out = new FileOutputStream(file);
-		byte buffer[] = new byte[1024];
-		int bufferLength;
-		while ((bufferLength = inputStream.read(buffer)) > 0) {
-			out.write(buffer, 0, bufferLength);
-		}
-		out.close();
-		inputStream.close();
-		return file;
-	}
-
-	// Modified from: http://msdn.microsoft.com/en-us/library/aa478985.aspx
-	public static String downloadVideosToTemp(int projectId) throws IOException {
+	public static String getVideoInformation(int projectId) {
 		int[] videoIds = OliveDatabaseApi.getVideoIds(projectId);
-		File tempDir = OliveServlet.tempDir;
 		Video[] videos = new Video[videoIds.length];
-		log.info("Downloading " + videoIds.length
-				+ " file(s) from S3 (may take a while)...");
-		log.info("Download directory: " + tempDir);
-		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
-			String videoUrl = OliveDatabaseApi
-					.getVideoUrl(videoIds[videoIndex]);
-			File inFile = S3Api.getFileFromS3(videoUrl);
-			File outFile = new File(tempDir, getNameFromUrl(videoUrl));
-			outFile.deleteOnExit(); // Delete the file when the JVM exits (cannot be undone).
-			S3Api.saveFileToDisk(inFile, outFile);
 
+		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
 			String videoName = OliveDatabaseApi
 					.getVideoName(videoIds[videoIndex]);
-			String videoTempUrl = "/olive" + OliveServlet.TEMP_DIR_PATH
-					+ getNameFromUrl(videoUrl);
-			String videoTempIcon = OliveDatabaseApi
+			String videoUrl = OliveDatabaseApi
+					.getVideoUrl(videoIds[videoIndex]);
+			String videoIcon = OliveDatabaseApi
 					.getVideoIcon(videoIds[videoIndex]);
 			int startTimeStoryboard = OliveDatabaseApi
 					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
-			videos[videoIndex] = new Video(videoName, videoTempUrl,
-					videoTempIcon, projectId, startTimeStoryboard); // TODO Distinguish these urls from the S3 urls!
 
-			log.info((videoIds.length - 1 - videoIndex)
-					+ " file(s) remaining...");
+			videos[videoIndex] = new Video(videoName, videoUrl, videoIcon,
+					projectId, startTimeStoryboard);
 		}
-		log.info("Downloaded " + videoIds.length + " file(s) from S3.");
 
 		return new Gson().toJson(videos);
-	}
-
-	// Modified from: http://java.sun.com/docs/books/performance/1st_edition/html/JPIOPerformance.fm.html#11078
-	public static void saveFileToDisk(File from, File to) throws IOException {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new FileInputStream(from);
-			out = new FileOutputStream(to);
-			while (true) {
-				synchronized (buffer) {
-					int amountRead = in.read(buffer);
-					if (amountRead == -1) {
-						break;
-					}
-					out.write(buffer, 0, amountRead);
-				}
-			}
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-			if (out != null) {
-				out.close();
-			}
-		}
 	}
 }

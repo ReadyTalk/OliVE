@@ -424,11 +424,13 @@ public class OliveServlet extends HttpServlet {
 				} else {
 					out.println("Error uploading video to the cloud.");
 					log.warning("Error uploading video to the cloud.");
+					log.warning("Error uploading video to the cloud.");
 					response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else {
 				out.println("Video name is invalid.");
+				log.warning("Video name is invalid.");
 				log.warning("Video name is invalid.");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 				return;
@@ -506,6 +508,7 @@ public class OliveServlet extends HttpServlet {
 			getVideoInformation(request, response, session, json);
 		} else {
 			log.warning("JSON request not recognized.");
+			log.warning("JSON request not recognized.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -582,6 +585,8 @@ public class OliveServlet extends HttpServlet {
 
 		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
 		
+		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
+		
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
 		out.close();
@@ -630,6 +635,7 @@ public class OliveServlet extends HttpServlet {
 		if (!Security.isSafeVideoName(splitVideoRequest.arguments.video)) {
 			out.println("Name of video to split is invalid.");
 			log.warning("Name of video to split is invalid.");
+			log.warning("Name of video to split is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -637,6 +643,7 @@ public class OliveServlet extends HttpServlet {
 		if (!Security
 				.isSafeSplitTimeInSeconds(splitVideoRequest.arguments.splitTimeInSeconds)) {
 			out.println("Split time (in seconds) is invalid.");
+			log.warning("Split time (in seconds) is invalid.");
 			log.warning("Split time (in seconds) is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
