@@ -14,9 +14,6 @@ public class Security {
 	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
 	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
 
-	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
-	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
-
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
 			int maxLength) {
@@ -95,7 +92,7 @@ public class Security {
 		}
 		else{
 			String [] content = contentType.split("/");
-			return content[0].equals("video"); 
+			return content[0].equals("video") || (content[0].equals("audio") && content[1].equals("ogg")); 
 		}
 	}
 

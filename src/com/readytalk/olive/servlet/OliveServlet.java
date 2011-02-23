@@ -411,33 +411,38 @@ public class OliveServlet extends HttpServlet {
 			/*
 			 * Write file to the ultimate location.
 			 */
+			FileItem i = fileItem;
 			file = new File(destinationDir, fileItem.getName()); // Allocate the space
 			fileItem.write(file); // Save the file to the allocated space
 			int projectId = getProjectIdFromSessionAttributes(session);
 			String videoName = videoNameItem.getString();
-			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(fileItem)) {
+			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(i)) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
 					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
 							"/olive/images/bbb480.jpg"); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
+					out.println("File uploaded. Please close this window and refresh the editor page.");
+					out.println();
 				} else {
-					out.println("Error uploading video to the cloud.");
-					log.warning("Error uploading video to the cloud.");
-					log.warning("Error uploading video to the cloud.");
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+					out.println("Upload Failed. Error uploading video to the cloud.");
+					log.warning("Upload Failed. Error uploading video to the cloud.");
+					//response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
+			} else if(Security.isSafeVideoName(videoName)){
+				out.println("Upload Failed. Video type is invalid.");
+				log.warning("Upload Failed. Video type is invalid.");
+				//response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+				return;
 			} else {
-				out.println("Video name is invalid.");
-				log.warning("Video name is invalid.");
-				log.warning("Video name is invalid.");
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				out.println("Upload Failed. Video name is invalid.");
+				log.warning("Upload Failed. Video name is invalid.");
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
-
-			out.println("File uploaded. Please close this window and refresh the editor page.");
-			out.println();
+			
+			
 		} catch (FileUploadException e) {
 			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
