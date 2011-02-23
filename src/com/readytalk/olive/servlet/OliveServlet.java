@@ -415,20 +415,21 @@ public class OliveServlet extends HttpServlet {
 			fileItem.write(file); // Save the file to the allocated space
 			int projectId = getProjectIdFromSessionAttributes(session);
 			String videoName = videoNameItem.getString();
-			if (Security.isSafeVideoName(videoName)) {
+			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(fileItem)) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
-					String icon = ""; // TODO Obtain this from S3.
 					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
-							icon);
+							"/olive/images/bbb480.jpg"); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 				} else {
 					out.println("Error uploading video to the cloud.");
+					log.warning("Error uploading video to the cloud.");
 					response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else {
 				out.println("Video name is invalid.");
+				log.warning("Video name is invalid.");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -501,11 +502,10 @@ public class OliveServlet extends HttpServlet {
 			handleSplitVideo(request, response, session, json);
 		} else if (generalRequest.command.equals("combineVideos")) {
 			handleCombineVideos(request, response, session, json);
-		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
-			handleDownloadVideosToTemp(request, response, session, json);
-		} else if (generalRequest.command.equals("downloadVideosToTemp")) {
-			handleDownloadVideosToTemp(request, response, session, json);
+		} else if (generalRequest.command.equals("getVideoInformation")) {
+			getVideoInformation(request, response, session, json);
 		} else {
+			log.warning("JSON request not recognized.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -580,6 +580,8 @@ public class OliveServlet extends HttpServlet {
 				deleteVideoRequest.arguments.video, projectId);
 		OliveDatabaseApi.deleteVideo(videoId);
 
+		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
+		
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
 		out.close();
@@ -627,6 +629,7 @@ public class OliveServlet extends HttpServlet {
 
 		if (!Security.isSafeVideoName(splitVideoRequest.arguments.video)) {
 			out.println("Name of video to split is invalid.");
+			log.warning("Name of video to split is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -634,6 +637,7 @@ public class OliveServlet extends HttpServlet {
 		if (!Security
 				.isSafeSplitTimeInSeconds(splitVideoRequest.arguments.splitTimeInSeconds)) {
 			out.println("Split time (in seconds) is invalid.");
+			log.warning("Split time (in seconds) is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -641,12 +645,12 @@ public class OliveServlet extends HttpServlet {
 		int projectId = getProjectIdFromSessionAttributes(session);
 		int videoId = OliveDatabaseApi.getVideoId(
 				splitVideoRequest.arguments.video, projectId);
-		Video[] videos = HttpSenderReceiver.split(videoId,
+		Video[] videoFragments = HttpSenderReceiver.split(videoId,
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
-		for (Video video : videos) { // For each video in videos
-			OliveDatabaseApi.AddVideo(video.getName(), video.getUrl(),
-					projectId, video.getIcon()); // projectId not computed by Zencoder
+		for (Video videoFragment : videoFragments) { // foreach-loop
+			OliveDatabaseApi.AddVideo(videoFragment.getName(),
+					videoFragment.getUrl(), projectId, videoFragment.getIcon()); // projectId not computed by Zencoder
 		}
 
 		out.println(splitVideoRequest.arguments.video + " split at "
@@ -661,14 +665,11 @@ public class OliveServlet extends HttpServlet {
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 
-	private void handleDownloadVideosToTemp(HttpServletRequest request,
+	private void getVideoInformation(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
 		int projectId = getProjectIdFromSessionAttributes(session);
-
-		String videoString = S3Api.downloadVideosToTemp(projectId);
-		System.out.println(videoString);
-
+		String videoString = S3Api.getVideoInformation(projectId);
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(videoString);

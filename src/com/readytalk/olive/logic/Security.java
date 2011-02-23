@@ -4,10 +4,15 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.fileupload.FileItem;
+
 // The regular expressions were taken from the JavaScript, but with A-Z appended
 // to all a-z's, to account for case sensitivity that the JavaScript usually
 // accounts for using /i at the end of the regular expression.
 public class Security {
+
+	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
+	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
 
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
@@ -58,7 +63,8 @@ public class Security {
 	}
 
 	public static boolean isSafeSplitTimeInSeconds(double startTimeStoryboard) {
-		return startTimeStoryboard > 0 && startTimeStoryboard < 14400;
+		return startTimeStoryboard > MIN_SPLIT_TIME_IN_SECONDS
+				&& startTimeStoryboard < MAX_SPLIT_TIME_IN_SECONDS;
 	}
 
 	public static boolean isSafeSecurityQuestion(String securityQuestion) {
@@ -79,8 +85,15 @@ public class Security {
 		return false; // TODO Implement this
 	}
 
-	public static boolean isSafeVideo(File video) {
-		return false; // TODO Implement this
+	public static boolean isSafeVideo(FileItem video) {
+		String contentType = video.getContentType();
+		if(contentType == null){
+			return false;
+		}
+		else{
+			String [] content = contentType.split("/");
+			return content[0].equals("video"); 
+		}
 	}
 
 	// The registration modal form does its own regular expression checking,
