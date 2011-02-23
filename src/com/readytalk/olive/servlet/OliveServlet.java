@@ -43,7 +43,7 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	public static final String TEMP_DIR_PATH = "/temp/"; // TODO Make a getter for this.
+	public static final String TEMP_DIR_PATH = "/temp/";	// TODO Make a getter for this.
 	public static File tempDir; // TODO Make a getter for this.
 	public static final String DESTINATION_DIR_PATH = "/temp/"; // TODO Make a getter for this.
 	public static File destinationDir; // TODO Make a getter for this.
