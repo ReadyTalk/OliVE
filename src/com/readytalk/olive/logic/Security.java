@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 // accounts for using /i at the end of the regular expression.
 public class Security {
 
+	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
+	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
+
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
 			int maxLength) {
@@ -58,7 +61,8 @@ public class Security {
 	}
 
 	public static boolean isSafeSplitTimeInSeconds(double startTimeStoryboard) {
-		return startTimeStoryboard > 0 && startTimeStoryboard < 14400;
+		return startTimeStoryboard > MIN_SPLIT_TIME_IN_SECONDS
+				&& startTimeStoryboard < MAX_SPLIT_TIME_IN_SECONDS;
 	}
 
 	public static boolean isSafeSecurityQuestion(String securityQuestion) {

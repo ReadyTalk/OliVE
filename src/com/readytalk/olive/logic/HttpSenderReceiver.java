@@ -41,41 +41,40 @@ public class HttpSenderReceiver {
 
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
-		String input = OliveDatabaseApi.getVideoUrl(videoId);
-		String baseUrl = S3Api.AWS_URL_PREFIX;
-		String[] filenames = new String[2]; // Will later be set before each Zencoder request.
-		double minimumTimeInSeconds = 0; // ASSUME: No video is shorter than 0 seconds.
-		double maximumTimeInSeconds = 14400; // ASSUME: No video is longer than 4 hours.
-		String[] urls = new String[2]; // Will later be set after each Zencoder request.
-		Video[] videos = new Video[2]; // Exists only to send multiple return values.
+		String originalVideoUrl = OliveDatabaseApi.getVideoUrl(videoId);
+		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
+		double maximumStartTimeInSeconds = Security.MIN_SPLIT_TIME_IN_SECONDS;
+		double minimumEndTimeInSeconds = Security.MAX_SPLIT_TIME_IN_SECONDS;
+		double[] splitStartInSeconds = { 0, splitTimeInSeconds };
+		double[] clipLengthInSeconds = {
+				splitTimeInSeconds - maximumStartTimeInSeconds,
+				minimumEndTimeInSeconds - splitTimeInSeconds }; // Draw a picture to understand this.
+		Video[] videoFragments = new Video[2];
 
-		// Get first half
-		filenames[0] = S3Api.getNameFromUrlWithNewTimeStamp(input);
-		urls[0] = S3Api.AWS_URL_PREFIX + filenames[0];
-		sendReceive(
-				getJson(input, baseUrl, filenames[0], minimumTimeInSeconds,
-						splitTimeInSeconds), new URL(getZencoderUrl()));
-		videos[0] = new Video(filenames[0], urls[0], "", -1, -1);
-		
-		// Get second half
-		filenames[1] = S3Api.getNameFromUrlWithNewTimeStamp(input);
-		urls[1] = S3Api.AWS_URL_PREFIX + filenames[1];
-		sendReceive(
-				getJson(input, baseUrl, filenames[1], splitTimeInSeconds,
-						maximumTimeInSeconds), new URL(getZencoderUrl()));
-		videos[1] = new Video(filenames[1], urls[1], "", -1, -1);
+		// Request the first and second halves of the original video.
+		for (int i = 0; i < 2; ++i) {
+			String videoFragmentFileName = S3Api
+					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
+			HttpSenderReceiver.sendReceive(HttpSenderReceiver.getZencoderJson(
+					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
+					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
+					getZencoderUrl()));
+			videoFragments[i] = new Video(
+					OliveDatabaseApi.getVideoName(videoId) + "-" + i,
+					S3Api.AWS_URL_PREFIX + videoFragmentFileName, "", -1, -1);
+		}
 
-		return videos;
+		return videoFragments;
 	}
 
-	private static String getJson(String input, String baseUrl,
+	private static String getZencoderJson(String input, String baseUrl,
 			String filename, double startClip, double clipLength) {
-		// Hard-coded for now.
 		String data = "{\"api_key\":\"" + OliveDatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
-				+ "\"filename\":\"" + filename + "\"," + "\"start_clip\":"
-				+ startClip + "," + "\"clip_length\":" + clipLength + "}]}";
+				+ "\"filename\":\"" + filename + "\",\"public\":1,"
+				+ "\"start_clip\":" + startClip + "," + "\"clip_length\":"
+				+ clipLength + "}]}";
 		System.out.println(data);
 		return data;
 	}

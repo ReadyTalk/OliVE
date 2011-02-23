@@ -15,7 +15,7 @@ jQuery(function($) {
 	attachPlayerHandlers();
 	enableDragAndDrop();
 	attachContextMenuHandlers();
-	downloadVideosToTemp();
+	getVideoInformation();
 });
 
 function attachDeleteVideoHandlers() {
@@ -318,9 +318,9 @@ function attachSplitHandlers() {
 	});
 }
 
-function downloadVideosToTemp() {
+function getVideoInformation() {
 	var requestData = '{'
-		+    '"command" : "downloadVideosToTemp"'
+		+    '"command" : "getVideoInformation"'
 		+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {
 		for (var i = 0; i < responseData.length; ++i) {
