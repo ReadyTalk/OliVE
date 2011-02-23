@@ -262,6 +262,16 @@ function attachSplitHandlers() {
 		}
 	}
 	
+	function checkCondition(o, condition, n) {
+		if (!condition) {
+			o.addClass("ui-state-error");
+			updateTips(n);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	$('#split-video-dialog-form').dialog({
 		autoOpen : false,
 		height : 400,
@@ -283,9 +293,15 @@ function attachSplitHandlers() {
 								/^[a-z]([0-9a-z_])+$/i,
 								'Video name may consist of a-z, 0-9, underscores; and must begin with a letter.');
 				bValid = bValid
-						&& checkRegexp(splitTimeInSeconds,
-								/^([0-9]*[.]?[0-9]+)$/,
-								'Split time must be a number');
+						&& checkCondition(splitTimeInSeconds,
+								!isNaN(splitTimeInSeconds.val()),
+								'Split time (in seconds) must be a number.')
+						&& checkCondition(splitTimeInSeconds,
+								splitTimeInSeconds.val() > 0,
+								'Split time (in seconds) must be greater than 0.')
+						&& checkCondition(splitTimeInSeconds,
+								splitTimeInSeconds.val() < 14400,
+								'Split time (in seconds) must be less than 14400.');
 				if (bValid) {
 					splitVideo(videoName.val(), splitTimeInSeconds.val());
 					$(this).dialog("close");

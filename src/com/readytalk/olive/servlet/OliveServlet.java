@@ -43,7 +43,7 @@ public class OliveServlet extends HttpServlet {
 	private static final long serialVersionUID = -6820792513104430238L;
 	// Static variables are okay, though, because they don't change across instances.
 	private static Logger log = Logger.getLogger(OliveServlet.class.getName());
-	public static final String TEMP_DIR_PATH = "/temp/";	// TODO Make a getter for this.
+	public static final String TEMP_DIR_PATH = "/temp/"; // TODO Make a getter for this.
 	public static File tempDir; // TODO Make a getter for this.
 	public static final String DESTINATION_DIR_PATH = "/temp/"; // TODO Make a getter for this.
 	public static File destinationDir; // TODO Make a getter for this.
@@ -69,6 +69,17 @@ public class OliveServlet extends HttpServlet {
 			throw new ServletException(DESTINATION_DIR_PATH
 					+ " is not a directory");
 		}
+	}
+
+	private int getProjectIdFromSessionAttributes(HttpSession session) {
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		String sessionProjectName = (String) session
+				.getAttribute(Attribute.PROJECT_NAME.toString());
+		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
+				accountId);
+		return projectId;
 	}
 
 	@Override
@@ -352,6 +363,7 @@ public class OliveServlet extends HttpServlet {
 		fileItemFactory.setRepository(tempDir);
 
 		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
+		File file = null;
 		try {
 			/*
 			 * Parse the request
@@ -399,15 +411,9 @@ public class OliveServlet extends HttpServlet {
 			/*
 			 * Write file to the ultimate location.
 			 */
-			File file = new File(destinationDir, fileItem.getName()); // Allocate the space
+			file = new File(destinationDir, fileItem.getName()); // Allocate the space
 			fileItem.write(file); // Save the file to the allocated space
-			String sessionUsername = (String) session
-					.getAttribute(Attribute.USERNAME.toString());
-			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-			String projectName = (String) session
-					.getAttribute(Attribute.PROJECT_NAME.toString());
-			int projectId = OliveDatabaseApi.getProjectId(projectName,
-					accountId);
+			int projectId = getProjectIdFromSessionAttributes(session);
 			String videoName = videoNameItem.getString();
 			if (Security.isSafeVideoName(videoName)) {
 				String videoUrl = S3Api.uploadFile(file);
@@ -418,12 +424,14 @@ public class OliveServlet extends HttpServlet {
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 				} else {
 					out.println("Error uploading video to the cloud.");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+					return;
 				}
 			} else {
 				out.println("Video name is invalid.");
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				return;
 			}
-
-			file.delete();
 
 			out.println("File uploaded. Please close this window and refresh the editor page.");
 			out.println();
@@ -440,7 +448,12 @@ public class OliveServlet extends HttpServlet {
 			out.println("Upload failed (unknown reason).");
 			e.printStackTrace();
 		} finally {
-			out.close();
+			if (out != null) {
+				out.close();
+			}
+			if (file != null) {
+				file.delete();
+			}
 		}
 	}
 
@@ -562,13 +575,7 @@ public class OliveServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 
-		String sessionUsername = (String) session
-				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-		String sessionProjectName = (String) session
-				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
-				accountId);
+		int projectId = getProjectIdFromSessionAttributes(session);
 		int videoId = OliveDatabaseApi.getVideoId(
 				deleteVideoRequest.arguments.video, projectId);
 		OliveDatabaseApi.deleteVideo(videoId);
@@ -618,13 +625,20 @@ public class OliveServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 
-		String sessionUsername = (String) session
-				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-		String sessionProjectName = (String) session
-				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
-				accountId);
+		if (!Security.isSafeVideoName(splitVideoRequest.arguments.video)) {
+			out.println("Name of video to split is invalid.");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+
+		if (!Security
+				.isSafeSplitTimeInSeconds(splitVideoRequest.arguments.splitTimeInSeconds)) {
+			out.println("Split time (in seconds) is invalid.");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+
+		int projectId = getProjectIdFromSessionAttributes(session);
 		int videoId = OliveDatabaseApi.getVideoId(
 				splitVideoRequest.arguments.video, projectId);
 		Video[] videos = HttpSenderReceiver.split(videoId,
@@ -650,17 +664,11 @@ public class OliveServlet extends HttpServlet {
 	private void handleDownloadVideosToTemp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		String sessionUsername = (String) session
-				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-		String sessionProjectName = (String) session
-				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
-				accountId);
+		int projectId = getProjectIdFromSessionAttributes(session);
 
 		String videoString = S3Api.downloadVideosToTemp(projectId);
 		System.out.println(videoString);
-		
+
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(videoString);

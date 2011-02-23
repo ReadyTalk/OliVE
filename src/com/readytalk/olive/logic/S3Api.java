@@ -45,6 +45,7 @@ public class S3Api {
 		return s3Service;
 	}
 
+	// TODO Make this a hash function that uses the time
 	public static String getTime() {
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -174,7 +175,7 @@ public class S3Api {
 					videoTempIcon, projectId, startTimeStoryboard); // TODO Distinguish these urls from the S3 urls!
 
 			log.info((videoIds.length - 1 - videoIndex)
-					+ " file(s) remaining)...");
+					+ " file(s) remaining...");
 		}
 		log.info("Downloaded " + videoIds.length + " file(s) from S3.");
 

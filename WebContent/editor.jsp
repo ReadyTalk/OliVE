@@ -139,8 +139,8 @@
 <p class="validateTips">All form fields are required.</p>
 <form id="split-video-form" action="OliveServlet" name="process"
 	method="post">
-<fieldset><label for="video-name">Video name</label> <input
-	type="text" name="video-name" id="video-name"
+<fieldset><label for="video-name">Name of video to
+split</label> <input type="text" name="video-name" id="video-name"
 	class="text ui-widget-content ui-corner-all" maxlength="32" /> <label
 	for="split-time-in-seconds">Split time (in seconds)</label> <input
 	type="number" min=0 max=14400 name="split-time-in-seconds"
