@@ -68,7 +68,7 @@ function attachVideoClickHandlers() {
 			'background-color': '#edf4e6'	// A lighter version of the Olive color
 		});
 		addToSelected($(element).attr('id'));
-		swapOutVideoInPlayer(element);
+		updatePlayerWithNewElement(element);
 	}
 	
 	function unselect(element) {
@@ -76,8 +76,8 @@ function attachVideoClickHandlers() {
 		$(element).css( {
 			'background-color': ''
 		});
-		removeFromSelected('all');
-		swapOutVideoInPlayer(element);
+		removeFromSelected(element);	// TODO Think of a way to removeAll
+		updatePlayerWithNewElement();	// TODO Think of better way to unUpdate
 	}
 }
 
@@ -107,24 +107,15 @@ function removeFromSelected(id) {
 
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
-function swapOutVideoInPlayer(element) {
-	if (hasVideoChanged()) {
-		$('#player-video').attr('type', getType());
-		$('#player-video').attr('poster', getPoster());
-		$('#player-video').attr('src', $(element).data('url'));
+function updatePlayerWithNewElement(element) {
+	if (typeof id === 'undefined') {	// Not passed in as an argument
+		$('#player-video').attr('type', '');
+		$('#player-video').attr('poster', '');
+		$('#player-video').attr('src', '');
 	}
-}
-
-function hasVideoChanged() {
-	return true;	// TODO Calculate this.
-}
-
-function getType() {
-	return 'video/mp4';
-}
-
-function getPoster() {
-	return '/olive/images/bbb480.jpg';
+	$('#player-video').attr('type', 'video/mp4');	// TODO Get this from the database.
+	$('#player-video').attr('poster', $(element).data('icon'));
+	$('#player-video').attr('src', $(element).data('url'));
 }
 
 function attachPlayerHandlers() {
@@ -290,8 +281,8 @@ function attachSplitHandlers() {
 								0, 14400);
 				bValid = bValid
 						&& checkRegexp(videoName,
-								/^[a-z]([0-9a-z_])+$/i,
-								'Video name may consist of a-z, 0-9, underscores; and must begin with a letter.');
+								/^([0-9a-zA-Z])+$/i,
+								'Video name may consist of a-z, 0-9; and must begin with a letter.');
 				bValid = bValid
 						&& checkCondition(splitTimeInSeconds,
 								!isNaN(splitTimeInSeconds.val()),

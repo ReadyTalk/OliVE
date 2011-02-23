@@ -60,8 +60,9 @@ public class HttpSenderReceiver {
 					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
 					getZencoderUrl()));
 			videoFragments[i] = new Video(
-					OliveDatabaseApi.getVideoName(videoId) + "-" + i,
-					S3Api.AWS_URL_PREFIX + videoFragmentFileName, "", -1, -1);
+					OliveDatabaseApi.getVideoName(videoId) + i,
+					S3Api.AWS_URL_PREFIX + videoFragmentFileName,
+					"/olive/images/bbb480.jpg", -1, -1);	// TODO Get icon from Zencoder
 		}
 
 		return videoFragments;
