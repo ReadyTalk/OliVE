@@ -34,7 +34,7 @@
 	else if(editSuccess == false){
 		if(isSafe){
 			if(passwordsMatch){
-				confirmation = "We're sorry, there is an error in inputing to the database. Please try again";	
+				confirmation = "We're sorry, there is an error in inputting to the database. Please try again";	
 			}
 			else{
 				confirmation = "Passwords do not match";
@@ -45,7 +45,7 @@
 		}
 	}
 	else if(editSuccess){
-		confirmation = "Congratulations. Your new password has been set. You" 
+		confirmation = "Congratulations. Your new password has been set. You " 
 							+ "may now sign in to <a href = "+index+">Olive</a>";
 	}
 	
