@@ -24,7 +24,7 @@ body {
 
 h1,h2,h3,h4,h5,h6 {
 	color: #92bd6a; /* The Olive color */
-	font-family: Cambria, Helvetica, Arial, sans-serif;
+	font-family: Calibri, Helvetica, Arial, sans-serif;
 }
 
 h1 {
@@ -56,6 +56,14 @@ p {
 	font-size: 120%; /* 12px */
 	margin: 1.12em 0;
 	line-height: 1.2em;
+}
+
+A:visited {
+	color: green;
+}
+
+A:hover { 
+	color: #92bd6a;
 }
 
 table {
