@@ -1,17 +1,31 @@
 #! /bin/sh
 
 # Create PDF of the Olive source code. Ignore third-party code.
-#	olivesrc.pdf	created using enscript
+#    olivesrc.pdf    created using enscript
 
 # List of files to be included in PDF.
 FILES="\
     README \
     \
-    WebContent/META-INF/context.xml \
-        \
-    WebContent/WEB-INF/sun-web.xml \
-    WebContent/WEB-INF/web.xml \
-        \
+    src/com/readytalk/olive/json/DeleteProjectRequest.java \
+    src/com/readytalk/olive/json/DeleteVideoRequest.java \
+    src/com/readytalk/olive/json/GeneralRequest.java \
+    src/com/readytalk/olive/json/SplitVideoRequest.java \
+    \
+    src/com/readytalk/olive/logic/HttpSenderReceiver.java \
+    src/com/readytalk/olive/logic/OliveDatabaseApi.java \
+    src/com/readytalk/olive/logic/S3Api.java \
+    src/com/readytalk/olive/logic/Security.java \
+    \
+    src/com/readytalk/olive/model/Project.java \
+    src/com/readytalk/olive/model/User.java \
+    src/com/readytalk/olive/model/Video.java \
+    \
+    src/com/readytalk/olive/servlet/OliveServlet.java \
+    \
+    src/com/readytalk/olive/util/Attribute.java \
+    src/com/readytalk/olive/util/InvalidFileSizeException.java \
+    \
     WebContent/css/account.css \
     WebContent/css/editor.css \
     WebContent/css/index.css \
@@ -19,9 +33,7 @@ FILES="\
     WebContent/css/projects.css \
     WebContent/css/reset.css \
         \
-    WebContent/doc/favicon_notes.txt \
-    WebContent/doc/longDirectory.txt \
-    WebContent/doc/post-implementation.txt \
+    WebContent/META-INF/context.xml \
         \
     WebContent/temp/maintainer.txt \
         \
@@ -30,6 +42,9 @@ FILES="\
     WebContent/scripts/index.js \
     WebContent/scripts/master.js \
     WebContent/scripts/projects.js \
+        \
+    WebContent/WEB-INF/sun-web.xml \
+    WebContent/WEB-INF/web.xml \
         \
     WebContent/account.jsp \
     WebContent/editor.jsp \
@@ -42,18 +57,6 @@ FILES="\
     WebContent/new-project-form.jsp \
     WebContent/new-video-form.jsp \
     WebContent/projects.jsp \
-    \
-    src/com/readytalk/olive/json/DeleteProjectRequest.java \
-    src/com/readytalk/olive/logic/HttpSenderReceiver.java \
-    src/com/readytalk/olive/logic/OliveDatabaseApi.java \
-    src/com/readytalk/olive/logic/S3Uploader.java \
-    src/com/readytalk/olive/logic/Security.java \
-    src/com/readytalk/olive/model/Project.java \
-    src/com/readytalk/olive/model/User.java \
-    src/com/readytalk/olive/model/Video.java \
-    src/com/readytalk/olive/servlet/OliveServlet.java \
-    src/com/readytalk/olive/util/Attribute.java \
-    src/com/readytalk/olive/util/InvalidFileSizeException.java \
     "
 
 # Remove any old PostScript or PDF versions lying around.
