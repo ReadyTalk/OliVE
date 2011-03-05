@@ -83,6 +83,9 @@ public class S3Api {
 			s3Service.putObject(BUCKET_NAME, fileAsS3Object);
 
 			String videoUrl = AWS_URL_PREFIX + fileNameOnS3;
+			
+			ZencoderApi.convertToOgg(videoUrl);
+			
 			return videoUrl;
 		} catch (IOException e) {
 			log.severe("Error connecting with S3");

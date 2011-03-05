@@ -26,7 +26,7 @@ import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
-import com.readytalk.olive.logic.HttpSenderReceiver;
+import com.readytalk.olive.logic.ZencoderApi;
 import com.readytalk.olive.logic.OliveDatabaseApi;
 import com.readytalk.olive.logic.S3Api;
 import com.readytalk.olive.logic.Security;
@@ -668,7 +668,7 @@ public class OliveServlet extends HttpServlet {
 		int projectId = getProjectIdFromSessionAttributes(session);
 		int videoId = OliveDatabaseApi.getVideoId(
 				splitVideoRequest.arguments.video, projectId);
-		Video[] videoFragments = HttpSenderReceiver.split(videoId,
+		Video[] videoFragments = ZencoderApi.split(videoId,
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop

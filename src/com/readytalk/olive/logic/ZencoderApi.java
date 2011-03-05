@@ -10,7 +10,7 @@ import java.net.URLConnection;
 import com.readytalk.olive.model.Video;
 
 // Modified from: http://www.exampledepot.com/egs/java.net/post.html
-public class HttpSenderReceiver {
+public class ZencoderApi {
 	public static String sendReceive(String data, URL url) throws IOException {
 		// Send data
 		System.out.println("Sending data to Zencoder...");
@@ -55,7 +55,7 @@ public class HttpSenderReceiver {
 		for (int i = 0; i < 2; ++i) {
 			String videoFragmentFileName = S3Api
 					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
-			HttpSenderReceiver.sendReceive(HttpSenderReceiver.getZencoderJson(
+			ZencoderApi.sendReceive(ZencoderApi.getZencoderJson(
 					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
 					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
 					getZencoderUrl()));
@@ -82,5 +82,9 @@ public class HttpSenderReceiver {
 
 	private static String getZencoderUrl() {
 		return "https://app.zencoder.com/api/jobs";
+	}
+
+	public static void convertToOgg(String videoUrl) {
+		// TODO Implement.
 	}
 }
