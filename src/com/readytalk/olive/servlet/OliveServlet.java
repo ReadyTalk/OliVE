@@ -25,7 +25,6 @@ import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
-import com.readytalk.olive.json.LogoutRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
