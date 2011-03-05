@@ -93,32 +93,28 @@
 <h2>Edit account information</h2>
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
-<p><label for="new-name">Name</label><br />
-<input type="text" name="new-name" id="new-name" value="<%=name%>"
-	size="32" maxlength="32" /></p>
-<p><label for="new-email">Email</label><br />
-<input type="text" name="new-email" id="new-email" value="<%=email%>"
-	size="32" maxlength="64" /></p>
-<p><label for="new-password">Password</label><br />
-<input type="password" name="new-password" id="new-password"
-	value="<%=password%>" size="32" maxlength="128" /></p>
-<p><label for="confirm-new-password">Confirm password</label><br />
-<input type="password" name="confirm-new-password"
-	id="confirm-new-password" value="<%=password%>" size="32"
+<p><label for="new-name">Name</label> <input type="text"
+	name="new-name" id="new-name" value="<%=name%>" size="32"
+	maxlength="32" /></p>
+<p><label for="new-email">Email</label> <input type="text"
+	name="new-email" id="new-email" value="<%=email%>" size="32"
+	maxlength="64" /></p>
+<p><label for="new-password">Password</label> <input type="password"
+	name="new-password" id="new-password" value="<%=password%>" size="32"
 	maxlength="128" /></p>
-<p><label for="security_question">Security Question</label><br />
-<input type="text" name="security_question" id="security_question"
+<p><label for="confirm-new-password">Confirm password</label> <input
+	type="password" name="confirm-new-password" id="confirm-new-password"
+	value="<%=password%>" size="32" maxlength="128" /></p>
+<p><label for="security_question">Security Question</label> <input
+	type="text" name="security_question" id="security_question"
 	value="<%=securityQuestion%>" size="32" maxlength="128" /></p>
-<p><label for="security_answer">Security Answer</label><br />
-<input type="text" name="security_answer" id="security_question_answer"
+<p><label for="security_answer">Security Answer</label> <input
+	type="text" name="security_answer" id="security_question_answer"
 	value="<%=securityAnswer%>" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="EditUser"></input><br />
-<input type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
-<form id="delete-account" action="OliveServlet" name="process"
-	method="post"><input type="hidden" name="FormName"
-	value="DeleteAccount"></input><br />
-<input type="submit" value="Delete Account" /> <!-- TODO: Add a "Are you sure you want to delete your account window?" here  -->
-</form>
+<input type="hidden" name="FormName" value="EditUser"></input> <input
+	type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
+<p><small><a id="delete-account"
+	class="warning delete-project">Delete account</a></small></p>
 </div>
 <!-- end #login-form-container --></div>
 <!-- end #main -->
@@ -126,5 +122,11 @@
 <div class="clear"></div>
 
 <div id="footer"></div>
+
+<div id="confirm-delete-account-dialog" title="Warning!">
+<p>Delete account? This will also delete the account's projects and
+videos.</p>
+</div>
+
 </body>
 </html>

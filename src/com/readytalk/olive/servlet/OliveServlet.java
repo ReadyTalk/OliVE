@@ -21,9 +21,11 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
+import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
+import com.readytalk.olive.json.LogoutRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.logic.HttpSenderReceiver;
 import com.readytalk.olive.logic.OliveDatabaseApi;
@@ -104,8 +106,6 @@ public class OliveServlet extends HttpServlet {
 				handleSecurityQuestion(request, response, session);
 			} else if (id.equals("new_password")) {
 				handleNewPassword(request, response, session);
-			} else if (id.equals("DeleteAccount")) {
-				handleDeleteAccount(request, response, session);
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
@@ -122,16 +122,6 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			log.severe("Unknown content type");
 		}
-	}
-
-	private void handleDeleteAccount(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws UnsupportedEncodingException, IOException {
-		String username = (String) session.getAttribute(Attribute.USERNAME
-				.toString());
-		int accountId = OliveDatabaseApi.getAccountId(username);
-		OliveDatabaseApi.deleteAccount(accountId);
-		response.sendRedirect("logout.jsp");
 	}
 
 	private void handleNewPassword(HttpServletRequest request,
@@ -427,22 +417,21 @@ public class OliveServlet extends HttpServlet {
 				} else {
 					out.println("Upload Failed. Error uploading video to the cloud.");
 					log.warning("Upload Failed. Error uploading video to the cloud.");
-					//response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
-			} else if(Security.isSafeVideoName(videoName)){
+			} else if (Security.isSafeVideoName(videoName)) {
 				out.println("Upload Failed. Video type is invalid.");
 				log.warning("Upload Failed. Video type is invalid.");
-				//response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else {
 				out.println("Upload Failed. Video name is invalid.");
 				log.warning("Upload Failed. Video name is invalid.");
-				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
+				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
-			
-			
+
 		} catch (FileUploadException e) {
 			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
@@ -481,7 +470,9 @@ public class OliveServlet extends HttpServlet {
 		GeneralRequest generalRequest = new Gson().fromJson(json,
 				GeneralRequest.class);
 
-		if (generalRequest.command.equals("getProjects")) {
+		if (generalRequest.command.equals("deleteAccount")) {
+			handleDeleteAccount(request, response, session, json);
+		} else if (generalRequest.command.equals("getProjects")) {
 			handleGetProjects(request, response, session, json);
 		} else if (generalRequest.command.equals("createProject")) {
 			handleCreateProject(request, response, session, json);
@@ -517,6 +508,27 @@ public class OliveServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+	}
+
+	private void handleDeleteAccount(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		DeleteAccountRequest deleteAccountRequest = new Gson().fromJson(json,
+				DeleteAccountRequest.class);
+
+		response.setContentType("text/plain");
+		// response.setStatus(HttpServletResponse.SC_OK); // Unnecessary
+
+		PrintWriter out = response.getWriter();
+
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		OliveDatabaseApi.deleteAccount(accountId);
+
+		out.println(deleteAccountRequest.arguments.account
+				+ " deleted successfully.");
+		out.close();
 	}
 
 	private void handleGetProjects(HttpServletRequest request,
@@ -589,9 +601,9 @@ public class OliveServlet extends HttpServlet {
 		OliveDatabaseApi.deleteVideo(videoId);
 
 		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
-		
+
 		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
-		
+
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
 		out.close();

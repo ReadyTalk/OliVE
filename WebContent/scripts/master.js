@@ -39,6 +39,11 @@ function openHelpWindow() {
 			"menubar=no,width=500,height=500,toolbar=no");
 }
 
+function logout() {
+	// See: http://stackoverflow.com/questions/503093/how-can-i-make-a-redirect-page-in-jquery
+	window.location.replace('logout.jsp');
+}
+
 function makeAjaxPostRequest(requestData, onSuccess, onError) {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	// E.g. 'http:' + '//' + 'olive.readytalk.com' + '/olive/OliveServlet'
