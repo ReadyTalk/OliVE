@@ -27,7 +27,7 @@ import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.logic.ZencoderApi;
-import com.readytalk.olive.logic.OliveDatabaseApi;
+import com.readytalk.olive.logic.DatabaseApi;
 import com.readytalk.olive.logic.S3Api;
 import com.readytalk.olive.logic.Security;
 import com.readytalk.olive.model.Project;
@@ -75,10 +75,10 @@ public class OliveServlet extends HttpServlet {
 	private int getProjectIdFromSessionAttributes(HttpSession session) {
 		String sessionUsername = (String) session
 				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		int accountId = DatabaseApi.getAccountId(sessionUsername);
 		String sessionProjectName = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = OliveDatabaseApi.getProjectId(sessionProjectName,
+		int projectId = DatabaseApi.getProjectId(sessionProjectName,
 				accountId);
 		return projectId;
 	}
@@ -137,7 +137,7 @@ public class OliveServlet extends HttpServlet {
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
-				newPasswordSet = OliveDatabaseApi.editPassword(username,
+				newPasswordSet = DatabaseApi.editPassword(username,
 						newPassword);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						newPasswordSet);
@@ -167,7 +167,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafeSecurityQuestion(securityQuestion)
 				&& Security.isSafeSecurityAnswer(securityAnswer)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			isCorrect = OliveDatabaseApi.isCorrectSecurityInfo(username,
+			isCorrect = DatabaseApi.isCorrectSecurityInfo(username,
 					securityQuestion, securityAnswer);
 			session.setAttribute(Attribute.IS_CORRECT.toString(), isCorrect);
 			if (isCorrect) {
@@ -192,10 +192,10 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("text/html");
 		HttpSession session = request.getSession();
 		String projectName = request.getParameter("projectName");
-		int accountId = OliveDatabaseApi.getAccountId((String) session
+		int accountId = DatabaseApi.getAccountId((String) session
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
-				&& OliveDatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
+				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
 			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
@@ -215,18 +215,18 @@ public class OliveServlet extends HttpServlet {
 		if (Security.isSafeUsername(username)
 				&& Security.isSafePassword(password)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			isAuthorized = OliveDatabaseApi.isAuthorized(username, password);
+			isAuthorized = DatabaseApi.isAuthorized(username, password);
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(),
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
-				int accountId = OliveDatabaseApi.getAccountId(username);
+				int accountId = DatabaseApi.getAccountId(username);
 				session.setAttribute(Attribute.USERNAME.toString(),
-						OliveDatabaseApi.getAccountUsername(accountId));
+						DatabaseApi.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
 				session.setAttribute(Attribute.EMAIL.toString(),
-						OliveDatabaseApi.getAccountEmail(accountId));
+						DatabaseApi.getAccountEmail(accountId));
 				session.setAttribute(Attribute.NAME.toString(),
-						OliveDatabaseApi.getAccountName(accountId));
+						DatabaseApi.getAccountName(accountId));
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
@@ -261,7 +261,7 @@ public class OliveServlet extends HttpServlet {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newName,
 						newEmail, securityQuestion, securityAnswer);
-				Boolean editSuccessfully = OliveDatabaseApi
+				Boolean editSuccessfully = DatabaseApi
 						.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
@@ -297,7 +297,7 @@ public class OliveServlet extends HttpServlet {
 		String email = Security.stripOutIllegalCharacters(request
 				.getParameter("email"));
 		User newUser = new User(username, password, "", email);
-		Boolean addSuccessfully = OliveDatabaseApi.AddAccount(newUser);
+		Boolean addSuccessfully = DatabaseApi.AddAccount(newUser);
 		if (addSuccessfully) {
 			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
 			session.setAttribute(Attribute.USERNAME.toString(), username);
@@ -319,10 +319,10 @@ public class OliveServlet extends HttpServlet {
 
 			String sessionUsername = (String) session
 					.getAttribute(Attribute.USERNAME.toString());
-			int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+			int accountId = DatabaseApi.getAccountId(sessionUsername);
 			String icon = ""; // TODO Get this from user input.
 			Project project = new Project(projectName, accountId, icon);
-			Boolean added = OliveDatabaseApi.AddProject(project);
+			Boolean added = DatabaseApi.AddProject(project);
 			if (!added) {
 				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
 						false);
@@ -408,7 +408,7 @@ public class OliveServlet extends HttpServlet {
 			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(i)) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
-					OliveDatabaseApi.AddVideo(videoName, videoUrl, projectId,
+					DatabaseApi.AddVideo(videoName, videoUrl, projectId,
 							"/olive/images/bbb480.jpg"); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out.println("File uploaded. Please close this window and refresh the editor page.");
@@ -522,8 +522,8 @@ public class OliveServlet extends HttpServlet {
 
 		String sessionUsername = (String) session
 				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
-		OliveDatabaseApi.deleteAccount(accountId);
+		int accountId = DatabaseApi.getAccountId(sessionUsername);
+		DatabaseApi.deleteAccount(accountId);
 
 		out.println(deleteAccountRequest.arguments.account
 				+ " deleted successfully.");
@@ -555,11 +555,11 @@ public class OliveServlet extends HttpServlet {
 
 		String sessionUsername = (String) session
 				.getAttribute(Attribute.USERNAME.toString());
-		int accountId = OliveDatabaseApi.getAccountId(sessionUsername);
+		int accountId = DatabaseApi.getAccountId(sessionUsername);
 		String projectToDelete = deleteProjectRequest.arguments.project;
-		int projectId = OliveDatabaseApi.getProjectId(projectToDelete,
+		int projectId = DatabaseApi.getProjectId(projectToDelete,
 				accountId);
-		OliveDatabaseApi.deleteProject(projectId);
+		DatabaseApi.deleteProject(projectId);
 
 		out.println(deleteProjectRequest.arguments.project
 				+ " deleted successfully.");
@@ -595,13 +595,13 @@ public class OliveServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 
 		int projectId = getProjectIdFromSessionAttributes(session);
-		int videoId = OliveDatabaseApi.getVideoId(
+		int videoId = DatabaseApi.getVideoId(
 				deleteVideoRequest.arguments.video, projectId);
-		OliveDatabaseApi.deleteVideo(videoId);
+		DatabaseApi.deleteVideo(videoId);
 
-		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
+		S3Api.deleteFileInS3(DatabaseApi.getVideoName(videoId));
 
-		S3Api.deleteFileInS3(OliveDatabaseApi.getVideoName(videoId));
+		S3Api.deleteFileInS3(DatabaseApi.getVideoName(videoId));
 
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
@@ -666,13 +666,13 @@ public class OliveServlet extends HttpServlet {
 		}
 
 		int projectId = getProjectIdFromSessionAttributes(session);
-		int videoId = OliveDatabaseApi.getVideoId(
+		int videoId = DatabaseApi.getVideoId(
 				splitVideoRequest.arguments.video, projectId);
 		Video[] videoFragments = ZencoderApi.split(videoId,
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop
-			OliveDatabaseApi.AddVideo(videoFragment.getName(),
+			DatabaseApi.AddVideo(videoFragment.getName(),
 					videoFragment.getUrl(), projectId, videoFragment.getIcon()); // projectId not computed by Zencoder
 		}
 

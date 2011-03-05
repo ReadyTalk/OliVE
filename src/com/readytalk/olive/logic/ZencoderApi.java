@@ -41,7 +41,7 @@ public class ZencoderApi {
 
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
-		String originalVideoUrl = OliveDatabaseApi.getVideoUrl(videoId);
+		String originalVideoUrl = DatabaseApi.getVideoUrl(videoId);
 		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
 		double maximumStartTimeInSeconds = Security.MIN_SPLIT_TIME_IN_SECONDS;
 		double minimumEndTimeInSeconds = Security.MAX_SPLIT_TIME_IN_SECONDS;
@@ -60,7 +60,7 @@ public class ZencoderApi {
 					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
 					getZencoderUrl()));
 			videoFragments[i] = new Video(
-					OliveDatabaseApi.getVideoName(videoId) + i,
+					DatabaseApi.getVideoName(videoId) + i,
 					S3Api.AWS_URL_PREFIX + videoFragmentFileName,
 					"/olive/images/bbb480.jpg", -1, -1);	// TODO Get icon from Zencoder
 		}
@@ -70,7 +70,7 @@ public class ZencoderApi {
 
 	private static String getZencoderJson(String input, String baseUrl,
 			String filename, double startClip, double clipLength) {
-		String data = "{\"api_key\":\"" + OliveDatabaseApi.getZencoderApiKey()
+		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
 				+ "\"filename\":\"" + filename + "\",\"public\":1,"
