@@ -35,7 +35,7 @@ public class S3Api {
 	private static Logger log = Logger.getLogger(S3Api.class.getName());
 
 	private static RestS3Service getS3Service() throws S3ServiceException {
-		AWSCredentials awsCredentials = OliveDatabaseApi.getAwsCredentials();
+		AWSCredentials awsCredentials = DatabaseApi.getAwsCredentials();
 
 		// RestS3Service is similar to HttpClient
 		RestS3Service s3Service = new RestS3Service(awsCredentials);
@@ -83,6 +83,9 @@ public class S3Api {
 			s3Service.putObject(BUCKET_NAME, fileAsS3Object);
 
 			String videoUrl = AWS_URL_PREFIX + fileNameOnS3;
+			
+			ZencoderApi.convertToOgg(videoUrl);
+			
 			return videoUrl;
 		} catch (IOException e) {
 			log.severe("Error connecting with S3");
@@ -118,17 +121,17 @@ public class S3Api {
 	}
 
 	public static String getVideoInformation(int projectId) {
-		int[] videoIds = OliveDatabaseApi.getVideoIds(projectId);
+		int[] videoIds = DatabaseApi.getVideoIds(projectId);
 		Video[] videos = new Video[videoIds.length];
 
 		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
-			String videoName = OliveDatabaseApi
+			String videoName = DatabaseApi
 					.getVideoName(videoIds[videoIndex]);
-			String videoUrl = OliveDatabaseApi
+			String videoUrl = DatabaseApi
 					.getVideoUrl(videoIds[videoIndex]);
-			String videoIcon = OliveDatabaseApi
+			String videoIcon = DatabaseApi
 					.getVideoIcon(videoIds[videoIndex]);
-			int startTimeStoryboard = OliveDatabaseApi
+			int startTimeStoryboard = DatabaseApi
 					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
 
 			videos[videoIndex] = new Video(videoName, videoUrl, videoIcon,

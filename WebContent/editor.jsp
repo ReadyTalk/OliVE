@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
+<%@ page import="com.readytalk.olive.logic.DatabaseApi"%>
 <%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
@@ -43,10 +43,10 @@
 			response.sendRedirect("projects.jsp");
 		}
 
-		int accountId = OliveDatabaseApi.getAccountId(username);
-		int projectId = OliveDatabaseApi.getProjectId(projectName,
+		int accountId = DatabaseApi.getAccountId(username);
+		int projectId = DatabaseApi.getProjectId(projectName,
 				accountId);
-		videosHtml = OliveDatabaseApi.populateVideos(projectId);
+		videosHtml = DatabaseApi.populateVideos(projectId);
 	}
 %>
 <div id="header">

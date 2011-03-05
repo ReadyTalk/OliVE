@@ -12,10 +12,10 @@ FILES="\
     src/com/readytalk/olive/json/GeneralRequest.java \
     src/com/readytalk/olive/json/SplitVideoRequest.java \
     \
-    src/com/readytalk/olive/logic/HttpSenderReceiver.java \
-    src/com/readytalk/olive/logic/OliveDatabaseApi.java \
+    src/com/readytalk/olive/logic/DatabaseApi.java \
     src/com/readytalk/olive/logic/S3Api.java \
     src/com/readytalk/olive/logic/Security.java \
+    src/com/readytalk/olive/logic/ZencoderApi.java \
     \
     src/com/readytalk/olive/model/Project.java \
     src/com/readytalk/olive/model/User.java \

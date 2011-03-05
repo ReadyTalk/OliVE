@@ -17,9 +17,9 @@ import org.jets3t.service.security.AWSCredentials;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 
-public class OliveDatabaseApi {
+public class DatabaseApi {
 
-	private static Logger log = Logger.getLogger(OliveDatabaseApi.class
+	private static Logger log = Logger.getLogger(DatabaseApi.class
 			.getName());
 
 	// CAUTION: closeConnection() must be called sometime after this method.
@@ -574,7 +574,7 @@ public class OliveDatabaseApi {
 
 	public static String getZencoderApiKey() {
 		String zencoderApiKey = "";
-		Connection conn = OliveDatabaseApi.getDBConnection();
+		Connection conn = DatabaseApi.getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";

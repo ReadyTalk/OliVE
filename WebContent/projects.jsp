@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="com.readytalk.olive.logic.OliveDatabaseApi"%>
+<%@ page import="com.readytalk.olive.logic.DatabaseApi"%>
 <%@ page import="com.readytalk.olive.util.Attribute"%>
 <!doctype html>
 <html>
@@ -35,8 +35,8 @@
 	} else {
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
-		int accountId = OliveDatabaseApi.getAccountId(username);
-		projectsHtml = OliveDatabaseApi.populateProjects(accountId);
+		int accountId = DatabaseApi.getAccountId(username);
+		projectsHtml = DatabaseApi.populateProjects(accountId);
 	}
 %>
 <div id="header">
