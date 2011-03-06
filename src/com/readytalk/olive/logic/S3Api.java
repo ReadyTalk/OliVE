@@ -82,11 +82,12 @@ public class S3Api {
 			// Upload the data object.
 			s3Service.putObject(BUCKET_NAME, fileAsS3Object);
 
-			String videoUrl = AWS_URL_PREFIX + fileNameOnS3;
-			
-			ZencoderApi.convertToOgg(videoUrl);
-			
-			return videoUrl;
+			String unconvertedVideoUrl = AWS_URL_PREFIX + fileNameOnS3;
+
+			String convertedVideoUrl = ZencoderApi
+					.convertToOgg(unconvertedVideoUrl);
+
+			return convertedVideoUrl;
 		} catch (IOException e) {
 			log.severe("Error connecting with S3");
 			e.printStackTrace();
@@ -125,12 +126,9 @@ public class S3Api {
 		Video[] videos = new Video[videoIds.length];
 
 		for (int videoIndex = 0; videoIndex < videoIds.length; ++videoIndex) {
-			String videoName = DatabaseApi
-					.getVideoName(videoIds[videoIndex]);
-			String videoUrl = DatabaseApi
-					.getVideoUrl(videoIds[videoIndex]);
-			String videoIcon = DatabaseApi
-					.getVideoIcon(videoIds[videoIndex]);
+			String videoName = DatabaseApi.getVideoName(videoIds[videoIndex]);
+			String videoUrl = DatabaseApi.getVideoUrl(videoIds[videoIndex]);
+			String videoIcon = DatabaseApi.getVideoIcon(videoIds[videoIndex]);
 			int startTimeStoryboard = DatabaseApi
 					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
 
