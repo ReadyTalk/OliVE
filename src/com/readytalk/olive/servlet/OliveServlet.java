@@ -21,10 +21,12 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
+import com.readytalk.olive.json.AddToSelectedRequest;
 import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
+import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.logic.ZencoderApi;
 import com.readytalk.olive.logic.DatabaseApi;
@@ -78,9 +80,16 @@ public class OliveServlet extends HttpServlet {
 		int accountId = DatabaseApi.getAccountId(sessionUsername);
 		String sessionProjectName = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
-		int projectId = DatabaseApi.getProjectId(sessionProjectName,
-				accountId);
+		int projectId = DatabaseApi.getProjectId(sessionProjectName, accountId);
 		return projectId;
+	}
+
+	private int getVideoIdFromSessionAttributes(HttpSession session,
+			String videoName) {
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		return DatabaseApi.getVideoId(videoName,
+				getProjectIdFromSessionAttributes(session));
 	}
 
 	@Override
@@ -137,8 +146,8 @@ public class OliveServlet extends HttpServlet {
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
-				newPasswordSet = DatabaseApi.editPassword(username,
-						newPassword);
+				newPasswordSet = DatabaseApi
+						.editPassword(username, newPassword);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						newPasswordSet);
 			} else {
@@ -261,8 +270,7 @@ public class OliveServlet extends HttpServlet {
 			if (newPassword.equals(confirmNewPassword)) {
 				User updateUser = new User(username, newPassword, newName,
 						newEmail, securityQuestion, securityAnswer);
-				Boolean editSuccessfully = DatabaseApi
-						.editAccount(updateUser);
+				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
@@ -557,8 +565,7 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString());
 		int accountId = DatabaseApi.getAccountId(sessionUsername);
 		String projectToDelete = deleteProjectRequest.arguments.project;
-		int projectId = DatabaseApi.getProjectId(projectToDelete,
-				accountId);
+		int projectId = DatabaseApi.getProjectId(projectToDelete, accountId);
 		DatabaseApi.deleteProject(projectId);
 
 		out.println(deleteProjectRequest.arguments.project
@@ -629,13 +636,29 @@ public class OliveServlet extends HttpServlet {
 	private void handleAddToSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleAddToSelected has not yet been implemented.");
+		AddToSelectedRequest addToSelectedRequest = new Gson().fromJson(json,
+				AddToSelectedRequest.class);
+
+		int videoId = getVideoIdFromSessionAttributes(session,
+				addToSelectedRequest.arguments.video);
+		
+		if (!DatabaseApi.markAsSelected(videoId)) {
+			log.severe("Error marking video " + videoId + " as selected");
+		}
 	}
 
 	private void handleRemoveFromSelected(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleRemoveFromSelected has not yet been implemented.");
+		RemoveFromSelectedRequest removeFromSelectedRequest = new Gson()
+				.fromJson(json, RemoveFromSelectedRequest.class);
+
+		int videoId = getVideoIdFromSessionAttributes(session,
+				removeFromSelectedRequest.arguments.video);
+
+		if (!DatabaseApi.markAsUnselected(videoId)) {
+			log.severe("Error marking video " + videoId + " as unselected");
+		}
 	}
 
 	private void handleSplitVideo(HttpServletRequest request,
@@ -666,8 +689,8 @@ public class OliveServlet extends HttpServlet {
 		}
 
 		int projectId = getProjectIdFromSessionAttributes(session);
-		int videoId = DatabaseApi.getVideoId(
-				splitVideoRequest.arguments.video, projectId);
+		int videoId = DatabaseApi.getVideoId(splitVideoRequest.arguments.video,
+				projectId);
 		Video[] videoFragments = ZencoderApi.split(videoId,
 				splitVideoRequest.arguments.splitTimeInSeconds);
 

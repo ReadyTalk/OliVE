@@ -19,8 +19,7 @@ import com.readytalk.olive.model.User;
 
 public class DatabaseApi {
 
-	private static Logger log = Logger.getLogger(DatabaseApi.class
-			.getName());
+	private static Logger log = Logger.getLogger(DatabaseApi.class.getName());
 
 	// CAUTION: closeConnection() must be called sometime after this method.
 	public static Connection getDBConnection() {
@@ -379,6 +378,39 @@ public class DatabaseApi {
 		}
 	}
 
+	public static boolean markAsSelectedOrUnselected(int videoId,
+			boolean isSelected) {
+		int isSelectedAsInt;
+		if (isSelected) {
+			isSelectedAsInt = 1;
+		} else {
+			isSelectedAsInt = 0;
+		}
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET IsSelected = " + isSelectedAsInt
+					+ " WHERE VideoID = '" + videoId + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean markAsSelected(int videoId) {
+		return markAsSelectedOrUnselected(videoId, true);
+	}
+
+	public static boolean markAsUnselected(int videoId) {
+		return markAsSelectedOrUnselected(videoId, false);
+	}
+
 	// You don't need the accountId if you have the projectId. The projectId was
 	// calculated using the accountId.
 	public static int getVideoId(String videoName, int projectId) {
@@ -428,7 +460,7 @@ public class DatabaseApi {
 				"StartTimeStoryboard", "Videos", "VideoID",
 				Integer.toString(videoId));
 		if (videoStartTimeStoryboard == null) {
-			return -1;	// TODO Is this a good idea?
+			return -1; // TODO Is this a good idea?
 		}
 		return Integer.parseInt(videoStartTimeStoryboard);
 	}
