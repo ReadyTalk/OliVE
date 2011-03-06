@@ -150,6 +150,7 @@ function updatePlayerWithNoElements() {
 	$('#player-video').removeAttr('poster');
 }
 
+// Modified from: http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
 function attachPlayerHandlers() {
 	video = document.getElementById('player-video');
 

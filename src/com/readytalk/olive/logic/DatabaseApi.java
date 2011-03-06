@@ -459,7 +459,7 @@ public class DatabaseApi {
 							+ videoIcon
 							+ "\" alt=\"olive"
 							+ videoNum
-							+ "\" /><br />"
+							+ "\" />"
 							+ "\n"
 							+ videoName
 							+ "<br />"

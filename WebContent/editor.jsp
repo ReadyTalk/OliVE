@@ -44,8 +44,8 @@
 		}
 
 		int accountId = DatabaseApi.getAccountId(username);
-		int projectId = DatabaseApi.getProjectId(projectName,
-				accountId);
+		int projectId = DatabaseApi
+				.getProjectId(projectName, accountId);
 		videosHtml = DatabaseApi.populateVideos(projectId);
 	}
 %>
@@ -89,8 +89,7 @@
 <!-- end #context-menu -->
 
 <div id="player-div">
-<div id="player-container"><video id="player-video"
-	preload="preload"></video></div>
+<div id="player-container"><video id="player-video"></video></div>
 <div id="player-controls" class="center-text">
 <button id="videos-playpause">Play/pause</button>
 <button id="videos-volume-down">Volume down</button>
@@ -102,9 +101,7 @@
 <div class="clear"></div>
 
 <div id="timeline">
-<div id="ticks-container">
-<div id="tick-anchor"></div>
-</div>
+<div id="ticks-container"></div>
 </div>
 
 <div class="clear"></div>
