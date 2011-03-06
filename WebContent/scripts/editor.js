@@ -112,15 +112,16 @@ function removeFromSelected(id) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	$('#player-video').attr('type', 'video/mp4');	// TODO Get this from the database.
 	$('#player-video').attr('poster', $(element).data('icon'));
-	$('#player-video').attr('src', $(element).data('url'));
+	$('#player-video').append(
+			'<source src="' + $(element).data('url')
+			+ '" type="' + 'application/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
+			+ '" />');
 }
 
 function updatePlayerWithNoElements() {
-	$('#player-video').removeAttr('type');
+	$('#player-video source').remove();
 	$('#player-video').removeAttr('poster');
-	$('#player-video').removeAttr('src');
 }
 
 function attachPlayerHandlers() {

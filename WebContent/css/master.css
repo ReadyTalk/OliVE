@@ -58,11 +58,15 @@ p {
 	line-height: 1.2em;
 }
 
-A:visited {
+a:link {
 	color: green;
 }
 
-A:hover { 
+a:visited {
+	color: green;
+}
+
+a:hover { 
 	color: #92bd6a;
 }
 
