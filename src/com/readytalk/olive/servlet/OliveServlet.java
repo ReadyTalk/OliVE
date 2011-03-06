@@ -508,7 +508,7 @@ public class OliveServlet extends HttpServlet {
 		} else if (generalRequest.command.equals("combineVideos")) {
 			handleCombineVideos(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideoInformation")) {
-			getVideoInformation(request, response, session, json);
+			handleGetVideoInformation(request, response, session, json);
 		} else {
 			log.warning("JSON request not recognized.");
 			log.warning("JSON request not recognized.");
@@ -711,7 +711,7 @@ public class OliveServlet extends HttpServlet {
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 
-	private void getVideoInformation(HttpServletRequest request,
+	private void handleGetVideoInformation(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
 		int projectId = getProjectIdFromSessionAttributes(session);

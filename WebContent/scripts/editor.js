@@ -91,24 +91,32 @@ function attachVideoClickHandlers() {
 			select(this);
 		}
 	});
-	
-	function select(element) {
-		$(element).data('isSelected', true);
+}
+
+function makeSelectionVisible(element) {
+	if ($(element).data('isSelected')) {
 		$(element).css( {
 			'background-color': '#edf4e6'	// A lighter version of the Olive color
 		});
-		addToSelected($(element).attr('id'));
 		updatePlayerWithNewElement(element);
-	}
-	
-	function unselect(element) {
-		$(element).data('isSelected', false);
+	} else {
 		$(element).css( {
 			'background-color': ''
 		});
-		removeFromSelected($(element).attr('id'));
 		updatePlayerWithNoElements();
 	}
+}
+
+function select(element) {
+	$(element).data('isSelected', true);
+	makeSelectionVisible(element);
+	addToSelected($(element).attr('id'));
+}
+
+function unselect(element) {
+	$(element).data('isSelected', false);
+	makeSelectionVisible(element);
+	removeFromSelected($(element).attr('id'));
 }
 
 //Perform an addToSelected request
@@ -348,9 +356,13 @@ function getVideoInformation() {
 		+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {
 		for (var i = 0; i < responseData.length; ++i) {
-			$('#' + responseData[i].name).data('url', responseData[i].url);
-			$('#' + responseData[i].name).data('icon', responseData[i].icon);
-			$('#' + responseData[i].name).data('startTimeStoryboard', responseData[i].startTimeStoryboard);
+			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
+			$(element).data('url', responseData[i].url);
+			$(element).data('icon', responseData[i].icon);
+			$(element).data('startTimeStoryboard', responseData[i].startTimeStoryboard);
+			
+			$(element).data('isSelected', responseData[i].isSelected);
+			makeSelectionVisible(element);
 		}
 	}, null);	// Defined in "/olive/scripts/master.js".
 }

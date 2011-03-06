@@ -7,14 +7,16 @@ public class Video {
 	private String icon;
 	private int projectId;
 	private int startTimeStoryboard;
+	private boolean isSelected;
 
 	public Video(String name, String url, String icon, int projectId,
-			int startTimeStoryboard) {
+			int startTimeStoryboard, boolean isSelected) {
 		this.name = name;
 		this.url = url;
 		this.icon = icon;
 		this.projectId = projectId;
-		this.setStartTimeStoryboard(startTimeStoryboard);
+		this.startTimeStoryboard = startTimeStoryboard;
+		this.isSelected = isSelected;
 	}
 
 	public String getName() {
@@ -55,6 +57,14 @@ public class Video {
 
 	public int getStartTimeStoryboard() {
 		return startTimeStoryboard;
+	}
+	
+	public void setIsSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+	
+	public boolean getIsSelected() {
+		return isSelected;
 	}
 
 }

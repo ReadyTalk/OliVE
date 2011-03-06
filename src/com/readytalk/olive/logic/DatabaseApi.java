@@ -465,6 +465,16 @@ public class DatabaseApi {
 		return Integer.parseInt(videoStartTimeStoryboard);
 	}
 
+	public static boolean getVideoIsSelected(int videoId) {
+		int isSelectedAsInt = Integer.parseInt(getUnknownValueFromTable(
+				"IsSelected", "Videos", "VideoID", Integer.toString(videoId)));
+		if (isSelectedAsInt == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public static String populateVideos(int projectId) {
 		String videos = "";
 		Connection conn = getDBConnection();

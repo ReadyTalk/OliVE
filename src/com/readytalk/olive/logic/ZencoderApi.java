@@ -137,7 +137,7 @@ public class ZencoderApi {
 			videoFragments[i] = new Video(
 					DatabaseApi.getVideoName(videoId) + i, S3Api.AWS_URL_PREFIX
 							+ videoFragmentFileName,
-					"/olive/images/bbb480.jpg", -1, -1); // TODO Get icon from Zencoder
+					"/olive/images/bbb480.jpg", -1, -1, false); // TODO Get icon from Zencoder
 		}
 
 		return videoFragments;

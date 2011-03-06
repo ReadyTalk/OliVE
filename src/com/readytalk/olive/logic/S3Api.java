@@ -131,9 +131,11 @@ public class S3Api {
 			String videoIcon = DatabaseApi.getVideoIcon(videoIds[videoIndex]);
 			int startTimeStoryboard = DatabaseApi
 					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
+			boolean isSelected = DatabaseApi
+					.getVideoIsSelected(videoIds[videoIndex]);
 
 			videos[videoIndex] = new Video(videoName, videoUrl, videoIcon,
-					projectId, startTimeStoryboard);
+					projectId, startTimeStoryboard, isSelected);
 		}
 
 		return new Gson().toJson(videos);
