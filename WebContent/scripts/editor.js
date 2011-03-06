@@ -141,7 +141,7 @@ function updatePlayerWithNewElement(element) {
 	$('#player-video').attr('poster', $(element).data('icon'));
 	$('#player-video').append(
 			'<source src="' + $(element).data('url')
-			+ '" type="' + 'application/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
+			+ '" type="' + 'video/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
 			+ '" />');
 }
 
