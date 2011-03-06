@@ -120,6 +120,11 @@ small {
 	text-decoration: underline;
 	cursor: pointer;
 }
+.link {
+	color: blue;
+	text-decoration:underline;
+	cursor: pointer;
+}
 
 /* 
 	----------------------------------------

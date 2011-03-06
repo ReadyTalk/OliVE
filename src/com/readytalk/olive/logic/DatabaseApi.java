@@ -464,6 +464,11 @@ public class DatabaseApi {
 							+ videoName
 							+ "<br />"
 							+ "\n"
+							+ "<small><a id\""
+							+ videoName
+							+ "\" class=\"link add-to-timeline\">Add to Timeline</a></small>"
+							+ "<br />"
+							+ "\n"
 							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
 							+ videoName
 							+ "\" class=\"warning delete-video\">Delete</a></small> </span>"

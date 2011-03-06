@@ -134,6 +134,9 @@
 <div id="confirm-delete-video-dialog" title="Warning!">
 <p>Delete video?</p>
 </div>
+<div id="confirm-add-to-timeline-dialog" title="Attention!">
+<p>Add Video to Timeline</p>
+</div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" title="Split video">
 <p class="validateTips">All form fields are required.</p>
