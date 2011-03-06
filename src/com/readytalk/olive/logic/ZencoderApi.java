@@ -10,7 +10,13 @@ import java.net.URLConnection;
 import com.readytalk.olive.model.Video;
 
 // Modified from: http://www.exampledepot.com/egs/java.net/post.html
-public class HttpSenderReceiver {
+public class ZencoderApi {
+	private static String getZencoderUrl() {
+		return "https://app.zencoder.com/api/jobs";
+	}
+
+	// Even though this method lives in the ZencoderApi class, it is generalized
+	// for any type of POST request.
 	public static String sendReceive(String data, URL url) throws IOException {
 		// Send data
 		System.out.println("Sending data to Zencoder...");
@@ -41,7 +47,7 @@ public class HttpSenderReceiver {
 
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
-		String originalVideoUrl = OliveDatabaseApi.getVideoUrl(videoId);
+		String originalVideoUrl = DatabaseApi.getVideoUrl(videoId);
 		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
 		double maximumStartTimeInSeconds = Security.MIN_SPLIT_TIME_IN_SECONDS;
 		double minimumEndTimeInSeconds = Security.MAX_SPLIT_TIME_IN_SECONDS;
@@ -55,22 +61,22 @@ public class HttpSenderReceiver {
 		for (int i = 0; i < 2; ++i) {
 			String videoFragmentFileName = S3Api
 					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
-			HttpSenderReceiver.sendReceive(HttpSenderReceiver.getZencoderJson(
+			ZencoderApi.sendReceive(ZencoderApi.getJsonForSplit(
 					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
 					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
 					getZencoderUrl()));
 			videoFragments[i] = new Video(
-					OliveDatabaseApi.getVideoName(videoId) + i,
-					S3Api.AWS_URL_PREFIX + videoFragmentFileName,
-					"/olive/images/bbb480.jpg", -1, -1);	// TODO Get icon from Zencoder
+					DatabaseApi.getVideoName(videoId) + i, S3Api.AWS_URL_PREFIX
+							+ videoFragmentFileName,
+					"/olive/images/bbb480.jpg", -1, -1); // TODO Get icon from Zencoder
 		}
 
 		return videoFragments;
 	}
 
-	private static String getZencoderJson(String input, String baseUrl,
+	private static String getJsonForSplit(String input, String baseUrl,
 			String filename, double startClip, double clipLength) {
-		String data = "{\"api_key\":\"" + OliveDatabaseApi.getZencoderApiKey()
+		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
 				+ "\"filename\":\"" + filename + "\",\"public\":1,"
@@ -80,7 +86,31 @@ public class HttpSenderReceiver {
 		return data;
 	}
 
-	private static String getZencoderUrl() {
-		return "https://app.zencoder.com/api/jobs";
+	private static String getJsonForConvertToOgg(String input, String baseUrl,
+			String filename, String videoCodec, String audioCodec) {
+		// Codec and file extension must match.
+		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
+				+ "\",\"input\":\"" + input + "\","
+				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
+				+ "\"filename\":\"" + filename + "\",\"video_codec\":\""
+				+ videoCodec + "\",\"audio_codec\":\"" + audioCodec
+				+ "\",\"public\":1" + "}]}";
+		System.out.println(data);
+		return data;
+	}
+
+	public static String convertToOgg(String videoUrl) throws IOException {
+		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
+		String newExtension = ".ogv";
+		String convertedVideoFileName = S3Api
+				.getNameFromUrlWithNewTimeStamp(videoUrl) + newExtension;
+		String newVideoCodec = "theora";
+		String newAudioCodec = "vorbis";
+
+		ZencoderApi.sendReceive(
+				getJsonForConvertToOgg(videoUrl, awsBaseUrl,
+						convertedVideoFileName, newVideoCodec, newAudioCodec),
+				new URL(getZencoderUrl()));
+		return S3Api.AWS_URL_PREFIX + convertedVideoFileName;
 	}
 }
