@@ -16,8 +16,8 @@ jQuery(function($) {
 	attachPlayerHandlers();
 	enableDragAndDrop();
 	attachContextMenuHandlers();
-	getVideoInformation();
 	attachAddToTimelineHandlers();
+	getVideoInformation();
 });
 
 function attachAddToTimelineHandlers() {
@@ -41,7 +41,6 @@ function attachAddToTimelineHandlers() {
 			}
 		}
 	});
-
 }
 
 function attachDeleteVideoHandlers() {
@@ -202,8 +201,26 @@ function enableDragAndDrop() {
 		snap : '#timeline'
 	});*/
 	
+	$('#videos').sortable( {
+		appendTo: 'body',
+		connectWith: '#timeline',
+		helper: 'clone',
+		items: 'span',
+		revert: true,
+		scroll: false,
+		tolerance: 'pointer',
+		change: function(event, ui) {; }
+	});
+	
 	$('#timeline').sortable( {
-		revert : true,
+		appendTo: 'body',
+		connectWith: '#videos',
+		helper: 'clone',
+		items: 'span',
+		revert: true,
+		scroll: false,
+		tolerance: 'pointer',
+		change: function(event, ui) {; },
 		sort: function() {
 			if($('#timeline').sortable('items').length > 0){
 				$('#export-button').removeAttr('disabled');

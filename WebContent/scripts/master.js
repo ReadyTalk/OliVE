@@ -53,6 +53,7 @@ function makeAjaxPostRequest(requestData, onSuccess, onError) {
 	$.ajax({
 		type: 'POST',
 		url: postUrl,
+		async: true,
 		contentType: 'application/json; charset=utf-8',
 		data: requestData,
 		success: function (responseData) {

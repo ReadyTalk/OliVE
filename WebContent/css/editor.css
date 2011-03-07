@@ -108,11 +108,15 @@ video {
 	height: 150px;	/* Larger than height of .video-container */
 	border: 1px solid gray;
 	overflow-x: auto;
-	/*	This would be for a "Timeline" background.
-	text-align: center;
-	font-size: 100px;
-	color: #eeeeee;*/
+	/*text-align: center;*/
 }
+/*
+#timeline-background-text {
+	font-size: 100px;
+	color: #eeeeee;
+	position: relative;
+	top: 40%;
+}*/
 
 #tick-anchor {
 	position: absolute;
