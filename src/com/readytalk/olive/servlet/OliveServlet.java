@@ -507,6 +507,10 @@ public class OliveServlet extends HttpServlet {
 			handleSplitVideo(request, response, session, json);
 		} else if (generalRequest.command.equals("combineVideos")) {
 			handleCombineVideos(request, response, session, json);
+		} else if (generalRequest.command.equals("updateVideosPosition")) {
+			handleUpdateVideosPosition(request, response, session, json);
+		} else if (generalRequest.command.equals("updateTimelinePosition")) {
+			handleUpdateTimelinePosition(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideoInformation")) {
 			handleGetVideoInformation(request, response, session, json);
 		} else {
@@ -641,7 +645,7 @@ public class OliveServlet extends HttpServlet {
 
 		int videoId = getVideoIdFromSessionAttributes(session,
 				addToSelectedRequest.arguments.video);
-		
+
 		if (!DatabaseApi.markAsSelected(videoId)) {
 			log.severe("Error marking video " + videoId + " as selected");
 		}
@@ -709,6 +713,18 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
 		log.severe("handleCombineVideos has not yet been implemented.");
+	}
+
+	private void handleUpdateVideosPosition(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		log.severe("handleUpdateVideosPosition has not yet been implemented.");
+	}
+
+	private void handleUpdateTimelinePosition(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		log.severe("handleUpdateTimelinePosition has not yet been implemented.");
 	}
 
 	private void handleGetVideoInformation(HttpServletRequest request,

@@ -20,29 +20,6 @@ jQuery(function($) {
 	getVideoInformation();
 });
 
-function attachAddToTimelineHandlers() {
-	$('.add-to-timeline').click(function () {
-		var clone = $(this).parent().parent().clone();
-		var child = clone.find(".link");
-		child.html("Remove from timeline");
-		$("#timeline").append(clone);
-		videoTimeline = this;
-	});
-	
-	$('#confirm-add-to-timeline-dialog').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 215,
-		modal: true,
-		buttons: {
-			'Ok': function () {
-				$("#timeline").append($(videoTimeline).parent().parent().clone());
-				$(this).dialog('close');
-			}
-		}
-	});
-}
-
 function attachDeleteVideoHandlers() {
 	$('.delete-video').click(function () {
 		$('#confirm-delete-video-dialog').dialog('open');
@@ -125,7 +102,7 @@ function addToSelected(id) {
 		+    '"command" : "addToSelected",'
 		+    '"arguments" : {'
 		+        '"video" : "' + videoName + '"'
-		+      '}'
+		+    '}'
 		+  '}';
 	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
@@ -137,7 +114,7 @@ function removeFromSelected(id) {
 		+    '"command" : "removeFromSelected",'
 		+    '"arguments" : {'
 		+        '"video" : "' + videoName + '"'
-		+      '}'
+		+    '}'
 		+  '}';
 	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
@@ -209,7 +186,9 @@ function enableDragAndDrop() {
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		change: function(event, ui) {; }
+		update: function(event, ui) {
+			updateVideosPosition();
+		}
 	});
 	
 	$('#timeline').sortable( {
@@ -220,7 +199,9 @@ function enableDragAndDrop() {
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		change: function(event, ui) {; },
+		update: function(event, ui) {
+		updateTimelinePosition();
+		},
 		sort: function() {
 			if($('#timeline').sortable('items').length > 0){
 				$('#export-button').removeAttr('disabled');
@@ -229,6 +210,38 @@ function enableDragAndDrop() {
 			}
 		}
 	});
+}
+
+// Perform an update<command>Position request
+function updateCollectionPosition(command, collectionItems) {
+	var requestData = '{'
+		+    '"command" : "' + command + '",'
+		+    '"arguments" : {'
+		+      '"videos" : [';
+		
+	$(collectionItems).each(function(index) {
+		requestData += '{'
+		+          '"video" : "' + $(this).attr('id') + '",'
+		+          '"position" : ' + index
+		+        '},';	// This will result in an extra comma.
+	});
+	
+	// Strip off the extra comma.
+	requestData = requestData.substring(0, requestData.length - 1);
+	
+	requestData += ']}}';
+	
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+}
+
+// Perform an updateVideosPosition request
+function updateVideosPosition() {
+	updateCollectionPosition('updateVideosPosition', '#videos span');
+}
+
+// Perform an updateTimelinePosition request
+function updateTimelinePosition() {
+	updateCollectionPosition('updateTimelinePosition', '#timeline span');
 }
 
 function attachContextMenuHandlers() {
@@ -262,7 +275,7 @@ function deleteVideo() {
 			+    '"command" : "deleteVideo",'
 			+    '"arguments" : {'
 			+        '"video" : "' + $(this).attr('id') + '"'
-			+      '}'
+			+    '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
 }
@@ -274,7 +287,7 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+    '"arguments" : {'
 			+        '"video" : "' + videoName + '",'
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
-			+      '}'
+			+    '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
 }
@@ -363,6 +376,29 @@ function attachSplitHandlers() {
 		},
 		close : function() {
 			allFields.val('').removeClass('ui-state-error');
+		}
+	});
+}
+
+function attachAddToTimelineHandlers() {
+	$('.add-to-timeline').click(function () {
+		var clone = $(this).parent().parent().clone();
+		var child = clone.find(".link");
+		child.html("Remove from timeline");
+		$("#timeline").append(clone);
+		videoTimeline = this;
+	});
+	
+	$('#confirm-add-to-timeline-dialog').dialog({
+		autoOpen: false,
+		resizable: false,
+		height: 215,
+		modal: true,
+		buttons: {
+			'OK': function () {
+				$("#timeline").append($(videoTimeline).parent().parent().clone());
+				$(this).dialog('close');
+			}
 		}
 	});
 }

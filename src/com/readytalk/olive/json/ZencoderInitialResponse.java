@@ -7,15 +7,15 @@ public class ZencoderInitialResponse {
 
 	}
 
-	public Arguments[] outputs;
+	public Outputs[] outputs;
 	public int id;
 	
 	// Must be static for Gson to work.
 	// See: http://sites.google.com/site/gson/gson-user-guide#TOC-Nested-Classes-including-Inner-Clas
-	public static class Arguments {
+	public static class Outputs {
 
 		// No-args constructor
-		public Arguments() {
+		public Outputs() {
 
 		}
 		
