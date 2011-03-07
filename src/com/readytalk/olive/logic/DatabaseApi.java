@@ -49,7 +49,7 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "SELECT AccountId FROM Accounts WHERE Username = '" + username
+			s = "SELECT AccountID FROM Accounts WHERE Username = '" + username
 					+ "' AND Password = Password('" + password + "');";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
@@ -110,38 +110,38 @@ public class DatabaseApi {
 	}
 
 	public static int getAccountId(String username) {
-		return Integer.parseInt(getUnknownValueFromTable("AccountId",
+		return Integer.parseInt(getUnknownValueFromTable("AccountID",
 				"Accounts", "Username", username));
 	}
 
 	public static String getAccountUsername(int accountId) {
-		return getUnknownValueFromTable("Username", "Accounts", "AccountId",
+		return getUnknownValueFromTable("Username", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
 
 	public static String getAccountPassword(int accountId) {
-		return getUnknownValueFromTable("Password", "Accounts", "AccountId",
+		return getUnknownValueFromTable("Password", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
 
 	public static String getAccountName(int accountId) {
-		return getUnknownValueFromTable("Name", "Accounts", "AccountId",
+		return getUnknownValueFromTable("Name", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
 
 	public static String getAccountEmail(int accountId) {
-		return getUnknownValueFromTable("Email", "Accounts", "AccountId",
+		return getUnknownValueFromTable("Email", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
 
 	public static String getAccountSecurityQuestion(int accountId) {
 		return getUnknownValueFromTable("SecurityQuestion", "Accounts",
-				"AccountId", Integer.toString(accountId));
+				"AccountID", Integer.toString(accountId));
 	}
 
 	public static String getAccountSecurityAnswer(int accountId) {
 		return getUnknownValueFromTable("SecurityAnswer", "Accounts",
-				"AccountId", Integer.toString(accountId));
+				"AccountID", Integer.toString(accountId));
 	}
 
 	public static Boolean editAccount(User user) {
@@ -196,12 +196,12 @@ public class DatabaseApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			ResultSet r;
-			s = "SELECT ProjectId FROM Projects WHERE AccountId = " + accountId
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
 					+ ";";
 			r = st.executeQuery(s);
 			if (r.first()) {
 				do {
-					deleteProject(r.getInt("ProjectId"));
+					deleteProject(r.getInt("ProjectID"));
 				} while (r.next());
 			}
 			// TODO Broken
@@ -214,7 +214,7 @@ public class DatabaseApi {
 			// st.executeUpdate(s);
 
 			// Delete the account itself.
-			s = "DELETE FROM Accounts WHERE AccountId = '" + accountId + "';"; // TODO Add error checking
+			s = "DELETE FROM Accounts WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -649,7 +649,7 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "SELECT AccountId FROM Accounts WHERE Username = '" + username
+			s = "SELECT AccountID FROM Accounts WHERE Username = '" + username
 					+ "' AND SecurityQuestion = '" + securityQuestion
 					+ "' AND SecurityAnswer = '" + securityAnswer + "';";
 			ResultSet r = st.executeQuery(s);
