@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
 import com.readytalk.olive.json.AddToSelectedRequest;
+import com.readytalk.olive.json.CombineVideosRequest;
 import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
@@ -712,7 +713,43 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
+		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+				CombineVideosRequest.class);
+		
+		response.setContentType("text/plain");
+
+		PrintWriter out = response.getWriter();
+		
+		int projectId = getProjectIdFromSessionAttributes(session);
+		String [] videos = combineVideosRequest.arguments.videos;
+		String [] videoURLs = new String[videos.length];
+		for (int i = 0; i < videos.length; i++){
+			videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(videos[i], projectId));
+		}
+		
+		Video combined = combineVideos(videoURLs, videos);
+		
 		log.severe("handleCombineVideos has not yet been implemented.");
+	}
+	
+	private Video combineVideos(String[] videoURLs, String [] videos) {
+		
+		
+		
+		
+		return null;
+	}
+	
+	//http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
+	private Boolean isWindows(){
+		String os = System.getProperty("os.name").toLowerCase();
+		//windows
+	    return (os.indexOf( "win" ) >= 0);
+	}
+	private Boolean isLinux(){
+		String os = System.getProperty("os.name").toLowerCase();
+		//linux or unix
+	    return (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0);
 	}
 
 	private void handleUpdateVideosPosition(HttpServletRequest request,
