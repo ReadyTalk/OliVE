@@ -410,15 +410,32 @@ function getVideoInformation() {
 		+    '"command" : "getVideoInformation"'
 		+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {
+		var poolPositions = [];
+		var timelinePositions = [];
 		for (var i = 0; i < responseData.length; ++i) {
 			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
 			$(element).data('url', responseData[i].url);
 			$(element).data('icon', responseData[i].icon);
-			$(element).data('poolPosition', responseData[i].poolPosition);
-			$(element).data('timelinePosition', responseData[i].timelinePosition);
+			
+			if (responseData[i].poolPosition != -1) {
+				$(element).data('poolPosition', responseData[i].poolPosition);
+				poolPositions[responseData[i].poolPosition] = element;	// Sort
+			}
+			if (responseData[i].timelinePosition != -1) {
+				$(element).data('timelinePosition', responseData[i].timelinePosition);
+				timelinePositions[responseData[i].timelinePosition] = element;	// Sort
+			}
 			
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
+		}
+		// Append in the sorted order
+		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
+			console.log(poolPositions[poolIndex]);
+			$('#videos').append(poolPositions[poolIndex]);
+		}
+		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
+			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
