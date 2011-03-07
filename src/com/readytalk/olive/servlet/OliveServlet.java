@@ -435,8 +435,8 @@ public class OliveServlet extends HttpServlet {
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else {
-				out.println("Upload Failed. Video name is invalid.");
-				log.warning("Upload Failed. Video name is invalid.");
+				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
