@@ -422,6 +422,31 @@ public class DatabaseApi {
 				"VideoID", Integer.toString(videoId)));
 	}
 
+	public static boolean isVideoPoolPositionNotNull(int videoId) {
+		int position = getVideoPoolPosition(videoId);
+		if (position != -1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isVideoTimelinePositionNotNull(int videoId) {
+		int position = getVideoTimelinePosition(videoId);
+		if (position != -1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static int getVideoPoolPosition(int videoId) {
+		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
+				"Videos", "VideoID", Integer.toString(videoId));
+		if (videoPoolPosition == null) {
+			return -1; // TODO Is this a good idea?
+		}
+		return Integer.parseInt(videoPoolPosition);
+	}
+	
 	public static int getVideoTimelinePosition(int videoId) {
 		String videoTimelinePosition = getUnknownValueFromTable(
 				"TimelinePosition", "Videos", "VideoID",
@@ -430,15 +455,6 @@ public class DatabaseApi {
 			return -1; // TODO Is this a good idea?
 		}
 		return Integer.parseInt(videoTimelinePosition);
-	}
-
-	public static int getVideoPoolPosition(int videoId) {
-		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
-				"Videos", "VideoID", Integer.toString(videoId));
-		if (videoPoolPosition == null) {
-			return -1; // TODO Is this a good idea?
-		}
-		return Integer.parseInt(videoPoolPosition);
 	}
 
 	public static boolean getVideoIsSelected(int videoId) {
