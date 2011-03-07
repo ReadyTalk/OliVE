@@ -417,6 +417,7 @@ function getVideoInformation() {
 			$(element).data('url', responseData[i].url);
 			$(element).data('icon', responseData[i].icon);
 			
+			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
 			if (responseData[i].poolPosition != -1) {
 				$(element).data('poolPosition', responseData[i].poolPosition);
 				poolPositions[responseData[i].poolPosition] = element;	// Sort
