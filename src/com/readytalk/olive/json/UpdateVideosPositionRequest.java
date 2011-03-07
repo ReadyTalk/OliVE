@@ -31,6 +31,7 @@ public class UpdateVideosPositionRequest {
 			}
 			
 			public String video;
+			public int position;
 		}
 	}
 }

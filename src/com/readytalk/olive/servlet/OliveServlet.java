@@ -28,6 +28,8 @@ import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
+import com.readytalk.olive.json.UpdateTimelinePositionRequest;
+import com.readytalk.olive.json.UpdateVideosPositionRequest;
 import com.readytalk.olive.logic.ZencoderApi;
 import com.readytalk.olive.logic.DatabaseApi;
 import com.readytalk.olive.logic.S3Api;
@@ -646,7 +648,7 @@ public class OliveServlet extends HttpServlet {
 		int videoId = getVideoIdFromSessionAttributes(session,
 				addToSelectedRequest.arguments.video);
 
-		if (!DatabaseApi.markAsSelected(videoId)) {
+		if (!DatabaseApi.setVideoAsSelected(videoId)) {
 			log.severe("Error marking video " + videoId + " as selected");
 		}
 	}
@@ -660,7 +662,7 @@ public class OliveServlet extends HttpServlet {
 		int videoId = getVideoIdFromSessionAttributes(session,
 				removeFromSelectedRequest.arguments.video);
 
-		if (!DatabaseApi.markAsUnselected(videoId)) {
+		if (!DatabaseApi.setVideoAsUnselected(videoId)) {
 			log.severe("Error marking video " + videoId + " as unselected");
 		}
 	}
@@ -718,13 +720,37 @@ public class OliveServlet extends HttpServlet {
 	private void handleUpdateVideosPosition(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleUpdateVideosPosition has not yet been implemented.");
+		UpdateVideosPositionRequest updateVideosPositionRequest = new Gson()
+				.fromJson(json, UpdateVideosPositionRequest.class);
+
+		int projectId = getProjectIdFromSessionAttributes(session);
+		DatabaseApi.setAllVideoPoolPositionsToNull(projectId);
+
+		int numberOfVideos = updateVideosPositionRequest.arguments.videos.length;
+		for (int videoIndex = 0; videoIndex < numberOfVideos; ++videoIndex) {
+			String videoName = updateVideosPositionRequest.arguments.videos[videoIndex].video;
+			int videoId = getVideoIdFromSessionAttributes(session, videoName);
+			int position = updateVideosPositionRequest.arguments.videos[videoIndex].position;
+			DatabaseApi.setPoolPosition(videoId, position);
+		}
 	}
 
 	private void handleUpdateTimelinePosition(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleUpdateTimelinePosition has not yet been implemented.");
+		UpdateTimelinePositionRequest updateTimelinePositionRequest = new Gson()
+				.fromJson(json, UpdateTimelinePositionRequest.class);
+
+		int projectId = getProjectIdFromSessionAttributes(session);
+		DatabaseApi.setAllVideoTimelinePositionsToNull(projectId);
+
+		int numberOfVideos = updateTimelinePositionRequest.arguments.videos.length;
+		for (int videoIndex = 0; videoIndex < numberOfVideos; ++videoIndex) {
+			String videoName = updateTimelinePositionRequest.arguments.videos[videoIndex].video;
+			int videoId = getVideoIdFromSessionAttributes(session, videoName);
+			int position = updateTimelinePositionRequest.arguments.videos[videoIndex].position;
+			DatabaseApi.setTimelinePosition(videoId, position);
+		}
 	}
 
 	private void handleGetVideoInformation(HttpServletRequest request,

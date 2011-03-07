@@ -130,7 +130,7 @@ public class S3Api {
 			String videoUrl = DatabaseApi.getVideoUrl(videoIds[videoIndex]);
 			String videoIcon = DatabaseApi.getVideoIcon(videoIds[videoIndex]);
 			int startTimeStoryboard = DatabaseApi
-					.getVideoStartTimeStoryboard(videoIds[videoIndex]);
+					.getVideoTimelinePosition(videoIds[videoIndex]);
 			boolean isSelected = DatabaseApi
 					.getVideoIsSelected(videoIds[videoIndex]);
 

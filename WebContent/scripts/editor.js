@@ -219,15 +219,17 @@ function updateCollectionPosition(command, collectionItems) {
 		+    '"arguments" : {'
 		+      '"videos" : [';
 		
-	$(collectionItems).each(function(index) {
-		requestData += '{'
-		+          '"video" : "' + $(this).attr('id') + '",'
-		+          '"position" : ' + index
-		+        '},';	// This will result in an extra comma.
-	});
-	
-	// Strip off the extra comma.
-	requestData = requestData.substring(0, requestData.length - 1);
+	if ($(collectionItems).length > 0) {
+		$(collectionItems).each(function(index) {
+			requestData += '{'
+			+          '"video" : "' + $(this).attr('id') + '",'
+			+          '"position" : ' + index
+			+        '},';	// This will result in an extra comma.
+		});
+		
+		// Strip off the extra comma.
+		requestData = requestData.substring(0, requestData.length - 1);
+	}	
 	
 	requestData += ']}}';
 	

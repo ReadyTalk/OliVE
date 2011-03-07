@@ -378,39 +378,6 @@ public class DatabaseApi {
 		}
 	}
 
-	public static boolean markAsSelectedOrUnselected(int videoId,
-			boolean isSelected) {
-		int isSelectedAsInt;
-		if (isSelected) {
-			isSelectedAsInt = 1;
-		} else {
-			isSelectedAsInt = 0;
-		}
-		Connection conn = getDBConnection();
-		try {
-			Statement st = conn.createStatement();
-			String s = "USE OliveData;";
-			st.executeUpdate(s);
-			s = "UPDATE Videos SET IsSelected = " + isSelectedAsInt
-					+ " WHERE VideoID = '" + videoId + "';";
-			st.executeUpdate(s);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(conn);
-		}
-		return false;
-	}
-
-	public static boolean markAsSelected(int videoId) {
-		return markAsSelectedOrUnselected(videoId, true);
-	}
-
-	public static boolean markAsUnselected(int videoId) {
-		return markAsSelectedOrUnselected(videoId, false);
-	}
-
 	// You don't need the accountId if you have the projectId. The projectId was
 	// calculated using the accountId.
 	public static int getVideoId(String videoName, int projectId) {
@@ -455,14 +422,23 @@ public class DatabaseApi {
 				"VideoID", Integer.toString(videoId)));
 	}
 
-	public static int getVideoStartTimeStoryboard(int videoId) {
-		String videoStartTimeStoryboard = getUnknownValueFromTable(
-				"StartTimeStoryboard", "Videos", "VideoID",
+	public static int getVideoTimelinePosition(int videoId) {
+		String videoTimelinePosition = getUnknownValueFromTable(
+				"TimelinePosition", "Videos", "VideoID",
 				Integer.toString(videoId));
-		if (videoStartTimeStoryboard == null) {
+		if (videoTimelinePosition == null) {
 			return -1; // TODO Is this a good idea?
 		}
-		return Integer.parseInt(videoStartTimeStoryboard);
+		return Integer.parseInt(videoTimelinePosition);
+	}
+
+	public static int getVideoPoolPosition(int videoId) {
+		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
+				"Videos", "VideoID", Integer.toString(videoId));
+		if (videoPoolPosition == null) {
+			return -1; // TODO Is this a good idea?
+		}
+		return Integer.parseInt(videoPoolPosition);
 	}
 
 	public static boolean getVideoIsSelected(int videoId) {
@@ -473,6 +449,101 @@ public class DatabaseApi {
 		}
 
 		return true;
+	}
+
+	private static boolean setVideoAsSelectedOrUnselected(int videoId,
+			boolean isSelected) {
+		int isSelectedAsInt;
+		if (isSelected) {
+			isSelectedAsInt = 1;
+		} else {
+			isSelectedAsInt = 0;
+		}
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET IsSelected = " + isSelectedAsInt
+					+ " WHERE VideoID = '" + videoId + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean setVideoAsSelected(int videoId) {
+		return setVideoAsSelectedOrUnselected(videoId, true);
+	}
+
+	public static boolean setVideoAsUnselected(int videoId) {
+		return setVideoAsSelectedOrUnselected(videoId, false);
+	}
+
+	private static boolean setPoolOrTimelinePosition(int videoId, int position,
+			String positionType) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET " + positionType + " = " + position
+					+ " WHERE VideoID = '" + videoId + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean setPoolPosition(int videoId, int position) {
+		return setPoolOrTimelinePosition(videoId, position, "PoolPosition");
+	}
+
+	public static boolean setTimelinePosition(int videoId, int position) {
+		return setPoolOrTimelinePosition(videoId, position, "TimelinePosition");
+	}
+
+	public static boolean setAllVideoPoolOrTimelinePositionsToNull(
+			int projectId, String positionType) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT VideoID FROM Videos WHERE ProjectID = '" + projectId
+					+ "';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					setPoolOrTimelinePosition(r.getInt("VideoID"), -1,	// TODO Insert "NULL", not -1
+							positionType);
+				} while (r.next());
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean setAllVideoPoolPositionsToNull(int projectId) {
+		return setAllVideoPoolOrTimelinePositionsToNull(projectId,
+				"PoolPosition");
+	}
+
+	public static boolean setAllVideoTimelinePositionsToNull(int projectId) {
+		return setAllVideoPoolOrTimelinePositionsToNull(projectId,
+				"TimelinePosition");
 	}
 
 	public static String populateVideos(int projectId) {
