@@ -431,7 +431,6 @@ function getVideoInformation() {
 		}
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			console.log(poolPositions[poolIndex]);
 			$('#videos').append(poolPositions[poolIndex]);
 		}
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
