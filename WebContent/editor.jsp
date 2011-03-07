@@ -119,7 +119,7 @@
 <div id="footer"></div>
 
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
-<div id="help-dialog" title="How to use Olive">
+<div id="help-dialog" class="hidden" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
 	<li>2. Create a new project.</li>
@@ -128,14 +128,15 @@
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
-<div id="confirm-delete-video-dialog" title="Warning!">
+<div id="confirm-delete-video-dialog" class="hidden" title="Warning!">
 <p>Delete video?</p>
 </div>
-<div id="confirm-add-to-timeline-dialog" title="Attention!">
+<div id="confirm-add-to-timeline-dialog" class="hidden"
+	title="Attention!">
 <p>Add Video to Timeline</p>
 </div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
-<div id="split-video-dialog-form" title="Split video">
+<div id="split-video-dialog-form" class="hidden" title="Split video">
 <p class="validateTips">All form fields are required.</p>
 <form id="split-video-form" action="OliveServlet" name="process"
 	method="post">

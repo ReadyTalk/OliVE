@@ -62,9 +62,9 @@ public class Security {
 				&& isSafeValue(videoName, "^([0-9a-zA-Z])+$"); // Same as password's regex
 	}
 
-	public static boolean isSafeSplitTimeInSeconds(double startTimeStoryboard) {
-		return startTimeStoryboard > MIN_SPLIT_TIME_IN_SECONDS
-				&& startTimeStoryboard < MAX_SPLIT_TIME_IN_SECONDS;
+	public static boolean isSafeSplitTimeInSeconds(double splitTimeInSeconds) {
+		return splitTimeInSeconds > MIN_SPLIT_TIME_IN_SECONDS
+				&& splitTimeInSeconds < MAX_SPLIT_TIME_IN_SECONDS;
 	}
 
 	public static boolean isSafeSecurityQuestion(String securityQuestion) {

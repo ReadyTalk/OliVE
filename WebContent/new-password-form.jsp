@@ -22,33 +22,34 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
-<% 
-	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE.toString());
-	Boolean passwordsMatch = (Boolean) session.getAttribute(Attribute.PASSWORDS_MATCH.toString());
-	Boolean editSuccess = (Boolean) session.getAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
+<%
+	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE
+			.toString());
+	Boolean passwordsMatch = (Boolean) session
+			.getAttribute(Attribute.PASSWORDS_MATCH.toString());
+	Boolean editSuccess = (Boolean) session
+			.getAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
 	String confirmation = "";
 	String index = "'index.jsp'";
-	if(editSuccess == null){
+	if (editSuccess == null) {
 		confirmation = "";
-	}
-	else if(editSuccess == false){
-		if(isSafe){
-			if(passwordsMatch){
-				confirmation = "We're sorry, there is an error in inputting to the database. Please try again";	
-			}
-			else{
+	} else if (editSuccess == false) {
+		if (isSafe) {
+			if (passwordsMatch) {
+				confirmation = "We're sorry, there is an error in inputting to the database. Please try again";
+			} else {
 				confirmation = "Passwords do not match";
 			}
+		} else {
+			confirmation = "Unsafe input";
 		}
-		else{
-			confirmation = "Unsafe input";		
-		}
+	} else if (editSuccess) {
+		confirmation = "Congratulations. Your new password has been set. You "
+				+ "may now sign in to <a href = "
+				+ index
+				+ ">Olive</a>";
 	}
-	else if(editSuccess){
-		confirmation = "Congratulations. Your new password has been set. You " 
-							+ "may now sign in to <a href = "+index+">Olive</a>";
-	}
-	
+
 	session.removeAttribute(Attribute.IS_SAFE.toString());
 	session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
 	session.removeAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
@@ -60,15 +61,6 @@
 <!-- end #header-left -->
 <div id="header-right"><span id="help-dialog-opener"><a
 	href="">Help</a></span></div>
-<div id="help-dialog" title="How to use Olive">
-<ul>
-	<li>1. Create a new account.</li>
-	<li>2. Create a new project.</li>
-	<li>3. Upload your videos.</li>
-	<li>4. Edit your videos.</li>
-	<li>5. Export to your computer.</li>
-</ul>
-</div>
 <!-- end #header-right --></div>
 <!-- end #header -->
 
@@ -94,5 +86,17 @@
 <!-- end #main --></div>
 
 <div id="footer"></div>
+
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="help-dialog" class="hidden" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
+
 </body>
 </html>

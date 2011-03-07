@@ -79,8 +79,8 @@
 	for="password">Password</label> <input type="password" name="password"
 	id="register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /> <label
-	for="confirm_password">Confirm Password</label> <input type="password" name="confirm_password"
-	id="confirm-register-password" value=""
+	for="confirm_password">Confirm Password</label> <input type="password"
+	name="confirm_password" id="confirm-register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
 <input type="hidden" name="FormName" value="AddUser"></input></form>
 </div>
@@ -89,7 +89,8 @@
 
 <div id="footer"></div>
 
-<div id="help-dialog" title="How to use Olive">
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="help-dialog" class="hidden" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
 	<li>2. Create a new project.</li>

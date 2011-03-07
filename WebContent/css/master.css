@@ -126,6 +126,10 @@ small {
 	cursor: pointer;
 }
 
+.hidden {
+	display: none;
+}
+
 /* 
 	----------------------------------------
 	Common elements to every page

@@ -3,4 +3,5 @@
 <div id="about-dialog" title="About Olive">
 <p>&copy; 2010 ReadyTalk</p>
 </div>
-<div id="footer-right">&copy; 2010 ReadyTalk</div>
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="footer-right" class="hidden">&copy; 2010 ReadyTalk</div>

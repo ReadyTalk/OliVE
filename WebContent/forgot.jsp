@@ -22,25 +22,23 @@
 <script src="/olive/scripts/google-analytics.js"></script>
 </head>
 <body>
-<% 
-	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE.toString());
-	Boolean isCorrect = (Boolean) session.getAttribute(Attribute.IS_CORRECT.toString());
+<%
+	Boolean isSafe = (Boolean) session.getAttribute(Attribute.IS_SAFE
+			.toString());
+	Boolean isCorrect = (Boolean) session
+			.getAttribute(Attribute.IS_CORRECT.toString());
 	String editConfirmation = "";
-	if(isCorrect == null){
+	if (isCorrect == null) {
 		editConfirmation = "";
-	}
-	else if(isCorrect == false){
-		if(isSafe == null){
+	} else if (isCorrect == false) {
+		if (isSafe == null) {
 			editConfirmation = "";
+		} else if (isSafe) {
+			editConfirmation = "Question or answer do not match database records";
+		} else {
+			editConfirmation = "Unsafe input";
 		}
-		else if(isSafe){
-			editConfirmation = "Question or answer do not match database records";	
-		}
-		else{
-			editConfirmation = "Unsafe input";		
-		}
-	}
-	else if(isCorrect){
+	} else if (isCorrect) {
 		editConfirmation = "";
 		response.sendRedirect("new-password-form.jsp");
 	}
@@ -52,9 +50,44 @@
 <h1>Olive</h1>
 </div>
 <!-- end #header-left -->
-<div id="header-right"><span
+<div id="header-right">
+<div><strong><a href="index.jsp">Home</a></strong>&nbsp;<span
 	id="help-dialog-opener"><a href="">Help</a></span></div>
-<div id="help-dialog" title="How to use Olive">
+</div>
+<!-- end #header-right --></div>
+
+<!-- end #header -->
+
+<div class="clear"></div>
+
+<div id="main">
+<div id="edit-account-container">
+<h2>Forgot Password?</h2>
+<p>Please enter your username and your security question and answer.
+Thank you</p>
+<!-- end #about-title -->
+
+<form id="security-question-form" action="OliveServlet" name="process"
+	method="post">
+<p><label for="username">Username</label><br />
+<input type="text" name="username" id="username" value="" size="32"
+	maxlength="32" /></p>
+<p><label for="security_question">Security Question</label><br />
+<input type="text" name="security_question" id="security_question"
+	value="" size="32" maxlength="128" /></p>
+<p><label for="security_answer">Security Answer</label><br />
+<input type="text" name="security_answer" id="security_question_answer"
+	value="" size="32" maxlength="128" /></p>
+<input type="hidden" name="FormName" value="security-question-form"></input><br />
+<input type="submit" value="Recover Password" /><span><%=editConfirmation%></span>
+</form>
+</div>
+<!-- end #main --></div>
+
+<div id="footer"></div>
+
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="help-dialog" class="hidden" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
 	<li>2. Create a new project.</li>
@@ -63,36 +96,6 @@
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
-<!-- end #header-right --></div>
-<!-- end #header -->
 
-<div class="clear"></div>
-
-<div id="main">
-<div id="edit-account-container">
-<h2>Forgot Password?</h2>
-<p> Please enter your username and your security question and answer. Thank you</p>
-<!-- end #about-title -->
-
-<form id="security-question-form" action="OliveServlet" name="process"
-	method="post">
-	<p><label for="username">Username</label><br />
-<input type="text" name="username" id="username" value=""
-	size="32" maxlength="32" /></p>
-	<p><label for="security_question">Security Question</label><br />	
-<input type="text" name="security_question"
-	id="security_question" value="" size="32"
-	maxlength="128" /></p>
-<p><label for="security_answer">Security Answer</label><br />
-<input type="text" name="security_answer"
-	id="security_question_answer" value="" size="32"
-	maxlength="128" /></p>
-<input type="hidden" name="FormName" value="security-question-form"></input><br />
-<input type="submit" value="Recover Password" /><span><%=editConfirmation%></span>
-</form>
-</div>
-<!-- end #main --></div>
-
-<div id="footer"></div>
 </body>
 </html>

@@ -129,13 +129,15 @@ public class S3Api {
 			String videoName = DatabaseApi.getVideoName(videoIds[videoIndex]);
 			String videoUrl = DatabaseApi.getVideoUrl(videoIds[videoIndex]);
 			String videoIcon = DatabaseApi.getVideoIcon(videoIds[videoIndex]);
-			int startTimeStoryboard = DatabaseApi
+			int poolPosition = DatabaseApi
+					.getVideoPoolPosition(videoIds[videoIndex]);
+			int timelinePosition = DatabaseApi
 					.getVideoTimelinePosition(videoIds[videoIndex]);
 			boolean isSelected = DatabaseApi
 					.getVideoIsSelected(videoIds[videoIndex]);
 
 			videos[videoIndex] = new Video(videoName, videoUrl, videoIcon,
-					projectId, startTimeStoryboard, isSelected);
+					projectId, poolPosition, timelinePosition, isSelected);
 		}
 
 		return new Gson().toJson(videos);

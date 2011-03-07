@@ -6,16 +6,18 @@ public class Video {
 	private String url;
 	private String icon;
 	private int projectId;
-	private int startTimeStoryboard;
+	private int poolPosition;
+	private int timelinePosition;
 	private boolean isSelected;
 
 	public Video(String name, String url, String icon, int projectId,
-			int startTimeStoryboard, boolean isSelected) {
+			int poolPosition, int timelinePosition, boolean isSelected) {
 		this.name = name;
 		this.url = url;
 		this.icon = icon;
 		this.projectId = projectId;
-		this.startTimeStoryboard = startTimeStoryboard;
+		this.poolPosition = poolPosition;
+		this.timelinePosition = timelinePosition;
 		this.isSelected = isSelected;
 	}
 
@@ -51,12 +53,20 @@ public class Video {
 		this.projectId = project;
 	}
 
-	public void setStartTimeStoryboard(int startTimeStoryboard) {
-		this.startTimeStoryboard = startTimeStoryboard;
+	public void setPoolPosition(int poolPosition) {
+		this.poolPosition = poolPosition;
 	}
 
-	public int getStartTimeStoryboard() {
-		return startTimeStoryboard;
+	public int getPoolPosition() {
+		return poolPosition;
+	}
+	
+	public void setTimelinePosition(int timelinePosition) {
+		this.timelinePosition = timelinePosition;
+	}
+
+	public int getTimelinePosition() {
+		return timelinePosition;
 	}
 	
 	public void setIsSelected(boolean isSelected) {

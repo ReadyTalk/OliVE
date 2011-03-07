@@ -680,7 +680,6 @@ public class OliveServlet extends HttpServlet {
 		if (!Security.isSafeVideoName(splitVideoRequest.arguments.video)) {
 			out.println("Name of video to split is invalid.");
 			log.warning("Name of video to split is invalid.");
-			log.warning("Name of video to split is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -688,7 +687,6 @@ public class OliveServlet extends HttpServlet {
 		if (!Security
 				.isSafeSplitTimeInSeconds(splitVideoRequest.arguments.splitTimeInSeconds)) {
 			out.println("Split time (in seconds) is invalid.");
-			log.warning("Split time (in seconds) is invalid.");
 			log.warning("Split time (in seconds) is invalid.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;

@@ -77,7 +77,8 @@ Project</button>
 
 <div id="footer"></div>
 
-<div id="help-dialog" title="How to use Olive">
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="help-dialog" class="hidden" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
 	<li>2. Create a new project.</li>
@@ -86,8 +87,8 @@ Project</button>
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
-<div id="confirm-delete-project-dialog" title="Warning!">
-	<p>Delete project? This will also delete the project's videos.</p>
+<div id="confirm-delete-project-dialog" class="hidden" title="Warning!">
+<p>Delete project? This will also delete the project's videos.</p>
 </div>
 
 </body>

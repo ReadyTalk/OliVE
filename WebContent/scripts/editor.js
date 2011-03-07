@@ -414,7 +414,8 @@ function getVideoInformation() {
 			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
 			$(element).data('url', responseData[i].url);
 			$(element).data('icon', responseData[i].icon);
-			$(element).data('startTimeStoryboard', responseData[i].startTimeStoryboard);
+			$(element).data('poolPosition', responseData[i].poolPosition);
+			$(element).data('timelinePosition', responseData[i].timelinePosition);
 			
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
