@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -768,5 +770,52 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 		return false;
+	}
+
+	public static String[] getVideosOnTimeline(int projectId) {
+		Connection conn = getDBConnection();
+		try{
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT * FROM Videos WHERE ProjectID = '"+projectId+"';";
+			ResultSet r = st.executeQuery(s);
+			ArrayList timelinePositionTemp = new ArrayList();
+			if(r.first()){
+				do{
+					int temp = r.getInt("TimelinePosition"); 
+					if(temp != -1){
+						timelinePositionTemp.add(temp);
+					}
+				}while(r.next());
+				Object [] timelinePositionO = timelinePositionTemp.toArray();
+				Integer temp = null;
+				int [] timelinePosition = new int[timelinePositionO.length];
+				int i = 0;
+				for(i = 0; i<timelinePositionO.length;i++){
+					temp = (Integer)timelinePositionO[i];
+					timelinePosition[i] = temp.intValue();
+				}
+				Arrays.sort(timelinePosition);
+				String [] result = new String[timelinePosition.length];
+				for(i = 0; i<timelinePosition.length;i++){
+					s = "SELECT Name FROM Videos WHERE ProjectID = '"+projectId+"' AND TimelinePosition = "+timelinePosition[i]+";";
+					r = st.executeQuery(s);
+					if(r.first()){
+						result[i] = r.getString("Name");
+					}
+				}
+				return result;
+				
+			}
+			else{
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
 	}
 }

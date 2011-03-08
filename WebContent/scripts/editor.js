@@ -18,6 +18,7 @@ jQuery(function($) {
 	attachContextMenuHandlers();
 	attachAddToTimelineHandlers();
 	getVideoInformation();
+	attachPublishButtonHandler();
 });
 
 function attachDeleteVideoHandlers() {
@@ -52,6 +53,39 @@ function attachVideoMenuHandlers() {
 	$('#split-button').click(function() {
 		$('#split-video-dialog-form').dialog('open');
 	});
+	
+	
+}
+
+function attachPublishButtonHandler(){
+	$('#export-button').click(function(){
+		$('confirm-splice').dialog('open');
+	});
+	$('#confirm-splice').dialog({
+		autoOpen: false,
+		resizable: false,
+		height: 275,
+		modal: true,
+		buttons: {
+			'Yes': function () {
+				combineVideos();
+				$(this).dialog('close');
+			},
+			'No': function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+	
+}
+
+function combineVideos(){
+	var requestData = '{'
+		+    '"command" : "combineVideos",'
+		+    '"arguments" : {'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	
 }
 
 function attachVideoClickHandlers() {

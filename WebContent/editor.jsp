@@ -107,8 +107,7 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled"
-	onclick="alert('Export to Computer');">Export to Computer</button>
+<button id="export-button" type="button">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>
@@ -134,6 +133,9 @@
 <div id="confirm-add-to-timeline-dialog" class="hidden"
 	title="Attention!">
 <p>Add Video to Timeline</p>
+</div>
+<div id="confirm-splice" class="hidden" title="Attention!">
+<p>Publish??</p>
 </div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" class="hidden" title="Split video">
