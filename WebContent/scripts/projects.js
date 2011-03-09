@@ -9,7 +9,8 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteProjectHandlers();
-	enableDragAndDrop();
+	//enableDragAndDrop();		// Still looks funny. CSS work needed.
+	//getProjectInformation();	// Not yet implemented on the server.
 });
 
 function attachDeleteProjectHandlers() {
@@ -69,7 +70,7 @@ function updatePosition(command, collectionItems) {
 	}	
 	
 	requestData += ']}}';
-	console.log(requestData);
+	
 	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
@@ -92,4 +93,27 @@ function deleteProject() {
 function openNewProjectForm() {
 	window.open("new-project-form.jsp", "newProjectForm",
 			"menubar=no,width=320,height=200,toolbar=no");
+}
+
+function getProjectInformation() {
+	var requestData = '{'
+		+    '"command" : "getProjectInformation"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		var poolPositions = [];
+		for (var i = 0; i < responseData.length; ++i) {
+			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
+			$(element).data('icon', responseData[i].icon);
+			
+			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
+			if (responseData[i].poolPosition != -1) {
+				$(element).data('poolPosition', responseData[i].poolPosition);
+				poolPositions[responseData[i].poolPosition] = element;	// Sort
+			}
+		}
+		// Append in the sorted order
+		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
+			$('#project-clips').append(poolPositions[poolIndex]);
+		}
+	}, null);	// Defined in "/olive/scripts/master.js".
 }
