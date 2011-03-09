@@ -3,10 +3,6 @@
  * Dependencies: "/olive/scripts/master.js"
  */
 
-var deleteVideoDialogContext;	// TODO Remove this global variable.
-var videoTimeline;
-var video; // Global
-
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
@@ -15,15 +11,15 @@ jQuery(function($) {
 	attachVideoClickHandlers();
 	attachPlayerHandlers();
 	enableDragAndDrop();
-	attachContextMenuHandlers();
-	attachAddToTimelineHandlers();
 	getVideoInformation();
 });
 
 function attachDeleteVideoHandlers() {
+	var videoToDelete;
+	
 	$('.delete-video').click(function () {
 		$('#confirm-delete-video-dialog').dialog('open');
-		deleteVideoDialogContext = this;	// This is a global variable.
+		videoToDelete = this;
 	});
 	
 	$('#confirm-delete-video-dialog').dialog({
@@ -33,7 +29,7 @@ function attachDeleteVideoHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteVideo.call(deleteVideoDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteVideo($(videoToDelete).attr('id'));	// We don't want the context to be the dialog element, but rather the element that triggered it.
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -49,7 +45,9 @@ function attachVideoMenuHandlers() {
 	});
 	
 	attachSplitHandlers();
-	$('#split-button').click(function() {
+	$('.split-link').click(function() {
+		$('#video-name').val($(this).attr('id'))
+						.change();	// Prefill in the value in the split dialog.
 		$('#split-video-dialog-form').dialog('open');
 	});
 }
@@ -136,10 +134,10 @@ function updatePlayerWithNoElements() {
 
 // Modified from: http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
 function attachPlayerHandlers() {
-	video = document.getElementById('player-video');
+	var video = $('#player-video').get(0);	// Use jQuery to find the element, but strip off the jQuery wrapper.
 
 	$('#videos-playpause').click(function () {
-		if (video.paused) {
+		if (video.paused || video.ended) {
 			video.play();
 		} else {
 			video.pause();
@@ -213,7 +211,7 @@ function enableDragAndDrop() {
 }
 
 // Perform an update<command>Position request
-function updateCollectionPosition(command, collectionItems) {
+function updatePosition(command, collectionItems) {
 	var requestData = '{'
 		+    '"command" : "' + command + '",'
 		+    '"arguments" : {'
@@ -238,45 +236,20 @@ function updateCollectionPosition(command, collectionItems) {
 
 // Perform an updateVideosPosition request
 function updateVideosPosition() {
-	updateCollectionPosition('updateVideosPosition', '#videos span');
+	updatePosition('updateVideosPosition', '#videos span');
 }
 
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
-	updateCollectionPosition('updateTimelinePosition', '#timeline span');
-}
-
-function attachContextMenuHandlers() {
-	$('.video-container').contextMenu('video-context-menu', {
-		menuStyle : {
-			border : '1px solid #000'
-		},
-		itemStyle : {
-			fontFamily : 'Arial',
-			backgroundColor : '#fff',
-			color : 'black',
-			border : 'none',
-			padding : '1px'
-		},
-		itemHoverStyle : {
-			color : '#fff',
-			backgroundColor : '#00c',
-			border : 'none'
-		},
-		bindings : {
-			'split-video-menu-item' : function (t) {
-				$('#split-video-dialog-form').dialog('open');
-			}
-		}
-	});
+	updatePosition('updateTimelinePosition', '#timeline span');
 }
 
 // Perform a deleteVideo request
-function deleteVideo() {
+function deleteVideo(videoName) {
 	var requestData = '{'
 			+    '"command" : "deleteVideo",'
 			+    '"arguments" : {'
-			+        '"video" : "' + $(this).attr('id') + '"'
+			+        '"video" : "' + videoName + '"'
 			+    '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
@@ -338,8 +311,8 @@ function attachSplitHandlers() {
 	
 	$('#split-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 400,
-		width : 400,
+		height : 325,
+		width : 300,
 		modal : true,
 		buttons : {
 			'Split video' : function() {
@@ -378,29 +351,6 @@ function attachSplitHandlers() {
 		},
 		close : function() {
 			allFields.val('').removeClass('ui-state-error');
-		}
-	});
-}
-
-function attachAddToTimelineHandlers() {
-	$('.add-to-timeline').click(function () {
-		var clone = $(this).parent().parent().clone();
-		var child = clone.find(".link");
-		child.html("Remove from timeline");
-		$("#timeline").append(clone);
-		videoTimeline = this;
-	});
-	
-	$('#confirm-add-to-timeline-dialog').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 215,
-		modal: true,
-		buttons: {
-			'OK': function () {
-				$("#timeline").append($(videoTimeline).parent().parent().clone());
-				$(this).dialog('close');
-			}
 		}
 	});
 }
