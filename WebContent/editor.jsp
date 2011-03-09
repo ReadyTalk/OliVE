@@ -107,7 +107,7 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled">Export to Computer</button>
 
 </div>
 <!-- end #export --></div>

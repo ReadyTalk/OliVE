@@ -1,8 +1,10 @@
 package com.readytalk.olive.servlet;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -729,7 +731,7 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+		/*CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
 		
 		response.setContentType("text/plain");
@@ -757,7 +759,7 @@ public class OliveServlet extends HttpServlet {
 		}
 		os.flush();
 		os.close();
-		
+		*/
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 	
@@ -769,23 +771,35 @@ public class OliveServlet extends HttpServlet {
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
 		for(int i = 0; i < videos.length-1; i++){
-			r.exec("ffmpeg -i "+videoURLs[0]+" -sameq temp/"+videos[0]+".mpg");
-			r.exec("ffmpeg -i "+videoURLs[i+1]+" -sameq temp/"+videos[i+1]+".mpg");
+			log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
+			Process process = r.exec("ffmpeg -i "+videoURLs[0]+" -sameq temp\\"+videos[0]+".mpg");
+			InputStream is2 = process.getInputStream();
+			InputStreamReader isr2 = new InputStreamReader(is2);
+			BufferedReader br2 = new BufferedReader(isr2);
+			String line;
+			for(int j = 0; j<5;j++) {
+			      log.info("command 1: "+br2.readLine());
+			}
+			r.exec("ffmpeg -i "+videoURLs[i+1]+" -sameq temp\\"+videos[i+1]+".mpg");
+			
 			if(isWindows){
-				r.exec("cmd /c copy /b "+videos[0]+".mpg + "+videos[i+1]+".mpg intermediateTemp.mpg");
-				r.exec("cmd /c del "+videos[i+1]+".mpg");
+				log.info("Windows");
+				r.exec("cmd /c copy /b temp\\"+videos[0]+".mpg+temp\\"+videos[i+1]+".mpg temp\\intermediateTemp.mpg");
+				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			}
 			else if(isLinux){
-				String [] arr = {"/bin/sh","-c","cat "+videos[0]+".mpg + "+videos[i+1]+".mpg > intermediateTemp.mpg"};
+				log.info("Linux");
+				String [] arr = {"/bin/sh","-c","cat temp\\"+videos[0]+".mpg + temp\\"+videos[i+1]+".mpg > temp\\intermediateTemp.mpg"};
 				r.exec(arr);
-				r.exec("rm "+videos[i+1]+".mpg");
+				//r.exec("rm temp\\"+videos[i+1]+".mpg");
 			}
 			else{
 				return null;
 			}
-			r.exec("ffmpeg -i temp/intermediateTemp.mpg -sameq temp/Combined/combined.ogv");
+			log.info("after IFS");
+			r.exec("ffmpeg -i temp\\intermediateTemp.mpg -sameq temp\\Combined\\combined.ogv");
 			videos[0] = "combined";
-			videoURLs[0] = "temp/Combined/combined.ogv";
+			videoURLs[0] = "temp\\Combined\\combined.ogv";
 		}
 		//Removing all temp files except for the one combined video
 		result[1] = videoURLs[0];

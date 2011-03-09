@@ -17,8 +17,8 @@ jQuery(function($) {
 	enableDragAndDrop();
 	attachContextMenuHandlers();
 	attachAddToTimelineHandlers();
+	//attachPublishButtonHandler();
 	getVideoInformation();
-	attachPublishButtonHandler();
 });
 
 function attachDeleteVideoHandlers() {
@@ -59,7 +59,7 @@ function attachVideoMenuHandlers() {
 
 function attachPublishButtonHandler(){
 	$('#export-button').click(function(){
-		$('confirm-splice').dialog('open');
+		$('#confirm-splice').dialog('open');
 	});
 	$('#confirm-splice').dialog({
 		autoOpen: false,
@@ -85,7 +85,7 @@ function combineVideos(){
 		+    '"arguments" : {'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	
+	makeAjaxPostRequest(requestData, null, null);
 }
 
 function attachVideoClickHandlers() {
@@ -235,13 +235,12 @@ function enableDragAndDrop() {
 		tolerance: 'pointer',
 		update: function(event, ui) {
 		updateTimelinePosition();
-		},
-		sort: function() {
-			if($('#timeline').sortable('items').length > 0){
-				$('#export-button').removeAttr('disabled');
-			} else {
-				$('#export-button').attr('disabled', 'disabled');
-			}
+		
+		if($('#timeline').sortable('items').length > 0){
+			$('#export-button').removeAttr('disabled');
+		} else {
+			$('#export-button').attr('disabled', 'disabled');
+		}
 		}
 	});
 }

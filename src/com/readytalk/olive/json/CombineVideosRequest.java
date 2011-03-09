@@ -17,7 +17,5 @@ public class CombineVideosRequest {
 		public Arguments() {
 
 		}
-		
-		public String [] videos;
 	}
 }
