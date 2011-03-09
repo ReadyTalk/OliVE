@@ -418,8 +418,9 @@ public class OliveServlet extends HttpServlet {
 			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(i)) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
-					DatabaseApi.AddVideo(videoName, videoUrl, projectId,
-							"/olive/images/bbb480.jpg"); // TODO Get icon from Zencoder.
+					DatabaseApi.AddVideo(new Video(videoName, videoUrl,
+							"/olive/images/bbb480.jpg", projectId, -1, -1,
+							false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
@@ -699,8 +700,9 @@ public class OliveServlet extends HttpServlet {
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop
-			DatabaseApi.AddVideo(videoFragment.getName(),
-					videoFragment.getUrl(), projectId, videoFragment.getIcon()); // projectId not computed by Zencoder
+			DatabaseApi.AddVideo(new Video(videoFragment.getName(),
+					videoFragment.getUrl(), videoFragment.getIcon(), projectId,
+					-1, -1, false)); // projectId not computed by Zencoder
 		}
 
 		out.println(splitVideoRequest.arguments.video + " split at "

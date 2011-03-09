@@ -16,6 +16,7 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.model.Video;
 
 public class DatabaseApi {
 
@@ -429,7 +430,7 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+
 	public static boolean isVideoTimelinePositionNotNull(int videoId) {
 		int position = getVideoTimelinePosition(videoId);
 		if (position != -1) {
@@ -437,7 +438,7 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+
 	public static int getVideoPoolPosition(int videoId) {
 		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
 				"Videos", "VideoID", Integer.toString(videoId));
@@ -446,7 +447,7 @@ public class DatabaseApi {
 		}
 		return Integer.parseInt(videoPoolPosition);
 	}
-	
+
 	public static int getVideoTimelinePosition(int videoId) {
 		String videoTimelinePosition = getUnknownValueFromTable(
 				"TimelinePosition", "Videos", "VideoID",
@@ -539,7 +540,7 @@ public class DatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				do {
-					setPoolOrTimelinePosition(r.getInt("VideoID"), -1,	// TODO Insert "NULL", not -1
+					setPoolOrTimelinePosition(r.getInt("VideoID"), -1, // TODO Insert "NULL", not -1
 							positionType);
 				} while (r.next());
 			}
@@ -647,16 +648,19 @@ public class DatabaseApi {
 		return null;
 	}
 
-	public static void AddVideo(String name, String url, int projectId,
-			String icon) {
+	public static void AddVideo(Video video) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon) VALUES ('"
-					+ name + "', '" + url + "', '" + projectId + "' , '" + icon
-					+ "');";
+			s = "INSERT INTO Videos (Name, URL, ProjectID, TimelinePosition,"
+					+ " Icon, IsSelected, PoolPosition) VALUES ('"
+					+ video.getName() + "', '" + video.getUrl() + "', '"
+					+ video.getProjectId() + "' , '"
+					+ video.getTimelinePosition() + "' , '" + video.getIcon()
+					+ "' , '" + (video.getIsSelected() ? 1 : 0) + "' , '"
+					+ video.getPoolPosition() + "');";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
