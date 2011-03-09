@@ -208,7 +208,7 @@ function enableDragAndDrop() {
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		update: function(event, ui) {
+		update: function (event, ui) {
 			updateVideosPosition();
 		}
 	});
@@ -221,14 +221,9 @@ function enableDragAndDrop() {
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		update: function(event, ui) {
+		update: function (event, ui) {
+			enableOrDisableExportButton();
 			updateTimelinePosition();
-		
-		if($('#timeline').sortable('items').length > 0){
-			$('#export-button').removeAttr('disabled');
-		} else {
-			$('#export-button').attr('disabled', 'disabled');
-		}
 		}
 	});
 }
@@ -410,7 +405,18 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		
+		enableOrDisableExportButton();
 	}, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function enableOrDisableExportButton() {
+	if ($('#timeline').sortable('toArray').length > 0){
+		$('#export-button').removeAttr('disabled');
+	} else {
+		console.log('disabling');
+		$('#export-button').attr('disabled', 'disabled');
+	}
 }
 
 function openNewVideoForm() {
