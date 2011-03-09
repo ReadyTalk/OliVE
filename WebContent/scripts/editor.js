@@ -414,7 +414,6 @@ function enableOrDisableExportButton() {
 	if ($('#timeline').sortable('toArray').length > 0){
 		$('#export-button').removeAttr('disabled');
 	} else {
-		console.log('disabling');
 		$('#export-button').attr('disabled', 'disabled');
 	}
 }
