@@ -28,6 +28,7 @@ import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
+import com.readytalk.olive.json.UpdateProjectsPositionRequest;
 import com.readytalk.olive.json.UpdateTimelinePositionRequest;
 import com.readytalk.olive.json.UpdateVideosPositionRequest;
 import com.readytalk.olive.logic.ZencoderApi;
@@ -74,6 +75,12 @@ public class OliveServlet extends HttpServlet {
 			throw new ServletException(DESTINATION_DIR_PATH
 					+ " is not a directory");
 		}
+	}
+
+	private int getAccountIdFromSessionAttributes(HttpSession session) {
+		String sessionUsername = (String) session
+				.getAttribute(Attribute.USERNAME.toString());
+		return DatabaseApi.getAccountId(sessionUsername);
 	}
 
 	private int getProjectIdFromSessionAttributes(HttpSession session) {
@@ -490,6 +497,8 @@ public class OliveServlet extends HttpServlet {
 			handleDeleteProject(request, response, session, json);
 		} else if (generalRequest.command.equals("renameProject")) {
 			handleRenameProject(request, response, session, json);
+		} else if (generalRequest.command.equals("updateProjectsPosition")) {
+			handleUpdateProjectsPosition(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideos")) {
 			handleGetVideos(request, response, session, json);
 		} else if (generalRequest.command.equals("createVideo")) {
@@ -584,6 +593,23 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
 		log.severe("handleRenameProject has not yet been implemented.");
+	}
+
+	private void handleUpdateProjectsPosition(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		UpdateProjectsPositionRequest updateProjectsPositionRequest = new Gson()
+				.fromJson(json, UpdateProjectsPositionRequest.class);
+
+		int accountId = getAccountIdFromSessionAttributes(session);
+		DatabaseApi.setAllProjectPoolPositionsToNull(accountId);
+
+		int numberOfProjects = updateProjectsPositionRequest.arguments.projects.length;
+		for (int projectIndex = 0; projectIndex < numberOfProjects; ++projectIndex) {
+			int projectId = getProjectIdFromSessionAttributes(session);
+			int position = updateProjectsPositionRequest.arguments.projects[projectIndex].position;
+			DatabaseApi.setProjectPoolPosition(projectId, position);
+		}
 	}
 
 	private void handleGetVideos(HttpServletRequest request,
@@ -731,7 +757,7 @@ public class OliveServlet extends HttpServlet {
 			String videoName = updateVideosPositionRequest.arguments.videos[videoIndex].video;
 			int videoId = getVideoIdFromSessionAttributes(session, videoName);
 			int position = updateVideosPositionRequest.arguments.videos[videoIndex].position;
-			DatabaseApi.setPoolPosition(videoId, position);
+			DatabaseApi.setVideoPoolPosition(videoId, position);
 		}
 	}
 

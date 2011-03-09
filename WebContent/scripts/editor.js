@@ -166,16 +166,6 @@ function attachPlayerHandlers() {
 }
 
 function enableDragAndDrop() {
-	// Modified from: http://jqueryui.com/demos/draggable/
-	/*$('.video-container').draggable( {
-		appendTo : '#timeline',
-		scroll : false,
-		connectToSortable : '#timeline',
-		helper : 'clone',
-		revert : 'invalid',
-		snap : '#timeline'
-	});*/
-	
 	$('#videos').sortable( {
 		appendTo: 'body',
 		connectWith: '#timeline',
@@ -198,7 +188,7 @@ function enableDragAndDrop() {
 		scroll: false,
 		tolerance: 'pointer',
 		update: function(event, ui) {
-		updateTimelinePosition();
+			updateTimelinePosition();
 		},
 		sort: function() {
 			if($('#timeline').sortable('items').length > 0){

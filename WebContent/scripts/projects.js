@@ -9,6 +9,7 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteProjectHandlers();
+	//enableDragAndDrop();
 });
 
 function attachDeleteProjectHandlers() {
@@ -32,6 +33,49 @@ function attachDeleteProjectHandlers() {
 			}
 		}
 	});
+}
+
+function enableDragAndDrop() {
+	$('#project-clips').sortable( {
+		appendTo: 'body',
+		helper: 'clone',
+		items: 'span',
+		revert: true,
+		scroll: false,
+		tolerance: 'pointer',
+		update: function(event, ui) {
+			updateProjectsPosition();
+		}
+	});
+}
+
+//Perform an update<command>Position request
+function updatePosition(command, collectionItems) {
+	var requestData = '{'
+		+    '"command" : "' + command + '",'
+		+    '"arguments" : {'
+		+      '"projects" : [';
+		
+	if ($(collectionItems).length > 0) {
+		$(collectionItems).each(function(index) {
+			requestData += '{'
+			+          '"project" : "' + $(this).attr('id') + '",'
+			+          '"position" : ' + index
+			+        '},';	// This will result in an extra comma.
+		});
+		
+		// Strip off the extra comma.
+		requestData = requestData.substring(0, requestData.length - 1);
+	}	
+	
+	requestData += ']}}';
+	
+	//makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+}
+
+//Perform an updateVideosPosition request
+function updateProjectsPosition() {
+	updatePosition('updateProjectsPosition', '#project-clips div');
 }
 
 // Perform a deleteProject request
