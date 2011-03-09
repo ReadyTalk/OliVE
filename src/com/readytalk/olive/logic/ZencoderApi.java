@@ -45,7 +45,6 @@ public class ZencoderApi {
 	private static String getResponse(InputStream inputStream)
 			throws IOException {
 		// Get the response
-		System.out.println("Receiving data from Zencoder...");
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(inputStream));
 		String line;
@@ -55,7 +54,6 @@ public class ZencoderApi {
 		}
 		bufferedReader.close();
 		System.out.println(response);
-		System.out.println("Data received from Zencoder.");
 		return response;
 	}
 
@@ -76,17 +74,9 @@ public class ZencoderApi {
 		outputStreamWriter.write(data);
 		outputStreamWriter.flush();
 		System.out.println("Data sent to Zencoder.");
-
-		String response = getResponse(conn.getInputStream());
-
 		outputStreamWriter.close();
-
-		ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
-				response, ZencoderInitialResponse.class);
-
-		waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
-
-		return response;
+		
+		return getResponse(conn.getInputStream());
 	}
 
 	private static String getJsonForSplit(String input, String baseUrl,
@@ -125,12 +115,13 @@ public class ZencoderApi {
 				splitTimeInSeconds - maximumStartTimeInSeconds,
 				minimumEndTimeInSeconds - splitTimeInSeconds }; // Draw a picture to understand this.
 		Video[] videoFragments = new Video[2];
-
+		String[] responses = new String[2];
+		
 		// Request the first and second halves of the original video.
 		for (int i = 0; i < 2; ++i) {
 			String videoFragmentFileName = S3Api
 					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
-			ZencoderApi.sendReceive(ZencoderApi.getJsonForSplit(
+			responses[i] = ZencoderApi.sendReceive(ZencoderApi.getJsonForSplit(
 					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
 					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
 					ZENCODER_API_JOBS_URL));
@@ -138,6 +129,13 @@ public class ZencoderApi {
 					DatabaseApi.getVideoName(videoId) + i, S3Api.AWS_URL_PREFIX
 							+ videoFragmentFileName,
 					"/olive/images/bbb480.jpg", -1, -1, -1, false); // TODO Get icon from Zencoder
+		}
+		
+		// Wait for the first and second halves of the original video.
+		for (int i = 0; i < 2; ++i) {
+			ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
+					responses[i], ZencoderInitialResponse.class);
+			waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
 		}
 
 		return videoFragments;
@@ -151,10 +149,14 @@ public class ZencoderApi {
 		String newVideoCodec = "theora";
 		String newAudioCodec = "vorbis";
 
-		ZencoderApi.sendReceive(
+		String response = ZencoderApi.sendReceive(
 				getJsonForConvertToOgg(videoUrl, awsBaseUrl,
 						convertedVideoFileName, newVideoCodec, newAudioCodec),
 				new URL(ZENCODER_API_JOBS_URL));
+		ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
+				response, ZencoderInitialResponse.class);
+		waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
+		
 		return S3Api.AWS_URL_PREFIX + convertedVideoFileName;
 	}
 }

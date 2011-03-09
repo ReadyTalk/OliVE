@@ -72,9 +72,8 @@
 <h3><%=projectName%></h3>
 </div>
 <!-- end #videos-title -->
-<div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
+<div id="videos-controls">
 <button id="upload-new-button" type="button">Upload New Video</button>
-<button id="split-button" type="button">Split Video</button>
 </div>
 <!-- end #videos-controls -->
 <div id="videos"><%=videosHtml%></div>
@@ -139,15 +138,14 @@
 </div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" class="hidden" title="Split video">
-<p class="validateTips">All form fields are required.</p>
+<p class="validateTips"></p>
 <form id="split-video-form" action="OliveServlet" name="process"
 	method="post">
-<fieldset><label for="video-name">Name of video to
-split</label> <input type="text" name="video-name" id="video-name"
-	class="text ui-widget-content ui-corner-all" maxlength="32" /> <label
-	for="split-time-in-seconds">Split time (in seconds)</label> <input
-	type="number" min=0 max=14400 name="split-time-in-seconds"
-	id="split-time-in-seconds" value=""
+<fieldset><input type="hidden" name="video-name"
+	id="video-name" class="text ui-widget-content ui-corner-all"
+	maxlength="32" /> <label for="split-time-in-seconds">Split
+time (in seconds)</label> <input type="number" min=0 max=14400
+	name="split-time-in-seconds" id="split-time-in-seconds" value=""
 	class="text ui-widget-content ui-corner-all" /></fieldset>
 <input type="hidden" name="FormName" value="SplitVideo"></input></form>
 </div>

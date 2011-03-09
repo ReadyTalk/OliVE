@@ -18,6 +18,7 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.model.Video;
 
 public class DatabaseApi {
 
@@ -380,6 +381,65 @@ public class DatabaseApi {
 		}
 	}
 
+	public static boolean setProjectPoolPosition(int projectId, int position) {
+		String positionType = "PoolPosition";
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Projects SET " + positionType + " = '" + position
+					+ "' WHERE ProjectID = '" + projectId + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean setAllProjectPoolPositionsToNull(int accountId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = '"
+					+ accountId + "';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					setProjectPoolPosition(r.getInt("ProjectID"), -1); // TODO Insert "NULL", not -1
+				} while (r.next());
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+
+	public static boolean isProjectPoolPositionNotNull(int projectId) {
+		int position = getProjectPoolPosition(projectId);
+		if (position != -1) {
+			return true;
+		}
+		return false;
+	}
+
+	public static int getProjectPoolPosition(int projectId) {
+		String projectPoolPosition = getUnknownValueFromTable("PoolPosition",
+				"Projects", "ProjectID", Integer.toString(projectId));
+		if (projectPoolPosition == null) {
+			return -1; // TODO Is this a good idea?
+		}
+		return Integer.parseInt(projectPoolPosition);
+	}
+
 	// You don't need the accountId if you have the projectId. The projectId was
 	// calculated using the accountId.
 	public static int getVideoId(String videoName, int projectId) {
@@ -431,7 +491,7 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+
 	public static boolean isVideoTimelinePositionNotNull(int videoId) {
 		int position = getVideoTimelinePosition(videoId);
 		if (position != -1) {
@@ -439,7 +499,7 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+
 	public static int getVideoPoolPosition(int videoId) {
 		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
 				"Videos", "VideoID", Integer.toString(videoId));
@@ -448,7 +508,7 @@ public class DatabaseApi {
 		}
 		return Integer.parseInt(videoPoolPosition);
 	}
-	
+
 	public static int getVideoTimelinePosition(int videoId) {
 		String videoTimelinePosition = getUnknownValueFromTable(
 				"TimelinePosition", "Videos", "VideoID",
@@ -502,15 +562,15 @@ public class DatabaseApi {
 		return setVideoAsSelectedOrUnselected(videoId, false);
 	}
 
-	private static boolean setPoolOrTimelinePosition(int videoId, int position,
-			String positionType) {
+	private static boolean setVideoPoolOrTimelinePosition(int videoId,
+			int position, String positionType) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Videos SET " + positionType + " = " + position
-					+ " WHERE VideoID = '" + videoId + "';";
+			s = "UPDATE Videos SET " + positionType + " = '" + position
+					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);
 			return true;
 		} catch (Exception e) {
@@ -521,12 +581,13 @@ public class DatabaseApi {
 		return false;
 	}
 
-	public static boolean setPoolPosition(int videoId, int position) {
-		return setPoolOrTimelinePosition(videoId, position, "PoolPosition");
+	public static boolean setVideoPoolPosition(int videoId, int position) {
+		return setVideoPoolOrTimelinePosition(videoId, position, "PoolPosition");
 	}
 
 	public static boolean setTimelinePosition(int videoId, int position) {
-		return setPoolOrTimelinePosition(videoId, position, "TimelinePosition");
+		return setVideoPoolOrTimelinePosition(videoId, position,
+				"TimelinePosition");
 	}
 
 	public static boolean setAllVideoPoolOrTimelinePositionsToNull(
@@ -541,7 +602,7 @@ public class DatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				do {
-					setPoolOrTimelinePosition(r.getInt("VideoID"), -1,	// TODO Insert "NULL", not -1
+					setVideoPoolOrTimelinePosition(r.getInt("VideoID"), -1, // TODO Insert "NULL", not -1
 							positionType);
 				} while (r.next());
 			}
@@ -595,9 +656,9 @@ public class DatabaseApi {
 							+ videoName
 							+ "<br />"
 							+ "\n"
-							+ "<small><a id\""
+							+ "<small><a id=\""
 							+ videoName
-							+ "\" class=\"link add-to-timeline\">Add to Timeline</a></small>"
+							+ "\" class=\"link split-link\">Split</a></small>"
 							+ "<br />"
 							+ "\n"
 							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
@@ -649,16 +710,19 @@ public class DatabaseApi {
 		return null;
 	}
 
-	public static void AddVideo(String name, String url, int projectId,
-			String icon) {
+	public static void AddVideo(Video video) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon) VALUES ('"
-					+ name + "', '" + url + "', '" + projectId + "' , '" + icon
-					+ "');";
+			s = "INSERT INTO Videos (Name, URL, ProjectID, TimelinePosition,"
+					+ " Icon, IsSelected, PoolPosition) VALUES ('"
+					+ video.getName() + "', '" + video.getUrl() + "', '"
+					+ video.getProjectId() + "' , '"
+					+ video.getTimelinePosition() + "' , '" + video.getIcon()
+					+ "' , '" + (video.getIsSelected() ? 1 : 0) + "' , '"
+					+ video.getPoolPosition() + "');";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
