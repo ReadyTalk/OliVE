@@ -93,10 +93,14 @@ public class OliveServlet extends HttpServlet {
 		return projectId;
 	}
 
+	private int getProjectIdFromSessionAttributes(HttpSession session,
+			String projectName) {
+		return DatabaseApi.getProjectId(projectName,
+				getAccountIdFromSessionAttributes(session));
+	}
+
 	private int getVideoIdFromSessionAttributes(HttpSession session,
 			String videoName) {
-		String sessionUsername = (String) session
-				.getAttribute(Attribute.USERNAME.toString());
 		return DatabaseApi.getVideoId(videoName,
 				getProjectIdFromSessionAttributes(session));
 	}
@@ -606,7 +610,9 @@ public class OliveServlet extends HttpServlet {
 
 		int numberOfProjects = updateProjectsPositionRequest.arguments.projects.length;
 		for (int projectIndex = 0; projectIndex < numberOfProjects; ++projectIndex) {
-			int projectId = getProjectIdFromSessionAttributes(session);
+			String projectName = updateProjectsPositionRequest.arguments.projects[projectIndex].project;
+			int projectId = getProjectIdFromSessionAttributes(session,
+					projectName);
 			int position = updateProjectsPositionRequest.arguments.projects[projectIndex].position;
 			DatabaseApi.setProjectPoolPosition(projectId, position);
 		}

@@ -9,7 +9,7 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteProjectHandlers();
-	//enableDragAndDrop();
+	enableDragAndDrop();
 });
 
 function attachDeleteProjectHandlers() {
@@ -39,7 +39,7 @@ function enableDragAndDrop() {
 	$('#project-clips').sortable( {
 		appendTo: 'body',
 		helper: 'clone',
-		items: 'span',
+		items: 'div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -69,8 +69,8 @@ function updatePosition(command, collectionItems) {
 	}	
 	
 	requestData += ']}}';
-	
-	//makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+	console.log(requestData);
+	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform an updateVideosPosition request
