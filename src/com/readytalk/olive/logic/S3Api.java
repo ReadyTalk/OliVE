@@ -1,7 +1,12 @@
 package com.readytalk.olive.logic;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +24,7 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.google.gson.Gson;
 import com.readytalk.olive.model.Video;
+import com.readytalk.olive.servlet.OliveServlet;
 import com.readytalk.olive.util.InvalidFileSizeException;
 
 // JetS3t code samples (in Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
@@ -33,6 +39,8 @@ public class S3Api {
 	private static final long MIN_SIZE_IN_BYTES = 1L; // ~0 MB
 	private static final String DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
 	private static Logger log = Logger.getLogger(S3Api.class.getName());
+	private static final int BUFFER_SIZE = 100000; // 100 KB
+	private static final byte[] buffer = new byte[BUFFER_SIZE];
 
 	private static RestS3Service getS3Service() throws S3ServiceException {
 		AWSCredentials awsCredentials = DatabaseApi.getAwsCredentials();
@@ -141,5 +149,79 @@ public class S3Api {
 		}
 
 		return new Gson().toJson(videos);
+	}
+	public static File getFileFromS3(String videoUrl) throws IOException {
+		String fileName = getNameFromUrl(videoUrl);
+		S3Object s3Object = null;
+		try {
+			RestS3Service s3Service = getS3Service();
+
+			s3Object = s3Service.getObject(BUCKET_NAME, fileName);
+
+			return getFileFromInputStream(s3Object.getDataInputStream(),
+					fileName);
+		} catch (S3ServiceException e) {
+			log.severe("Error accessing object \"" + fileName
+					+ "\" in S3 bucket \"" + BUCKET_NAME + "\"");
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			log.severe("Error accessing S3Object input stream for file \""
+					+ fileName + "\" in S3 bucket \"" + BUCKET_NAME + "\"");
+			e.printStackTrace();
+		} finally {
+			s3Object.closeDataInputStream();
+		}
+		log.severe("The function downloadFile returned null instead of a file");
+		return null; // Error
+	}
+
+	private static File getFileFromInputStream(InputStream inputStream,
+			String name) throws FileNotFoundException, IOException {
+		File file = new File(name);
+		OutputStream out = new FileOutputStream(file);
+		byte buffer[] = new byte[1024];
+		int bufferLength;
+		while ((bufferLength = inputStream.read(buffer)) > 0) {
+			out.write(buffer, 0, bufferLength);
+		}
+		out.close();
+		inputStream.close();
+		return file;
+	}
+
+	// Modified from: http://msdn.microsoft.com/en-us/library/aa478985.aspx
+	public static String downloadVideosToTemp(String videoUrl) throws IOException {
+		File tempDir = OliveServlet.tempDir;
+		File inFile = S3Api.getFileFromS3(videoUrl);
+		File outFile = new File(tempDir, getNameFromUrl(videoUrl));
+		outFile.deleteOnExit(); // Delete the file when the JVM exits (cannot be undone).
+		S3Api.saveFileToDisk(inFile, outFile);
+		return outFile.getName();
+	}
+
+	// Modified from: http://java.sun.com/docs/books/performance/1st_edition/html/JPIOPerformance.fm.html#11078
+	public static void saveFileToDisk(File from, File to) throws IOException {
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = new FileInputStream(from);
+			out = new FileOutputStream(to);
+			while (true) {
+				synchronized (buffer) {
+					int amountRead = in.read(buffer);
+					if (amountRead == -1) {
+						break;
+					}
+					out.write(buffer, 0, amountRead);
+				}
+			}
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+			if (out != null) {
+				out.close();
+			}
+		}
 	}
 }

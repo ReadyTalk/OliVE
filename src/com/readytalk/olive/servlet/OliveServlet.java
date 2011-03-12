@@ -1,7 +1,9 @@
 package com.readytalk.olive.servlet;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +18,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,6 +159,9 @@ public class OliveServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -499,7 +505,7 @@ public class OliveServlet extends HttpServlet {
 	// http://stackoverflow.com/questions/1688099/converting-json-to-java/1688182#1688182
 	private void handleJsonPostRequest(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
+			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException, InterruptedException {
 		String line;
 		String json = "";
 		while ((line = request.getReader().readLine()) != null) {
@@ -764,13 +770,13 @@ public class OliveServlet extends HttpServlet {
 
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
-			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-		/*CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException, InterruptedException {
+		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
 		
-		response.setContentType("text/plain");
+		//response.setContentType("text/plain");
 
-		PrintWriter out = response.getWriter();
+		//PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String [] videos = DatabaseApi.getVideosOnTimeline(projectId);
 		String [] videoURLs = new String[videos.length];
@@ -779,67 +785,61 @@ public class OliveServlet extends HttpServlet {
 		}
 		
 		String combinedURL = combineVideos(videoURLs, videos);
-		ServletContext ctx = getServletContext();
-		response.setContentType("text/plain");
-		response.setHeader("Content-Disposition",
-        "attachment;filename=downloadname.txt");
-		InputStream is = ctx.getResourceAsStream(combinedURL);
-		int read=0;
-		byte[] bytes = new byte[1024];
-		OutputStream os = response.getOutputStream();
-	 
-		while((read = is.read(bytes))!= -1){
-			os.write(bytes, 0, read);
-		}
-		os.flush();
-		os.close();
-		*/
+		//My view resource servlet:
+			// Use a ServletOutputStream because we may pass binary information
+			  final ServletOutputStream out = response.getOutputStream();
+			  response.setContentType("application/octet-stream");
+
+			  File file = new File(combinedURL);
+			  BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
+			  byte[] buf = new byte[4 * 1024]; // 4K buffer
+			  int bytesRead;
+			  while ((bytesRead = is.read(buf)) != -1) {
+			  out.write(buf, 0, bytesRead);
+			  }
+			  is.close();
+			  out.close();	
+
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 	
-	private String combineVideos(String[] videoURLs, String [] videos) throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
+	private String combineVideos(String[] videoURLs, String [] videos) throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException, InterruptedException {
 		String [] result = new String[2];
 		result[0] = "combined";
-		String [] oldVideoNames = videos;
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
+		File combined = new File(videoURLs[0]);
+		String videoName;
 		for(int i = 0; i < videos.length-1; i++){
-			log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
-			Process process = r.exec("ffmpeg -i "+videoURLs[0]+" -sameq temp\\"+videos[0]+".mpg");
-			InputStream is2 = process.getInputStream();
-			InputStreamReader isr2 = new InputStreamReader(is2);
-			BufferedReader br2 = new BufferedReader(isr2);
-			String line;
-			for(int j = 0; j<5;j++) {
-			      log.info("command 1: "+br2.readLine());
-			}
-			r.exec("ffmpeg -i "+videoURLs[i+1]+" -sameq temp\\"+videos[i+1]+".mpg");
-			
+			videoName=S3Api.downloadVideosToTemp(videoURLs[i+1]);
+			r.exec("ffmpeg -i "+combined.getName()+" -sameq temp.mpg",null,tempDir);
+			r.exec("ffmpeg -i "+videoName+" -sameq temp2.mpg",null,tempDir);
+			//process.waitFor();
 			if(isWindows){
 				log.info("Windows");
-				r.exec("cmd /c copy /b temp\\"+videos[0]+".mpg+temp\\"+videos[i+1]+".mpg temp\\intermediateTemp.mpg");
+				r.exec("cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",null,tempDir);
 				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			}
 			else if(isLinux){
 				log.info("Linux");
-				String [] arr = {"/bin/sh","-c","cat temp\\"+videos[0]+".mpg + temp\\"+videos[i+1]+".mpg > temp\\intermediateTemp.mpg"};
-				r.exec(arr);
+				String [] arr = {"/bin/sh","-c","cat temp.mpg + temp2.mpg > intermediateTemp.mpg"};
+				r.exec(arr,null,tempDir);
 				//r.exec("rm temp\\"+videos[i+1]+".mpg");
 			}
 			else{
 				return null;
 			}
 			log.info("after IFS");
-			r.exec("ffmpeg -i temp\\intermediateTemp.mpg -sameq temp\\Combined\\combined.ogv");
+			r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv",null,tempDir);
+			combined = new File(tempDir.getAbsolutePath()+"/combined.ogv");
+			//process.waitFor();
 			videos[0] = "combined";
-			videoURLs[0] = "temp\\Combined\\combined.ogv";
 		}
 		//Removing all temp files except for the one combined video
-		result[1] = videoURLs[0];
-		File file = new File(result[1]);
-		return S3Api.uploadFile(file);
-		
+		//result[1] = videoURLs[0];
+		return S3Api.uploadFile(combined);
+		//return videoURLs[0];
 	}
 	
 	//http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
