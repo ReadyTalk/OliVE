@@ -57,7 +57,7 @@ function attachVideoMenuHandlers() {
 
 function attachPublishButtonHandler(){
 	$('#export-button').click(function(){
-		$('#confirm-splice').dialog('open');
+		combineVideos();
 	});
 	$('#confirm-splice').dialog({
 		autoOpen: false,
