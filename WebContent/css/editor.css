@@ -46,14 +46,12 @@
 .video-container {
 	float: left;
 	height: 125px;
-	width: 100px;
+	width: 125px;
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
-	text-overflow: ellipsis; /* Does not work yet */
-	overflow: hidden; /* Temporary solution to text-overflow not working */
 }
 
 .video-image {
@@ -63,6 +61,15 @@
 	height: 50px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.video-name {
+	line-height: 1.2em;	/* Larger than font-size */
+	font-size: 1em;	/* Smaller than line-height */
+	max-height: 3.6em;	/* 3 x line-height */
+	text-align: center;
+	word-wrap: break-word;
+	overflow: hidden; /* Temporary solution to text-overflow not working */
 }
 
 #player-container {
@@ -116,4 +123,16 @@
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
+}
+
+/* 
+	----------------------------------------
+	Editable
+	----------------------------------------
+*/
+.video-name > input {
+	width: 90%;	/* Same as .video-container */
+}
+
+.video-name > button {
 }
