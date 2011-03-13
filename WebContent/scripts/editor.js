@@ -9,7 +9,6 @@ jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
 	attachVideoClickHandlers();
-	attachPlayerHandlers();
 	enableDragAndDrop();
 	//attachPublishButtonHandler();
 	getVideoInformation();
@@ -154,49 +153,16 @@ function removeFromSelected(id) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	$('#player-video').attr('poster', $(element).data('icon'));
-	$('#player-video').append(
+	$('#player').attr('poster', $(element).data('icon'));
+	$('#player').append(
 			'<source src="' + $(element).data('url')
 			+ '" type="' + 'video/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
 			+ '" />');
 }
 
 function updatePlayerWithNoElements() {
-	$('#player-video source').remove();
-	$('#player-video').removeAttr('poster');
-}
-
-// Modified from: http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
-function attachPlayerHandlers() {
-	var video = $('#player-video').get(0);	// Use jQuery to find the element, but strip off the jQuery wrapper.
-
-	$('#videos-playpause').click(function () {
-		if (video.paused || video.ended) {
-			video.play();
-		} else {
-			video.pause();
-		}
-	});
-	
-	$('#videos-volume-up').click(function () {
-		if (video.volume < 0.85) { // Account for rounding errors
-			video.volume += 0.1;
-		} else {
-			video.volume = 1.0; // Don't allow rounding errors
-			$('#videos-volume-up').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-down').removeAttr('disabled'); // Enable
-	});
-
-	$('#videos-volume-down').click(function () {
-		if (video.volume > 0.15) { // Account for rounding errors
-			video.volume -= 0.1;
-		} else {
-			video.volume = 0.0; // Don't allow rounding errors
-			$('#videos-volume-down').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-up').removeAttr('disabled'); // Enable
-	});
+	$('#player source').remove();
+	$('#player').removeAttr('poster');
 }
 
 function enableDragAndDrop() {

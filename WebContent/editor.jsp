@@ -87,15 +87,9 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-div">
-<div id="player-container"><video id="player-video"></video></div>
-<div id="player-controls" class="center-text">
-<button id="videos-playpause">Play/pause</button>
-<button id="videos-volume-down">Volume down</button>
-<button id="videos-volume-up" disabled="disabled">Volume up</button>
+<div id="player-outer-container">
+<div id="player-inner-container"><video id="player" controls></video></div>
 </div>
-</div>
-<!-- end #player -->
 
 <div class="clear"></div>
 
@@ -106,7 +100,8 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled">Export
+to Computer</button>
 
 </div>
 <!-- end #export --></div>

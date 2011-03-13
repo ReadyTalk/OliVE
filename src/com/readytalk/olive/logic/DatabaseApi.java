@@ -699,7 +699,7 @@ public class DatabaseApi {
 							+ videoName
 							+ "\" class=\"video-container\"><img id=\"olive"
 							+ videoNum
-							+ "\" class=\"video-icon\""
+							+ "\" class=\"video-image\""
 							+ "\n"
 							+ "src=\""
 							+ videoIcon
