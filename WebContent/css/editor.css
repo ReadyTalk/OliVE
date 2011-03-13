@@ -44,7 +44,6 @@
 }
 
 .video-container {
-	display: block;
 	float: left;
 	height: 125px;
 	width: 100px;
@@ -53,7 +52,7 @@
 	border: 1px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
-	text-overflow: ellipsis; /* Does not work with spans */
+	text-overflow: ellipsis; /* Does not work yet */
 	overflow: hidden; /* Temporary solution to text-overflow not working */
 }
 

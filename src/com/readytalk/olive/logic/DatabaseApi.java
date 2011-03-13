@@ -695,7 +695,7 @@ public class DatabaseApi {
 					String videoName = r.getString("Name");
 					String videoIcon = "/olive/images/olive.png";
 
-					videos += "<span id=\""
+					videos += "<div id=\""
 							+ videoName
 							+ "\" class=\"video-container\"><img id=\"olive"
 							+ videoNum
@@ -717,7 +717,7 @@ public class DatabaseApi {
 							+ "\n"
 							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
 							+ videoName
-							+ "\" class=\"warning delete-video\">Delete</a></small> </span>"
+							+ "\" class=\"warning delete-video\">Delete</a></small> </div>"
 							+ "\n";
 				} while (r.next());
 			}

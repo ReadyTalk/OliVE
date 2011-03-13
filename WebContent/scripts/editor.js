@@ -170,7 +170,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#timeline',
 		helper: 'clone',
-		items: 'span',
+		items: 'div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -183,7 +183,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: 'span',
+		items: 'div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -220,12 +220,12 @@ function updatePosition(command, collectionItems) {
 
 // Perform an updateVideosPosition request
 function updateVideosPosition() {
-	updatePosition('updateVideosPosition', '#videos span');
+	updatePosition('updateVideosPosition', '#videos > div');
 }
 
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
-	updatePosition('updateTimelinePosition', '#timeline span');
+	updatePosition('updateTimelinePosition', '#timeline > div');
 }
 
 // Perform a deleteVideo request
