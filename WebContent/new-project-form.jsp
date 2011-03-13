@@ -33,7 +33,7 @@
 			safeMessage = "Project already exists";	
 		}
 	} else {
-		safeMessage = "Project name must be between 1 and 32 characters; must consist of a-z, 0-9, underscores; and must begin with a letter.";
+		safeMessage = "Only 25 projects allowed. Project name must be between 1 and 32 characters; must consist of a-z, 0-9, underscores; and must begin with a letter.";
 	}
 	session.removeAttribute(Attribute.ADD_SUCCESSFULLY.toString());
 	session.removeAttribute(Attribute.IS_SAFE.toString());

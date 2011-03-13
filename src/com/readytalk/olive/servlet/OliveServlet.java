@@ -353,13 +353,12 @@ public class OliveServlet extends HttpServlet {
 	private void handleAddProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
+		int accountId = getAccountIdFromSessionAttributes(session);
 		String projectName = request.getParameter("ProjectName");
-		if (Security.isSafeProjectName(projectName)) {
+		if (Security.isSafeProjectName(projectName)
+				&& DatabaseApi.getNumberOfProjects(accountId) < Security.MAXIMUM_NUMBER_OF_PROJECTS) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 
-			String sessionUsername = (String) session
-					.getAttribute(Attribute.USERNAME.toString());
-			int accountId = DatabaseApi.getAccountId(sessionUsername);
 			String icon = ""; // TODO Get this from user input.
 			Project project = new Project(projectName, accountId, icon);
 			Boolean added = DatabaseApi.AddProject(project);
@@ -445,7 +444,9 @@ public class OliveServlet extends HttpServlet {
 			fileItem.write(file); // Save the file to the allocated space
 			int projectId = getProjectIdFromSessionAttributes(session);
 			String videoName = videoNameItem.getString();
-			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(i)) {
+			if (Security.isSafeVideoName(videoName)
+					&& Security.isSafeVideo(i)
+					&& DatabaseApi.getNumberOfVideos(projectId) < Security.MAXIMUM_NUMBER_OF_VIDEOS) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
 					DatabaseApi.AddVideo(new Video(videoName, videoUrl,
@@ -461,8 +462,8 @@ public class OliveServlet extends HttpServlet {
 					return;
 				}
 			} else if (Security.isSafeVideoName(videoName)) {
-				out.println("Upload Failed. Video type is invalid.");
-				log.warning("Upload Failed. Video type is invalid.");
+				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else {
@@ -499,7 +500,8 @@ public class OliveServlet extends HttpServlet {
 	// http://stackoverflow.com/questions/1688099/converting-json-to-java/1688182#1688182
 	private void handleJsonPostRequest(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
+			throws IOException, NoSuchAlgorithmException,
+			InvalidFileSizeException, ServiceException {
 		String line;
 		String json = "";
 		while ((line = request.getReader().readLine()) != null) {
@@ -764,70 +766,82 @@ public class OliveServlet extends HttpServlet {
 
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
-			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-		/*CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
-				CombineVideosRequest.class);
-		
-		response.setContentType("text/plain");
-
-		PrintWriter out = response.getWriter();
-		int projectId = getProjectIdFromSessionAttributes(session);
-		String [] videos = DatabaseApi.getVideosOnTimeline(projectId);
-		String [] videoURLs = new String[videos.length];
-		for (int i = 0; i < videos.length; i++){
-			videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(videos[i], projectId));
-		}
-		
-		String combinedURL = combineVideos(videoURLs, videos);
-		ServletContext ctx = getServletContext();
-		response.setContentType("text/plain");
-		response.setHeader("Content-Disposition",
-        "attachment;filename=downloadname.txt");
-		InputStream is = ctx.getResourceAsStream(combinedURL);
-		int read=0;
-		byte[] bytes = new byte[1024];
-		OutputStream os = response.getOutputStream();
-	 
-		while((read = is.read(bytes))!= -1){
-			os.write(bytes, 0, read);
-		}
-		os.flush();
-		os.close();
-		*/
+			throws IOException, NoSuchAlgorithmException,
+			InvalidFileSizeException, ServiceException {
+		/*
+		 * CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+		 * CombineVideosRequest.class);
+		 * 
+		 * response.setContentType("text/plain");
+		 * 
+		 * PrintWriter out = response.getWriter();
+		 * int projectId = getProjectIdFromSessionAttributes(session);
+		 * String [] videos = DatabaseApi.getVideosOnTimeline(projectId);
+		 * String [] videoURLs = new String[videos.length];
+		 * for (int i = 0; i < videos.length; i++){
+		 * videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(videos[i], projectId));
+		 * }
+		 * 
+		 * String combinedURL = combineVideos(videoURLs, videos);
+		 * ServletContext ctx = getServletContext();
+		 * response.setContentType("text/plain");
+		 * response.setHeader("Content-Disposition",
+		 * "attachment;filename=downloadname.txt");
+		 * InputStream is = ctx.getResourceAsStream(combinedURL);
+		 * int read=0;
+		 * byte[] bytes = new byte[1024];
+		 * OutputStream os = response.getOutputStream();
+		 * 
+		 * while((read = is.read(bytes))!= -1){
+		 * os.write(bytes, 0, read);
+		 * }
+		 * os.flush();
+		 * os.close();
+		 */
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
-	
-	private String combineVideos(String[] videoURLs, String [] videos) throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-		String [] result = new String[2];
+
+	private String combineVideos(String[] videoURLs, String[] videos)
+			throws IOException, NoSuchAlgorithmException,
+			InvalidFileSizeException, ServiceException {
+		String[] result = new String[2];
 		result[0] = "combined";
-		String [] oldVideoNames = videos;
+		String[] oldVideoNames = videos;
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		for(int i = 0; i < videos.length-1; i++){
-			log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
-			Process process = r.exec("ffmpeg -i "+videoURLs[0]+" -sameq temp\\"+videos[0]+".mpg");
+		for (int i = 0; i < videos.length - 1; i++) {
+			log.info("Video 1: NAME: " + videos[0] + " - URL:" + videoURLs[0]
+					+ "...Video 2: NAME: " + videos[1] + " - URL:"
+					+ videoURLs[i + 1]);
+			Process process = r.exec("ffmpeg -i " + videoURLs[0]
+					+ " -sameq temp\\" + videos[0] + ".mpg");
 			InputStream is2 = process.getInputStream();
 			InputStreamReader isr2 = new InputStreamReader(is2);
 			BufferedReader br2 = new BufferedReader(isr2);
 			String line;
-			for(int j = 0; j<5;j++) {
-			      log.info("command 1: "+br2.readLine());
+			for (int j = 0; j < 5; j++) {
+				log.info("command 1: " + br2.readLine());
 			}
-			r.exec("ffmpeg -i "+videoURLs[i+1]+" -sameq temp\\"+videos[i+1]+".mpg");
-			
-			if(isWindows){
+			r.exec("ffmpeg -i " + videoURLs[i + 1] + " -sameq temp\\"
+					+ videos[i + 1] + ".mpg");
+
+			if (isWindows) {
 				log.info("Windows");
-				r.exec("cmd /c copy /b temp\\"+videos[0]+".mpg+temp\\"+videos[i+1]+".mpg temp\\intermediateTemp.mpg");
-				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
-			}
-			else if(isLinux){
+				r.exec("cmd /c copy /b temp\\" + videos[0] + ".mpg+temp\\"
+						+ videos[i + 1] + ".mpg temp\\intermediateTemp.mpg");
+				// r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
+			} else if (isLinux) {
 				log.info("Linux");
-				String [] arr = {"/bin/sh","-c","cat temp\\"+videos[0]+".mpg + temp\\"+videos[i+1]+".mpg > temp\\intermediateTemp.mpg"};
+				String[] arr = {
+						"/bin/sh",
+						"-c",
+						"cat temp\\" + videos[0] + ".mpg + temp\\"
+								+ videos[i + 1]
+								+ ".mpg > temp\\intermediateTemp.mpg" };
 				r.exec(arr);
-				//r.exec("rm temp\\"+videos[i+1]+".mpg");
-			}
-			else{
+				// r.exec("rm temp\\"+videos[i+1]+".mpg");
+			} else {
 				return null;
 			}
 			log.info("after IFS");
@@ -835,23 +849,24 @@ public class OliveServlet extends HttpServlet {
 			videos[0] = "combined";
 			videoURLs[0] = "temp\\Combined\\combined.ogv";
 		}
-		//Removing all temp files except for the one combined video
+		// Removing all temp files except for the one combined video
 		result[1] = videoURLs[0];
 		File file = new File(result[1]);
 		return S3Api.uploadFile(file);
-		
+
 	}
-	
-	//http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
-	private Boolean isWindows(){
+
+	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
+	private Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
-		//windows
-	    return (os.indexOf( "win" ) >= 0);
+		// windows
+		return (os.indexOf("win") >= 0);
 	}
-	private Boolean isLinux(){
+
+	private Boolean isLinux() {
 		String os = System.getProperty("os.name").toLowerCase();
-		//linux or unix
-	    return (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0);
+		// linux or unix
+		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 	}
 
 	private void handleUpdateVideosPosition(HttpServletRequest request,

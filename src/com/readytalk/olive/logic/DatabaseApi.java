@@ -147,6 +147,33 @@ public class DatabaseApi {
 				"AccountID", Integer.toString(accountId));
 	}
 
+	public static int getNumberOfProjects(int accountId) {
+
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
+					+ ";";
+			r = st.executeQuery(s);
+			int numberOfProjects = 0;
+
+			if (r.first()) {
+				do {
+					numberOfProjects++;
+				} while (r.next());
+			}
+			return numberOfProjects;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1; // error!
+	}
+
 	public static Boolean editAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
@@ -261,6 +288,33 @@ public class DatabaseApi {
 	public static String getProjectIcon(int projectId) {
 		return getUnknownValueFromTable("Icon", "Projects", "ProjectID",
 				Integer.toString(projectId));
+	}
+
+	public static int getNumberOfVideos(int projectId) {
+
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT VideoID FROM Videos WHERE ProjectID = " + projectId
+					+ ";";
+			r = st.executeQuery(s);
+			int numberOfVideos = 0;
+
+			if (r.first()) {
+				do {
+					numberOfVideos++;
+				} while (r.next());
+			}
+			return numberOfVideos;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1; // error!
 	}
 
 	public static String populateProjects(int accountId) {
@@ -838,41 +892,42 @@ public class DatabaseApi {
 
 	public static String[] getVideosOnTimeline(int projectId) {
 		Connection conn = getDBConnection();
-		try{
+		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "SELECT * FROM Videos WHERE ProjectID = '"+projectId+"';";
+			s = "SELECT * FROM Videos WHERE ProjectID = '" + projectId + "';";
 			ResultSet r = st.executeQuery(s);
 			ArrayList timelinePositionTemp = new ArrayList();
-			if(r.first()){
-				do{
-					int temp = r.getInt("TimelinePosition"); 
-					if(temp != -1){
+			if (r.first()) {
+				do {
+					int temp = r.getInt("TimelinePosition");
+					if (temp != -1) {
 						timelinePositionTemp.add(temp);
 					}
-				}while(r.next());
-				Object [] timelinePositionO = timelinePositionTemp.toArray();
+				} while (r.next());
+				Object[] timelinePositionO = timelinePositionTemp.toArray();
 				Integer temp = null;
-				int [] timelinePosition = new int[timelinePositionO.length];
+				int[] timelinePosition = new int[timelinePositionO.length];
 				int i = 0;
-				for(i = 0; i<timelinePositionO.length;i++){
-					temp = (Integer)timelinePositionO[i];
+				for (i = 0; i < timelinePositionO.length; i++) {
+					temp = (Integer) timelinePositionO[i];
 					timelinePosition[i] = temp.intValue();
 				}
 				Arrays.sort(timelinePosition);
-				String [] result = new String[timelinePosition.length];
-				for(i = 0; i<timelinePosition.length;i++){
-					s = "SELECT Name FROM Videos WHERE ProjectID = '"+projectId+"' AND TimelinePosition = "+timelinePosition[i]+";";
+				String[] result = new String[timelinePosition.length];
+				for (i = 0; i < timelinePosition.length; i++) {
+					s = "SELECT Name FROM Videos WHERE ProjectID = '"
+							+ projectId + "' AND TimelinePosition = "
+							+ timelinePosition[i] + ";";
 					r = st.executeQuery(s);
-					if(r.first()){
+					if (r.first()) {
 						result[i] = r.getString("Name");
 					}
 				}
 				return result;
-				
-			}
-			else{
+
+			} else {
 				return null;
 			}
 		} catch (Exception e) {
