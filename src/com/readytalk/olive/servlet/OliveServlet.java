@@ -359,13 +359,12 @@ public class OliveServlet extends HttpServlet {
 	private void handleAddProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
+		int accountId = getAccountIdFromSessionAttributes(session);
 		String projectName = request.getParameter("ProjectName");
-		if (Security.isSafeProjectName(projectName)) {
+		if (Security.isSafeProjectName(projectName)
+				&& DatabaseApi.getNumberOfProjects(accountId) < Security.MAXIMUM_NUMBER_OF_PROJECTS) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 
-			String sessionUsername = (String) session
-					.getAttribute(Attribute.USERNAME.toString());
-			int accountId = DatabaseApi.getAccountId(sessionUsername);
 			String icon = ""; // TODO Get this from user input.
 			Project project = new Project(projectName, accountId, icon);
 			Boolean added = DatabaseApi.AddProject(project);
@@ -451,7 +450,9 @@ public class OliveServlet extends HttpServlet {
 			fileItem.write(file); // Save the file to the allocated space
 			int projectId = getProjectIdFromSessionAttributes(session);
 			String videoName = videoNameItem.getString();
-			if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(i)) {
+			if (Security.isSafeVideoName(videoName)
+					&& Security.isSafeVideo(i)
+					&& DatabaseApi.getNumberOfVideos(projectId) < Security.MAXIMUM_NUMBER_OF_VIDEOS) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
 					DatabaseApi.AddVideo(new Video(videoName, videoUrl,
@@ -467,8 +468,8 @@ public class OliveServlet extends HttpServlet {
 					return;
 				}
 			} else if (Security.isSafeVideoName(videoName)) {
-				out.println("Upload Failed. Video type is invalid.");
-				log.warning("Upload Failed. Video type is invalid.");
+				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else {
@@ -800,9 +801,7 @@ public class OliveServlet extends HttpServlet {
 			  is.close();
 			  out.close();	
 
-		log.severe("handleCombineVideos has not yet been implemented.");
 	}
-	
 	private String combineVideos(String[] videoURLs, String [] videos) throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException, InterruptedException {
 		String [] result = new String[2];
 		result[0] = "combined";
@@ -820,14 +819,12 @@ public class OliveServlet extends HttpServlet {
 				log.info("Windows");
 				r.exec("cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",null,tempDir);
 				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
-			}
-			else if(isLinux){
+			} else if (isLinux) {
 				log.info("Linux");
 				String [] arr = {"/bin/sh","-c","cat temp.mpg + temp2.mpg > intermediateTemp.mpg"};
 				r.exec(arr,null,tempDir);
-				//r.exec("rm temp\\"+videos[i+1]+".mpg");
-			}
-			else{
+				// r.exec("rm temp\\"+videos[i+1]+".mpg");
+			} else {
 				return null;
 			}
 			log.info("after IFS");
@@ -836,22 +833,23 @@ public class OliveServlet extends HttpServlet {
 			//process.waitFor();
 			videos[0] = "combined";
 		}
-		//Removing all temp files except for the one combined video
+		// Removing all temp files except for the one combined video
 		//result[1] = videoURLs[0];
 		return S3Api.uploadFile(combined);
 		//return videoURLs[0];
 	}
-	
-	//http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
-	private Boolean isWindows(){
+
+	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
+	private Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
-		//windows
-	    return (os.indexOf( "win" ) >= 0);
+		// windows
+		return (os.indexOf("win") >= 0);
 	}
-	private Boolean isLinux(){
+
+	private Boolean isLinux() {
 		String os = System.getProperty("os.name").toLowerCase();
-		//linux or unix
-	    return (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0);
+		// linux or unix
+		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 	}
 
 	private void handleUpdateVideosPosition(HttpServletRequest request,
