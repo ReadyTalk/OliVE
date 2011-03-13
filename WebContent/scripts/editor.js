@@ -374,6 +374,8 @@ function attachSplitHandlers() {
 }
 
 function getVideoInformation() {
+	$('.video-container').hide();
+	
 	var requestData = '{'
 		+    '"command" : "getVideoInformation"'
 		+  '}';
@@ -405,6 +407,7 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		$('.video-container').show();
 		
 		enableOrDisableExportButton();
 	}, null);	// Defined in "/olive/scripts/master.js".
