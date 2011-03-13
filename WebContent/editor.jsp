@@ -18,10 +18,11 @@
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
+<script src="/olive/scripts/contextMenu.js"></script>
+<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
-<script src="/olive/scripts/contextMenu.js"></script>
 </head>
 <body>
 <%

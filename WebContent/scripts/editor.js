@@ -9,15 +9,21 @@ jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
 	attachVideoClickHandlers();
+	attachVideoRenameHandlers();
 	enableDragAndDrop();
 	//attachPublishButtonHandler();
 	getVideoInformation();
 });
 
+function doNotSelectThisTime() {
+	event.stopPropagation();	// Prevent selecting from happening.
+}
+
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
 	
 	$('.delete-video').click(function () {
+		doNotSelectThisTime();
 		$('#confirm-delete-video-dialog').dialog('open');
 		videoToDelete = this;
 	});
@@ -46,12 +52,11 @@ function attachVideoMenuHandlers() {
 	
 	attachSplitHandlers();
 	$('.split-link').click(function() {
+		doNotSelectThisTime();
 		$('#video-name').val($(this).attr('id'))
 						.change();	// Prefill in the value in the split dialog.
 		$('#split-video-dialog-form').dialog('open');
 	});
-	
-	
 }
 
 function attachPublishButtonHandler(){
@@ -97,6 +102,29 @@ function attachVideoClickHandlers() {
 			// Then, select this
 			select(this);
 		}
+	});
+}
+
+function attachVideoRenameHandlers() {
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html
+	$('.video-name').editable({
+		type: 'text',
+        submit: 'Save',
+        cancel: 'Cancel',
+        onEdit: function () {
+			doNotSelectThisTime();
+		},
+        onSubmit: function (content) {
+			alert(content.current+':'+content.previous);
+		}
+	});
+	
+	// These don't work.
+	$('.video-container input').live('click', function (){
+		doNotSelectThisTime();
+	});
+	$('.video-container button').live('click', function (){
+		doNotSelectThisTime();
 	});
 }
 
@@ -170,7 +198,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#timeline',
 		helper: 'clone',
-		items: 'div',
+		items: '> div',	// Only immediate divs, not divs within other elements.
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -329,7 +357,6 @@ function attachSplitHandlers() {
 				}
 			},
 			Cancel : function() {
-				window.location.reload(true);
 				$(this).dialog('close');
 			}
 		},
