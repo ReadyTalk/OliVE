@@ -9,34 +9,32 @@
 	right: 60%;
 	bottom: 150px;
 	left: 0px;
-	text-align: center;
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 }
 
-#videos-title {
+#videos-header {
 	position: absolute;
 	top: 0%;
 	right: 0%;
-	bottom: 10%;
+	bottom: 85%;
 	left: 0%;
-	margin: 5px;
+}
+
+#videos-title {
+	float: left;
+	margin: 3%;
+	font-size: 240%;	/* 24px */
+	color: #92bd6a; /* The Olive color */
 }
 
 #videos-controls {
-	position: absolute;
-	top: 10%;
-	right: 0%;
-	bottom: 20%;
-	left: 0%;
-	border-top: 1px solid gray;
-	border-right: 1px solid gray;
-	border-bottom: 0px solid gray; /* different */
-	border-left: 1px solid gray;
+	float: right;
+	margin: 1%;
 }
 
 #videos {
 	position: absolute;
-	top: 20%;
+	top: 15%;
 	right: 0%;
 	bottom: 0%;
 	left: 0%;
@@ -68,7 +66,7 @@
 	margin-right: auto;
 }
 
-#player-outer-container {
+#player-container {
 	position: absolute;
 	top: 0px;
 	right: 0px;
@@ -76,15 +74,8 @@
 	left: 40%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
+	background-color: #101010;
 	text-align: center;
-}
-
-#player-inner-container {
-	position: absolute;
-	top: 0%;
-	right: 0%;
-	bottom: 5%;	/* Provide room for controls */
-	left: 0%;
 }
 
 #player {

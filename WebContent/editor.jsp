@@ -68,14 +68,12 @@
 <div id="main">
 
 <div id="videos-container">
-<div id="videos-title">
-<h3><%=projectName%></h3>
-</div>
-<!-- end #videos-title -->
-<div id="videos-controls">
-<button id="upload-new-button" type="button">Upload New Video</button>
-</div>
-<!-- end #videos-controls -->
+<div id="videos-header"><span id="videos-title"> <%=projectName%>
+</span> <span id="videos-controls">
+<button id="upload-new-button" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
+	class="ui-button-text">Upload New Video</span></button>
+</span></div>
 <div id="videos"><%=videosHtml%></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
@@ -87,9 +85,7 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-outer-container">
-<div id="player-inner-container"><video id="player" controls></video></div>
-</div>
+<div id="player-container"><video id="player" controls></video></div>
 
 <div class="clear"></div>
 
