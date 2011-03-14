@@ -211,7 +211,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: 'div',
+		items: '> div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
