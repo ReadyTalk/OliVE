@@ -116,6 +116,18 @@ function attachVideoRenameHandlers() {
 	});
 }
 
+//Perform a renameVideo request
+function renameVideo(oldVideoName, newVideoName) {
+	var requestData = '{'
+		+    '"command" : "renameVideo",'
+		+    '"arguments" : {'
+		+        '"oldVideoName" : "' + oldVideoName + '",'
+		+        '"newVideoName" : "' + newVideoName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
+}
+
 function makeSelectionVisible(element) {
 	if ($(element).data('isSelected')) {
 		$(element).css( {
@@ -267,18 +279,6 @@ function splitVideo(videoName, splitTimeInSeconds) {
 	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
-//Perform a renameVideo request
-function renameVideo(oldVideoName, newVideoName) {
-	var requestData = '{'
-		+    '"command" : "renameVideo",'
-		+    '"arguments" : {'
-		+        '"oldVideoName" : "' + oldVideoName + '",'
-		+        '"newVideoName" : "' + newVideoName + '"'
-		+    '}'
-		+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
-}
-
 function attachSplitHandlers() {
 	var videoName = $('#video-name'), splitTimeInSeconds = $('#split-time-in-seconds'), allFields = $(
 			[]).add(videoName).add(splitTimeInSeconds), tips = $('.validateTips');
@@ -372,6 +372,7 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		
 		$('.video-container').show();
 		
 		enableOrDisableExportButton();

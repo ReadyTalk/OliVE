@@ -38,6 +38,7 @@ import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
+import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
 import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.json.UpdateProjectsPositionRequest;
@@ -367,7 +368,7 @@ public class OliveServlet extends HttpServlet {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 
 			String icon = ""; // TODO Get this from user input.
-			Project project = new Project(projectName, accountId, icon);
+			Project project = new Project(projectName, accountId, icon, -1);
 			Boolean added = DatabaseApi.addProject(project);
 			if (!added) {
 				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
@@ -531,6 +532,8 @@ public class OliveServlet extends HttpServlet {
 			handleRenameProject(request, response, session, json);
 		} else if (generalRequest.command.equals("updateProjectsPosition")) {
 			handleUpdateProjectsPosition(request, response, session, json);
+		} else if (generalRequest.command.equals("getProjectInformation")) {
+			handleGetProjectInformation(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideos")) {
 			handleGetVideos(request, response, session, json);
 		} else if (generalRequest.command.equals("createVideo")) {
@@ -624,7 +627,24 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleRenameProject has not yet been implemented.");
+		RenameProjectRequest renameProjectRequest = new Gson().fromJson(json,
+				RenameProjectRequest.class);
+
+		String newProjectName = renameProjectRequest.arguments.newProjectName;
+		String oldProjectName = renameProjectRequest.arguments.oldProjectName;
+		int projectId = getProjectIdFromSessionAttributes(session,
+				oldProjectName);
+
+		response.setContentType("text/plain");
+		PrintWriter out = response.getWriter();
+
+		if (Security.isSafeProjectName(newProjectName)) {
+			DatabaseApi.renameProject(projectId, newProjectName);
+			out.println(newProjectName);
+		} else {
+			out.println(oldProjectName);
+		}
+		out.close();
 	}
 
 	private void handleUpdateProjectsPosition(HttpServletRequest request,
@@ -646,6 +666,17 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
+	private void handleGetProjectInformation(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		int accountId = getAccountIdFromSessionAttributes(session);
+		String projectString = S3Api.getProjectInformation(accountId);
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(projectString);
+		out.close();
+	}
+	
 	private void handleGetVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
@@ -685,8 +716,6 @@ public class OliveServlet extends HttpServlet {
 	private void handleRenameVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleRenameVideo has not yet been implemented.");
-
 		RenameVideoRequest renameVideoRequest = new Gson().fromJson(json,
 				RenameVideoRequest.class);
 
