@@ -810,6 +810,7 @@ public class OliveServlet extends HttpServlet {
 		boolean isLinux = isLinux();
 		File combined = new File(videoURLs[0]);
 		String videoName;
+		S3Api.downloadVideosToTemp(videoURLs[0]);
 		Process p;
 		for(int i = 0; i < videos.length-1; i++){
 			videoName=S3Api.downloadVideosToTemp(videoURLs[i+1]);
