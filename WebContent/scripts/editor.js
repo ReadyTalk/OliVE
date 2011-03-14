@@ -106,7 +106,7 @@ function attachVideoClickHandlers() {
 }
 
 function attachVideoRenameHandlers() {
-	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
 	$('.video-name').editable({
 		type: 'text',
         submit: 'Save',
@@ -115,7 +115,9 @@ function attachVideoRenameHandlers() {
 			doNotSelectThisTime();
 		},
         onSubmit: function (content) {
-			alert(content.current+':'+content.previous);
+			alert(content.current + ' : ' + content.previous);
+		},
+		onCancel: function (content) {
 		}
 	});
 	
@@ -282,34 +284,6 @@ function splitVideo(videoName, splitTimeInSeconds) {
 function attachSplitHandlers() {
 	var videoName = $('#video-name'), splitTimeInSeconds = $('#split-time-in-seconds'), allFields = $(
 			[]).add(videoName).add(splitTimeInSeconds), tips = $('.validateTips');
-
-	function updateTips(t) {
-		tips.text(t).addClass("ui-state-highlight");
-		setTimeout(function() {
-			tips.removeClass("ui-state-highlight", 1500);
-		}, 500);
-	}
-
-	function checkLength(o, n, min, max) {
-		if (o.val().length > max || o.val().length < min) {
-			o.addClass("ui-state-error");
-			updateTips("Length of " + n + " must be between " + min + " and "
-					+ max + ".");
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function checkRegexp(o, regexp, n) {
-		if (!(regexp.test(o.val()))) {
-			o.addClass("ui-state-error");
-			updateTips(n);
-			return false;
-		} else {
-			return true;
-		}
-	}
 	
 	function checkCondition(o, condition, n) {
 		if (!condition) {
