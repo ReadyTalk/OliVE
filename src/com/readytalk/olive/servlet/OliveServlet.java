@@ -840,6 +840,7 @@ public class OliveServlet extends HttpServlet {
 		Process p;
 		for (int i = 0; i < videos.length - 1; i++) {
 			videoName = S3Api.downloadVideosToTemp(videoURLs[i + 1]);
+			wait();
 			p = r.exec("ffmpeg -i " + combined.getName() + " -sameq temp.mpg",
 					null, tempDir);
 			// p.waitFor();
