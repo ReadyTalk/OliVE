@@ -101,7 +101,7 @@ function attachVideoRenameHandlers() {
 			doNotSelectThisTime();
 		},
         onSubmit: function (content) {
-			alert(content.current + ' : ' + content.previous);
+			renameVideo(content.previous, content.current);
 		},
 		onCancel: function (content) {
 		}
@@ -252,7 +252,7 @@ function deleteVideo(videoName) {
 			+        '"video" : "' + videoName + '"'
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
@@ -264,7 +264,19 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+}
+
+//Perform a renameVideo request
+function renameVideo(oldVideoName, newVideoName) {
+	var requestData = '{'
+		+    '"command" : "renameVideo",'
+		+    '"arguments" : {'
+		+        '"oldVideoName" : "' + oldVideoName + '",'
+		+        '"newVideoName" : "' + newVideoName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function attachSplitHandlers() {

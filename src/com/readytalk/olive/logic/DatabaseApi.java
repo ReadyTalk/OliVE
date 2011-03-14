@@ -389,7 +389,7 @@ public class DatabaseApi {
 		return false;
 	}
 
-	public static boolean AddProject(Project project) {
+	public static boolean addProject(Project project) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -412,6 +412,22 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 		return false;
+	}
+	
+	public static void renameProject(int projectId, String newProjectName) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET Name = '" + newProjectName
+					+ "' WHERE ProjectID = '" + projectId + "';";
+			st.executeUpdate(s);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
 	}
 
 	public static void deleteProject(int projectId) {
@@ -713,8 +729,8 @@ public class DatabaseApi {
 							+ "\n"
 							+ "<small><a id=\""
 							+ videoName
-							+ "\" class=\"link split-link\">Split</a></small> "
-							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ "\" class=\"link split-link\">Split</a> | "
+							+ "<a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
 							+ videoName
 							+ "\" class=\"warning delete-video\">Delete</a></small> </div>"
 							+ "\n";
@@ -763,7 +779,7 @@ public class DatabaseApi {
 		return null;
 	}
 
-	public static void AddVideo(Video video) {
+	public static void addVideo(Video video) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -776,6 +792,22 @@ public class DatabaseApi {
 					+ video.getTimelinePosition() + "' , '" + video.getIcon()
 					+ "' , '" + (video.getIsSelected() ? 1 : 0) + "' , '"
 					+ video.getPoolPosition() + "');";
+			st.executeUpdate(s);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+	}
+
+	public static void renameVideo(int videoId, String newVideoName) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET Name = '" + newVideoName
+					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();

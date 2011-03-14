@@ -39,6 +39,10 @@ function openHelpWindow() {
 			"menubar=no,width=500,height=500,toolbar=no");
 }
 
+function refresh() {
+	window.location.reload();
+}
+
 function logout() {
 	// See: http://stackoverflow.com/questions/503093/how-can-i-make-a-redirect-page-in-jquery
 	window.location.replace('logout.jsp');
