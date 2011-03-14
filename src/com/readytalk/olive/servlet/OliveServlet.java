@@ -765,12 +765,12 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-		/*CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
 		
 		response.setContentType("text/plain");
 
-		PrintWriter out = response.getWriter();
+		//PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String [] videos = DatabaseApi.getVideosOnTimeline(projectId);
 		String [] videoURLs = new String[videos.length];
@@ -793,7 +793,7 @@ public class OliveServlet extends HttpServlet {
 		}
 		os.flush();
 		os.close();
-		*/
+
 		log.severe("handleCombineVideos has not yet been implemented.");
 	}
 	
@@ -804,21 +804,15 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		for(int i = 0; i < videos.length-1; i++){
-			log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
-			Process process = r.exec("ffmpeg -i "+videoURLs[0]+" -sameq temp\\"+videos[0]+".mpg");
-			InputStream is2 = process.getInputStream();
-			InputStreamReader isr2 = new InputStreamReader(is2);
-			BufferedReader br2 = new BufferedReader(isr2);
-			String line;
-			for(int j = 0; j<5;j++) {
-			      log.info("command 1: "+br2.readLine());
-			}
-			r.exec("ffmpeg -i "+videoURLs[i+1]+" -sameq temp\\"+videos[i+1]+".mpg");
+		for(int i = 0; i < videos.length; i++){
+			//log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
+			r.exec("cmd /c cd C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet");
+			Process process = r.exec("ffmpeg -i trailer_400p.ogg -sameq trailer1.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
+						r.exec("ffmpeg -i trailer_400pCopy.ogg -sameq trailer2.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
 			
 			if(isWindows){
 				log.info("Windows");
-				r.exec("cmd /c copy /b temp\\"+videos[0]+".mpg+temp\\"+videos[i+1]+".mpg temp\\intermediateTemp.mpg");
+				//r.exec("cmd /c copy /b trailer1.mpg+trailer2.mpg intermediate.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
 				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			}
 			else if(isLinux){
@@ -831,13 +825,22 @@ public class OliveServlet extends HttpServlet {
 				return null;
 			}
 			log.info("after IFS");
-			r.exec("ffmpeg -i temp\\intermediateTemp.mpg -sameq temp\\Combined\\combined.ogv");
+			r.exec("cmd /c dir", null, new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
+			process = r.exec("ffmpeg -i intermediate.mpg -sameq combined.ogv",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
+			InputStream is2 = process.getErrorStream();
+			InputStreamReader isr2 = new InputStreamReader(is2);
+			BufferedReader br2 = new BufferedReader(isr2);
+			String line;
+			//while((line=br2.readLine())!=null) {
+			//      log.info("command 1: "+line);
+			//}
+
 			videos[0] = "combined";
-			videoURLs[0] = "temp\\Combined\\combined.ogv";
+			videoURLs[0] = "C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet\\combined.ogv";
 		}
 		//Removing all temp files except for the one combined video
 		result[1] = videoURLs[0];
-		File file = new File(result[1]);
+		File file = new File(videoURLs[0]);
 		return S3Api.uploadFile(file);
 		
 	}

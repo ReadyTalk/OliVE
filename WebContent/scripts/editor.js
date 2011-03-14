@@ -11,7 +11,7 @@ jQuery(function($) {
 	attachVideoClickHandlers();
 	attachPlayerHandlers();
 	enableDragAndDrop();
-	//attachPublishButtonHandler();
+	attachPublishButtonHandler();
 	getVideoInformation();
 });
 
