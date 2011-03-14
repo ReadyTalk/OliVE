@@ -72,6 +72,17 @@
 	overflow: hidden; /* Temporary solution to text-overflow not working */
 }
 
+.video-name:hover {
+	background-color: #ffffd3;
+}
+
+.video-name > input {
+	width: 90%;	/* Same as .video-container */
+}
+
+.video-name > button {
+}
+
 #player-container {
 	position: absolute;
 	top: 0px;
@@ -123,16 +134,4 @@
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
-}
-
-/* 
-	----------------------------------------
-	Editable
-	----------------------------------------
-*/
-.video-name > input {
-	width: 90%;	/* Same as .video-container */
-}
-
-.video-name > button {
 }
