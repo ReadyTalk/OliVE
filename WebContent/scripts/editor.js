@@ -116,6 +116,18 @@ function attachVideoRenameHandlers() {
 	});
 }
 
+//Perform a renameVideo request
+function renameVideo(oldVideoName, newVideoName) {
+	var requestData = '{'
+		+    '"command" : "renameVideo",'
+		+    '"arguments" : {'
+		+        '"oldVideoName" : "' + oldVideoName + '",'
+		+        '"newVideoName" : "' + newVideoName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
+}
+
 function makeSelectionVisible(element) {
 	if ($(element).data('isSelected')) {
 		$(element).css( {
@@ -199,7 +211,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: 'div',
+		items: '> div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -265,18 +277,6 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+    '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-//Perform a renameVideo request
-function renameVideo(oldVideoName, newVideoName) {
-	var requestData = '{'
-		+    '"command" : "renameVideo",'
-		+    '"arguments" : {'
-		+        '"oldVideoName" : "' + oldVideoName + '",'
-		+        '"newVideoName" : "' + newVideoName + '"'
-		+    '}'
-		+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function attachSplitHandlers() {
@@ -372,6 +372,7 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		
 		$('.video-container').show();
 		
 		enableOrDisableExportButton();

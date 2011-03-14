@@ -332,27 +332,32 @@ public class DatabaseApi {
 					projectNum += 1; // TODO This is never used.
 					String projectName = r.getString("Name");
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
+
 					projects += "<div id=\""
 							+ projectName
-							+ "\" class=\"project-icon-container\">"
+							+ "\" class=\"project-container\">"
 							+ "\n"
 							+ "<a href=\"OliveServlet?projectName="
 							+ projectName
-							+ "\"><img src=\""
-							+ projectIcon
-							+ "\" class=\"project-icon\" alt=\""
-							+ projectName
-							+ "\" /></a>"
-							+ "\n"
-							+ "<p><a href=\"OliveServlet?projectName="
-							+ projectName
 							+ "\">"
-							+ projectName
-							+ "</a></p>"
+							+ "<img id=\"olive"
+							+ projectNum
+							+ "\" class=\"project-image\""
 							+ "\n"
-							+ "<p><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ "src=\""
+							+ projectIcon
+							+ "\" alt=\"olive"
+							+ projectNum
+							+ "\" />"
+							+ "</a>"
+							+ "\n"
+							+ "<div class=\"project-name\">"
 							+ projectName
-							+ "\" class=\"warning delete-project\">Delete</a></small></p>"
+							+ "</div>"
+							+ "\n"
+							+ "<div class=\"project-controls\"><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ projectName
+							+ "\" class=\"warning delete-project\">Delete</a></small></div>"
 							+ "\n" + "</div>" + "\n";
 				} while (r.next());
 			}
@@ -367,6 +372,38 @@ public class DatabaseApi {
 		// both projects and videos in one project
 	}
 
+	public static int[] getProjectIds(int accountId) {
+		Connection conn = getDBConnection();
+		List<Integer> projectIds = new LinkedList<Integer>();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
+					+ ";";
+			r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					projectIds.add(r.getInt("ProjectID"));
+				} while (r.next());
+			}
+
+			// Convert the List to an int array.
+			int[] projectIdsAsIntArray = new int[projectIds.size()];
+			for (int i = 0; i < projectIds.size(); ++i) {
+				projectIdsAsIntArray[i] = projectIds.get(i);
+			}
+
+			return projectIdsAsIntArray;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
+	}
+	
 	public static boolean projectExists(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
@@ -413,14 +450,14 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+
 	public static void renameProject(int projectId, String newProjectName) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Videos SET Name = '" + newProjectName
+			s = "UPDATE Projects SET Name = '" + newProjectName
 					+ "' WHERE ProjectID = '" + projectId + "';";
 			st.executeUpdate(s);
 		} catch (Exception e) {
@@ -727,12 +764,14 @@ public class DatabaseApi {
 							+ videoName
 							+ "</div>"
 							+ "\n"
-							+ "<small><a id=\""
+							+ "<div class=\"video-controls\"><small><a id=\""
 							+ videoName
 							+ "\" class=\"link split-link\">Split</a> | "
 							+ "<a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
 							+ videoName
-							+ "\" class=\"warning delete-video\">Delete</a></small> </div>"
+							+ "\" class=\"warning delete-video\">Delete</a></small></div>"
+							+ "\n"
+							+ "</div>"
 							+ "\n";
 				} while (r.next());
 			}

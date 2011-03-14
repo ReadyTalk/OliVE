@@ -23,6 +23,7 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
 import com.google.gson.Gson;
+import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.Video;
 import com.readytalk.olive.servlet.OliveServlet;
 import com.readytalk.olive.util.InvalidFileSizeException;
@@ -129,6 +130,25 @@ public class S3Api {
 				+ getNameFromUrl(videoUrl).substring(S3Api.getTime().length()); // TODO Fix fugly code
 	}
 
+	public static String getProjectInformation(int accountId) {
+		int[] projectIds = DatabaseApi.getProjectIds(accountId);
+		Project[] projects = new Project[projectIds.length];
+
+		for (int projectIndex = 0; projectIndex < projectIds.length; ++projectIndex) {
+			String projectName = DatabaseApi
+					.getProjectName(projectIds[projectIndex]);
+			String projectIcon = DatabaseApi
+					.getProjectIcon(projectIds[projectIndex]);
+			int poolPosition = DatabaseApi
+					.getProjectPoolPosition(projectIds[projectIndex]);
+
+			projects[projectIndex] = new Project(projectName, accountId,
+					projectIcon, poolPosition);
+		}
+
+		return new Gson().toJson(projects);
+	}
+
 	public static String getVideoInformation(int projectId) {
 		int[] videoIds = DatabaseApi.getVideoIds(projectId);
 		Video[] videos = new Video[videoIds.length];
@@ -150,6 +170,7 @@ public class S3Api {
 
 		return new Gson().toJson(videos);
 	}
+
 	public static File getFileFromS3(String videoUrl) throws IOException {
 		String fileName = getNameFromUrl(videoUrl);
 		S3Object s3Object = null;
@@ -190,7 +211,8 @@ public class S3Api {
 	}
 
 	// Modified from: http://msdn.microsoft.com/en-us/library/aa478985.aspx
-	public static String downloadVideosToTemp(String videoUrl) throws IOException {
+	public static String downloadVideosToTemp(String videoUrl)
+			throws IOException {
 		File tempDir = OliveServlet.tempDir;
 		File inFile = S3Api.getFileFromS3(videoUrl);
 		File outFile = new File(tempDir, getNameFromUrl(videoUrl));

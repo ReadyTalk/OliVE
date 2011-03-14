@@ -5,11 +5,13 @@ public class Project {
 	private String name;
 	private int accountId;
 	private String icon;
+	private int poolPosition;
 
-	public Project(String name, int accountId, String icon) {
+	public Project(String name, int accountId, String icon, int poolPosition) {
 		this.name = name;
 		this.accountId = accountId;
 		this.icon = icon;
+		this.poolPosition = poolPosition;
 	}
 
 	@Override
@@ -39,5 +41,13 @@ public class Project {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+	
+	public void setPoolPosition(int poolPosition) {
+		this.poolPosition = poolPosition;
+	}
+
+	public int getPoolPosition() {
+		return poolPosition;
 	}
 }

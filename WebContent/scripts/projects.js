@@ -9,9 +9,38 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteProjectHandlers();
-	//enableDragAndDrop();		// Still looks funny. CSS work needed.
-	//getProjectInformation();	// Not yet implemented on the server.
+	attachProjectRenameHandlers();
+	enableDragAndDrop();
+	getProjectInformation();
 });
+
+function attachProjectRenameHandlers() {
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
+	$('.project-name').editable({
+		type: 'text',
+        submit: 'Save',
+        cancel: 'Cancel',
+        onEdit: function () {
+		},
+        onSubmit: function (content) {
+			renameProject(content.previous, content.current);
+		},
+		onCancel: function (content) {
+		}
+	});
+}
+
+//Perform a renameProject request
+function renameProject(oldProjectName, newProjectName) {
+	var requestData = '{'
+		+    '"command" : "renameProject",'
+		+    '"arguments" : {'
+		+        '"oldProjectName" : "' + oldProjectName + '",'
+		+        '"newProjectName" : "' + newProjectName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
+}
 
 function attachDeleteProjectHandlers() {
 	$('.delete-project').click(function () {
@@ -37,10 +66,10 @@ function attachDeleteProjectHandlers() {
 }
 
 function enableDragAndDrop() {
-	$('#project-clips').sortable( {
+	$('#projects').sortable( {
 		appendTo: 'body',
 		helper: 'clone',
-		items: 'div',
+		items: '> div',	// Only immediate divs, not divs within other elements.
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -74,9 +103,9 @@ function updatePosition(command, collectionItems) {
 	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
-//Perform an updateVideosPosition request
+//Perform an updateProjectsPosition request
 function updateProjectsPosition() {
-	updatePosition('updateProjectsPosition', '#project-clips div');
+	updatePosition('updateProjectsPosition', '#projects > div');
 }
 
 // Perform a deleteProject request
@@ -96,6 +125,8 @@ function openNewProjectForm() {
 }
 
 function getProjectInformation() {
+	$('.project-container').hide();
+	
 	var requestData = '{'
 		+    '"command" : "getProjectInformation"'
 		+  '}';
@@ -113,7 +144,9 @@ function getProjectInformation() {
 		}
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			$('#project-clips').append(poolPositions[poolIndex]);
+			$('#projects').append(poolPositions[poolIndex]);
 		}
+		
+		$('.project-container').show();
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
