@@ -125,9 +125,6 @@ to Computer</button>
 	title="Attention!">
 <p>Add Video to Timeline</p>
 </div>
-<div id="confirm-splice" class="hidden" title="Attention!">
-<p>Publish??</p>
-</div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" class="hidden" title="Split video">
 <p class="validateTips"></p>

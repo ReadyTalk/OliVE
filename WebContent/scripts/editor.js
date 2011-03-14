@@ -11,7 +11,7 @@ jQuery(function($) {
 	attachVideoClickHandlers();
 	attachVideoRenameHandlers();
 	enableDragAndDrop();
-	//attachPublishButtonHandler();
+	attachPublishButtonHandler();
 	getVideoInformation();
 });
 
@@ -61,22 +61,8 @@ function attachVideoMenuHandlers() {
 
 function attachPublishButtonHandler(){
 	$('#export-button').click(function(){
-		$('#confirm-splice').dialog('open');
-	});
-	$('#confirm-splice').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 275,
-		modal: true,
-		buttons: {
-			'Yes': function () {
-				combineVideos();
-				$(this).dialog('close');
-			},
-			'No': function () {
-				$(this).dialog('close');
-			}
-		}
+		$(this).text("Please wait...")
+		combineVideos();
 	});
 	
 }

@@ -774,7 +774,7 @@ public class OliveServlet extends HttpServlet {
 			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException, InterruptedException {
 		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
-		
+		log.info("COMBINING VIDEOS");
 		//response.setContentType("text/plain");
 
 		//PrintWriter out = response.getWriter();
@@ -810,25 +810,35 @@ public class OliveServlet extends HttpServlet {
 		boolean isLinux = isLinux();
 		File combined = new File(videoURLs[0]);
 		String videoName;
+		Process p;
 		for(int i = 0; i < videos.length-1; i++){
 			videoName=S3Api.downloadVideosToTemp(videoURLs[i+1]);
-			r.exec("ffmpeg -i "+combined.getName()+" -sameq temp.mpg",null,tempDir);
-			r.exec("ffmpeg -i "+videoName+" -sameq temp2.mpg",null,tempDir);
-			//process.waitFor();
+			p = r.exec("ffmpeg -i "+combined.getName()+" -sameq temp.mpg",null,tempDir);
+			//p.waitFor();
+			//log.info("Process 1...Done");
+			p = r.exec("ffmpeg -i "+videoName+" -sameq temp2.mpg",null,tempDir);
+			//p.waitFor();
+			//log.info("Process 2...Done");
 			if(isWindows){
 				log.info("Windows");
-				r.exec("cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",null,tempDir);
+				p = r.exec("cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",null,tempDir);
+				//p.waitFor();
+				//log.info("Process 3...Done");
 				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			} else if (isLinux) {
 				log.info("Linux");
 				String [] arr = {"/bin/sh","-c","cat temp.mpg + temp2.mpg > intermediateTemp.mpg"};
-				r.exec(arr,null,tempDir);
+				p = r.exec(arr,null,tempDir);
+				//p.waitFor();
+				//log.info("Process 3...Done");
 				// r.exec("rm temp\\"+videos[i+1]+".mpg");
 			} else {
 				return null;
 			}
 			log.info("after IFS");
 			r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv",null,tempDir);
+			//p.waitFor();
+			//log.info("Process 4...Done");
 			combined = new File(tempDir.getAbsolutePath()+"/combined.ogv");
 			//process.waitFor();
 			videos[0] = "combined";
