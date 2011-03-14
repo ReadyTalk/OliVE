@@ -9,16 +9,21 @@ jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
 	attachVideoClickHandlers();
-	attachPlayerHandlers();
+	attachVideoRenameHandlers();
 	enableDragAndDrop();
-	attachPublishButtonHandler();
+	//attachPublishButtonHandler();
 	getVideoInformation();
 });
+
+function doNotSelectThisTime() {
+	event.stopPropagation();	// Prevent selecting from happening.
+}
 
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
 	
 	$('.delete-video').click(function () {
+		doNotSelectThisTime();
 		$('#confirm-delete-video-dialog').dialog('open');
 		videoToDelete = this;
 	});
@@ -47,32 +52,17 @@ function attachVideoMenuHandlers() {
 	
 	attachSplitHandlers();
 	$('.split-link').click(function() {
+		doNotSelectThisTime();
 		$('#video-name').val($(this).attr('id'))
 						.change();	// Prefill in the value in the split dialog.
 		$('#split-video-dialog-form').dialog('open');
 	});
-	
-	
 }
 
 function attachPublishButtonHandler(){
 	$('#export-button').click(function(){
-		$('#confirm-splice').dialog('open');
-	});
-	$('#confirm-splice').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 275,
-		modal: true,
-		buttons: {
-			'Yes': function () {
-				combineVideos();
-				$(this).dialog('close');
-			},
-			'No': function () {
-				$(this).dialog('close');
-			}
-		}
+		$(this).text("Please wait...")
+		combineVideos();
 	});
 	
 }
@@ -99,6 +89,43 @@ function attachVideoClickHandlers() {
 			select(this);
 		}
 	});
+}
+
+function attachVideoRenameHandlers() {
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
+	$('.video-name').editable({
+		type: 'text',
+        submit: 'Save',
+        cancel: 'Cancel',
+        onEdit: function () {
+			doNotSelectThisTime();
+		},
+        onSubmit: function (content) {
+			renameVideo(content.previous, content.current);
+		},
+		onCancel: function (content) {
+		}
+	});
+	
+	// These don't work.
+	$('.video-container input').live('click', function (){
+		doNotSelectThisTime();
+	});
+	$('.video-container button').live('click', function (){
+		doNotSelectThisTime();
+	});
+}
+
+//Perform a renameVideo request
+function renameVideo(oldVideoName, newVideoName) {
+	var requestData = '{'
+		+    '"command" : "renameVideo",'
+		+    '"arguments" : {'
+		+        '"oldVideoName" : "' + oldVideoName + '",'
+		+        '"newVideoName" : "' + newVideoName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function makeSelectionVisible(element) {
@@ -154,49 +181,16 @@ function removeFromSelected(id) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	$('#player-video').attr('poster', $(element).data('icon'));
-	$('#player-video').append(
+	$('#player').attr('poster', $(element).data('icon'));
+	$('#player').append(
 			'<source src="' + $(element).data('url')
 			+ '" type="' + 'video/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
 			+ '" />');
 }
 
 function updatePlayerWithNoElements() {
-	$('#player-video source').remove();
-	$('#player-video').removeAttr('poster');
-}
-
-// Modified from: http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
-function attachPlayerHandlers() {
-	var video = $('#player-video').get(0);	// Use jQuery to find the element, but strip off the jQuery wrapper.
-
-	$('#videos-playpause').click(function () {
-		if (video.paused || video.ended) {
-			video.play();
-		} else {
-			video.pause();
-		}
-	});
-	
-	$('#videos-volume-up').click(function () {
-		if (video.volume < 0.85) { // Account for rounding errors
-			video.volume += 0.1;
-		} else {
-			video.volume = 1.0; // Don't allow rounding errors
-			$('#videos-volume-up').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-down').removeAttr('disabled'); // Enable
-	});
-
-	$('#videos-volume-down').click(function () {
-		if (video.volume > 0.15) { // Account for rounding errors
-			video.volume -= 0.1;
-		} else {
-			video.volume = 0.0; // Don't allow rounding errors
-			$('#videos-volume-down').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-up').removeAttr('disabled'); // Enable
-	});
+	$('#player source').remove();
+	$('#player').removeAttr('poster');
 }
 
 function enableDragAndDrop() {
@@ -204,7 +198,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#timeline',
 		helper: 'clone',
-		items: 'span',
+		items: '> div',	// Only immediate divs, not divs within other elements.
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -217,7 +211,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: 'span',
+		items: '> div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -254,12 +248,12 @@ function updatePosition(command, collectionItems) {
 
 // Perform an updateVideosPosition request
 function updateVideosPosition() {
-	updatePosition('updateVideosPosition', '#videos span');
+	updatePosition('updateVideosPosition', '#videos > div');
 }
 
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
-	updatePosition('updateTimelinePosition', '#timeline span');
+	updatePosition('updateTimelinePosition', '#timeline > div');
 }
 
 // Perform a deleteVideo request
@@ -270,7 +264,7 @@ function deleteVideo(videoName) {
 			+        '"video" : "' + videoName + '"'
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
@@ -282,40 +276,12 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitHandlers() {
 	var videoName = $('#video-name'), splitTimeInSeconds = $('#split-time-in-seconds'), allFields = $(
 			[]).add(videoName).add(splitTimeInSeconds), tips = $('.validateTips');
-
-	function updateTips(t) {
-		tips.text(t).addClass("ui-state-highlight");
-		setTimeout(function() {
-			tips.removeClass("ui-state-highlight", 1500);
-		}, 500);
-	}
-
-	function checkLength(o, n, min, max) {
-		if (o.val().length > max || o.val().length < min) {
-			o.addClass("ui-state-error");
-			updateTips("Length of " + n + " must be between " + min + " and "
-					+ max + ".");
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function checkRegexp(o, regexp, n) {
-		if (!(regexp.test(o.val()))) {
-			o.addClass("ui-state-error");
-			updateTips(n);
-			return false;
-		} else {
-			return true;
-		}
-	}
 	
 	function checkCondition(o, condition, n) {
 		if (!condition) {
@@ -363,7 +329,6 @@ function attachSplitHandlers() {
 				}
 			},
 			Cancel : function() {
-				window.location.reload(true);
 				$(this).dialog('close');
 			}
 		},
@@ -374,6 +339,8 @@ function attachSplitHandlers() {
 }
 
 function getVideoInformation() {
+	$('.video-container').hide();
+	
 	var requestData = '{'
 		+    '"command" : "getVideoInformation"'
 		+  '}';
@@ -405,6 +372,8 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		
+		$('.video-container').show();
 		
 		enableOrDisableExportButton();
 	}, null);	// Defined in "/olive/scripts/master.js".

@@ -141,7 +141,7 @@ small {
 	right: 0px;
 	left: 0px;
 	height: 7.5%;
-	border-bottom: 2px solid #888888;
+	border-bottom: 1px solid #888888;
 	min-width: 1000px;
 }
 
@@ -172,7 +172,7 @@ small {
 	bottom: 0px;
 	left: 0px;
 	height: 5%;
-	border-top: 2px solid #888888;
+	border-top: 1px solid #888888;
 	min-width: 1000px;
 }
 

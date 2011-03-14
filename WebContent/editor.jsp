@@ -18,10 +18,11 @@
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
+<script src="/olive/scripts/contextMenu.js"></script>
+<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
-<script src="/olive/scripts/contextMenu.js"></script>
 </head>
 <body>
 <%
@@ -68,14 +69,12 @@
 <div id="main">
 
 <div id="videos-container">
-<div id="videos-title">
-<h3><%=projectName%></h3>
-</div>
-<!-- end #videos-title -->
-<div id="videos-controls">
-<button id="upload-new-button" type="button">Upload New Video</button>
-</div>
-<!-- end #videos-controls -->
+<div id="videos-header"><span id="videos-title"> <%=projectName%>
+</span> <span id="videos-controls">
+<button id="upload-new-button" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
+	class="ui-button-text">Upload New Video</span></button>
+</span></div>
 <div id="videos"><%=videosHtml%></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
@@ -87,15 +86,7 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-div">
-<div id="player-container"><video id="player-video"></video></div>
-<div id="player-controls" class="center-text">
-<button id="videos-playpause">Play/pause</button>
-<button id="videos-volume-down">Volume down</button>
-<button id="videos-volume-up" disabled="disabled">Volume up</button>
-</div>
-</div>
-<!-- end #player -->
+<div id="player-container"><video id="player" controls></video></div>
 
 <div class="clear"></div>
 
@@ -106,7 +97,8 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled">Export
+to Computer</button>
 
 </div>
 <!-- end #export --></div>
@@ -132,9 +124,6 @@
 <div id="confirm-add-to-timeline-dialog" class="hidden"
 	title="Attention!">
 <p>Add Video to Timeline</p>
-</div>
-<div id="confirm-splice" class="hidden" title="Attention!">
-<p>Publish??</p>
 </div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" class="hidden" title="Split video">

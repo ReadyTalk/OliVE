@@ -18,6 +18,7 @@
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
+	<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/projects.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
@@ -68,8 +69,8 @@ Project</button>
 <!-- end #controls -->
 
 <div class="clear"></div>
-<div id="project-clips"><%=projectsHtml%></div>
-<!-- end #project-clips --></div>
+<div id="projects"><%=projectsHtml%></div>
+<!-- end #projects --></div>
 <!-- end #projects-container --></div>
 <!-- end #main -->
 
