@@ -820,22 +820,17 @@ public class OliveServlet extends HttpServlet {
 
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
-<<<<<<< HEAD
-			throws IOException, NoSuchAlgorithmException, InvalidFileSizeException, ServiceException {
-=======
+
 			throws IOException, NoSuchAlgorithmException,
 			InvalidFileSizeException, ServiceException, InterruptedException {
->>>>>>> refs/remotes/origin/master
+
 		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
 		log.info("COMBINING VIDEOS");
 		// response.setContentType("text/plain");
 
-<<<<<<< HEAD
-		//PrintWriter out = response.getWriter();
-=======
+
 		// PrintWriter out = response.getWriter();
->>>>>>> refs/remotes/origin/master
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
 		String[] videoURLs = new String[videos.length];
@@ -858,16 +853,10 @@ public class OliveServlet extends HttpServlet {
 		while ((bytesRead = is.read(buf)) != -1) {
 			out.write(buf, 0, bytesRead);
 		}
-<<<<<<< HEAD
-		os.flush();
-		os.close();
 
-		log.severe("handleCombineVideos has not yet been implemented.");
-=======
 		is.close();
 		out.close();
 
->>>>>>> refs/remotes/origin/master
 	}
 
 	private String combineVideos(String[] videoURLs, String[] videos)
@@ -878,15 +867,7 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-<<<<<<< HEAD
-		for(int i = 0; i < videos.length; i++){
-			//log.info("Video 1: NAME: "+videos[0]+" - URL:"+videoURLs[0]+"...Video 2: NAME: "+videos[1]+" - URL:"+videoURLs[i+1]);
-			r.exec("cmd /c cd C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet");
-			Process process = r.exec("ffmpeg -i trailer_400p.ogg -sameq trailer1.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
-						r.exec("ffmpeg -i trailer_400pCopy.ogg -sameq trailer2.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
-			
-			if(isWindows){
-=======
+
 		File combined = new File(videoURLs[0]);
 		String videoName;
 		S3Api.downloadVideosToTemp(videoURLs[0]);
@@ -902,14 +883,9 @@ public class OliveServlet extends HttpServlet {
 			// p.waitFor();
 			// log.info("Process 2...Done");
 			if (isWindows) {
->>>>>>> refs/remotes/origin/master
+
 				log.info("Windows");
-<<<<<<< HEAD
-				//r.exec("cmd /c copy /b trailer1.mpg+trailer2.mpg intermediate.mpg",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
-				//r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
-			}
-			else if(isLinux){
-=======
+
 				p = r.exec(
 						"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
 						null, tempDir);
@@ -917,7 +893,7 @@ public class OliveServlet extends HttpServlet {
 				// log.info("Process 3...Done");
 				// r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			} else if (isLinux) {
->>>>>>> refs/remotes/origin/master
+
 				log.info("Linux");
 				String[] arr = { "/bin/sh", "-c",
 						"cat temp.mpg + temp2.mpg > intermediateTemp.mpg" };
@@ -929,39 +905,22 @@ public class OliveServlet extends HttpServlet {
 				return null;
 			}
 			log.info("after IFS");
-<<<<<<< HEAD
-			r.exec("cmd /c dir", null, new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
-			process = r.exec("ffmpeg -i intermediate.mpg -sameq combined.ogv",null,new File("C:\\Users\\Kirun\\workspace\\olive\\src\\com\\readytalk\\olive\\servlet"));
-			InputStream is2 = process.getErrorStream();
-			InputStreamReader isr2 = new InputStreamReader(is2);
-			BufferedReader br2 = new BufferedReader(isr2);
-			String line;
-			//while((line=br2.readLine())!=null) {
-			//      log.info("command 1: "+line);
-			//}
 
-=======
 			r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv", null,
 					tempDir);
 			// p.waitFor();
 			// log.info("Process 4...Done");
 			combined = new File(tempDir.getAbsolutePath() + "/combined.ogv");
 			// process.waitFor();
->>>>>>> refs/remotes/origin/master
+
 			videos[0] = "combined";
 		}
-<<<<<<< HEAD
-		//Removing all temp files except for the one combined video
-		result[1] = videoURLs[0];
-		File file = new File(videoURLs[0]);
-		return S3Api.uploadFile(file);
-		
-=======
+
 		// Removing all temp files except for the one combined video
 		// result[1] = videoURLs[0];
 		return S3Api.uploadFile(combined);
 		// return videoURLs[0];
->>>>>>> refs/remotes/origin/master
+
 	}
 
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
