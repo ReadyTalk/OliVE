@@ -11,7 +11,7 @@ jQuery(function($) {
 	attachVideoClickHandlers();
 	attachVideoRenameHandlers();
 	enableDragAndDrop();
-	attachPublishButtonHandler();
+	//attachPublishButtonHandler();
 	getVideoInformation();
 });
 
