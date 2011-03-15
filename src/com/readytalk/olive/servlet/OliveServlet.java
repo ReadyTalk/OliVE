@@ -850,13 +850,15 @@ public class OliveServlet extends HttpServlet {
 				file));
 		byte[] buf = new byte[4 * 1024]; // 4K buffer
 		int bytesRead;
+		log.info("downloading");
 		while ((bytesRead = is.read(buf)) != -1) {
+			log.info("in while");
 			out.write(buf, 0, bytesRead);
 		}
 
 		is.close();
 		out.close();
-
+		log.info("end of handleCombinedVideos");
 	}
 
 	private String combineVideos(String[] videoURLs, String[] videos)
@@ -876,20 +878,31 @@ public class OliveServlet extends HttpServlet {
 			videoName = S3Api.downloadVideosToTemp(videoURLs[i + 1]);
 			p = r.exec("ffmpeg -i " + combined.getName() + " -sameq temp.mpg",
 					null, tempDir);
-			// p.waitFor();
+			
+			/*BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		    String currentLine = null;
+		    while  (( currentLine = in.readLine()) != null )  
+		    		System.out.println ( currentLine ) ;*/
+		    
+			//p.waitFor();
 			// log.info("Process 1...Done");
 			p = r.exec("ffmpeg -i " + videoName + " -sameq temp2.mpg", null,
 					tempDir);
-			// p.waitFor();
+			//p.waitFor();
 			// log.info("Process 2...Done");
 			if (isWindows) {
 
 				log.info("Windows");
 
-				p = r.exec(
-						"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
-						null, tempDir);
-				// p.waitFor();
+				p = r.exec("cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg", null, 
+						tempDir);
+				
+			    BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream())) ;
+			    String currentLine = null;
+			    while  (( currentLine = in.readLine()) != null )  
+			    		System.out.println ( currentLine ) ; 
+
+				p.waitFor();
 				// log.info("Process 3...Done");
 				// r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			} else if (isLinux) {
@@ -906,11 +919,16 @@ public class OliveServlet extends HttpServlet {
 			}
 			log.info("after IFS");
 
-			r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv", null,
+			p = r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv", null,
 					tempDir);
-			// p.waitFor();
+						
+			BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		    String currentLine = null;
+		    while  (( currentLine = in.readLine()) != null )  
+		    		System.out.println ( currentLine ) ; 
+			p.waitFor();
 			// log.info("Process 4...Done");
-			combined = new File(tempDir.getAbsolutePath() + "/combined.ogv");
+			combined = new File(tempDir.getAbsolutePath() + File.separator + "combined.ogv");
 			// process.waitFor();
 
 			videos[0] = "combined";
@@ -918,7 +936,8 @@ public class OliveServlet extends HttpServlet {
 
 		// Removing all temp files except for the one combined video
 		// result[1] = videoURLs[0];
-		return S3Api.uploadFile(combined);
+		// return S3Api.uploadFile(combined);
+		return combined.getAbsolutePath();
 		// return videoURLs[0];
 
 	}

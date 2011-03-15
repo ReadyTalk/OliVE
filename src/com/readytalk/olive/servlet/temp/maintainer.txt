@@ -1,1 +1,0 @@
-This file exists purely to keep its parent directly under source control.
