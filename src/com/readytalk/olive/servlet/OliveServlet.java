@@ -39,7 +39,11 @@ import com.readytalk.olive.model.User;
 import com.readytalk.olive.model.Video;
 import com.readytalk.olive.util.Attribute;
 import com.readytalk.olive.util.InvalidFileSizeException;
-
+/**
+ * class OliveServlet 
+ * @author Team Olive
+ *
+ */
 public class OliveServlet extends HttpServlet {
 	// Don't store anything as a member variable in the Servlet.
 	// private Object dontDoThis;
@@ -55,6 +59,9 @@ public class OliveServlet extends HttpServlet {
 
 	// Modified from: http://www.jsptube.com/servlet-tutorials/servlet-file-upload-example.html
 	// Also see: http://stackoverflow.com/questions/4101960/storing-image-using-htm-input-type-file
+	/**
+	 * 
+	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);

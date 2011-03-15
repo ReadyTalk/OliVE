@@ -13,12 +13,21 @@ import com.google.gson.Gson;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.ZencoderInitialResponse;
 import com.readytalk.olive.model.Video;
-
+/**
+ * Provides tool to use Zencoder from Olive 
+ * @author Team Olive
+ *
+ */
 // Modified from: http://www.exampledepot.com/egs/java.net/post.html
 public class ZencoderApi {
 	private static final String ZENCODER_API_JOBS_URL = "https://app.zencoder.com/api/jobs/";
 	private static final String ZENCODER_API_OUTPUTS_URL_PREFIX = "https://app.zencoder.com/api/outputs/";
-
+	/**
+	 * 
+	 * @param outputId
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	// Don't use id. See: http://zencoder.com/docs/api/#status
 	private static void waitForJobToFinish(int outputId)
 			throws MalformedURLException, IOException {

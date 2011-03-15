@@ -16,12 +16,20 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
-
+/**
+ * class DatabaseApi provides tool to connect to Database
+ * 
+ * @author Team Olive
+ *
+ */
 public class DatabaseApi {
 
 	private static Logger log = Logger.getLogger(DatabaseApi.class.getName());
 
 	// CAUTION: closeConnection() must be called sometime after this method.
+	/**
+	 * enables to connect to Olive database
+	 */
 	public static Connection getDBConnection() {
 		try {
 			Context initCtx = new InitialContext();
@@ -34,7 +42,10 @@ public class DatabaseApi {
 		// TODO Close the connection here on error.
 		return null;
 	}
-
+	/**
+	 * enables to disconnect from Live database
+	 * @param c an object that is using Olive database
+	 */
 	public static void closeConnection(Connection c) {
 		try {
 			c.close();
@@ -42,7 +53,12 @@ public class DatabaseApi {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Check whether the user and password are registered in the Olive database
+	 * @param username username that has been registered in the Olive database
+	 * @param password password that has been registered in the Olive database
+	 * @return return boolean expression saying whether the information ( username/pw ) is registered or not.
+	 */
 	public static Boolean isAuthorized(String username, String password) {
 		Connection conn = getDBConnection();
 		try {
@@ -63,7 +79,11 @@ public class DatabaseApi {
 		}
 		return false; // Error!
 	}
-
+	/**
+	 * Enables to register an account to the Olive database
+	 * @param user user information typed in the registration form by an user
+	 * @return passes true if the passed in values are valid to be registered, and passes false if the passed in values are invalid to register
+	 */
 	public static boolean AddAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
@@ -85,6 +105,9 @@ public class DatabaseApi {
 	}
 
 	// Used for the general query: "SELECT W FROM X WHERE Y = Z;"
+	/**
+	 * Get an information which requested by an user from encrypted table
+	 */
 	public static String getUnknownValueFromTable(String unknownLabel,
 			String table, String knownLabel, String knownValue) {
 		Connection conn = getDBConnection();
@@ -108,42 +131,74 @@ public class DatabaseApi {
 		}
 		return null;
 	}
-
+	/**
+	 * Brings the specific account information according to user input id
+	 * @param username specific username entered by an user
+	 * @return return corresponding information of the user name entered by an user
+	 */
 	public static int getAccountId(String username) {
 		return Integer.parseInt(getUnknownValueFromTable("AccountID",
 				"Accounts", "Username", username));
 	}
-
+	/**
+	 * Brings the Username according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding username and account to the accountID from the Olive database
+	 */
 	public static String getAccountUsername(int accountId) {
 		return getUnknownValueFromTable("Username", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
-
+	/**
+	 * Brings the Password information according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding password and account to the accountID from the Olive database
+	 */
 	public static String getAccountPassword(int accountId) {
 		return getUnknownValueFromTable("Password", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
-
+	/**
+	 * Brings the Account name according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding name and account to the accountID from the Olive database
+	 */
 	public static String getAccountName(int accountId) {
 		return getUnknownValueFromTable("Name", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
-
+	/**
+	 * Brings the email address according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding email and account to the accountID from the Olive database
+	 */
 	public static String getAccountEmail(int accountId) {
 		return getUnknownValueFromTable("Email", "Accounts", "AccountID",
 				Integer.toString(accountId));
 	}
-
+	/**
+	 * Brings the security question according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding security question and account to the accountID from the Olive database
+	 */
 	public static String getAccountSecurityQuestion(int accountId) {
 		return getUnknownValueFromTable("SecurityQuestion", "Accounts",
 				"AccountID", Integer.toString(accountId));
 	}
-
+	/**
+	 * Brings the answer of the security question according to its accountID
+	 * @param accountId unique account number given to an user
+	 * @return corresponding security question answer and account to the accountID from the Olive database
+	 */
 	public static String getAccountSecurityAnswer(int accountId) {
 		return getUnknownValueFromTable("SecurityAnswer", "Accounts",
 				"AccountID", Integer.toString(accountId));
 	}
-
+	/**
+	 * sets the data for edit account section of the web page
+	 * @param user brings the data of an user
+	 * @return true if data is updated, false if not
+	 */
 	public static Boolean editAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
@@ -180,7 +235,10 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * enables to remove an account registered
+	 * @param accountId unique account number given to an user
+	 */
 	public static void deleteAccount(int accountId) {
 		// TODO implement
 
@@ -222,7 +280,12 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 	}
-
+	/**
+	 * Brings the project id registered in the Olive database
+	 * @param projectName name of the project on the web
+	 * @param accountId unique account number given to an user
+	 * @return projectID if exists on the database, -1 if not there
+	 */
 	public static int getProjectId(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
@@ -244,22 +307,38 @@ public class DatabaseApi {
 		}
 		return -1;
 	}
-
+	/**
+	 * Brings the project name according to its projectID
+	 * @param projectId unique project number given to a project of an user
+	 * @return name of the project in the projects of the accountID table of the Olive database
+	 */
 	public static String getProjectName(int projectId) {
 		return getUnknownValueFromTable("Name", "Projects", "ProjectID",
 				Integer.toString(projectId));
 	}
-
+	/**
+	 * Brings the project accountID according to its projectID
+	 * @param projectId unique project number given to a project of an user
+	 * @return accountID of the project in the projects of the accountID table of the Olive database
+	 */
 	public static int getProjectAccountId(int projectId) {
 		return Integer.parseInt(getUnknownValueFromTable("AccountID",
 				"Projects", "ProjectID", Integer.toString(projectId)));
 	}
-
+	/**
+	 * Brings the project icon according to its projectID
+	 * @param projectId unique project number given to a project of an user
+	 * @return project icon of the project in the projects of the accountID table of the Olive database
+	 */
 	public static String getProjectIcon(int projectId) {
 		return getUnknownValueFromTable("Icon", "Projects", "ProjectID",
 				Integer.toString(projectId));
 	}
-
+	/**
+	 * Populates projects in the Olive database
+	 * @param accountId unique account number given to an user
+	 * @return projects properties
+	 */
 	public static String populateProjects(int accountId) {
 		String projects = "";
 		Connection conn = getDBConnection();
@@ -309,7 +388,12 @@ public class DatabaseApi {
 		// TODO change db to have unique usernames for accounts and names for
 		// both projects and videos in one project
 	}
-
+	/**
+	 * Checks whether given project name exists already in the account
+	 * @param projectName name of the project name
+	 * @param accountId unique accountId given to an user
+	 * @return true if it exists, false if not
+	 */
 	public static boolean projectExists(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
@@ -331,7 +415,11 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * Adds new project
+	 * @param project project property such as name, accountID
+	 * @return true if possible to make, false if not possible
+	 */
 	public static boolean AddProject(Project project) {
 		Connection conn = getDBConnection();
 		try {
@@ -356,7 +444,10 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * Enables to delete a project requested by an user
+	 * @param projectId unique projectId after created by an user
+	 */
 	public static void deleteProject(int projectId) {
 		Connection conn = getDBConnection();
 		try {
@@ -377,7 +468,12 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 	}
-
+	/**
+	 * Brings the unique videoId given video name and its unique projectId
+	 * @param videoName Name of the video that has been typed by an user
+	 * @param projectId unique ProjectId given after project's creation
+	 * @return corresponding videoId in the Olive database given videoName and projectId
+	 */
 	// You don't need the accountId if you have the projectId. The projectId was
 	// calculated using the accountId.
 	public static int getVideoId(String videoName, int projectId) {
@@ -401,27 +497,47 @@ public class DatabaseApi {
 		}
 		return -1;
 	}
-
+	/**
+	 * Brings the name of the video name given videoId
+	 * @param videoId unique videoId for each individual video
+	 * @return Name of the video in the Olive database
+	 */
 	public static String getVideoName(int videoId) {
 		return getUnknownValueFromTable("Name", "Videos", "VideoID",
 				Integer.toString(videoId));
 	}
-
+	/**
+	 * Brings the URL where video is located given videoId
+	 * @param videoId unique videoId for each individual video
+	 * @return URL of the video listed in the Olive database
+	 */
 	public static String getVideoUrl(int videoId) {
 		return getUnknownValueFromTable("URL", "Videos", "VideoID",
 				Integer.toString(videoId));
 	}
-
+	/**
+	 * Brings the video icon given videoId
+	 * @param videoId unique videoId for each individual video
+	 * @return an icon corresponding to video and videoID
+	 */
 	public static String getVideoIcon(int videoId) {
 		return getUnknownValueFromTable("Icon", "Videos", "VideoID",
 				Integer.toString(videoId));
 	}
-
+	/**
+	 * Brings the project given video Id
+	 * @param videoId unique videoId for each individual video
+	 * @return projectId where video belongs to listed in the Olive database
+	 */
 	public static int getVideoProjectId(int videoId) {
 		return Integer.parseInt(getUnknownValueFromTable("ProjectID", "Videos",
 				"VideoID", Integer.toString(videoId)));
 	}
-
+	/**
+	 * Check whether there is any video listed in the editing box
+	 * @param videoId unique videoId for each individual video
+	 * @return true if there is nothing in the editing box, false if something exists
+	 */
 	public static boolean isVideoPoolPositionNotNull(int videoId) {
 		int position = getVideoPoolPosition(videoId);
 		if (position != -1) {
@@ -429,7 +545,11 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+	/**
+	 * Check whether there is any video listed in the time line
+	 * @param videoId unique videoId for each individual video
+	 * @return true if there is nothing in the time line, false if something exists
+	 */
 	public static boolean isVideoTimelinePositionNotNull(int videoId) {
 		int position = getVideoTimelinePosition(videoId);
 		if (position != -1) {
@@ -437,7 +557,11 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	
+	/**
+	 * check the arrangement of the video in the editing box
+	 * @param videoId unique videoId for each individual video
+	 * @return video's order in the editing box
+	 */
 	public static int getVideoPoolPosition(int videoId) {
 		String videoPoolPosition = getUnknownValueFromTable("PoolPosition",
 				"Videos", "VideoID", Integer.toString(videoId));
@@ -446,7 +570,11 @@ public class DatabaseApi {
 		}
 		return Integer.parseInt(videoPoolPosition);
 	}
-	
+	/**
+	 * check the arrangement of the video in the time line
+	 * @param videoId unique videoId for each individual video
+	 * @return video's order in the time line
+	 */
 	public static int getVideoTimelinePosition(int videoId) {
 		String videoTimelinePosition = getUnknownValueFromTable(
 				"TimelinePosition", "Videos", "VideoID",
@@ -456,7 +584,11 @@ public class DatabaseApi {
 		}
 		return Integer.parseInt(videoTimelinePosition);
 	}
-
+	/**
+	 * check whether video is selected or not
+	 * @param videoId unique videoId for each individual video
+	 * @return true if selected, false if not
+	 */
 	public static boolean getVideoIsSelected(int videoId) {
 		int isSelectedAsInt = Integer.parseInt(getUnknownValueFromTable(
 				"IsSelected", "Videos", "VideoID", Integer.toString(videoId)));
@@ -466,7 +598,12 @@ public class DatabaseApi {
 
 		return true;
 	}
-
+	/**
+	 * Enables to select or unselect
+	 * @param videoId unique videoId for each individual video
+	 * @param isSelected checker whether it is selected or not
+	 * @return true if selected, false if unselected
+	 */
 	private static boolean setVideoAsSelectedOrUnselected(int videoId,
 			boolean isSelected) {
 		int isSelectedAsInt;
@@ -491,15 +628,29 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * Sets status as selected
+	 * @param videoId unique videoId for each individual video
+	 * @return status of selected
+	 */
 	public static boolean setVideoAsSelected(int videoId) {
 		return setVideoAsSelectedOrUnselected(videoId, true);
 	}
-
+	/**
+	 * Sets status as unselected
+	 * @param videoId unique videoId for each individual video
+	 * @return status of unselected
+	 */
 	public static boolean setVideoAsUnselected(int videoId) {
 		return setVideoAsSelectedOrUnselected(videoId, false);
 	}
-
+	/**
+	 * Sets the position of an video in the time line
+	 * @param videoId unique videoId for each individual video
+	 * @param position the order in the editing box/time line
+	 * @param positionType Pool or Timeline
+	 * @return true if it sets, false if it did not
+	 */
 	private static boolean setPoolOrTimelinePosition(int videoId, int position,
 			String positionType) {
 		Connection conn = getDBConnection();
@@ -518,15 +669,30 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * Sets the position of an video in the editing box
+	 * @param videoId unique videoId for each individual video
+	 * @param position the order in the editing box/time line
+	 * @return sets the order
+	 */
 	public static boolean setPoolPosition(int videoId, int position) {
 		return setPoolOrTimelinePosition(videoId, position, "PoolPosition");
 	}
-
+	/**
+	 * Sets the position of an video in the timeline
+	 * @param videoId unique videoId for each individual video
+	 * @param position the order in the editing box/time line
+	 * @return sets the order
+	 */
 	public static boolean setTimelinePosition(int videoId, int position) {
 		return setPoolOrTimelinePosition(videoId, position, "TimelinePosition");
 	}
-
+	/**
+	 * Clears the position of video in the timeline
+	 * @param projectId unique videoId for each individual video
+	 * @param positionType editing box or timeline
+	 * @return true if clears, false if not
+	 */
 	public static boolean setAllVideoPoolOrTimelinePositionsToNull(
 			int projectId, String positionType) {
 		Connection conn = getDBConnection();
@@ -551,17 +717,29 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
+	/**
+	 * Clears the position in the editing box
+	 * @param projectId unique videoId for each individual video
+	 * @return clears editing box
+	 */
 	public static boolean setAllVideoPoolPositionsToNull(int projectId) {
 		return setAllVideoPoolOrTimelinePositionsToNull(projectId,
 				"PoolPosition");
 	}
-
+	/**
+	 * Clears the position in the timeline
+	 * @param projectId unique videoId for each individual video
+	 * @return clears timeline
+	 */
 	public static boolean setAllVideoTimelinePositionsToNull(int projectId) {
 		return setAllVideoPoolOrTimelinePositionsToNull(projectId,
 				"TimelinePosition");
 	}
-
+	/**
+	 * Populates video properties in the olive database
+	 * @param projectId unique project number given to a project
+	 * @return video properties
+	 */
 	public static String populateVideos(int projectId) {
 		String videos = "";
 		Connection conn = getDBConnection();
@@ -614,7 +792,11 @@ public class DatabaseApi {
 		// TODO change db to have unique usernames for accounts and names for
 		// both projects and videos in one project
 	}
-
+	/**
+	 * brings the lists of videoIds in a given project
+	 * @param projectId unique project number given to a project
+	 * @return lists of video ids in an integer array form
+	 */
 	public static int[] getVideoIds(int projectId) {
 		Connection conn = getDBConnection();
 		List<Integer> videoIds = new LinkedList<Integer>();
@@ -646,7 +828,13 @@ public class DatabaseApi {
 		}
 		return null;
 	}
-
+	/**
+	 * Adds video to the Olive database
+	 * @param name name of the video
+	 * @param url where video is located
+	 * @param projectId unique project number 
+	 * @param icon unique icon given to the video clip
+	 */
 	public static void AddVideo(String name, String url, int projectId,
 			String icon) {
 		Connection conn = getDBConnection();
@@ -664,7 +852,10 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 	}
-
+	/**
+	 * deletes an video
+	 * @param videoId unique video id given a specific video clip
+	 */
 	public static void deleteVideo(int videoId) {
 		Connection conn = getDBConnection();
 		try {
@@ -679,7 +870,10 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 	}
-
+	/**
+	 * Brings the credential information to connect to database
+	 * @return credential properties
+	 */
 	public static AWSCredentials getAwsCredentials() {
 		String awsAccessKeyPropertyName = "";
 		String awsSecretKeyPropertyName = "";
@@ -705,7 +899,10 @@ public class DatabaseApi {
 		return new AWSCredentials(awsAccessKeyPropertyName,
 				awsSecretKeyPropertyName);
 	}
-
+	/**
+	 * gets Zencoder access key
+	 * @return Zencoder api access key information
+	 */
 	public static String getZencoderApiKey() {
 		String zencoderApiKey = "";
 		Connection conn = DatabaseApi.getDBConnection();
@@ -728,7 +925,13 @@ public class DatabaseApi {
 
 		return zencoderApiKey;
 	}
-
+	/**
+	 * Checks whether input value of security question and answer of an user is correct
+	 * @param username id of an user
+	 * @param securityQuestion security question made for recovery purpose
+	 * @param securityAnswer answer for the security question made
+	 * @return true if it matches, false if it does not
+	 */
 	public static Boolean isCorrectSecurityInfo(String username,
 			String securityQuestion, String securityAnswer) {
 		Connection conn = getDBConnection();
@@ -751,7 +954,12 @@ public class DatabaseApi {
 		}
 		return false; // Error!
 	}
-
+	/**
+	 * Modifies a password
+	 * @param username id of an user
+	 * @param newPassword new password typed in
+	 * @return true if it modified, false if not
+	 */
 	public static Boolean editPassword(String username, String newPassword) {
 		Connection conn = getDBConnection();
 		try {

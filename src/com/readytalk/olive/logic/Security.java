@@ -5,7 +5,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.fileupload.FileItem;
-
+/**
+ * class Security checks whether the inputs are valid or invalid
+ * @author Team Olive
+ *
+ */
 // The regular expressions were taken from the JavaScript, but with A-Z appended
 // to all a-z's, to account for case sensitivity that the JavaScript usually
 // accounts for using /i at the end of the regular expression.
@@ -13,13 +17,24 @@ public class Security {
 
 	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
 	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
-
+	/**
+	 * Checks to see if the length of an input meets database and JavaScript length requirement
+	 * @param input user input
+	 * @param minLength minimum length allowed by database and Javascript
+	 * @param maxLength maximum length allowed by database and Javascript
+	 * @return the length has to meet the requirements of database and Javascript
+	 */
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
 			int maxLength) {
 		return minLength <= input.length() && input.length() <= maxLength;
 	}
-
+	/**
+	 * 
+	 * @param input
+	 * @param validRegex
+	 * @return
+	 */
 	// Input must match database and JavaScript value requirements!
 	// For Java regular expression syntax, see:
 	// http://download.oracle.com/javase/1.4.2/docs/api/java/util/regex/Pattern.html

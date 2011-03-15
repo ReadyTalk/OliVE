@@ -20,7 +20,11 @@ import org.jets3t.service.security.AWSCredentials;
 import com.google.gson.Gson;
 import com.readytalk.olive.model.Video;
 import com.readytalk.olive.util.InvalidFileSizeException;
-
+/**
+ * class S3Api provides tool to connect to S3 from Olive
+ * @author Team Olive
+ *
+ */
 // JetS3t code samples (in Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
 // JetS3t code samples (in HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
 // JetS3t JavaDocs: http://jets3t.s3.amazonaws.com/api/org/jets3t/service/model/StorageObject.html
@@ -33,7 +37,11 @@ public class S3Api {
 	private static final long MIN_SIZE_IN_BYTES = 1L; // ~0 MB
 	private static final String DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
 	private static Logger log = Logger.getLogger(S3Api.class.getName());
-
+	/**
+	 * Constructs the service and initializes the properties.
+	 * @return initialized properties
+	 * @throws S3ServiceException Exception for use by S3Services and related utilities. This exception can hold useful additional information about errors that occur when communicating with S3.
+	 */
 	private static RestS3Service getS3Service() throws S3ServiceException {
 		AWSCredentials awsCredentials = DatabaseApi.getAwsCredentials();
 
@@ -41,14 +49,25 @@ public class S3Api {
 		RestS3Service s3Service = new RestS3Service(awsCredentials);
 		return s3Service;
 	}
-
+	/**
+	 * Gets a calendar using the default time zone and locale
+	 * @return simple data format of the calendar
+	 */
 	// TODO Make this a hash function that uses the time
 	public static String getTime() {
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 		return simpleDateFormat.format(calendar.getTime());
 	}
-
+	/**
+	 * Enables to upload a file
+	 * @param file video file
+	 * @return a converted file's location
+	 * @throws InvalidFileSizeException Exception for limiting the size of the video file
+	 * @throws IOException Signals that an I/O exception of some sort has occurred. 
+	 * @throws ServiceException Exception for use by S3Services and related utilities. This exception can hold useful additional information about errors that occur when communicating with S3.
+	 * @throws NoSuchAlgorithmException This exception is thrown when a particular cryptographic algorithm is requested but is not available in the environment.
+	 */
 	public static String uploadFile(File file) throws InvalidFileSizeException,
 			IOException, ServiceException, NoSuchAlgorithmException {
 		if (file.length() > MAX_SIZE_IN_BYTES) {
@@ -104,23 +123,38 @@ public class S3Api {
 			fileAsS3Object.closeDataInputStream();
 		}
 	}
-
+	/**
+	 * Enables to delete the file in S3
+	 * @param fileName name of the file
+	 */
 	public static void deleteFileInS3(String fileName) {
 		log.severe("deleteFileInS3 has not yet been implemented.");
 		// Do something like this:
 		// RestS3Service s3Service = getS3Service();
 		// s3Service.deleteObject(BUCKET_NAME, objectKey); // TODO Store objectKey in the database
 	}
-
+	/**
+	 * gets the URL address of S3 where video is located
+	 * @param videoUrl where video is located in S3
+	 * @return
+	 */
 	public static String getNameFromUrl(String videoUrl) {
 		return videoUrl.substring(AWS_URL_PREFIX.length());
 	}
-
+	/**
+	 * Gets the time stamped on the URL where video is located
+	 * @param videoUrl where video is located in S3
+	 * @return the time stamped URL
+	 */
 	public static String getNameFromUrlWithNewTimeStamp(String videoUrl) {
 		return S3Api.getTime()
 				+ getNameFromUrl(videoUrl).substring(S3Api.getTime().length()); // TODO Fix fugly code
 	}
-
+	/**
+	 * Gets the video properties
+	 * @param projectId unique number given to a project
+	 * @return video properties in a Json form
+	 */
 	public static String getVideoInformation(int projectId) {
 		int[] videoIds = DatabaseApi.getVideoIds(projectId);
 		Video[] videos = new Video[videoIds.length];

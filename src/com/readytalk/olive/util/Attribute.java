@@ -1,5 +1,60 @@
 package com.readytalk.olive.util;
-
+/**
+ * Doc for enum
+ * @author Team Olive
+ *
+ */
 public enum Attribute {
-	IS_AUTHORIZED, USERNAME, PASSWORD, EDIT_SUCCESSFULLY, ADD_SUCCESSFULLY, PROJECT_NAME, PASSWORDS_MATCH, IS_SAFE, EMAIL, NAME, SECURITY_QUESTION, SECURITY_ANSWER, IS_CORRECT
+	/**
+	 * Uses for whether 
+	 */
+	IS_AUTHORIZED,
+	/**
+	 * 
+	 */
+	USERNAME,
+	/**
+	 * 
+	 */
+	PASSWORD,
+	/**
+	 * 
+	 */
+	EDIT_SUCCESSFULLY,
+	/**
+	 * 
+	 */
+	ADD_SUCCESSFULLY,
+	/**
+	 * 
+	 */
+	PROJECT_NAME,
+	/**
+	 * 
+	 */
+	PASSWORDS_MATCH,
+	/**
+	 * 
+	 */
+	IS_SAFE,
+	/**
+	 * 
+	 */
+	EMAIL,
+	/**
+	 * 
+	 */
+	NAME,
+	/**
+	 * 
+	 */
+	SECURITY_QUESTION,
+	/**
+	 * 
+	 */
+	SECURITY_ANSWER,
+	/**
+	 * 
+	 */
+	IS_CORRECT
 }
