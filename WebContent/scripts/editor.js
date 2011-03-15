@@ -3,27 +3,29 @@
  * Dependencies: "/olive/scripts/master.js"
  */
 
-var deleteVideoDialogContext;	// TODO Remove this global variable.
-var videoTimeline;
-var video; // Global
-
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
 	attachVideoClickHandlers();
-	attachPlayerHandlers();
+	attachVideoRenameHandlers();
 	enableDragAndDrop();
-	attachContextMenuHandlers();
-	attachAddToTimelineHandlers();
+	//attachPublishButtonHandler();
 	getVideoInformation();
 });
 
+function doNotSelectThisTime() {
+	event.stopPropagation();	// Prevent selecting from happening.
+}
+
 function attachDeleteVideoHandlers() {
+	var videoToDelete;
+	
 	$('.delete-video').click(function () {
+		doNotSelectThisTime();
 		$('#confirm-delete-video-dialog').dialog('open');
-		deleteVideoDialogContext = this;	// This is a global variable.
+		videoToDelete = this;
 	});
 	
 	$('#confirm-delete-video-dialog').dialog({
@@ -33,7 +35,7 @@ function attachDeleteVideoHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteVideo.call(deleteVideoDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteVideo($(videoToDelete).attr('id'));	// We don't want the context to be the dialog element, but rather the element that triggered it.
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -49,9 +51,29 @@ function attachVideoMenuHandlers() {
 	});
 	
 	attachSplitHandlers();
-	$('#split-button').click(function() {
+	$('.split-link').click(function() {
+		doNotSelectThisTime();
+		$('#video-name').val($(this).attr('id'))
+						.change();	// Prefill in the value in the split dialog.
 		$('#split-video-dialog-form').dialog('open');
 	});
+}
+
+function attachPublishButtonHandler(){
+	$('#export-button').click(function(){
+		$(this).text("Please wait...")
+		combineVideos();
+	});
+	
+}
+
+function combineVideos(){
+	var requestData = '{'
+		+    '"command" : "combineVideos",'
+		+    '"arguments" : {'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, null, null);
 }
 
 function attachVideoClickHandlers() {
@@ -67,6 +89,43 @@ function attachVideoClickHandlers() {
 			select(this);
 		}
 	});
+}
+
+function attachVideoRenameHandlers() {
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
+	$('.video-name').editable({
+		type: 'text',
+        submit: 'Save',
+        cancel: 'Cancel',
+        onEdit: function () {
+			doNotSelectThisTime();
+		},
+        onSubmit: function (content) {
+			renameVideo(content.previous, content.current);
+		},
+		onCancel: function (content) {
+		}
+	});
+	
+	// These don't work.
+	$('.video-container input').live('click', function (){
+		doNotSelectThisTime();
+	});
+	$('.video-container button').live('click', function (){
+		doNotSelectThisTime();
+	});
+}
+
+//Perform a renameVideo request
+function renameVideo(oldVideoName, newVideoName) {
+	var requestData = '{'
+		+    '"command" : "renameVideo",'
+		+    '"arguments" : {'
+		+        '"oldVideoName" : "' + oldVideoName + '",'
+		+        '"newVideoName" : "' + newVideoName + '"'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function makeSelectionVisible(element) {
@@ -122,71 +181,28 @@ function removeFromSelected(id) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	$('#player-video').attr('poster', $(element).data('icon'));
-	$('#player-video').append(
+	$('#player').attr('poster', $(element).data('icon'));
+	$('#player').append(
 			'<source src="' + $(element).data('url')
 			+ '" type="' + 'video/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
 			+ '" />');
 }
 
 function updatePlayerWithNoElements() {
-	$('#player-video source').remove();
-	$('#player-video').removeAttr('poster');
-}
-
-// Modified from: http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
-function attachPlayerHandlers() {
-	video = document.getElementById('player-video');
-
-	$('#videos-playpause').click(function () {
-		if (video.paused) {
-			video.play();
-		} else {
-			video.pause();
-		}
-	});
-	
-	$('#videos-volume-up').click(function () {
-		if (video.volume < 0.85) { // Account for rounding errors
-			video.volume += 0.1;
-		} else {
-			video.volume = 1.0; // Don't allow rounding errors
-			$('#videos-volume-up').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-down').removeAttr('disabled'); // Enable
-	});
-
-	$('#videos-volume-down').click(function () {
-		if (video.volume > 0.15) { // Account for rounding errors
-			video.volume -= 0.1;
-		} else {
-			video.volume = 0.0; // Don't allow rounding errors
-			$('#videos-volume-down').attr('disabled', 'disabled'); // Disable
-		}
-		$('#videos-volume-up').removeAttr('disabled'); // Enable
-	});
+	$('#player source').remove();
+	$('#player').removeAttr('poster');
 }
 
 function enableDragAndDrop() {
-	// Modified from: http://jqueryui.com/demos/draggable/
-	/*$('.video-container').draggable( {
-		appendTo : '#timeline',
-		scroll : false,
-		connectToSortable : '#timeline',
-		helper : 'clone',
-		revert : 'invalid',
-		snap : '#timeline'
-	});*/
-	
 	$('#videos').sortable( {
 		appendTo: 'body',
 		connectWith: '#timeline',
 		helper: 'clone',
-		items: 'span',
+		items: '> div',	// Only immediate divs, not divs within other elements.
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		update: function(event, ui) {
+		update: function (event, ui) {
 			updateVideosPosition();
 		}
 	});
@@ -195,25 +211,19 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: 'span',
+		items: '> div',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
-		update: function(event, ui) {
-		updateTimelinePosition();
-		},
-		sort: function() {
-			if($('#timeline').sortable('items').length > 0){
-				$('#export-button').removeAttr('disabled');
-			} else {
-				$('#export-button').attr('disabled', 'disabled');
-			}
+		update: function (event, ui) {
+			enableOrDisableExportButton();
+			updateTimelinePosition();
 		}
 	});
 }
 
 // Perform an update<command>Position request
-function updateCollectionPosition(command, collectionItems) {
+function updatePosition(command, collectionItems) {
 	var requestData = '{'
 		+    '"command" : "' + command + '",'
 		+    '"arguments" : {'
@@ -238,48 +248,23 @@ function updateCollectionPosition(command, collectionItems) {
 
 // Perform an updateVideosPosition request
 function updateVideosPosition() {
-	updateCollectionPosition('updateVideosPosition', '#videos span');
+	updatePosition('updateVideosPosition', '#videos > div');
 }
 
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
-	updateCollectionPosition('updateTimelinePosition', '#timeline span');
-}
-
-function attachContextMenuHandlers() {
-	$('.video-container').contextMenu('video-context-menu', {
-		menuStyle : {
-			border : '1px solid #000'
-		},
-		itemStyle : {
-			fontFamily : 'Arial',
-			backgroundColor : '#fff',
-			color : 'black',
-			border : 'none',
-			padding : '1px'
-		},
-		itemHoverStyle : {
-			color : '#fff',
-			backgroundColor : '#00c',
-			border : 'none'
-		},
-		bindings : {
-			'split-video-menu-item' : function (t) {
-				$('#split-video-dialog-form').dialog('open');
-			}
-		}
-	});
+	updatePosition('updateTimelinePosition', '#timeline > div');
 }
 
 // Perform a deleteVideo request
-function deleteVideo() {
+function deleteVideo(videoName) {
 	var requestData = '{'
 			+    '"command" : "deleteVideo",'
 			+    '"arguments" : {'
-			+        '"video" : "' + $(this).attr('id') + '"'
+			+        '"video" : "' + videoName + '"'
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload();}, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform a splitVideo request
@@ -291,40 +276,12 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {location.reload(); }, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitHandlers() {
 	var videoName = $('#video-name'), splitTimeInSeconds = $('#split-time-in-seconds'), allFields = $(
 			[]).add(videoName).add(splitTimeInSeconds), tips = $('.validateTips');
-
-	function updateTips(t) {
-		tips.text(t).addClass("ui-state-highlight");
-		setTimeout(function() {
-			tips.removeClass("ui-state-highlight", 1500);
-		}, 500);
-	}
-
-	function checkLength(o, n, min, max) {
-		if (o.val().length > max || o.val().length < min) {
-			o.addClass("ui-state-error");
-			updateTips("Length of " + n + " must be between " + min + " and "
-					+ max + ".");
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function checkRegexp(o, regexp, n) {
-		if (!(regexp.test(o.val()))) {
-			o.addClass("ui-state-error");
-			updateTips(n);
-			return false;
-		} else {
-			return true;
-		}
-	}
 	
 	function checkCondition(o, condition, n) {
 		if (!condition) {
@@ -338,8 +295,8 @@ function attachSplitHandlers() {
 	
 	$('#split-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 400,
-		width : 400,
+		height : 325,
+		width : 300,
 		modal : true,
 		buttons : {
 			'Split video' : function() {
@@ -372,7 +329,6 @@ function attachSplitHandlers() {
 				}
 			},
 			Cancel : function() {
-				window.location.reload(true);
 				$(this).dialog('close');
 			}
 		},
@@ -382,30 +338,9 @@ function attachSplitHandlers() {
 	});
 }
 
-function attachAddToTimelineHandlers() {
-	$('.add-to-timeline').click(function () {
-		var clone = $(this).parent().parent().clone();
-		var child = clone.find(".link");
-		child.html("Remove from timeline");
-		$("#timeline").append(clone);
-		videoTimeline = this;
-	});
-	
-	$('#confirm-add-to-timeline-dialog').dialog({
-		autoOpen: false,
-		resizable: false,
-		height: 215,
-		modal: true,
-		buttons: {
-			'OK': function () {
-				$("#timeline").append($(videoTimeline).parent().parent().clone());
-				$(this).dialog('close');
-			}
-		}
-	});
-}
-
 function getVideoInformation() {
+	$('.video-container').hide();
+	
 	var requestData = '{'
 		+    '"command" : "getVideoInformation"'
 		+  '}';
@@ -437,7 +372,19 @@ function getVideoInformation() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').append(timelinePositions[timelineIndex]);
 		}
+		
+		$('.video-container').show();
+		
+		enableOrDisableExportButton();
 	}, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function enableOrDisableExportButton() {
+	if ($('#timeline').sortable('toArray').length > 0){
+		$('#export-button').removeAttr('disabled');
+	} else {
+		$('#export-button').attr('disabled', 'disabled');
+	}
 }
 
 function openNewVideoForm() {

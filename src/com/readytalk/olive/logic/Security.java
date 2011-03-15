@@ -17,6 +17,9 @@ public class Security {
 
 	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
 	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
+	public static final int MAXIMUM_NUMBER_OF_PROJECTS = 25;
+	public static final int MAXIMUM_NUMBER_OF_VIDEOS = 25;
+	
 	/**
 	 * Checks to see if the length of an input meets database and JavaScript length requirement
 	 * @param input user input
@@ -39,7 +42,7 @@ public class Security {
 	// For Java regular expression syntax, see:
 	// http://download.oracle.com/javase/1.4.2/docs/api/java/util/regex/Pattern.html
 	private static boolean isSafeValue(String input, String validRegex) {
-		Pattern pattern = Pattern.compile(validRegex);
+		Pattern pattern = Pattern.compile(validRegex);	// TODO change to 25
 		Matcher matcher = pattern.matcher(input);
 		return matcher.matches();
 	}

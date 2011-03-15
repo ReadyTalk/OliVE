@@ -39,6 +39,10 @@ function openHelpWindow() {
 			"menubar=no,width=500,height=500,toolbar=no");
 }
 
+function refresh() {
+	window.location.reload();
+}
+
 function logout() {
 	// See: http://stackoverflow.com/questions/503093/how-can-i-make-a-redirect-page-in-jquery
 	window.location.replace('logout.jsp');
@@ -67,4 +71,46 @@ function makeAjaxPostRequest(requestData, onSuccess, onError) {
 			}
 		}
 	});
+}
+
+/*
+ * The following functions are used for input validation
+ */
+
+function updateTips(t) {
+	tips.text(t).addClass("ui-state-highlight");
+	setTimeout(function() {
+		tips.removeClass("ui-state-highlight", 1500);
+	}, 500);
+}
+
+function checkLength(o, n, min, max) {
+	if (o.val().length > max || o.val().length < min) {
+		o.addClass("ui-state-error");
+		updateTips("Length of " + n + " must be between " + min + " and "
+				+ max + ".");
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function checkRegexp(o, regexp, n) {
+	if (!(regexp.test(o.val()))) {
+		o.addClass("ui-state-error");
+		updateTips(n);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function checkPasswordsEqual(o,p,n){
+	if(!(o.val() == p.val())){
+		o.addClass("ui-state-error");
+		updateTips(n);
+		return false;
+	} else {
+		return true;
+	}
 }

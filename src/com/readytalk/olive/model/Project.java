@@ -12,17 +12,21 @@ public class Project {
 	private String name;
 	private int accountId;
 	private String icon;
+	private int poolPosition;
 
 /**
  * Project Constructor
  * @param name			a name of the Project folder
  * @param accountId		a unique number distinguishes the different user which enables to show specific user's projects list
  * @param icon 			an icon that is specifically designated to a project
+ * @param poolPosition 	position of a video in the editing box
  */
-	public Project(String name, int accountId, String icon) {
+
+	public Project(String name, int accountId, String icon, int poolPosition) {
 		this.name = name;
 		this.accountId = accountId;
 		this.icon = icon;
+		this.poolPosition = poolPosition;
 	}
 /**
  * In use of displaying the name of a project for developers for debugging purpose
@@ -79,5 +83,19 @@ public class Project {
  */
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+/**
+ * sets the video position in the editing box (pool)
+ * @param poolPosition
+ */
+	public void setPoolPosition(int poolPosition) {
+		this.poolPosition = poolPosition;
+	}
+/**
+ * 
+ * @return
+ */
+	public int getPoolPosition() {
+		return poolPosition;
 	}
 }

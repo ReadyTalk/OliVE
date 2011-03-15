@@ -18,10 +18,11 @@
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
+<script src="/olive/scripts/contextMenu.js"></script>
+<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
-<script src="/olive/scripts/contextMenu.js"></script>
 </head>
 <body>
 <%
@@ -68,15 +69,12 @@
 <div id="main">
 
 <div id="videos-container">
-<div id="videos-title">
-<h3><%=projectName%></h3>
-</div>
-<!-- end #videos-title -->
-<div id="videos-controls"><!-- http://stackoverflow.com/questions/1106720/how-to-display-html-form-as-inline-element/1106747#1106747 -->
-<button id="upload-new-button" type="button">Upload New Video</button>
-<button id="split-button" type="button">Split Video</button>
-</div>
-<!-- end #videos-controls -->
+<div id="videos-header"><span id="videos-title"> <%=projectName%>
+</span> <span id="videos-controls">
+<button id="upload-new-button" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
+	class="ui-button-text">Upload New Video</span></button>
+</span></div>
 <div id="videos"><%=videosHtml%></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
@@ -88,15 +86,7 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-div">
-<div id="player-container"><video id="player-video"></video></div>
-<div id="player-controls" class="center-text">
-<button id="videos-playpause">Play/pause</button>
-<button id="videos-volume-down">Volume down</button>
-<button id="videos-volume-up" disabled="disabled">Volume up</button>
-</div>
-</div>
-<!-- end #player -->
+<div id="player-container"><video id="player" controls></video></div>
 
 <div class="clear"></div>
 
@@ -107,8 +97,8 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled"
-	onclick="alert('Export to Computer');">Export to Computer</button>
+<button id="export-button" type="button" disabled="disabled">Export
+to Computer</button>
 
 </div>
 <!-- end #export --></div>
@@ -137,15 +127,14 @@
 </div>
 <!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
 <div id="split-video-dialog-form" class="hidden" title="Split video">
-<p class="validateTips">All form fields are required.</p>
+<p class="validateTips"></p>
 <form id="split-video-form" action="OliveServlet" name="process"
 	method="post">
-<fieldset><label for="video-name">Name of video to
-split</label> <input type="text" name="video-name" id="video-name"
-	class="text ui-widget-content ui-corner-all" maxlength="32" /> <label
-	for="split-time-in-seconds">Split time (in seconds)</label> <input
-	type="number" min=0 max=14400 name="split-time-in-seconds"
-	id="split-time-in-seconds" value=""
+<fieldset><input type="hidden" name="video-name"
+	id="video-name" class="text ui-widget-content ui-corner-all"
+	maxlength="32" /> <label for="split-time-in-seconds">Split
+time (in seconds)</label> <input type="number" min=0 max=14400
+	name="split-time-in-seconds" id="split-time-in-seconds" value=""
 	class="text ui-widget-content ui-corner-all" /></fieldset>
 <input type="hidden" name="FormName" value="SplitVideo"></input></form>
 </div>

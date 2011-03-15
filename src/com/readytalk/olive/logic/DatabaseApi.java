@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -16,6 +18,8 @@ import org.jets3t.service.security.AWSCredentials;
 
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
+import com.readytalk.olive.model.Video;
+
 /**
  * class DatabaseApi provides tool to connect to Database
  * 
@@ -194,12 +198,45 @@ public class DatabaseApi {
 		return getUnknownValueFromTable("SecurityAnswer", "Accounts",
 				"AccountID", Integer.toString(accountId));
 	}
-	/**
-	 * sets the data for edit account section of the web page
-	 * @param user brings the data of an user
-	 * @return true if data is updated, false if not
-	 */
-	public static Boolean editAccount(User user) {
+/**
+ * Gets the number of projects in an account
+ * @param accountId unique account number given to an user
+ * @return number of projects
+ */
+	public static int getNumberOfProjects(int accountId) {
+
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
+					+ ";";
+			r = st.executeQuery(s);
+			int numberOfProjects = 0;
+
+			if (r.first()) {
+				do {
+					numberOfProjects++;
+				} while (r.next());
+			}
+			return numberOfProjects;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1; // error!
+	}
+
+/**
+ * sets the data for edit account section of the web page
+ * @param user brings the data of an user
+ * @return true if data is updated, false if not
+ */
+
+public static Boolean editAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -335,6 +372,38 @@ public class DatabaseApi {
 				Integer.toString(projectId));
 	}
 	/**
+	 * Gets number of videos in a project
+	 * @param projectId unique project number given to a project
+	 * @return number of videos
+	 */
+	public static int getNumberOfVideos(int projectId) {
+
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT VideoID FROM Videos WHERE ProjectID = " + projectId
+					+ ";";
+			r = st.executeQuery(s);
+			int numberOfVideos = 0;
+
+			if (r.first()) {
+				do {
+					numberOfVideos++;
+				} while (r.next());
+			}
+			return numberOfVideos;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return -1; // error!
+	}
+
+	/**
 	 * Populates projects in the Olive database
 	 * @param accountId unique account number given to an user
 	 * @return projects properties
@@ -354,27 +423,32 @@ public class DatabaseApi {
 					projectNum += 1; // TODO This is never used.
 					String projectName = r.getString("Name");
 					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
+
 					projects += "<div id=\""
 							+ projectName
-							+ "\" class=\"project-icon-container\">"
+							+ "\" class=\"project-container\">"
 							+ "\n"
 							+ "<a href=\"OliveServlet?projectName="
 							+ projectName
-							+ "\"><img src=\""
-							+ projectIcon
-							+ "\" class=\"project-icon\" alt=\""
-							+ projectName
-							+ "\" /></a>"
-							+ "\n"
-							+ "<p><a href=\"OliveServlet?projectName="
-							+ projectName
 							+ "\">"
-							+ projectName
-							+ "</a></p>"
+							+ "<img id=\"olive"
+							+ projectNum
+							+ "\" class=\"project-image\""
 							+ "\n"
-							+ "<p><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ "src=\""
+							+ projectIcon
+							+ "\" alt=\"olive"
+							+ projectNum
+							+ "\" />"
+							+ "</a>"
+							+ "\n"
+							+ "<div class=\"project-name\">"
 							+ projectName
-							+ "\" class=\"warning delete-project\">Delete</a></small></p>"
+							+ "</div>"
+							+ "\n"
+							+ "<div class=\"project-controls\"><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ projectName
+							+ "\" class=\"warning delete-project\">Delete</a></small></div>"
 							+ "\n" + "</div>" + "\n";
 				} while (r.next());
 			}
@@ -388,12 +462,50 @@ public class DatabaseApi {
 		// TODO change db to have unique usernames for accounts and names for
 		// both projects and videos in one project
 	}
-	/**
-	 * Checks whether given project name exists already in the account
-	 * @param projectName name of the project name
-	 * @param accountId unique accountId given to an user
-	 * @return true if it exists, false if not
-	 */
+/**
+ * Gets projectIds projects) in a given account
+ * @param accountId unique account number given an user
+ * @return lists of project in a form of int array
+ */
+	public static int[] getProjectIds(int accountId) {
+		Connection conn = getDBConnection();
+		List<Integer> projectIds = new LinkedList<Integer>();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			ResultSet r;
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
+					+ ";";
+			r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					projectIds.add(r.getInt("ProjectID"));
+				} while (r.next());
+			}
+
+			// Convert the List to an int array.
+			int[] projectIdsAsIntArray = new int[projectIds.size()];
+			for (int i = 0; i < projectIds.size(); ++i) {
+				projectIdsAsIntArray[i] = projectIds.get(i);
+			}
+
+			return projectIdsAsIntArray;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
+	}
+	
+
+/**
+ * Checks whether given project name exists already in the account
+ * @param projectName name of the project name
+ * @param accountId unique accountId given to an user
+ * @return true if it exists, false if not
+ */
 	public static boolean projectExists(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
@@ -415,12 +527,13 @@ public class DatabaseApi {
 		}
 		return false;
 	}
+
 	/**
 	 * Adds new project
 	 * @param project project property such as name, accountID
 	 * @return true if possible to make, false if not possible
 	 */
-	public static boolean AddProject(Project project) {
+	public static boolean addProject(Project project) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -444,10 +557,31 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-	/**
-	 * Enables to delete a project requested by an user
-	 * @param projectId unique projectId after created by an user
-	 */
+/**
+ * Enables to rename a name of a project
+ * @param projectId unique project number given to a project
+ * @param newProjectName new name of a project that wanted to be changed
+ */
+	public static void renameProject(int projectId, String newProjectName) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Projects SET Name = '" + newProjectName
+					+ "' WHERE ProjectID = '" + projectId + "';";
+			st.executeUpdate(s);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+	}
+
+/**
+ * Enables to delete a project requested by an user
+ * @param projectId unique projectId after created by an user
+ */
 	public static void deleteProject(int projectId) {
 		Connection conn = getDBConnection();
 		try {
@@ -467,6 +601,82 @@ public class DatabaseApi {
 		} finally {
 			closeConnection(conn);
 		}
+	}
+/**
+ * Sets the position of projects in the project page
+ * @param projectId unique project number given to a project
+ * @param position position of project in the page
+ * @return true if changed, false if not
+ */
+	public static boolean setProjectPoolPosition(int projectId, int position) {
+		String positionType = "PoolPosition";
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Projects SET " + positionType + " = '" + position
+					+ "' WHERE ProjectID = '" + projectId + "';";
+			st.executeUpdate(s);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+	/**
+	 * Sets all position to where it is now which is set to be not organized
+	 * @param accountId unique account number given to an user
+	 * @return true everything is set to -1 else false
+	 */
+	public static boolean setAllProjectPoolPositionsToNull(int accountId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT ProjectID FROM Projects WHERE AccountID = '"
+					+ accountId + "';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				do {
+					setProjectPoolPosition(r.getInt("ProjectID"), -1); // TODO Insert "NULL", not -1
+				} while (r.next());
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+	/**
+	 * check whether projects are not organized or not
+	 * @param projectId unique project id given to a project
+	 * @return true if project is not organized, false if not.
+	 */
+	public static boolean isProjectPoolPositionNotNull(int projectId) {
+		int position = getProjectPoolPosition(projectId);
+		if (position != -1) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Enables to put project on the project page
+	 * @param projectId unique project number given to a project
+	 * @return ordered projects
+	 */
+	public static int getProjectPoolPosition(int projectId) {
+		String projectPoolPosition = getUnknownValueFromTable("PoolPosition",
+				"Projects", "ProjectID", Integer.toString(projectId));
+		if (projectPoolPosition == null) {
+			return -1; // TODO Is this a good idea?
+		}
+		return Integer.parseInt(projectPoolPosition);
 	}
 	/**
 	 * Brings the unique videoId given video name and its unique projectId
@@ -570,6 +780,7 @@ public class DatabaseApi {
 		}
 		return Integer.parseInt(videoPoolPosition);
 	}
+
 	/**
 	 * check the arrangement of the video in the time line
 	 * @param videoId unique videoId for each individual video
@@ -651,15 +862,15 @@ public class DatabaseApi {
 	 * @param positionType Pool or Timeline
 	 * @return true if it sets, false if it did not
 	 */
-	private static boolean setPoolOrTimelinePosition(int videoId, int position,
-			String positionType) {
+	private static boolean setVideoPoolOrTimelinePosition(int videoId,
+			int position, String positionType) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Videos SET " + positionType + " = " + position
-					+ " WHERE VideoID = '" + videoId + "';";
+			s = "UPDATE Videos SET " + positionType + " = '" + position
+					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);
 			return true;
 		} catch (Exception e) {
@@ -675,8 +886,8 @@ public class DatabaseApi {
 	 * @param position the order in the editing box/time line
 	 * @return sets the order
 	 */
-	public static boolean setPoolPosition(int videoId, int position) {
-		return setPoolOrTimelinePosition(videoId, position, "PoolPosition");
+	public static boolean setVideoPoolPosition(int videoId, int position) {
+		return setVideoPoolOrTimelinePosition(videoId, position, "PoolPosition");
 	}
 	/**
 	 * Sets the position of an video in the timeline
@@ -685,7 +896,8 @@ public class DatabaseApi {
 	 * @return sets the order
 	 */
 	public static boolean setTimelinePosition(int videoId, int position) {
-		return setPoolOrTimelinePosition(videoId, position, "TimelinePosition");
+		return setVideoPoolOrTimelinePosition(videoId, position,
+				"TimelinePosition");
 	}
 	/**
 	 * Clears the position of video in the timeline
@@ -705,7 +917,7 @@ public class DatabaseApi {
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
 				do {
-					setPoolOrTimelinePosition(r.getInt("VideoID"), -1,	// TODO Insert "NULL", not -1
+					setVideoPoolOrTimelinePosition(r.getInt("VideoID"), -1, // TODO Insert "NULL", not -1
 							positionType);
 				} while (r.next());
 			}
@@ -756,11 +968,11 @@ public class DatabaseApi {
 					String videoName = r.getString("Name");
 					String videoIcon = "/olive/images/olive.png";
 
-					videos += "<span id=\""
+					videos += "<div id=\""
 							+ videoName
 							+ "\" class=\"video-container\"><img id=\"olive"
 							+ videoNum
-							+ "\" class=\"video-icon\""
+							+ "\" class=\"video-image\""
 							+ "\n"
 							+ "src=\""
 							+ videoIcon
@@ -768,17 +980,18 @@ public class DatabaseApi {
 							+ videoNum
 							+ "\" />"
 							+ "\n"
+							+ "<div class=\"video-name\">"
 							+ videoName
-							+ "<br />"
+							+ "</div>"
 							+ "\n"
-							+ "<small><a id\""
+							+ "<div class=\"video-controls\"><small><a id=\""
 							+ videoName
-							+ "\" class=\"link add-to-timeline\">Add to Timeline</a></small>"
-							+ "<br />"
+							+ "\" class=\"link split-link\">Split</a> | "
+							+ "<a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
+							+ videoName
+							+ "\" class=\"warning delete-video\">Delete</a></small></div>"
 							+ "\n"
-							+ "<small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
-							+ videoName
-							+ "\" class=\"warning delete-video\">Delete</a></small> </span>"
+							+ "</div>"
 							+ "\n";
 				} while (r.next());
 			}
@@ -828,6 +1041,7 @@ public class DatabaseApi {
 		}
 		return null;
 	}
+
 	/**
 	 * Adds video to the Olive database
 	 * @param name name of the video
@@ -835,16 +1049,39 @@ public class DatabaseApi {
 	 * @param projectId unique project number 
 	 * @param icon unique icon given to the video clip
 	 */
-	public static void AddVideo(String name, String url, int projectId,
-			String icon) {
+	public static void addVideo(Video video) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "INSERT INTO Videos (Name, URL, ProjectID, Icon) VALUES ('"
-					+ name + "', '" + url + "', '" + projectId + "' , '" + icon
-					+ "');";
+			s = "INSERT INTO Videos (Name, URL, ProjectID, TimelinePosition,"
+					+ " Icon, IsSelected, PoolPosition) VALUES ('"
+					+ video.getName() + "', '" + video.getUrl() + "', '"
+					+ video.getProjectId() + "' , '"
+					+ video.getTimelinePosition() + "' , '" + video.getIcon()
+					+ "' , '" + (video.getIsSelected() ? 1 : 0) + "' , '"
+					+ video.getPoolPosition() + "');";
+			st.executeUpdate(s);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+	}
+	/**
+	 * Enables to rename a video
+	 * @param videoId unique video number given to a video
+	 * @param newVideoName name of video user wants to rename
+	 */
+	public static void renameVideo(int videoId, String newVideoName) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "UPDATE Videos SET Name = '" + newVideoName
+					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -976,5 +1213,57 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 		return false;
+	}
+/**
+ * Enables to put videos on timeline
+ * @param projectId unique project number given to a project
+ * @return lists of string ordered
+ */
+	public static String[] getVideosOnTimeline(int projectId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+			s = "SELECT * FROM Videos WHERE ProjectID = '" + projectId + "';";
+			ResultSet r = st.executeQuery(s);
+			ArrayList timelinePositionTemp = new ArrayList();
+			if (r.first()) {
+				do {
+					int temp = r.getInt("TimelinePosition");
+					if (temp != -1) {
+						timelinePositionTemp.add(temp);
+					}
+				} while (r.next());
+				Object[] timelinePositionO = timelinePositionTemp.toArray();
+				Integer temp = null;
+				int[] timelinePosition = new int[timelinePositionO.length];
+				int i = 0;
+				for (i = 0; i < timelinePositionO.length; i++) {
+					temp = (Integer) timelinePositionO[i];
+					timelinePosition[i] = temp.intValue();
+				}
+				Arrays.sort(timelinePosition);
+				String[] result = new String[timelinePosition.length];
+				for (i = 0; i < timelinePosition.length; i++) {
+					s = "SELECT Name FROM Videos WHERE ProjectID = '"
+							+ projectId + "' AND TimelinePosition = "
+							+ timelinePosition[i] + ";";
+					r = st.executeQuery(s);
+					if (r.first()) {
+						result[i] = r.getString("Name");
+					}
+				}
+				return result;
+
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return null;
 	}
 }

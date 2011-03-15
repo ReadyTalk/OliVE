@@ -7,10 +7,18 @@
 FILES="\
     README \
     \
+    src/com/readytalk/olive/json/AddToSelectedRequest.java \
+    src/com/readytalk/olive/json/CombineVideosRequest.java \
+    src/com/readytalk/olive/json/DeleteAccountRequest.java \
     src/com/readytalk/olive/json/DeleteProjectRequest.java \
     src/com/readytalk/olive/json/DeleteVideoRequest.java \
     src/com/readytalk/olive/json/GeneralRequest.java \
+    src/com/readytalk/olive/json/RemoveFromSelectedRequest.java \
     src/com/readytalk/olive/json/SplitVideoRequest.java \
+    src/com/readytalk/olive/json/UpdateProjectsPositionRequest.java \
+    src/com/readytalk/olive/json/UpdateTimelinePositionRequest.java \
+    src/com/readytalk/olive/json/UpdateVideosPositionRequest.java \
+    src/com/readytalk/olive/json/ZencoderInitialResponse.java \
     \
     src/com/readytalk/olive/logic/DatabaseApi.java \
     src/com/readytalk/olive/logic/S3Api.java \
