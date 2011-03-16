@@ -198,7 +198,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#timeline',
 		helper: 'clone',
-		items: '> div',	// Only immediate divs, not divs within other elements.
+		items: '.video-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
@@ -211,7 +211,7 @@ function enableDragAndDrop() {
 		appendTo: 'body',
 		connectWith: '#videos',
 		helper: 'clone',
-		items: '> div',
+		items: '.video-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',

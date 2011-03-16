@@ -69,7 +69,7 @@ function enableDragAndDrop() {
 	$('#projects').sortable( {
 		appendTo: 'body',
 		helper: 'clone',
-		items: '> div',	// Only immediate divs, not divs within other elements.
+		items: '.project-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
