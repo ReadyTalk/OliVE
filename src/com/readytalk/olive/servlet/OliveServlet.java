@@ -472,43 +472,40 @@ public class OliveServlet extends HttpServlet {
 			String videoName = videoNameItem.getString();
 			if (Security.isSafeVideoName(videoName)
 					&& Security.isSafeVideo(i)
+					&& (!DatabaseApi.videoExists(videoName, projectId))
 					&& DatabaseApi.getNumberOfVideos(projectId) < Security.MAXIMUM_NUMBER_OF_VIDEOS) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
-					DatabaseApi.addVideo(new Video(videoName, videoUrl,
-							"/olive/images/bbb480.jpg", projectId, -1, -1,
-							false)); // TODO Get icon from Zencoder.
+					DatabaseApi.addVideo(new Video(videoName,
+							videoUrl, "/olive/images/bbb480.jpg", projectId,
+							-1, -1, false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out
-							.println("File uploaded. Please close this window and refresh the editor page.");
+					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
 				} else {
-					out
-							.println("Upload Failed. Error uploading video to the cloud.");
-					log
-							.warning("Upload Failed. Error uploading video to the cloud.");
+					out.println("Upload Failed. Error uploading video to the cloud.");
+					log.warning("Upload Failed. Error uploading video to the cloud.");
 					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
-			} else if (Security.isSafeVideoName(videoName)) {
-				out
-						.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log
-						.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
+			} else if (!Security.isSafeVideoName(videoName)) {
+				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
+			} else if (DatabaseApi.videoExists(videoName, projectId)) {
+				out.println("Upload Failed. Video name already exists.");
+				log.warning("Upload Failed. Video name already exists.");
+				return;
 			} else {
-				out
-						.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log
-						.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
 
 		} catch (FileUploadException e) {
-			log
-					.severe("Error encountered while parsing the request in the upload handler");
+			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
@@ -752,8 +749,8 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("text/plain");
 		PrintWriter out = response.getWriter();
 
-		if (Security.isSafeVideoName(newVideoName)) {
-			DatabaseApi.renameVideo(videoId, newVideoName);
+		if (Security.isSafeVideoName(newVideoName)
+				&& DatabaseApi.renameVideo(videoId, newVideoName)) {
 			out.println(newVideoName);
 		} else {
 			out.println(oldVideoName);

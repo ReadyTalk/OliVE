@@ -199,11 +199,11 @@ public class DatabaseApi {
 		return getUnknownValueFromTable("SecurityAnswer", "Accounts",
 				"AccountID", Integer.toString(accountId));
 	}
-/**
- * Gets the number of projects in an account
- * @param accountId unique account number given to an user
- * @return number of projects
- */
+	/**
+	 * Gets the number of projects in an account
+	 * @param accountId unique account number given to an user
+	 * @return number of projects
+	 */
 	public static int getNumberOfProjects(int accountId) {
 
 		Connection conn = getDBConnection();
@@ -230,13 +230,11 @@ public class DatabaseApi {
 		}
 		return -1; // error!
 	}
-
-/**
- * sets the data for edit account section of the web page
- * @param user brings the data of an user
- * @return true if data is updated, false if not
- */
-
+	/**
+	 * sets the data for edit account section of the web page
+	 * @param user brings the data of an user
+	 * @return true if data is updated, false if not
+	 */
 	public static Boolean editAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
@@ -463,11 +461,11 @@ public class DatabaseApi {
 		// TODO change db to have unique usernames for accounts and names for
 		// both projects and videos in one project
 	}
-/**
- * Gets projectIds projects) in a given account
- * @param accountId unique account number given an user
- * @return lists of project in a form of int array
- */
+	/**
+	 * Gets projectIds projects) in a given account
+	 * @param accountId unique account number given an user
+	 * @return lists of project in a form of int array
+	 */
 	public static int[] getProjectIds(int accountId) {
 		Connection conn = getDBConnection();
 		List<Integer> projectIds = new LinkedList<Integer>();
@@ -499,14 +497,12 @@ public class DatabaseApi {
 		}
 		return null;
 	}
-	
-
-/**
- * Checks whether given project name exists already in the account
- * @param projectName name of the project name
- * @param accountId unique accountId given to an user
- * @return true if it exists, false if not
- */
+	/**
+	 * Checks whether given project name exists already in the account
+	 * @param projectName name of the project name
+	 * @param accountId unique accountId given to an user
+	 * @return true if it exists, false if not
+	 */
 	public static boolean projectExists(String projectName, int accountId) {
 		Connection conn = getDBConnection();
 		try {
@@ -528,7 +524,6 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
 	/**
 	 * Adds new project
 	 * @param project project property such as name, accountID
@@ -558,11 +553,11 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-/**
- * Enables to rename a name of a project
- * @param projectId unique project number given to a project
- * @param newProjectName new name of a project that wanted to be changed
- */
+	/**
+	 * Enables to rename a name of a project
+	 * @param projectId unique project number given to a project
+	 * @param newProjectName new name of a project that wanted to be changed
+	 */
 	public static boolean renameProject(int projectId, String newProjectName) {
 		Connection conn = getDBConnection();
 		try {
@@ -570,7 +565,7 @@ public class DatabaseApi {
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
 			Boolean exists = projectExists(newProjectName,
-					getAccountId(Attribute.USERNAME.toString()));
+					getProjectAccountId(projectId));
 			if (exists) {
 				return false;
 			}
@@ -585,11 +580,10 @@ public class DatabaseApi {
 		}
 		return false;
 	}
-
-/**
- * Enables to delete a project requested by an user
- * @param projectId unique projectId after created by an user
- */
+	/**
+	 * Enables to delete a project requested by an user
+	 * @param projectId unique projectId after created by an user
+	 */
 	public static void deleteProject(int projectId) {
 		Connection conn = getDBConnection();
 		try {
@@ -610,12 +604,12 @@ public class DatabaseApi {
 			closeConnection(conn);
 		}
 	}
-/**
- * Sets the position of projects in the project page
- * @param projectId unique project number given to a project
- * @param position position of project in the page
- * @return true if changed, false if not
- */
+	/**
+	 * Sets the position of projects in the project page
+	 * @param projectId unique project number given to a project
+	 * @param position position of project in the page
+	 * @return true if changed, false if not
+	 */
 	public static boolean setProjectPoolPosition(int projectId, int position) {
 		String positionType = "PoolPosition";
 		Connection conn = getDBConnection();
@@ -1050,6 +1044,35 @@ public class DatabaseApi {
 		return null;
 	}
 
+	
+	/**
+	 * Checks whether given video name exists already in the account
+	 * @param videoName name of the video
+	 * @param projectId unique projectId given to a project
+	 * @return true if it exists, false if not
+	 */
+	public static boolean videoExists(String videoName, int projectId) {
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+
+			s = "SELECT Name FROM Videos WHERE Name = '" + videoName
+					+ "' AND ProjectID = '" + projectId + "';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		return false;
+	}
+	
 	/**
 	 * Adds video to the Olive database
 	 * @param name name of the video
@@ -1057,12 +1080,16 @@ public class DatabaseApi {
 	 * @param projectId unique project number 
 	 * @param icon unique icon given to the video clip
 	 */
-	public static void addVideo(Video video) {
+	public static boolean addVideo(Video video) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			Boolean exists = videoExists(video.getName(),video.getProjectId());
+			if(exists){
+				return false;
+			}
 			s = "INSERT INTO Videos (Name, URL, ProjectID, TimelinePosition,"
 					+ " Icon, IsSelected, PoolPosition) VALUES ('"
 					+ video.getName() + "', '" + video.getUrl() + "', '"
@@ -1071,31 +1098,39 @@ public class DatabaseApi {
 					+ "' , '" + (video.getIsSelected() ? 1 : 0) + "' , '"
 					+ video.getPoolPosition() + "');";
 			st.executeUpdate(s);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(conn);
 		}
+		return false;
 	}
 	/**
 	 * Enables to rename a video
 	 * @param videoId unique video number given to a video
 	 * @param newVideoName name of video user wants to rename
 	 */
-	public static void renameVideo(int videoId, String newVideoName) {
+	public static boolean renameVideo(int videoId, String newVideoName) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			Boolean exists = videoExists(newVideoName,getVideoProjectId(videoId));
+			if(exists){
+				return false;
+			}
 			s = "UPDATE Videos SET Name = '" + newVideoName
 					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(conn);
 		}
+		return false;
 	}
 	/**
 	 * deletes an video
