@@ -19,6 +19,7 @@ import org.jets3t.service.security.AWSCredentials;
 import com.readytalk.olive.model.Project;
 import com.readytalk.olive.model.User;
 import com.readytalk.olive.model.Video;
+import com.readytalk.olive.util.Attribute;
 
 /**
  * class DatabaseApi provides tool to connect to Database
@@ -47,7 +48,7 @@ public class DatabaseApi {
 		return null;
 	}
 	/**
-	 * enables to disconnect from Live database
+	 * enables to disconnect from Olive database
 	 * @param c an object that is using Olive database
 	 */
 	public static void closeConnection(Connection c) {
@@ -236,7 +237,7 @@ public class DatabaseApi {
  * @return true if data is updated, false if not
  */
 
-public static Boolean editAccount(User user) {
+	public static Boolean editAccount(User user) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -562,20 +563,27 @@ public static Boolean editAccount(User user) {
  * @param projectId unique project number given to a project
  * @param newProjectName new name of a project that wanted to be changed
  */
-	public static void renameProject(int projectId, String newProjectName) {
+	public static boolean renameProject(int projectId, String newProjectName) {
 		Connection conn = getDBConnection();
 		try {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
+			Boolean exists = projectExists(newProjectName,
+					getAccountId(Attribute.USERNAME.toString()));
+			if (exists) {
+				return false;
+			}
 			s = "UPDATE Projects SET Name = '" + newProjectName
 					+ "' WHERE ProjectID = '" + projectId + "';";
 			st.executeUpdate(s);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(conn);
 		}
+		return false;
 	}
 
 /**

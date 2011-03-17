@@ -53,10 +53,12 @@ import com.readytalk.olive.model.User;
 import com.readytalk.olive.model.Video;
 import com.readytalk.olive.util.Attribute;
 import com.readytalk.olive.util.InvalidFileSizeException;
+
 /**
- * class OliveServlet 
+ * class OliveServlet
+ * 
  * @author Team Olive
- *
+ * 
  */
 public class OliveServlet extends HttpServlet {
 	// Don't store anything as a member variable in the Servlet.
@@ -190,7 +192,9 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			if (newPassword.equals(confirmNewPassword)) {
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session
+						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+								true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
 				newPasswordSet = DatabaseApi
@@ -252,13 +256,16 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
 				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
-			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
+			session
+					.setAttribute(Attribute.PROJECT_NAME.toString(),
+							projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
-		out.println("File uploaded. Please close this window and refresh the editor page.");
+		out
+				.println("File uploaded. Please close this window and refresh the editor page.");
 		out.close();
 	}
 
@@ -276,13 +283,13 @@ public class OliveServlet extends HttpServlet {
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = DatabaseApi.getAccountId(username);
-				session.setAttribute(Attribute.USERNAME.toString(),
-						DatabaseApi.getAccountUsername(accountId));
+				session.setAttribute(Attribute.USERNAME.toString(), DatabaseApi
+						.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
-				session.setAttribute(Attribute.EMAIL.toString(),
-						DatabaseApi.getAccountEmail(accountId));
-				session.setAttribute(Attribute.NAME.toString(),
-						DatabaseApi.getAccountName(accountId));
+				session.setAttribute(Attribute.EMAIL.toString(), DatabaseApi
+						.getAccountEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
+						.getAccountName(accountId));
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
@@ -320,8 +327,12 @@ public class OliveServlet extends HttpServlet {
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
+				session
+						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+								true);
+				session
+						.setAttribute(Attribute.PASSWORD.toString(),
+								newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
@@ -468,28 +479,36 @@ public class OliveServlet extends HttpServlet {
 							"/olive/images/bbb480.jpg", projectId, -1, -1,
 							false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out.println("File uploaded. Please close this window and refresh the editor page.");
+					out
+							.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
 				} else {
-					out.println("Upload Failed. Error uploading video to the cloud.");
-					log.warning("Upload Failed. Error uploading video to the cloud.");
+					out
+							.println("Upload Failed. Error uploading video to the cloud.");
+					log
+							.warning("Upload Failed. Error uploading video to the cloud.");
 					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else if (Security.isSafeVideoName(videoName)) {
-				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				out
+						.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log
+						.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else {
-				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				out
+						.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log
+						.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
 
 		} catch (FileUploadException e) {
-			log.severe("Error encountered while parsing the request in the upload handler");
+			log
+					.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
@@ -645,8 +664,8 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("text/plain");
 		PrintWriter out = response.getWriter();
 
-		if (Security.isSafeProjectName(newProjectName)) {
-			DatabaseApi.renameProject(projectId, newProjectName);
+		if (Security.isSafeProjectName(newProjectName)
+				&& DatabaseApi.renameProject(projectId, newProjectName)) { // renameProject returns false if the project name already exists.
 			out.println(newProjectName);
 		} else {
 			out.println(oldProjectName);
@@ -683,7 +702,7 @@ public class OliveServlet extends HttpServlet {
 		out.println(projectString);
 		out.close();
 	}
-	
+
 	private void handleGetVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
@@ -828,14 +847,13 @@ public class OliveServlet extends HttpServlet {
 	private void handleCombineVideos(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 
-			throws IOException, NoSuchAlgorithmException,
-			InvalidFileSizeException, ServiceException, InterruptedException {
+	throws IOException, NoSuchAlgorithmException, InvalidFileSizeException,
+			ServiceException, InterruptedException {
 
 		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
 				CombineVideosRequest.class);
 		log.info("COMBINING VIDEOS");
 		// response.setContentType("text/plain");
-
 
 		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
@@ -852,7 +870,7 @@ public class OliveServlet extends HttpServlet {
 		log.info("Combined. Now Dowloading");
 		final ServletOutputStream out = response.getOutputStream();
 		response.setContentType("application/octet-stream");
-		
+
 		File file = new File(combinedURL);
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(
 				file));
@@ -883,43 +901,46 @@ public class OliveServlet extends HttpServlet {
 		S3Api.downloadVideosToTemp(videoURLs[0]);
 		Process p;
 		String videoName = "";
-		for (int i = 0; i < videos.length - 1; i++) {	//Use i+1 everywhere
+		for (int i = 0; i < videos.length - 1; i++) { // Use i+1 everywhere
 			videoName = S3Api.downloadVideosToTemp(videoURLs[i + 1]);
 			p = r.exec("ffmpeg -i " + combined.getName() + " -sameq temp.mpg",
-			 		null, tempDir);
-			
-			/*BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
-		    String currentLine = null;
-		    while  (( currentLine = in.readLine()) != null )  
-		    		System.out.println ( currentLine ) ;*/
-		    
-			//p.waitFor();
+					null, tempDir);
+
+			/*
+			 * BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+			 * String currentLine = null;
+			 * while (( currentLine = in.readLine()) != null )
+			 * System.out.println ( currentLine ) ;
+			 */
+
+			// p.waitFor();
 			// log.info("Process 1...Done");
 			p = r.exec("ffmpeg -i " + videoName + " -sameq temp2.mpg", null,
 					tempDir);
-			//p.waitFor();
+			// p.waitFor();
 			// log.info("Process 2...Done");
 			if (isWindows) {
 
 				log.info("Windows");
-				p = r.exec(
-						"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
-						null, tempDir);
+				p = r
+						.exec(
+								"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
+								null, tempDir);
 				InputStream is2 = p.getInputStream();
 				log.info("InputStream2");
 				InputStreamReader isr2 = new InputStreamReader(is2);
 				log.info("InputStreamReader2");
 				BufferedReader br2 = new BufferedReader(isr2);
 				String line;
-				for(int j = 0; j <10; j++){
+				for (int j = 0; j < 10; j++) {
 					line = br2.readLine();
-					if(line!=null){
-						log.info("Line "+j+1+": "+line);
+					if (line != null) {
+						log.info("Line " + j + 1 + ": " + line);
 					}
 				}
-				//p.waitFor();
+				// p.waitFor();
 				log.info("after Windows Process finishes");
-								// log.info("Process 3...Done");
+				// log.info("Process 3...Done");
 				// r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
 			} else if (isLinux) {
 
@@ -935,30 +956,31 @@ public class OliveServlet extends HttpServlet {
 			}
 			log.info("after IFS");
 
-			p = r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv", null,
-					tempDir);
+			p = r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv",
+					null, tempDir);
 			InputStream is2 = p.getErrorStream();
 			log.info("InputStream");
 			InputStreamReader isr2 = new InputStreamReader(is2);
 			log.info("InputStreamReader");
 			BufferedReader br2 = new BufferedReader(isr2);
 			String line;
-			for(int j = 0; j <25; j++){
+			for (int j = 0; j < 25; j++) {
 				line = br2.readLine();
-				if(line!=null){
-					log.info("FFMPEG Line "+j+1+": "+line);
+				if (line != null) {
+					log.info("FFMPEG Line " + j + 1 + ": " + line);
 				}
 			}
 			log.info("after last ffmpeg process");
-			
-						
-			BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
-		    String currentLine = null;
-		    while  (( currentLine = in.readLine()) != null )  
-		    		System.out.println ( currentLine ) ; 
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(p
+					.getErrorStream()));
+			String currentLine = null;
+			while ((currentLine = in.readLine()) != null)
+				System.out.println(currentLine);
 			p.waitFor();
 			// log.info("Process 4...Done");
-			combined = new File(tempDir.getAbsolutePath() + File.separator + "combined.ogv");
+			combined = new File(tempDir.getAbsolutePath() + File.separator
+					+ "combined.ogv");
 			// process.waitFor();
 
 			videos[0] = "combined";
@@ -966,14 +988,14 @@ public class OliveServlet extends HttpServlet {
 
 		// Removing all temp files except for the one combined video
 		// result[1] = videoURLs[0];
-		//if(inFor){
-	//		return S3Api.uploadFile(combined);
-	//	}
-		//else{
-			return combined.getAbsolutePath();
-		//}
-		//return S3Api.uploadFile(new File(videoName));
-		//return null;
+		// if(inFor){
+		// return S3Api.uploadFile(combined);
+		// }
+		// else{
+		return combined.getAbsolutePath();
+		// }
+		// return S3Api.uploadFile(new File(videoName));
+		// return null;
 		// return videoURLs[0];
 
 	}
