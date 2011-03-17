@@ -11,7 +11,7 @@ jQuery(function($) {
 	attachVideoClickHandlers();
 	attachVideoRenameHandlers();
 	enableDragAndDrop();
-	attachPublishButtonHandler();
+	//attachPublishButtonHandler();
 	getVideoInformation();
 });
 
@@ -61,7 +61,7 @@ function attachVideoMenuHandlers() {
 
 function attachPublishButtonHandler(){
 	$('#export-button').click(function(){
-		$(this).text("Please wait...")
+		$(this).text("Please wait...");
 		combineVideos();
 	});
 	

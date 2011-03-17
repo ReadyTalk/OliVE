@@ -883,7 +883,7 @@ public class OliveServlet extends HttpServlet {
 		S3Api.downloadVideosToTemp(videoURLs[0]);
 		Process p;
 		String videoName = "";
-		for (int i = 0; i < videos.length - 1; i++) {
+		for (int i = 0; i < videos.length - 1; i++) {	//Use i+1 everywhere
 			videoName = S3Api.downloadVideosToTemp(videoURLs[i + 1]);
 			p = r.exec("ffmpeg -i " + combined.getName() + " -sameq temp.mpg",
 			 		null, tempDir);
@@ -925,7 +925,7 @@ public class OliveServlet extends HttpServlet {
 
 				log.info("Linux");
 				String[] arr = { "/bin/sh", "-c",
-						"cat temp.mpg + temp2.mpg > intermediateTemp.mpg" };
+						"cat temp.mpg temp2.mpg > intermediateTemp.mpg" };
 				p = r.exec(arr, null, tempDir);
 				// p.waitFor();
 				// log.info("Process 3...Done");
