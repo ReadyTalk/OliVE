@@ -535,12 +535,6 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			Boolean exists = projectExists(project.getName(),
-					project.getAccountId());
-			if (exists) {
-				return false;
-			}
-
 			s = "INSERT INTO Projects (Name, AccountID, Icon) " + "VALUES ('"
 					+ project.getName() + "', '" + project.getAccountId()
 					+ "' , '" + project.getIcon() + "');";
@@ -564,11 +558,6 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			Boolean exists = projectExists(newProjectName,
-					getProjectAccountId(projectId));
-			if (exists) {
-				return false;
-			}
 			s = "UPDATE Projects SET Name = '" + newProjectName
 					+ "' WHERE ProjectID = '" + projectId + "';";
 			st.executeUpdate(s);
@@ -1086,10 +1075,6 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			Boolean exists = videoExists(video.getName(),video.getProjectId());
-			if(exists){
-				return false;
-			}
 			s = "INSERT INTO Videos (Name, URL, ProjectID, TimelinePosition,"
 					+ " Icon, IsSelected, PoolPosition) VALUES ('"
 					+ video.getName() + "', '" + video.getUrl() + "', '"
@@ -1117,10 +1102,6 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			Boolean exists = videoExists(newVideoName,getVideoProjectId(videoId));
-			if(exists){
-				return false;
-			}
 			s = "UPDATE Videos SET Name = '" + newVideoName
 					+ "' WHERE VideoID = '" + videoId + "';";
 			st.executeUpdate(s);

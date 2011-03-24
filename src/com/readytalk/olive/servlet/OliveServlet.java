@@ -382,7 +382,8 @@ public class OliveServlet extends HttpServlet {
 		int accountId = getAccountIdFromSessionAttributes(session);
 		String projectName = request.getParameter("ProjectName");
 		if (Security.isSafeProjectName(projectName)
-				&& DatabaseApi.getNumberOfProjects(accountId) < Security.MAXIMUM_NUMBER_OF_PROJECTS) {
+				&& Security.isUniqueProjectName(projectName, accountId)
+				&& Security.projectFits(DatabaseApi.getNumberOfProjects(accountId))) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 
 			String icon = ""; // TODO Get this from user input.
@@ -472,8 +473,8 @@ public class OliveServlet extends HttpServlet {
 			String videoName = videoNameItem.getString();
 			if (Security.isSafeVideoName(videoName)
 					&& Security.isSafeVideo(i)
-					&& (!DatabaseApi.videoExists(videoName, projectId))
-					&& DatabaseApi.getNumberOfVideos(projectId) < Security.MAXIMUM_NUMBER_OF_VIDEOS) {
+					&& Security.isUniqueVideoName(videoName, projectId)
+					&& Security.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
 					DatabaseApi.addVideo(new Video(videoName,
@@ -493,7 +494,7 @@ public class OliveServlet extends HttpServlet {
 				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
-			} else if (DatabaseApi.videoExists(videoName, projectId)) {
+			} else if (!Security.isUniqueVideoName(videoName, projectId)) {
 				out.println("Upload Failed. Video name already exists.");
 				log.warning("Upload Failed. Video name already exists.");
 				return;
@@ -657,12 +658,13 @@ public class OliveServlet extends HttpServlet {
 		String oldProjectName = renameProjectRequest.arguments.oldProjectName;
 		int projectId = getProjectIdFromSessionAttributes(session,
 				oldProjectName);
-
+		int accountId = getAccountIdFromSessionAttributes(session);
 		response.setContentType("text/plain");
 		PrintWriter out = response.getWriter();
 
 		if (Security.isSafeProjectName(newProjectName)
-				&& DatabaseApi.renameProject(projectId, newProjectName)) { // renameProject returns false if the project name already exists.
+				&& Security.isUniqueProjectName(newProjectName, accountId)) {
+			DatabaseApi.renameProject(projectId, newProjectName);
 			out.println(newProjectName);
 		} else {
 			out.println(oldProjectName);
@@ -745,12 +747,13 @@ public class OliveServlet extends HttpServlet {
 		String newVideoName = renameVideoRequest.arguments.newVideoName;
 		String oldVideoName = renameVideoRequest.arguments.oldVideoName;
 		int videoId = getVideoIdFromSessionAttributes(session, oldVideoName);
-
+		int projectId = getProjectIdFromSessionAttributes(session);
 		response.setContentType("text/plain");
 		PrintWriter out = response.getWriter();
 
 		if (Security.isSafeVideoName(newVideoName)
-				&& DatabaseApi.renameVideo(videoId, newVideoName)) {
+				&& Security.isUniqueVideoName(newVideoName, projectId)) {
+			DatabaseApi.renameVideo(videoId, newVideoName);
 			out.println(newVideoName);
 		} else {
 			out.println(oldVideoName);
