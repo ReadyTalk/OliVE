@@ -68,7 +68,8 @@ function onClickSplit() {
 		$('#invalid-split-dialog').dialog('open');
 	} else {
 		var maximumZencoderDecimalPlaces = 2;
-		splitVideo($(this).attr('id'), video.currentTime.toFixed(maximumZencoderDecimalPlaces));
+		splitVideo($(this).attr('id'),
+				video.currentTime.toFixed(maximumZencoderDecimalPlaces));
 	}
 	doNotSelectThisTime();
 	//$('#video-name').val($(this).attr('id'))
