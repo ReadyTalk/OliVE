@@ -9,7 +9,7 @@ jQuery(function($) {
 	attachDeleteVideoHandlers();
 	attachVideoMenuHandlers();
 	attachVideoClickHandlers();
-	attachVideoRenameHandlers();
+	attachRenameVideoHandlers();
 	enableDragAndDrop();
 	//attachPublishButtonHandler();
 	getVideoInformation();
@@ -91,14 +91,19 @@ function attachVideoClickHandlers() {
 	});
 }
 
-function attachVideoRenameHandlers() {
+function attachRenameVideoHandlers() {
 	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
 	$('.video-name').editable({
 		type: 'text',
         submit: 'Save',
         cancel: 'Cancel',
         onEdit: function () {
-			doNotSelectThisTime();
+			doNotSelectThisTime();	
+			
+			// Restrict input length
+			// Another way: http://www.arashkarimzadeh.com/jquery/9-how-to-extend-jquery-editable.html
+			var maxVideoNameLength = 32;
+			$(this).children('input').attr('maxlength', maxVideoNameLength);
 		},
         onSubmit: function (content) {
 			renameVideo(content.previous, content.current);

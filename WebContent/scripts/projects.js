@@ -9,18 +9,22 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteProjectHandlers();
-	attachProjectRenameHandlers();
+	attachRenameProjectHandlers();
 	enableDragAndDrop();
 	getProjectInformation();
 });
 
-function attachProjectRenameHandlers() {
-	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html	
+function attachRenameProjectHandlers() {
+	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html
 	$('.project-name').editable({
 		type: 'text',
         submit: 'Save',
         cancel: 'Cancel',
         onEdit: function () {
+			// Restrict input length
+			// Another way: http://www.arashkarimzadeh.com/jquery/9-how-to-extend-jquery-editable.html
+			var maxProjectNameLength = 32;
+			$(this).children('input').attr('maxlength', maxProjectNameLength);
 		},
         onSubmit: function (content) {
 			renameProject(content.previous, content.current);
