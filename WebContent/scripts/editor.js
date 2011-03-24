@@ -7,17 +7,14 @@
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteVideoHandlers();
-	attachVideoMenuHandlers();
+	attachSplitVideoHandlers();
+	attachUploadVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
+	//attachPublishButtonHandlers();
 	enableDragAndDrop();
-	//attachPublishButtonHandler();
 	getVideoInformation();
 });
-
-function doNotSelectThisTime() {
-	event.stopPropagation();	// Prevent selecting from happening.
-}
 
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
@@ -45,12 +42,30 @@ function attachDeleteVideoHandlers() {
 	});
 }
 
-function attachVideoMenuHandlers() {
-	$('#upload-new-button').click(function () {
-		openNewVideoForm();
+//Perform a deleteVideo request
+function deleteVideo(videoName) {
+	var requestData = '{'
+			+    '"command" : "deleteVideo",'
+			+    '"arguments" : {'
+			+        '"video" : "' + videoName + '"'
+			+    '}'
+			+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function attachSplitVideoHandlers() {
+	$('.split-link').click(function () {
+		var video = $('video').get(0);
+		if (video.currentTime === 0 || video.ended) {
+			$('#invalid-split-dialog').dialog('open');
+		} else {
+			var maximumZencoderDecimalPlaces = 2;
+			splitVideo($(this).attr('id'),
+					video.currentTime.toFixed(maximumZencoderDecimalPlaces));
+		}
+		doNotSelectThisTime();
 	});
 	
-	attachSplitHandlers();
 	$('#invalid-split-dialog').dialog( {
 		autoOpen : false,
 		buttons: {
@@ -59,53 +74,44 @@ function attachVideoMenuHandlers() {
 			}
 		}
 	});
-	$('.split-link').click(onClickSplit);
 }
 
-function onClickSplit() {
-	var video = $('video').get(0);
-	if (video.currentTime === 0 || video.ended) {
-		$('#invalid-split-dialog').dialog('open');
-	} else {
-		var maximumZencoderDecimalPlaces = 2;
-		splitVideo($(this).attr('id'),
-				video.currentTime.toFixed(maximumZencoderDecimalPlaces));
-	}
-	doNotSelectThisTime();
-	//$('#video-name').val($(this).attr('id'))
-	//				.change();	// Prefill in the value in the split dialog.
-	//$('#split-video-dialog-form').dialog('open');
-}
-
-function attachPublishButtonHandler(){
-	$('#export-button').click(function(){
-		$(this).text("Please wait...");
-		combineVideos();
-	});
-	
-}
-
-function combineVideos(){
+//Perform a splitVideo request
+function splitVideo(videoName, splitTimeInSeconds) {
 	var requestData = '{'
-		+    '"command" : "combineVideos",'
-		+    '"arguments" : {'
-		+    '}'
-		+  '}';
-	makeAjaxPostRequest(requestData, null, null);
+			+    '"command" : "splitVideo",'
+			+    '"arguments" : {'
+			+        '"video" : "' + videoName + '",'
+			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
+			+    '}'
+			+  '}';
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function attachUploadVideoHandlers() {
+	$('#upload-new-button').click(function () {
+		openNewVideoForm();
+	});
 }
 
 function attachVideoClickHandlers() {
-	$('.video-container').click(function () {
+	$('.video-container').click(function (eventObject) {
+		eventObject.stopPropagation();	// Don't let the parent div's .click() event fire.
+		
 		if ($(this).data('isSelected')) {
 			unselect(this);
 		} else {
-			// First, unselect all
-			$('.video-container').each(function () {
-				unselect(this);	// 'this' is a different 'this' than outside .each()
-			});
-			// Then, select this
+			unselectAll();
 			select(this);
 		}
+	});
+	
+	$('#videos').click(function () {
+		unselectAll();
+	});
+	
+	$('#timeline').click(function () {
+		unselectAll();
 	});
 }
 
@@ -137,6 +143,27 @@ function attachRenameVideoHandlers() {
 	$('.video-container button').live('click', function (){
 		doNotSelectThisTime();
 	});
+}
+
+function doNotSelectThisTime() {
+	event.stopPropagation();	// Prevent selecting from happening.
+}
+
+function attachPublishButtonHandlers(){
+	$('#export-button').click(function(){
+		$(this).text("Please wait...");
+		combineVideos();
+	});
+}
+
+// Perform a combineVideos request
+function combineVideos(){
+	var requestData = '{'
+		+    '"command" : "combineVideos",'
+		+    '"arguments" : {'
+		+    '}'
+		+  '}';
+	makeAjaxPostRequest(requestData, null, null);
 }
 
 //Perform a renameVideo request
@@ -179,6 +206,12 @@ function unselect(element) {
 	$(element).data('isSelected', false);
 	makeSelectionVisible(element);
 	removeFromSelected($(element).attr('id'));
+}
+
+function unselectAll() {
+	$('.video-container').each(function () {
+		unselect(this);	// 'this' is a different 'this' than outside .each()
+	});
 }
 
 //Perform an addToSelected request
@@ -243,7 +276,7 @@ function enableDragAndDrop() {
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
-			enableOrDisableExportButton();
+			enableOrDisablePublishButton();
 			updateTimelinePosition();
 		}
 	});
@@ -283,88 +316,6 @@ function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > div');
 }
 
-// Perform a deleteVideo request
-function deleteVideo(videoName) {
-	var requestData = '{'
-			+    '"command" : "deleteVideo",'
-			+    '"arguments" : {'
-			+        '"video" : "' + videoName + '"'
-			+    '}'
-			+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-//Perform a splitVideo request
-function splitVideo(videoName, splitTimeInSeconds) {
-	var requestData = '{'
-			+    '"command" : "splitVideo",'
-			+    '"arguments" : {'
-			+        '"video" : "' + videoName + '",'
-			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
-			+    '}'
-			+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-function attachSplitHandlers() {
-	var videoName = $('#video-name'), splitTimeInSeconds = $('#split-time-in-seconds'), allFields = $(
-			[]).add(videoName).add(splitTimeInSeconds), tips = $('.validateTips');
-	
-	function checkCondition(o, condition, n) {
-		if (!condition) {
-			o.addClass("ui-state-error");
-			updateTips(n);
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	$('#split-video-dialog-form').dialog({
-		autoOpen : false,
-		height : 325,
-		width : 300,
-		modal : true,
-		buttons : {
-			'Split video' : function() {
-				var bValid = true;
-				allFields.removeClass('ui-state-error');
-
-				bValid = bValid
-						&& checkLength(videoName,
-								'video-name', 1, 32);
-				bValid = bValid
-						&& checkLength(splitTimeInSeconds, 'split-time-in-seconds',
-								0, 14400);
-				bValid = bValid
-						&& checkRegexp(videoName,
-								/^([0-9a-zA-Z])+$/i,
-								'Video name may consist of a-z, 0-9; and must begin with a letter.');
-				bValid = bValid
-						&& checkCondition(splitTimeInSeconds,
-								!isNaN(splitTimeInSeconds.val()),
-								'Split time (in seconds) must be a number.')
-						&& checkCondition(splitTimeInSeconds,
-								splitTimeInSeconds.val() > 0,
-								'Split time (in seconds) must be greater than 0.')
-						&& checkCondition(splitTimeInSeconds,
-								splitTimeInSeconds.val() < 14400,
-								'Split time (in seconds) must be less than 14400.');
-				if (bValid) {
-					splitVideo(videoName.val(), splitTimeInSeconds.val());
-					$(this).dialog("close");
-				}
-			},
-			Cancel : function() {
-				$(this).dialog('close');
-			}
-		},
-		close : function() {
-			allFields.val('').removeClass('ui-state-error');
-		}
-	});
-}
-
 function getVideoInformation() {
 	$('.video-container').hide();
 	
@@ -402,11 +353,11 @@ function getVideoInformation() {
 		
 		$('.video-container').show();
 		
-		enableOrDisableExportButton();
+		enableOrDisablePublishButton();
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
-function enableOrDisableExportButton() {
+function enableOrDisablePublishButton() {
 	if ($('#timeline').sortable('toArray').length > 0){
 		$('#export-button').removeAttr('disabled');
 	} else {

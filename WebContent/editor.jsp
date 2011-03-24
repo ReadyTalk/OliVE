@@ -125,19 +125,6 @@ to Computer</button>
 	title="Attention!">
 <p>Add Video to Timeline</p>
 </div>
-<!-- type="number", min, and max are valid in HTML5: http://dev.w3.org/html5/markup/input.number.html -->
-<div id="split-video-dialog-form" class="hidden" title="Split video">
-<p class="validateTips"></p>
-<form id="split-video-form" action="OliveServlet" name="process"
-	method="post">
-<fieldset><input type="hidden" name="video-name"
-	id="video-name" class="text ui-widget-content ui-corner-all"
-	maxlength="32" /> <label for="split-time-in-seconds">Split
-time (in seconds)</label> <input type="number" min=0 max=14400
-	name="split-time-in-seconds" id="split-time-in-seconds" value=""
-	class="text ui-widget-content ui-corner-all" /></fieldset>
-<input type="hidden" name="FormName" value="SplitVideo"></input></form>
-</div>
 <div id="invalid-split-dialog" class="hidden" title="Warning">
 <p>Please pause the video at a valid split location.</p>
 </div>
