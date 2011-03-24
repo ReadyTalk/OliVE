@@ -25,7 +25,12 @@ function includeFooter() {
 
 function attachDialogToLink(linkName) {
 	$('#' + linkName + '-dialog').dialog( {
-		autoOpen : false
+		autoOpen : false,
+		buttons: {
+			OK: function() {
+				$(this).dialog('close');
+			}
+		}
 	});
 	
 	$('#' + linkName + '-dialog-opener').click(function() {

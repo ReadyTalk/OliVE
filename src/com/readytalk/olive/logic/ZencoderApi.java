@@ -59,7 +59,7 @@ public class ZencoderApi {
 		String line;
 		String response = "";
 		while ((line = bufferedReader.readLine()) != null) {
-			response += line + System.getProperty("line.separator");
+			response += line;
 		}
 		bufferedReader.close();
 		System.out.println(response);

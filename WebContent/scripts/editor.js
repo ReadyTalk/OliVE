@@ -51,12 +51,29 @@ function attachVideoMenuHandlers() {
 	});
 	
 	attachSplitHandlers();
-	$('.split-link').click(function() {
-		doNotSelectThisTime();
-		$('#video-name').val($(this).attr('id'))
-						.change();	// Prefill in the value in the split dialog.
-		$('#split-video-dialog-form').dialog('open');
+	$('#invalid-split-dialog').dialog( {
+		autoOpen : false,
+		buttons: {
+			OK: function() {
+				$(this).dialog('close');
+			}
+		}
 	});
+	$('.split-link').click(onClickSplit);
+}
+
+function onClickSplit() {
+	var video = $('video').get(0);
+	if (video.currentTime === 0 || video.ended) {
+		$('#invalid-split-dialog').dialog('open');
+	} else {
+		var maximumZencoderDecimalPlaces = 2;
+		splitVideo($(this).attr('id'), video.currentTime.toFixed(maximumZencoderDecimalPlaces));
+	}
+	doNotSelectThisTime();
+	//$('#video-name').val($(this).attr('id'))
+	//				.change();	// Prefill in the value in the split dialog.
+	//$('#split-video-dialog-form').dialog('open');
 }
 
 function attachPublishButtonHandler(){
@@ -138,11 +155,15 @@ function makeSelectionVisible(element) {
 		$(element).css( {
 			'background-color': '#edf4e6'	// A lighter version of the Olive color
 		});
+		$(element).find('.split-link').removeClass('hidden');
+		$(element).find('.video-controls-divider').removeClass('hidden');
 		updatePlayerWithNewElement(element);
 	} else {
 		$(element).css( {
 			'background-color': ''
 		});
+		$(element).find('.split-link').addClass('hidden');
+		$(element).find('.video-controls-divider').addClass('hidden');
 		updatePlayerWithNoElements();
 	}
 }

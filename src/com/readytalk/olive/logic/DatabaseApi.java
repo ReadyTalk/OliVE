@@ -988,7 +988,10 @@ public class DatabaseApi {
 							+ "\n"
 							+ "<div class=\"video-controls\"><small><a id=\""
 							+ videoName
-							+ "\" class=\"link split-link\">Split</a> | "
+							+ "\" class=\"link split-link hidden\">Split</a>"
+							+ "<span class=\"video-controls-divider hidden\">"
+							+ " | "
+							+ "</span>"
 							+ "<a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
 							+ videoName
 							+ "\" class=\"warning delete-video\">Delete</a></small></div>"

@@ -86,7 +86,7 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-container"><video id="player" controls></video></div>
+<div id="player-container"><video id="player" preload controls></video></div>
 
 <div class="clear"></div>
 
@@ -137,6 +137,9 @@ time (in seconds)</label> <input type="number" min=0 max=14400
 	name="split-time-in-seconds" id="split-time-in-seconds" value=""
 	class="text ui-widget-content ui-corner-all" /></fieldset>
 <input type="hidden" name="FormName" value="SplitVideo"></input></form>
+</div>
+<div id="invalid-split-dialog" class="hidden" title="Warning">
+<p>Please pause the video at a valid split location.</p>
 </div>
 <!-- end #dialog-form -->
 
