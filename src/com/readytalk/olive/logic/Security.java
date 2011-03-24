@@ -74,10 +74,26 @@ public class Security {
 		return isSafeLength(projectName, 1, 32)
 				&& isSafeValue(projectName, "^([0-9a-zA-Z ])+$"); // Same as password's regex
 	}
+	
+	public static boolean isUniqueProjectName(String projectName, int accountId){
+		return !DatabaseApi.projectExists(projectName, accountId);
+	}
 
+	public static boolean projectFits(int numberOfProjects){
+		return numberOfProjects < MAXIMUM_NUMBER_OF_PROJECTS;
+	}
+	
 	public static boolean isSafeVideoName(String videoName) {
 		return isSafeLength(videoName, 1, 32)
 				&& isSafeValue(videoName, "^([0-9a-zA-Z])+$"); // Same as password's regex
+	}
+	
+	public static boolean isUniqueVideoName(String videoName,int projectId){
+		return !DatabaseApi.videoExists(videoName, projectId);
+	}
+	
+	public static boolean videoFits(int numberOfVideos){
+		return numberOfVideos < MAXIMUM_NUMBER_OF_VIDEOS;
 	}
 
 	public static boolean isSafeSplitTimeInSeconds(double splitTimeInSeconds) {
