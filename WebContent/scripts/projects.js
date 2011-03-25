@@ -179,12 +179,12 @@ function getProjectInformation() {
 			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
 			if (responseData[i].poolPosition != -1) {
 				$(element).data('poolPosition', responseData[i].poolPosition);
-				poolPositions[responseData[i].poolPosition] = element;	// Sort
+				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
 			}
 		}
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			$('#projects').append(poolPositions[poolIndex]);
+			$('#projects').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
 		}
 		
 		$('.project-container').show();
