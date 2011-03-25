@@ -56,5 +56,9 @@ public enum Attribute {
 	/**
 	 * 
 	 */
-	IS_CORRECT
+	IS_CORRECT,
+	/**
+	 * 
+	 */
+	IS_FIRST_SIGN_IN
 }

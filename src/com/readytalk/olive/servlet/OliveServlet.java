@@ -290,6 +290,7 @@ public class OliveServlet extends HttpServlet {
 						.getAccountEmail(accountId));
 				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
 						.getAccountName(accountId));
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), false);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
@@ -369,6 +370,7 @@ public class OliveServlet extends HttpServlet {
 			session.setAttribute(Attribute.USERNAME.toString(), username);
 			session.setAttribute(Attribute.PASSWORD.toString(), password);
 			session.setAttribute(Attribute.EMAIL.toString(), email);
+			session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), true);
 			response.sendRedirect("projects.jsp");
 		} else {
 			response.sendRedirect("index.jsp");
@@ -395,6 +397,7 @@ public class OliveServlet extends HttpServlet {
 			} else {
 				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
 						true);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), false);
 			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
