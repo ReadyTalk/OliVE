@@ -10,11 +10,11 @@ jQuery(function($) {
 
 function attachRegistrationHandlers() {
 	var name = $("#register-name"), email = $("#register-email"), password = $("#register-password"), cPassword = $("#confirm-register-password"), allFields = $(
-			[]).add(name).add(email).add(password).add(cPassword), tips = $(".validateTips");
+			[]).add(name).add(email).add(password).add(cPassword);
 	
 	$("#dialog-form").dialog({
 		autoOpen : false,
-		height : 525,
+		height : 550,
 		width : 400,
 		modal : true,
 		buttons : {
@@ -46,11 +46,11 @@ function attachRegistrationHandlers() {
 				bValid = bValid
 						&& checkRegexp(password,
 								/^([0-9a-zA-Z])+$/,
-								"Password field only allow : a-z 0-9");
+								"Password may consist of a-z, A-Z 0-9.");
 				bValid = bValid
 						&& checkPasswordsEqual(password,
 								cPassword,
-								"Passwords are not equal");
+								"Passwords do not match.");
 				if (bValid) {
 					$("#register-form").submit();
 					$(this).dialog("close");
@@ -61,7 +61,7 @@ function attachRegistrationHandlers() {
 			}
 		},
 		close : function() {
-			allFields.val("").removeClass("ui-state-error");
+			allFields.val("").change().removeClass("ui-state-error");
 		}
 	});
 

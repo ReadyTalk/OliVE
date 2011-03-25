@@ -83,6 +83,8 @@ function makeAjaxPostRequest(requestData, onSuccess, onError) {
  */
 
 function updateTips(t) {
+	var tips = $(".validateTips");
+	
 	tips.text(t).addClass("ui-state-highlight");
 	setTimeout(function() {
 		tips.removeClass("ui-state-highlight", 1500);

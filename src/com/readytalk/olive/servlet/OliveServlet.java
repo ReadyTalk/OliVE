@@ -380,7 +380,7 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		int accountId = getAccountIdFromSessionAttributes(session);
-		String projectName = request.getParameter("ProjectName");
+		String projectName = request.getParameter("new-project-name");
 		if (Security.isSafeProjectName(projectName)
 				&& Security.isUniqueProjectName(projectName, accountId)
 				&& Security.projectFits(DatabaseApi.getNumberOfProjects(accountId))) {
@@ -399,7 +399,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
-		response.sendRedirect("new-project-form.jsp");
+		response.sendRedirect("projects.jsp");
 	}
 
 	private void handleUploadVideo(HttpServletRequest request,

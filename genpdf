@@ -62,7 +62,6 @@ FILES="\
     WebContent/index.jsp \
     WebContent/logout.jsp \
     WebContent/new-password-form.jsp \
-    WebContent/new-project-form.jsp \
     WebContent/new-video-form.jsp \
     WebContent/projects.jsp \
     "

@@ -18,7 +18,7 @@
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
-	<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
+<script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/projects.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
@@ -63,15 +63,27 @@
 <!-- end #projects-title -->
 
 <div id="projects-controls">
-<button type="button" onclick="openNewProjectForm()">Create New
-Project</button>
+<button id="create-new-project" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
+	class="ui-button-text">Create New Project</span></button>
 </div>
 <!-- end #controls -->
 
 <div class="clear"></div>
 <div id="projects"><%=projectsHtml%></div>
 <!-- end #projects --></div>
-<!-- end #projects-container --></div>
+<!-- end #projects-container -->
+
+<div id="new-project-dialog-form" title="Create new user">
+<p class="validateTips">All form fields are required.</p>
+<form id="new-project-form" action="OliveServlet" name="process"
+	method="post">
+<fieldset><label for="new-project-name">Project Name</label>
+<input type="text" name="new-project-name" id="new-project-name"
+	class="text ui-widget-content ui-corner-all" maxlength="32" /></fieldset>
+<input type="hidden" name="FormName" value="AddProject"></input></form>
+</div>
+<!-- end #new-project-dialog-form --></div>
 <!-- end #main -->
 
 <div class="clear"></div>

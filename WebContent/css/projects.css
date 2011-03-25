@@ -15,21 +15,23 @@
 	position: absolute;
 	top: 0%;
 	right: 0%;
-	bottom: 15%;
+	bottom: 85%;
 	left: 0%;
+	overflow: hidden;
 }
 
 #projects-controls {
 	position: absolute;
 	top: 15%;
 	right: 0%;
-	bottom: 20%;
+	bottom: 75%;
 	left: 0%;
+	overflow: hidden;
 }
 
 #projects {
 	position: absolute;
-	top: 20%;
+	top: 25%;
 	right: 0%;
 	bottom: 0%;
 	left: 0%;

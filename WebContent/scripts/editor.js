@@ -96,7 +96,9 @@ function attachUploadVideoHandlers() {
 
 function attachVideoClickHandlers() {
 	$('.video-container').click(function (eventObject) {
-		eventObject.stopPropagation();	// Don't let the parent div's .click() event fire.
+		// Don't let the parent div's .click() event fire.
+		// Modified from: http://stackoverflow.com/questions/1369035/how-do-i-prevent-a-parents-onclick-event-from-firing-when-a-child-anchor-is-clic
+		eventObject.stopPropagation();
 		
 		if ($(this).data('isSelected')) {
 			unselect(this);

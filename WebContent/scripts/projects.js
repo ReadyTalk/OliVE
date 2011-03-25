@@ -8,11 +8,52 @@ var deleteProjectDialogContext;	// TODO Remove this global variable.
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
+	attachCreateNewProjectHandlers();
 	attachDeleteProjectHandlers();
 	attachRenameProjectHandlers();
 	enableDragAndDrop();
 	getProjectInformation();
 });
+
+function attachCreateNewProjectHandlers() {
+	var newProjectName = $("#new-project-name"),
+		allFields = $([]).add(newProjectName);
+	
+	$("#new-project-dialog-form").dialog({
+		autoOpen : false,
+		height : 350,
+		width : 400,
+		modal : true,
+		buttons : {
+			"Create New Project" : function () {
+				var bValid = true;
+				allFields.removeClass("ui-state-error");
+
+				bValid = bValid
+						&& checkLength(newProjectName,
+								"new-project-name", 1, 32);
+				bValid = bValid
+						&& checkRegexp(newProjectName,
+								/^([0-9a-zA-Z])+$/,
+								"Project Name may consist of a-z, A-Z, 0-9.");
+				if (bValid) {
+					$("#new-project-form").submit();
+					$(this).dialog("close");
+				}
+			},
+			Cancel : function () {
+				$(this).dialog("close");
+			}
+		},
+		close : function () {
+			allFields.val("").change().removeClass("ui-state-error");
+		}
+	});
+
+	$("#create-new-project").click(function() {
+		$("#new-project-dialog-form").dialog("open");
+	});
+}
 
 function attachRenameProjectHandlers() {
 	// Downloaded from: http://www.arashkarimzadeh.com/jquery/7-editable-jquery-plugin.html
@@ -121,11 +162,6 @@ function deleteProject() {
 			+      '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-function openNewProjectForm() {
-	window.open("new-project-form.jsp", "newProjectForm",
-			"menubar=no,width=320,height=200,toolbar=no");
 }
 
 function getProjectInformation() {
