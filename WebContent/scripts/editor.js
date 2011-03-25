@@ -38,6 +38,7 @@ function attachUploadNewVideoHandlers() {
 								/^([0-9a-zA-Z])+$/,
 								"Video Name may consist of a-z, A-Z, 0-9.");
 				if (bValid) {
+					createSpinner();
 					$("#new-video-form").submit();
 					$(this).dialog("close");
 				}
@@ -352,6 +353,35 @@ function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > div');
 }
 
+function createSpinner() {
+	
+}
+
+function createVideoContainer(videoName, videoNum, videoIcon) {
+	var videoContainer = '<div id="'
+		+ videoName
+		+ '" class="video-container"><img id="olive'
+		+ videoNum
+		+ '" class="video-image"\n'
+		+ 'src="'
+		+ videoIcon
+		+ '" alt="olive'
+		+ videoNum
+		+ '" />\n'
+		+ '<div class="video-name">'
+		+ videoName
+		+ '</div>\n'
+		+ '<div class="video-controls"><small><a id="'
+		+ videoName
+		+ '" class="link split-link hidden">Split</a>\n'
+		+ '<span class="video-controls-divider hidden"> | </span>'
+		+ '<a id="' // TODO Assign the videoName elsewhere for the JavaScript to access.
+		+ videoName
+		+ '" class="warning delete-video">Delete</a></small></div>\n'
+		+ '</div>\n';
+	$('#videos').append(videoContainer);
+}
+
 function getVideoInformation() {
 	$('.video-container').hide();
 	
@@ -362,6 +392,7 @@ function getVideoInformation() {
 		var poolPositions = [];
 		var timelinePositions = [];
 		for (var i = 0; i < responseData.length; ++i) {
+			//createVideoContainer(videoName, videoNum, videoIcon);
 			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
 			$(element).data('url', responseData[i].url);
 			$(element).data('icon', responseData[i].icon);
@@ -369,11 +400,11 @@ function getVideoInformation() {
 			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
 			if (responseData[i].poolPosition != -1) {
 				$(element).data('poolPosition', responseData[i].poolPosition);
-				poolPositions[responseData[i].poolPosition] = element;	// Sort
+				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
 			}
 			if (responseData[i].timelinePosition != -1) {
 				$(element).data('timelinePosition', responseData[i].timelinePosition);
-				timelinePositions[responseData[i].timelinePosition] = element;	// Sort
+				timelinePositions[(responseData.length - 1) - responseData[i].timelinePosition] = element;	// Sort in reverse order to work with prepending.
 			}
 			
 			$(element).data('isSelected', responseData[i].isSelected);
@@ -381,10 +412,10 @@ function getVideoInformation() {
 		}
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			$('#videos').append(poolPositions[poolIndex]);
+			$('#videos').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
 		}
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
-			$('#timeline').append(timelinePositions[timelineIndex]);
+			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
 		}
 		
 		$('.video-container').show();
