@@ -45,9 +45,6 @@
 				"on your username at the top right and adding a security question "+
 				"and answer in case you forget your password.<br /><br />Thanks!<br /><br />The Olive Team</p>";
 		}
-		else{
-			projectsHtml = DatabaseApi.populateProjects(accountId);
-		}
 	}
 %>
 <div id="header">

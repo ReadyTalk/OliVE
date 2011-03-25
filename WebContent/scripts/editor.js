@@ -19,10 +19,6 @@ function attachHandlers() {
 	enableDragAndDrop();
 }
 
-function createSpinner() {
-	
-}
-
 function createNewVideoContainer(videoName, videoNum, videoIcon) {
 	var videoContainer = '<div id="video-container-'
 		+ videoNum
@@ -34,18 +30,22 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 		+ videoNum
 		+ '" /><div class="video-name">'
 		+ videoName
-		+ '</div><div class="video-controls"><small><a id="split-link-'
+		+ '</div><div class="video-controls"><small><a id="split-video-link-'
 		+ videoNum
-		+ '" class="split-link link hidden">Split</a>'
+		+ '" class="split-video-link link hidden">Split</a>'
 		+ '<span class="video-controls-divider hidden"> | </span>'
-		+ '<a id=delete-link-"'
+		+ '<a id="delete-video-link-'
 		+ videoNum
-		+ '" class="delete-link warning">Delete</a></small></div></div>';
+		+ '" class="delete-video-link warning">Delete</a></small></div></div>';
 	
 	$('#videos').append(videoContainer);
 	
 	// Return the object that was just appended (with the jQuery wrapper stripped off).
 	return $('#video-container-' + videoNum).get(0);
+}
+
+function createVideoSpinner() {
+	
 }
 
 function populateVideos() {
@@ -88,7 +88,7 @@ function populateVideos() {
 		
 		enableOrDisablePublishButton();
 		
-		attachHandlers();	// This must go inside the ajax callback.
+		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
@@ -114,7 +114,7 @@ function attachUploadNewVideoHandlers() {
 								/^([0-9a-zA-Z])+$/,
 								'Video Name may consist of a-z, A-Z, 0-9.');
 				if (bValid) {
-					createSpinner();
+					createVideoSpinner();
 					$('#new-video-form').submit();
 					$(this).dialog('close');
 				}
@@ -149,7 +149,7 @@ function attachDeleteVideoHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteVideo($(videoToDelete).data('name'));	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteVideo($(videoToDelete).data('name'));
 				$(this).dialog('close');
 			},
 			Cancel: function () {

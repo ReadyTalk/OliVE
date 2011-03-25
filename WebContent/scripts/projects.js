@@ -3,17 +3,76 @@
  * Dependencies: "/olive/scripts/master.js"
  */
 
-var deleteProjectDialogContext;	// TODO Remove this global variable.
-
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
+	populateProjects();
+});
+
+function attachHandlers() {
 	attachCreateNewProjectHandlers();
 	attachDeleteProjectHandlers();
 	attachRenameProjectHandlers();
 	enableDragAndDrop();
-	getProjectInformation();
-});
+}
+
+function createNewProjectContainer(projectName, projectNum, projectIcon) {
+	projectIcon = '/olive/images/SPANISH OLIVES.jpg';
+	var projectContainer = '<div id="project-container-'
+		+ projectNum
+		+ '" class="project-container"><a href="OliveServlet?projectName='
+		+ projectName
+		+ '"><img id="project-image-'
+		+ projectNum
+		+ '" class="project-image" src="'
+		+ projectIcon
+		+ '" alt="project-image-'
+		+ projectNum
+		+ '" /></a><div class="project-name">'
+		+ projectName
+		+ '</div><div class="project-controls"><small><a id="delete-project-link-'
+		+ projectNum
+		+ '" class="delete-project-link warning">Delete</a></small></div></div>';
+	
+	$('#projects').append(projectContainer);
+	
+	// Return the object that was just appended (with the jQuery wrapper stripped off).
+	return $('#project-container-' + projectNum).get(0);
+}
+
+function createProjectSpinner() {
+	
+}
+
+function populateProjects() {
+	$('.project-container').hide();
+	
+	var requestData = '{'
+		+    '"command" : "getProjectInformation"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		var poolPositions = [];
+		for (var i = 0; i < responseData.length; ++i) {
+			var element = createNewProjectContainer(responseData[i].name, i, responseData[i].icon);
+			$(element).data('name', responseData[i].name);
+			$(element).data('icon', responseData[i].icon);
+			
+			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
+			if (responseData[i].poolPosition != -1) {
+				$(element).data('poolPosition', responseData[i].poolPosition);
+				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
+			}
+		}
+		// Append in the sorted order
+		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
+			$('#projects').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
+		}
+		
+		$('.project-container').show();
+		
+		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
+	}, null);	// Defined in "/olive/scripts/master.js".
+}
 
 function attachCreateNewProjectHandlers() {
 	var newProjectName = $("#new-project-name"),
@@ -88,9 +147,11 @@ function renameProject(oldProjectName, newProjectName) {
 }
 
 function attachDeleteProjectHandlers() {
-	$('.delete-project').click(function () {
+	var projectToDelete;
+	
+	$('.delete-project-link').click(function () {
 		$('#confirm-delete-project-dialog').dialog('open');
-		deleteProjectDialogContext = this;	// This is a global variable.
+		projectToDelete = $(this).parent().parent().parent();
 	});
 	
 	$('#confirm-delete-project-dialog').dialog({
@@ -100,7 +161,7 @@ function attachDeleteProjectHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteProject.call(deleteProjectDialogContext);	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteProject($(projectToDelete).data('name'));
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -134,7 +195,7 @@ function updatePosition(command, collectionItems) {
 	if ($(collectionItems).length > 0) {
 		$(collectionItems).each(function(index) {
 			requestData += '{'
-			+          '"project" : "' + $(this).attr('id') + '",'
+			+          '"project" : "' + $(this).data('name') + '",'
 			+          '"position" : ' + index
 			+        '},';	// This will result in an extra comma.
 		});
@@ -154,39 +215,12 @@ function updateProjectsPosition() {
 }
 
 // Perform a deleteProject request
-function deleteProject() {
+function deleteProject(projectName) {
 	var requestData = '{'
 			+    '"command" : "deleteProject",'
 			+    '"arguments" : {'
-			+        '"project" : "' + $(this).attr('id') + '"'
+			+        '"project" : "' + projectName + '"'
 			+      '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-function getProjectInformation() {
-	$('.project-container').hide();
-	
-	var requestData = '{'
-		+    '"command" : "getProjectInformation"'
-		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
-		var poolPositions = [];
-		for (var i = 0; i < responseData.length; ++i) {
-			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
-			$(element).data('icon', responseData[i].icon);
-			
-			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
-			if (responseData[i].poolPosition != -1) {
-				$(element).data('poolPosition', responseData[i].poolPosition);
-				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
-			}
-		}
-		// Append in the sorted order
-		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			$('#projects').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
-		}
-		
-		$('.project-container').show();
-	}, null);	// Defined in "/olive/scripts/master.js".
 }

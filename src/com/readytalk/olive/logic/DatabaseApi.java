@@ -403,65 +403,6 @@ public class DatabaseApi {
 	}
 
 	/**
-	 * Populates projects in the Olive database
-	 * @param accountId unique account number given to an user
-	 * @return projects properties
-	 */
-	public static String populateProjects(int accountId) {
-		String projects = "";
-		Connection conn = getDBConnection();
-		try {
-			Statement st = conn.createStatement();
-			String s = "USE OliveData;";
-			st.executeUpdate(s);
-			s = "SELECT * FROM Projects WHERE AccountID = '" + accountId + "';";
-			ResultSet r = st.executeQuery(s);
-			if (r.first()) {
-				int projectNum = 0;
-				do {
-					projectNum += 1; // TODO This is never used.
-					String projectName = r.getString("Name");
-					String projectIcon = "/olive/images/SPANISH OLIVES.jpg";
-
-					projects += "<div id=\""
-							+ projectName
-							+ "\" class=\"project-container\">"
-							+ "\n"
-							+ "<a href=\"OliveServlet?projectName="
-							+ projectName
-							+ "\">"
-							+ "<img id=\"olive"
-							+ projectNum
-							+ "\" class=\"project-image\""
-							+ "\n"
-							+ "src=\""
-							+ projectIcon
-							+ "\" alt=\"olive"
-							+ projectNum
-							+ "\" />"
-							+ "</a>"
-							+ "\n"
-							+ "<div class=\"project-name\">"
-							+ projectName
-							+ "</div>"
-							+ "\n"
-							+ "<div class=\"project-controls\"><small><a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
-							+ projectName
-							+ "\" class=\"warning delete-project\">Delete</a></small></div>"
-							+ "\n" + "</div>" + "\n";
-				} while (r.next());
-			}
-			return projects;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(conn);
-		}
-		return projects;
-		// TODO change db to have unique usernames for accounts and names for
-		// both projects and videos in one project
-	}
-	/**
 	 * Gets projectIds projects) in a given account
 	 * @param accountId unique account number given an user
 	 * @return lists of project in a form of int array
