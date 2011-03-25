@@ -84,7 +84,7 @@
 </div>
 <!-- end #context-menu -->
 
-<div id="player-container"><video id="player" preload controls></video></div>
+<div id="player-container"></div>
 
 <div class="clear"></div>
 

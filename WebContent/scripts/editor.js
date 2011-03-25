@@ -45,7 +45,11 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 }
 
 function createVideoSpinner() {
-	
+	var videoContainer = '<div class="video-container">'
+		+ '<img class="video-image" src="/olive/images/ajax-loader.gif"/>'
+		+ '<div><p>Preparing video...</p></div>'
+		+ '</div>';
+	$('#videos').append(videoContainer);
 }
 
 function populateVideos() {
@@ -180,6 +184,8 @@ function attachSplitVideoHandlers() {
 		} else {
 			var videoToSplit = $(this).parent().parent().parent();
 			var maximumZencoderDecimalPlaces = 2;
+			createVideoSpinner();	// First half
+			createVideoSpinner();	// Second half
 			splitVideo($(videoToSplit).data('name'),
 					video.currentTime.toFixed(maximumZencoderDecimalPlaces));
 		}
@@ -355,16 +361,16 @@ function removeFromSelected(videoName) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	$('#player').attr('poster', $(element).data('icon'));
-	$('#player').append(
-			'<source src="' + $(element).data('url')
-			+ '" type="' + 'video/ogg; codecs=theora,vorbis'	// TODO Get this from the database.
-			+ '" />');
+	var video = '<video id="player" preload controls poster="'
+		+ $(element).data('icon')
+		+ '">'
+		+ '<source src="' + $(element).data('url')
+		+ '" type="video/ogg; codecs=\'theora,vorbis\'" /></video>';	// TODO Get this from the database.
+	$('#player-container').append(video);
 }
 
 function updatePlayerWithNoElements() {
-	$('#player > source').remove();
-	$('#player').removeAttr('poster');
+	$('#player-container').empty();
 }
 
 function enableDragAndDrop() {
