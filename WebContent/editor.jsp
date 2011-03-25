@@ -71,7 +71,7 @@
 <div id="videos-container">
 <div id="videos-header"><span id="videos-title"> <%=projectName%>
 </span> <span id="videos-controls">
-<button id="upload-new-button" type="button"
+<button id="upload-new-video-button" type="button"
 	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
 	class="ui-button-text">Upload New Video</span></button>
 </span></div>
@@ -118,17 +118,34 @@ to Computer</button>
 	<li>5. Export to your computer.</li>
 </ul>
 </div>
+
 <div id="confirm-delete-video-dialog" class="hidden" title="Warning!">
 <p>Delete video?</p>
 </div>
+
 <div id="confirm-add-to-timeline-dialog" class="hidden"
 	title="Attention!">
 <p>Add Video to Timeline</p>
 </div>
+
 <div id="invalid-split-dialog" class="hidden" title="Warning">
 <p>Please pause the video at a valid split location.</p>
 </div>
 <!-- end #dialog-form -->
+
+<div id="new-video-dialog-form" title="Create new user">
+<p class="validateTips">All form fields are required.</p>
+<form id="new-video-form" action="OliveServlet" name="process"
+	enctype="multipart/form-data" method="post">
+<fieldset><input type="hidden" name="FormName"
+	value="UploadVideo"></input><input type="file" id="new-video-file"
+	name="file" /> <br />
+<label for="new-video-name">Give the video a new name</label> <input
+	type="text" name="new-video-name" id="new-video-name"
+	class="text ui-widget-content ui-corner-all" maxlength="32" /></fieldset>
+</form>
+</div>
+<!-- end #new-video-dialog-form -->
 
 </body>
 </html>

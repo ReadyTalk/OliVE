@@ -437,7 +437,7 @@ public class OliveServlet extends HttpServlet {
 				 * Handle Form Fields.
 				 */
 				if (item.isFormField()
-						&& item.getFieldName().equals("VideoName")) { // Short-circuitry
+						&& item.getFieldName().equals("new-video-name")) { // Short-circuitry
 					// Handle text fields
 					log.info("Form Name = \"" + item.getFieldName()
 							+ "\", Value = \"" + item.getString() + "\"");

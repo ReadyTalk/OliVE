@@ -52,7 +52,6 @@
 <!-- end #splash-container -->
 
 <div id="login-form-container">
-
 <form id="login-form" action="OliveServlet" name="process" method="post">
 <p><label for="username">Username</label> <input type="text"
 	name="username" id="login-username" size="32" maxlength="16" /></p>
@@ -64,7 +63,21 @@
 <p>Don't have an account? <a id="create-user" href="javascript:;"
 	title="">Sign up!</a></p>
 </div>
-<!-- end #login-form-container -->
+<!-- end #login-form-container --></div>
+<!-- end #main -->
+
+<div id="footer"></div>
+
+<!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="help-dialog" class="hidden" title="How to use Olive">
+<ul>
+	<li>1. Create a new account.</li>
+	<li>2. Create a new project.</li>
+	<li>3. Upload your videos.</li>
+	<li>4. Edit your videos.</li>
+	<li>5. Export to your computer.</li>
+</ul>
+</div>
 
 <div id="dialog-form" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
@@ -84,21 +97,7 @@
 	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
 <input type="hidden" name="FormName" value="AddUser"></input></form>
 </div>
-<!-- end #dialog-form --></div>
-<!-- end #main -->
-
-<div id="footer"></div>
-
-<!-- Everything below this line will be hidden and inserted in pop-ups. -->
-<div id="help-dialog" class="hidden" title="How to use Olive">
-<ul>
-	<li>1. Create a new account.</li>
-	<li>2. Create a new project.</li>
-	<li>3. Upload your videos.</li>
-	<li>4. Edit your videos.</li>
-	<li>5. Export to your computer.</li>
-</ul>
-</div>
+<!-- end #dialog-form -->
 
 </body>
 </html>

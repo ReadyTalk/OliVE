@@ -6,15 +6,55 @@
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
+	attachUploadNewVideoHandlers();
 	attachDeleteVideoHandlers();
 	attachSplitVideoHandlers();
-	attachUploadVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
 	//attachPublishButtonHandlers();
 	enableDragAndDrop();
 	getVideoInformation();
 });
+
+function attachUploadNewVideoHandlers() {
+	var newVideoName = $("#new-video-name"),
+		allFields = $([]).add(newVideoName);
+	
+	$("#new-video-dialog-form").dialog({
+		autoOpen : false,
+		height : 400,
+		width : 400,
+		modal : true,
+		buttons : {
+			"Upload New Video" : function () {
+				var bValid = true;
+				allFields.removeClass("ui-state-error");
+
+				bValid = bValid
+						&& checkLength(newVideoName,
+								"new-video-name", 1, 32);
+				bValid = bValid
+						&& checkRegexp(newVideoName,
+								/^([0-9a-zA-Z])+$/,
+								"Video Name may consist of a-z, A-Z, 0-9.");
+				if (bValid) {
+					$("#new-video-form").submit();
+					$(this).dialog("close");
+				}
+			},
+			Cancel : function () {
+				$(this).dialog("close");
+			}
+		},
+		close : function () {
+			allFields.val("").change().removeClass("ui-state-error");
+		}
+	});
+
+	$("#upload-new-video-button").click(function() {
+		$("#new-video-dialog-form").dialog("open");
+	});
+}
 
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
@@ -86,12 +126,6 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+    '}'
 			+  '}';
 	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
-}
-
-function attachUploadVideoHandlers() {
-	$('#upload-new-button').click(function () {
-		openNewVideoForm();
-	});
 }
 
 function attachVideoClickHandlers() {
@@ -365,9 +399,4 @@ function enableOrDisablePublishButton() {
 	} else {
 		$('#export-button').attr('disabled', 'disabled');
 	}
-}
-
-function openNewVideoForm() {
-	window.open("new-video-form.jsp", "videoUploadForm",
-			"menubar=no,width=320,height=200,toolbar=no");
 }
