@@ -34,10 +34,20 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} else {
+		Boolean isFirstSignIn = (Boolean) session.getAttribute(Attribute.IS_FIRST_SIGN_IN.toString());
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		int accountId = DatabaseApi.getAccountId(username);
-		projectsHtml = DatabaseApi.populateProjects(accountId);
+		if(isFirstSignIn){
+			projectsHtml = "<p>Welcome to Olive. This is the projects page where you "+
+			"can add, edit, and delete your projects. We would like to "+
+				"remind you to go to the Account Information page by clicking "+
+				"on your username at the top right and adding a security question "+
+				"and answer in case you forget your password.<br /><br />Thanks!<br /><br />The Olive Team</p>";
+		}
+		else{
+			projectsHtml = DatabaseApi.populateProjects(accountId);
+		}
 	}
 %>
 <div id="header">
@@ -80,6 +90,14 @@
 <div id="footer"></div>
 
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="first-sign-in-dialog" class="hidden" title="Welcome to Olive!">
+<p>Welcome to Olive. This is the projects page where you
+can add, edit, and delete your projects. We would like to
+remind you to go to the Account Information page by clicking
+on your username at the top right and adding a security question
+and answer in case you forget your password.<br />Thanks!<br />The Olive Team</p>
+</div>
+
 <div id="help-dialog" class="hidden" title="How to use Olive">
 <ul>
 	<li>1. Create a new account.</li>
