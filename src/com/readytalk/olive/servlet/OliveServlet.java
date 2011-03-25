@@ -483,6 +483,7 @@ public class OliveServlet extends HttpServlet {
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
+					response.sendRedirect("editor.jsp");	// Keep the user on the same page.
 				} else {
 					out.println("Upload Failed. Error uploading video to the cloud.");
 					log.warning("Upload Failed. Error uploading video to the cloud.");
