@@ -108,11 +108,13 @@ function attachUploadNewVideoHandlers() {
 
 				bValid = bValid
 						&& checkLength(newVideoName,
-								'new-video-name', 1, 32);
+								'new-video-name',
+								MIN_VIDEO_NAME_LENGTH,
+								MAX_VIDEO_NAME_LENGTH);
 				bValid = bValid
 						&& checkRegexp(newVideoName,
-								/^([0-9a-zA-Z])+$/,
-								'Video Name may consist of a-z, A-Z, 0-9.');
+								SAFE_VIDEO_NAME_REGEX,
+								'Video name may consist of letters, numbers, underscores, and spaces.');
 				if (bValid) {
 					createVideoSpinner();
 					$('#new-video-form').submit();

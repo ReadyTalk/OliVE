@@ -10,7 +10,6 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.google.gson.Gson;
-import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.ZencoderInitialResponse;
 import com.readytalk.olive.model.Video;
 /**

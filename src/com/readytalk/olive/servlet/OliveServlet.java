@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -192,9 +190,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			if (newPassword.equals(confirmNewPassword)) {
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
 				newPasswordSet = DatabaseApi
@@ -256,16 +252,13 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
 				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
-			session
-					.setAttribute(Attribute.PROJECT_NAME.toString(),
-							projectName);
+			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
-		out
-				.println("File uploaded. Please close this window and refresh the editor page.");
+		out.println("File uploaded. Please close this window and refresh the editor page.");
 		out.close();
 	}
 
@@ -283,14 +276,15 @@ public class OliveServlet extends HttpServlet {
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = DatabaseApi.getAccountId(username);
-				session.setAttribute(Attribute.USERNAME.toString(), DatabaseApi
-						.getAccountUsername(accountId));
+				session.setAttribute(Attribute.USERNAME.toString(),
+						DatabaseApi.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
-				session.setAttribute(Attribute.EMAIL.toString(), DatabaseApi
-						.getAccountEmail(accountId));
-				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
-						.getAccountName(accountId));
-				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), false);
+				session.setAttribute(Attribute.EMAIL.toString(),
+						DatabaseApi.getAccountEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(),
+						DatabaseApi.getAccountName(accountId));
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						false);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("projects.jsp");
 			} else {
@@ -328,12 +322,8 @@ public class OliveServlet extends HttpServlet {
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
-				session
-						.setAttribute(Attribute.PASSWORD.toString(),
-								newPassword);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
@@ -385,7 +375,8 @@ public class OliveServlet extends HttpServlet {
 		String projectName = request.getParameter("new-project-name");
 		if (Security.isSafeProjectName(projectName)
 				&& Security.isUniqueProjectName(projectName, accountId)
-				&& Security.projectFits(DatabaseApi.getNumberOfProjects(accountId))) {
+				&& Security.projectFits(DatabaseApi
+						.getNumberOfProjects(accountId))) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 
 			String icon = ""; // TODO Get this from user input.
@@ -397,7 +388,8 @@ public class OliveServlet extends HttpServlet {
 			} else {
 				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
 						true);
-				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), false);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						false);
 			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
@@ -477,16 +469,17 @@ public class OliveServlet extends HttpServlet {
 			if (Security.isSafeVideoName(videoName)
 					&& Security.isSafeVideo(i)
 					&& Security.isUniqueVideoName(videoName, projectId)
-					&& Security.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
+					&& Security.videoFits(DatabaseApi
+							.getNumberOfVideos(projectId))) {
 				String videoUrl = S3Api.uploadFile(file);
 				if (videoUrl != null) {
-					DatabaseApi.addVideo(new Video(videoName,
-							videoUrl, "/olive/images/bbb480.jpg", projectId,
-							-1, -1, false)); // TODO Get icon from Zencoder.
+					DatabaseApi.addVideo(new Video(videoName, videoUrl,
+							"/olive/images/bbb480.jpg", projectId, -1, -1,
+							false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
-					response.sendRedirect("editor.jsp");	// Keep the user on the same page.
+					response.sendRedirect("editor.jsp"); // Keep the user on the same page.
 				} else {
 					out.println("Upload Failed. Error uploading video to the cloud.");
 					log.warning("Upload Failed. Error uploading video to the cloud.");
@@ -926,10 +919,9 @@ public class OliveServlet extends HttpServlet {
 			if (isWindows) {
 
 				log.info("Windows");
-				p = r
-						.exec(
-								"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
-								null, tempDir);
+				p = r.exec(
+						"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
+						null, tempDir);
 				InputStream is2 = p.getInputStream();
 				log.info("InputStream2");
 				InputStreamReader isr2 = new InputStreamReader(is2);
@@ -976,8 +968,8 @@ public class OliveServlet extends HttpServlet {
 			}
 			log.info("after last ffmpeg process");
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(p
-					.getErrorStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					p.getErrorStream()));
 			String currentLine = null;
 			while ((currentLine = in.readLine()) != null)
 				System.out.println(currentLine);

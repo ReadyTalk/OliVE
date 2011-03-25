@@ -19,15 +19,16 @@ public class Security {
 
 	private static final int MIN_USERNAME_LENGTH = 3;
 	private static final int MAX_USERNAME_LENGTH = 16;
-	private static final String SAFE_USERNAME_REGEX = "^[a-zA-z]([0-9a-z_A-z])+$";
+	private static final String SAFE_USERNAME_REGEX = "^[a-zA-z]([0-9a-zA-Z_])+$";
 
 	private static final int MIN_EMAIL_LENGTH = 6;
 	private static final int MAX_EMAIL_LENGTH = 64;
+	// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 	private static final String SAFE_EMAIL_REGEX = "^((([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-zA-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-zA-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-zA-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.?$";
 
 	private static final int MIN_PASSWORD_LENGTH = 5;
 	private static final int MAX_PASSWORD_LENGTH = 128;
-	private static final String SAFE_PASSWORD_REGEX = "^([0-9a-zA-Z])+$";
+	private static final String SAFE_PASSWORD_REGEX = "^[a-zA-Z0-9_]$|^[a-zA-Z0-9_]+[a-zA-Z0-9_ ]*[a-zA-Z0-9_]+$"; // Prevent spaces at the beginning or end, but don't require at least 2 characters.
 
 	private static final int MIN_NAME_LENGTH = 1;
 	private static final int MAX_NAME_LENGTH = 32;
@@ -45,7 +46,7 @@ public class Security {
 
 	public static final double MIN_SPLIT_TIME_IN_SECONDS = 0; // ASSUME: No video is shorter than 0 seconds.
 	public static final double MAX_SPLIT_TIME_IN_SECONDS = 14400; // ASSUME: No video is longer than 4 hours.
-	
+
 	private static final int MIN_SECURITY_QUESTION_LENGTH = 1;
 	private static final int MAX_SECURITY_QUESTION_LENGTH = 128;
 	private static final String SAFE_SECURITY_QUESTION_REGEX = "^[0-9a-zA-Z .,]+[?.]*$";
@@ -53,7 +54,7 @@ public class Security {
 	private static final int MIN_SECURITY_ANSWER_LENGTH = 1;
 	private static final int MAX_SECURITY_ANSWER_LENGTH = 128;
 	private static final String SAFE_SECURITY_ANSWER_REGEX = "^([0-9a-zA-Z .,])+$";
-	
+
 	// Why some characters are allowed:
 	// http://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-email-address
 	private static final String[] ILLEGAL_STRINGS = { "!", "&", "*", "(", ")",

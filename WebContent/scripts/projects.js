@@ -21,7 +21,7 @@ function createNewProjectContainer(projectName, projectNum, projectIcon) {
 	var projectContainer = '<div id="project-container-'
 		+ projectNum
 		+ '" class="project-container"><a href="OliveServlet?projectName='
-		+ projectName
+		+ encodeURI(projectName)	// Ensure a safe link.
 		+ '"><img id="project-image-'
 		+ projectNum
 		+ '" class="project-image" src="'
@@ -75,42 +75,44 @@ function populateProjects() {
 }
 
 function attachCreateNewProjectHandlers() {
-	var newProjectName = $("#new-project-name"),
+	var newProjectName = $('#new-project-name'),
 		allFields = $([]).add(newProjectName);
 	
-	$("#new-project-dialog-form").dialog({
+	$('#new-project-dialog-form').dialog({
 		autoOpen : false,
 		height : 350,
 		width : 400,
 		modal : true,
 		buttons : {
-			"Create New Project" : function () {
+			'Create New Project' : function () {
 				var bValid = true;
-				allFields.removeClass("ui-state-error");
+				allFields.removeClass('ui-state-error');
 
 				bValid = bValid
 						&& checkLength(newProjectName,
-								"new-project-name", 1, 32);
+								'new-project-name',
+								MIN_PROJECT_NAME_LENGTH,
+								MAX_PROJECT_NAME_LENGTH);
 				bValid = bValid
 						&& checkRegexp(newProjectName,
-								/^([0-9a-zA-Z])+$/,
-								"Project Name may consist of a-z, A-Z, 0-9.");
+								SAFE_PROJECT_NAME_REGEX,
+								'Project name may consist of letters, numbers, underscores, and spaces.');
 				if (bValid) {
-					$("#new-project-form").submit();
-					$(this).dialog("close");
+					$('#new-project-form').submit();
+					$(this).dialog('close');
 				}
 			},
 			Cancel : function () {
-				$(this).dialog("close");
+				$(this).dialog('close');
 			}
 		},
 		close : function () {
-			allFields.val("").change().removeClass("ui-state-error");
+			allFields.val('').change().removeClass('ui-state-error');
 		}
 	});
 
-	$("#create-new-project").click(function() {
-		$("#new-project-dialog-form").dialog("open");
+	$('#create-new-project').click(function() {
+		$('#new-project-dialog-form').dialog('open');
 	});
 }
 
