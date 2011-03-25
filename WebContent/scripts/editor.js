@@ -6,6 +6,10 @@
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
+	populateVideos();
+});
+
+function attachHandlers() {
 	attachUploadNewVideoHandlers();
 	attachDeleteVideoHandlers();
 	attachSplitVideoHandlers();
@@ -13,57 +17,129 @@ jQuery(function($) {
 	attachRenameVideoHandlers();
 	//attachPublishButtonHandlers();
 	enableDragAndDrop();
-	getVideoInformation();
-});
+}
+
+function createSpinner() {
+	
+}
+
+function createNewVideoContainer(videoName, videoNum, videoIcon) {
+	var videoContainer = '<div id="video-container-'
+		+ videoNum
+		+ '" class="video-container"><img id="video-image-'
+		+ videoNum
+		+ '" class="video-image" src="'
+		+ videoIcon
+		+ '" alt="video-image-'
+		+ videoNum
+		+ '" /><div class="video-name">'
+		+ videoName
+		+ '</div><div class="video-controls"><small><a id="split-link-'
+		+ videoNum
+		+ '" class="split-link link hidden">Split</a>'
+		+ '<span class="video-controls-divider hidden"> | </span>'
+		+ '<a id=delete-link-"'
+		+ videoNum
+		+ '" class="delete-link warning">Delete</a></small></div></div>';
+	
+	$('#videos').append(videoContainer);
+	
+	// Return the object that was just appended (with the jQuery wrapper stripped off).
+	return $('#video-container-' + videoNum).get(0);
+}
+
+function populateVideos() {
+	$('.video-container').hide();
+	
+	var requestData = '{'
+		+    '"command" : "getVideoInformation"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		var poolPositions = [];
+		var timelinePositions = [];
+		for (var i = 0; i < responseData.length; ++i) {
+			var element = createNewVideoContainer(responseData[i].name, i, responseData[i].icon);
+			$(element).data('name', responseData[i].name);
+			$(element).data('url', responseData[i].url);
+			$(element).data('icon', responseData[i].icon);
+			
+			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
+			if (responseData[i].poolPosition != -1) {
+				$(element).data('poolPosition', responseData[i].poolPosition);
+				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
+			}
+			if (responseData[i].timelinePosition != -1) {
+				$(element).data('timelinePosition', responseData[i].timelinePosition);
+				timelinePositions[(responseData.length - 1) - responseData[i].timelinePosition] = element;	// Sort in reverse order to work with prepending.
+			}
+			
+			$(element).data('isSelected', responseData[i].isSelected);
+			makeSelectionVisible(element);
+		}
+		// Append in the sorted order
+		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
+			$('#videos').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
+		}
+		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
+			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
+		}
+		
+		$('.video-container').show();
+		
+		enableOrDisablePublishButton();
+		
+		attachHandlers();	// This must go inside the ajax callback.
+	}, null);	// Defined in "/olive/scripts/master.js".
+}
 
 function attachUploadNewVideoHandlers() {
-	var newVideoName = $("#new-video-name"),
+	var newVideoName = $('#new-video-name'),
 		allFields = $([]).add(newVideoName);
 	
-	$("#new-video-dialog-form").dialog({
+	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
 		height : 400,
 		width : 400,
 		modal : true,
 		buttons : {
-			"Upload New Video" : function () {
+			'Upload New Video' : function () {
 				var bValid = true;
-				allFields.removeClass("ui-state-error");
+				allFields.removeClass('ui-state-error');
 
 				bValid = bValid
 						&& checkLength(newVideoName,
-								"new-video-name", 1, 32);
+								'new-video-name', 1, 32);
 				bValid = bValid
 						&& checkRegexp(newVideoName,
 								/^([0-9a-zA-Z])+$/,
-								"Video Name may consist of a-z, A-Z, 0-9.");
+								'Video Name may consist of a-z, A-Z, 0-9.');
 				if (bValid) {
 					createSpinner();
-					$("#new-video-form").submit();
-					$(this).dialog("close");
+					$('#new-video-form').submit();
+					$(this).dialog('close');
 				}
 			},
 			Cancel : function () {
-				$(this).dialog("close");
+				$(this).dialog('close');
 			}
 		},
 		close : function () {
-			allFields.val("").change().removeClass("ui-state-error");
+			allFields.val('').change().removeClass('ui-state-error');
 		}
 	});
 
-	$("#upload-new-video-button").click(function() {
-		$("#new-video-dialog-form").dialog("open");
+	$('#upload-new-video-button').click(function() {
+		$('#new-video-dialog-form').dialog('open');
 	});
 }
 
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
 	
-	$('.delete-video').click(function () {
+	$('.delete-link').click(function () {
 		doNotSelectThisTime();
 		$('#confirm-delete-video-dialog').dialog('open');
-		videoToDelete = this;
+		videoToDelete = $(this).parent().parent().parent();
 	});
 	
 	$('#confirm-delete-video-dialog').dialog({
@@ -73,7 +149,7 @@ function attachDeleteVideoHandlers() {
 		modal: true,
 		buttons: {
 			'Delete': function () {
-				deleteVideo($(videoToDelete).attr('id'));	// We don't want the context to be the dialog element, but rather the element that triggered it.
+				deleteVideo($(videoToDelete).data('name'));	// We don't want the context to be the dialog element, but rather the element that triggered it.
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -100,8 +176,9 @@ function attachSplitVideoHandlers() {
 		if (video.currentTime === 0 || video.ended) {
 			$('#invalid-split-dialog').dialog('open');
 		} else {
+			var videoToSplit = $(this).parent().parent().parent();
 			var maximumZencoderDecimalPlaces = 2;
-			splitVideo($(this).attr('id'),
+			splitVideo($(videoToSplit).data('name'),
 					video.currentTime.toFixed(maximumZencoderDecimalPlaces));
 		}
 		doNotSelectThisTime();
@@ -236,13 +313,13 @@ function makeSelectionVisible(element) {
 function select(element) {
 	$(element).data('isSelected', true);
 	makeSelectionVisible(element);
-	addToSelected($(element).attr('id'));
+	addToSelected($(element).data('name'));
 }
 
 function unselect(element) {
 	$(element).data('isSelected', false);
 	makeSelectionVisible(element);
-	removeFromSelected($(element).attr('id'));
+	removeFromSelected($(element).data('name'));
 }
 
 function unselectAll() {
@@ -252,8 +329,7 @@ function unselectAll() {
 }
 
 //Perform an addToSelected request
-function addToSelected(id) {
-	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+function addToSelected(videoName) {
 	var requestData = '{'
 		+    '"command" : "addToSelected",'
 		+    '"arguments" : {'
@@ -264,8 +340,7 @@ function addToSelected(id) {
 }
 
 // Perform a removeFromSelected request
-function removeFromSelected(id) {
-	var videoName = id;	// TODO This works by definition (but the definition should probably change).
+function removeFromSelected(videoName) {
 	var requestData = '{'
 		+    '"command" : "removeFromSelected",'
 		+    '"arguments" : {'
@@ -286,7 +361,7 @@ function updatePlayerWithNewElement(element) {
 }
 
 function updatePlayerWithNoElements() {
-	$('#player source').remove();
+	$('#player > source').remove();
 	$('#player').removeAttr('poster');
 }
 
@@ -329,7 +404,7 @@ function updatePosition(command, collectionItems) {
 	if ($(collectionItems).length > 0) {
 		$(collectionItems).each(function(index) {
 			requestData += '{'
-			+          '"video" : "' + $(this).attr('id') + '",'
+			+          '"video" : "' + $(this).data('name') + '",'
 			+          '"position" : ' + index
 			+        '},';	// This will result in an extra comma.
 		});
@@ -345,83 +420,12 @@ function updatePosition(command, collectionItems) {
 
 // Perform an updateVideosPosition request
 function updateVideosPosition() {
-	updatePosition('updateVideosPosition', '#videos > div');
+	updatePosition('updateVideosPosition', '#videos > .video-container');
 }
 
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
-	updatePosition('updateTimelinePosition', '#timeline > div');
-}
-
-function createSpinner() {
-	
-}
-
-function createVideoContainer(videoName, videoNum, videoIcon) {
-	var videoContainer = '<div id="'
-		+ videoName
-		+ '" class="video-container"><img id="olive'
-		+ videoNum
-		+ '" class="video-image"\n'
-		+ 'src="'
-		+ videoIcon
-		+ '" alt="olive'
-		+ videoNum
-		+ '" />\n'
-		+ '<div class="video-name">'
-		+ videoName
-		+ '</div>\n'
-		+ '<div class="video-controls"><small><a id="'
-		+ videoName
-		+ '" class="link split-link hidden">Split</a>\n'
-		+ '<span class="video-controls-divider hidden"> | </span>'
-		+ '<a id="' // TODO Assign the videoName elsewhere for the JavaScript to access.
-		+ videoName
-		+ '" class="warning delete-video">Delete</a></small></div>\n'
-		+ '</div>\n';
-	$('#videos').append(videoContainer);
-}
-
-function getVideoInformation() {
-	$('.video-container').hide();
-	
-	var requestData = '{'
-		+    '"command" : "getVideoInformation"'
-		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
-		var poolPositions = [];
-		var timelinePositions = [];
-		for (var i = 0; i < responseData.length; ++i) {
-			//createVideoContainer(videoName, videoNum, videoIcon);
-			var element = $('#' + responseData[i].name).get(0);	// Strip off jQuery wrapper.
-			$(element).data('url', responseData[i].url);
-			$(element).data('icon', responseData[i].icon);
-			
-			// Modified from: http://stackoverflow.com/questions/600700/jquery-javascript-reordering-rows/617349#617349
-			if (responseData[i].poolPosition != -1) {
-				$(element).data('poolPosition', responseData[i].poolPosition);
-				poolPositions[(responseData.length - 1) - responseData[i].poolPosition] = element;	// Sort in reverse order to work with prepending.
-			}
-			if (responseData[i].timelinePosition != -1) {
-				$(element).data('timelinePosition', responseData[i].timelinePosition);
-				timelinePositions[(responseData.length - 1) - responseData[i].timelinePosition] = element;	// Sort in reverse order to work with prepending.
-			}
-			
-			$(element).data('isSelected', responseData[i].isSelected);
-			makeSelectionVisible(element);
-		}
-		// Append in the sorted order
-		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
-			$('#videos').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
-		}
-		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
-			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
-		}
-		
-		$('.video-container').show();
-		
-		enableOrDisablePublishButton();
-	}, null);	// Defined in "/olive/scripts/master.js".
+	updatePosition('updateTimelinePosition', '#timeline > .video-container');
 }
 
 function enableOrDisablePublishButton() {

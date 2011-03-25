@@ -938,67 +938,7 @@ public class DatabaseApi {
 		return setAllVideoPoolOrTimelinePositionsToNull(projectId,
 				"TimelinePosition");
 	}
-	/**
-	 * Populates video properties in the olive database
-	 * @param projectId unique project number given to a project
-	 * @return video properties
-	 */
-	public static String populateVideos(int projectId) {
-		String videos = "";
-		Connection conn = getDBConnection();
-		try {
-			Statement st = conn.createStatement();
-			String s = "USE OliveData;";
-			st.executeUpdate(s);
-			s = "SELECT * FROM Videos WHERE ProjectID = '" + projectId + "';";
-			ResultSet r = st.executeQuery(s);
-			if (r.first()) {
-				int videoNum = 0;
-				do {
-					videoNum += 1; // TODO This is inconsistent with projects.
-					String videoName = r.getString("Name");
-					String videoIcon = "/olive/images/olive.png";
-
-					videos += "<div id=\""
-							+ videoName
-							+ "\" class=\"video-container\"><img id=\"olive"
-							+ videoNum
-							+ "\" class=\"video-image\""
-							+ "\n"
-							+ "src=\""
-							+ videoIcon
-							+ "\" alt=\"olive"
-							+ videoNum
-							+ "\" />"
-							+ "\n"
-							+ "<div class=\"video-name\">"
-							+ videoName
-							+ "</div>"
-							+ "\n"
-							+ "<div class=\"video-controls\"><small><a id=\""
-							+ videoName
-							+ "\" class=\"link split-link hidden\">Split</a>"
-							+ "<span class=\"video-controls-divider hidden\">"
-							+ " | "
-							+ "</span>"
-							+ "<a id=\"" // TODO Assign the videoName elsewhere for the JavaScript to access.
-							+ videoName
-							+ "\" class=\"warning delete-video\">Delete</a></small></div>"
-							+ "\n"
-							+ "</div>"
-							+ "\n";
-				} while (r.next());
-			}
-			return videos;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(conn);
-		}
-		return videos;
-		// TODO change db to have unique usernames for accounts and names for
-		// both projects and videos in one project
-	}
+	
 	/**
 	 * brings the lists of videoIds in a given project
 	 * @param projectId unique project number given to a project

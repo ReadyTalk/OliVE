@@ -94,7 +94,7 @@
 <p>Delete project? This will also delete the project's videos.</p>
 </div>
 
-<div id="new-project-dialog-form" title="Create new user">
+<div id="new-project-dialog-form" class="hidden" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
 <form id="new-project-form" action="OliveServlet" name="process"
 	method="post">

@@ -150,7 +150,7 @@ function updatePosition(command, collectionItems) {
 
 //Perform an updateProjectsPosition request
 function updateProjectsPosition() {
-	updatePosition('updateProjectsPosition', '#projects > div');
+	updatePosition('updateProjectsPosition', '#projects > .project-container');
 }
 
 // Perform a deleteProject request

@@ -30,7 +30,6 @@
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	String projectName = "";
-	String videosHtml = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
@@ -47,7 +46,6 @@
 		int accountId = DatabaseApi.getAccountId(username);
 		int projectId = DatabaseApi
 				.getProjectId(projectName, accountId);
-		videosHtml = DatabaseApi.populateVideos(projectId);
 	}
 %>
 <div id="header">
@@ -75,7 +73,7 @@
 	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
 	class="ui-button-text">Upload New Video</span></button>
 </span></div>
-<div id="videos"><%=videosHtml%></div>
+<div id="videos"></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
 
@@ -133,7 +131,7 @@ to Computer</button>
 </div>
 <!-- end #dialog-form -->
 
-<div id="new-video-dialog-form" title="Create new user">
+<div id="new-video-dialog-form" class="hidden" title="Create new user">
 <p class="validateTips">All form fields are required.</p>
 <form id="new-video-form" action="OliveServlet" name="process"
 	enctype="multipart/form-data" method="post">
