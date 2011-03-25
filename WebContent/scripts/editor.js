@@ -138,7 +138,7 @@ function attachUploadNewVideoHandlers() {
 function attachDeleteVideoHandlers() {
 	var videoToDelete;
 	
-	$('.delete-link').click(function () {
+	$('.delete-video-link').click(function () {
 		doNotSelectThisTime();
 		$('#confirm-delete-video-dialog').dialog('open');
 		videoToDelete = $(this).parent().parent().parent();
@@ -173,7 +173,7 @@ function deleteVideo(videoName) {
 }
 
 function attachSplitVideoHandlers() {
-	$('.split-link').click(function () {
+	$('.split-video-link').click(function () {
 		var video = $('video').get(0);
 		if (video.currentTime === 0 || video.ended) {
 			$('#invalid-split-dialog').dialog('open');
@@ -299,14 +299,14 @@ function makeSelectionVisible(element) {
 		$(element).css( {
 			'background-color': '#edf4e6'	// A lighter version of the Olive color
 		});
-		$(element).find('.split-link').removeClass('hidden');
+		$(element).find('.split-video-link').removeClass('hidden');
 		$(element).find('.video-controls-divider').removeClass('hidden');
 		updatePlayerWithNewElement(element);
 	} else {
 		$(element).css( {
 			'background-color': ''
 		});
-		$(element).find('.split-link').addClass('hidden');
+		$(element).find('.split-video-link').addClass('hidden');
 		$(element).find('.video-controls-divider').addClass('hidden');
 		updatePlayerWithNoElements();
 	}
