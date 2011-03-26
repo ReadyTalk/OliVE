@@ -27,6 +27,8 @@
 			.toString());
 	Boolean isCorrect = (Boolean) session
 			.getAttribute(Attribute.IS_CORRECT.toString());
+	String username = (String) session.getAttribute(Attribute.USERNAME.toString());
+	String securityQuestion = (String) session.getAttribute(Attribute.SECURITY_QUESTION.toString());
 	String confirmation = "";
 	if (isCorrect == null) {
 		confirmation = "";
@@ -34,13 +36,13 @@
 		if (isSafe == null) {
 			confirmation = "";
 		} else if (isSafe) {
-			confirmation = "Username does not exist or a security question has not been entered yet";
+			confirmation = "Answer does not match database records";
 		} else {
 			confirmation = "Unsafe input";
 		}
 	} else if (isCorrect) {
 		confirmation = "";
-		response.sendRedirect("securityQuestion.jsp");
+		response.sendRedirect("new-password-form.jsp");
 	}
 	session.removeAttribute(Attribute.IS_SAFE.toString());
 	session.removeAttribute(Attribute.IS_CORRECT.toString());
@@ -63,17 +65,20 @@
 <div id="main">
 <div id="edit-account-container">
 <h2>Forgot Password?</h2>
-<p>Please enter your username to retrieve your security question.
+<p>Welcome <%=username%>. Please enter the answer you gave for your security question.
 Thank you</p>
 <!-- end #about-title -->
 
-<form id="security-question-form" action="OliveServlet" name="process"
+<form id="security-question-form-2" action="OliveServlet" name="process"
 	method="post">
-<p><label for="username">Username</label><br />
-<input type="text" name="username" id="username" value="" size="32"
-	maxlength="32" /></p>
-<input type="hidden" name="FormName" value="security-question-form"></input><br />
-<input type="submit" value="Get Security Question" /><span><%=confirmation%></span>
+<p>Security Question:<br />
+<%=securityQuestion%>
+</p>
+<p><label for="security_answer">Security Answer</label><br />
+<input type="text" name="security_answer" id="security_answer"
+	value="" size="32" maxlength="128" /></p>
+<input type="hidden" name="FormName" value="security-question-form-2"></input><br />
+<input type="submit" value="Recover Password" /><span><%=confirmation%></span>
 </form>
 </div>
 <!-- end #main --></div>

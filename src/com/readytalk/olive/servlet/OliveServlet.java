@@ -145,7 +145,9 @@ public class OliveServlet extends HttpServlet {
 			} else if (id.equals("AddProject")) {
 				handleAddProject(request, response, session);
 			} else if (id.equals("security-question-form")) {
-				handleSecurityQuestion(request, response, session);
+				handleSecurityQuestionRetrieval(request, response, session);
+			} else if (id.equals("security-question-form-2")) {
+				handleSecurityAnswer(request, response, session);
 			} else if (id.equals("new_password")) {
 				handleNewPassword(request, response, session);
 			} else {
@@ -212,32 +214,59 @@ public class OliveServlet extends HttpServlet {
 		session.removeAttribute(Attribute.USERNAME.toString());
 	}
 
-	private void handleSecurityQuestion(HttpServletRequest request,
+	private void handleSecurityQuestionRetrieval(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		// TODO Auto-generated method stub
 		String username = request.getParameter("username");
-		String securityQuestion = request.getParameter("security_question");
-		String securityAnswer = request.getParameter("security_answer");
-		Boolean isCorrect;
-		if (Security.isSafeUsername(username)
-				&& Security.isSafeSecurityQuestion(securityQuestion)
-				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+		if (Security.isSafeUsername(username)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			isCorrect = DatabaseApi.isCorrectSecurityInfo(username,
-					securityQuestion, securityAnswer);
-			session.setAttribute(Attribute.IS_CORRECT.toString(), isCorrect);
-			if (isCorrect) {
-				session.setAttribute(Attribute.USERNAME.toString(), username);
-				response.sendRedirect("new-password-form.jsp");
-				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
-			} else {
+			if(DatabaseApi.usernameExists(username)){
+				String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
+				if (securityQuestion!=null) {
+					session.setAttribute(Attribute.SECURITY_QUESTION.toString(), securityQuestion);
+					session.setAttribute(Attribute.USERNAME.toString(), username);
+					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
+					response.sendRedirect("securityQuestion.jsp");
+				} else {
+					session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+					response.sendRedirect("forgot.jsp");
+				}
+			}
+			else {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 				response.sendRedirect("forgot.jsp");
 			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 			session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 			response.sendRedirect("forgot.jsp");
+		}
+	}
+	
+	private void handleSecurityAnswer(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws UnsupportedEncodingException, IOException {
+		// TODO Auto-generated method stub
+		String answer = request.getParameter("security_answer");
+		String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+		if (Security.isSafeSecurityAnswer(answer)) {
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+			String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
+			Boolean isCorrect = DatabaseApi.isCorrectSecurityInfo(username, securityQuestion, answer);
+			if (isCorrect) {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), true);
+				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
+				response.sendRedirect("new-password-form.jsp");
+			} 
+			else {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+				response.sendRedirect("securityQuestion.jsp");
+			}
+		} else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+			session.setAttribute(Attribute.IS_CORRECT.toString(), false);
+			response.sendRedirect("securityQuestion.jsp");
 		}
 	}
 
