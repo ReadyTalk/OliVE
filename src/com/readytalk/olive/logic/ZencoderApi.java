@@ -91,11 +91,15 @@ public class ZencoderApi {
 	}
 
 	private static String getJsonForSplit(String input, String baseUrl,
-			String filename, double startClip, double clipLength) {
+			String filename, double startClip, double clipLength,
+			String thumbBaseUrl, String thumbPrefix, String thumbFormat) {
 		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
-				+ "\"filename\":\"" + filename + "\",\"public\":1,"
+				+ "\"filename\":\"" + filename + "\"," + "\"thumbnails\":{"
+				+ "\"number\":1," + "\"base_url\":\"" + thumbBaseUrl + "\","
+				+ "\"prefix\":\"" + thumbPrefix + "\"," + "\"format\":\""
+				+ thumbFormat + "\"," + "\"public\":1" + "}," + "\"public\":1,"
 				+ "\"start_clip\":" + startClip + "," + "\"clip_length\":"
 				+ clipLength + "}]}";
 		System.out.println(data);
@@ -130,6 +134,7 @@ public class ZencoderApi {
 		double[] clipLengthInSeconds = {
 				splitTimeInSeconds - maximumStartTimeInSeconds,
 				minimumEndTimeInSeconds - splitTimeInSeconds }; // Draw a picture to understand this.
+		String thumbFormat = "jpg";
 		Video[] videoFragments = new Video[2];
 		String[] responses = new String[2];
 
@@ -137,14 +142,17 @@ public class ZencoderApi {
 		for (int i = 0; i < 2; ++i) {
 			String videoFragmentFileName = S3Api
 					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
+			String thumbPrefix = S3Api.getTime(); // The video name can't be included because it has a ".".
 			responses[i] = ZencoderApi.sendReceive(ZencoderApi.getJsonForSplit(
 					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
-					splitStartInSeconds[i], clipLengthInSeconds[i]), new URL(
-					ZENCODER_API_JOBS_URL));
+					splitStartInSeconds[i], clipLengthInSeconds[i], awsBaseUrl,
+					thumbPrefix, thumbFormat), new URL(ZENCODER_API_JOBS_URL));
+			String videoIcon = awsBaseUrl + thumbPrefix + "_0000."
+					+ thumbFormat;
 			videoFragments[i] = new Video(
 					DatabaseApi.getVideoName(videoId) + i, S3Api.AWS_URL_PREFIX
-							+ videoFragmentFileName,
-					"/olive/images/bbb480.jpg", -1, -1, -1, false); // TODO Get icon from Zencoder
+							+ videoFragmentFileName, videoIcon, -1, -1, -1,
+					false); // TODO Get icon from Zencoder
 		}
 
 		// Wait for the first and second halves of the original video.
