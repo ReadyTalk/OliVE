@@ -35,6 +35,7 @@ import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
+import com.readytalk.olive.json.GetAccountInformationResponse;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
@@ -309,8 +310,6 @@ public class OliveServlet extends HttpServlet {
 				.getParameter("confirm-new-password");
 		String securityQuestion = request.getParameter("security_question");
 		String securityAnswer = request.getParameter("security_answer");
-		log.info("Security question: " + securityQuestion
-				+ ". Security Answer: " + securityAnswer);
 		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)
@@ -544,6 +543,8 @@ public class OliveServlet extends HttpServlet {
 
 		if (generalRequest.command.equals("deleteAccount")) {
 			handleDeleteAccount(request, response, session, json);
+		} else if (generalRequest.command.equals("getAccountInformation")) {
+			handleGetAccountInformation(request, response, session, json);
 		} else if (generalRequest.command.equals("getProjects")) {
 			handleGetProjects(request, response, session, json);
 		} else if (generalRequest.command.equals("createProject")) {
@@ -610,6 +611,27 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(deleteAccountRequest.arguments.account
 				+ " deleted successfully.");
+		out.close();
+	}
+
+	private void handleGetAccountInformation(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		String name = (String) session.getAttribute(Attribute.NAME.toString());
+		String email = (String) session
+				.getAttribute(Attribute.EMAIL.toString());
+		String password = (String) session.getAttribute(Attribute.PASSWORD
+				.toString());
+		String securityQuestion = (String) session
+				.getAttribute(Attribute.SECURITY_QUESTION.toString());
+		String securityAnswer = (String) session
+				.getAttribute(Attribute.SECURITY_ANSWER.toString());
+		out.println(new Gson().toJson(new GetAccountInformationResponse(name,
+				email, password, securityQuestion, securityAnswer)));
+		
 		out.close();
 	}
 

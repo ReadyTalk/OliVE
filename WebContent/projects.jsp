@@ -35,7 +35,6 @@
 	} else {
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
-		int accountId = DatabaseApi.getAccountId(username);
 	}
 %>
 <div id="header">

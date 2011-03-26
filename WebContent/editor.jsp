@@ -26,26 +26,21 @@
 </head>
 <body>
 <%
-	String username = "";
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
+	String username = "";
 	String projectName = "";
-	if (isAuthorized == null) {
-		response.sendRedirect("index.jsp");
-	} else if (!isAuthorized) {
+	if (isAuthorized == null || !isAuthorized) { // Short-circuiting
 		response.sendRedirect("index.jsp");
 	} else {
-		username = (String) session.getAttribute(Attribute.USERNAME
-				.toString());
 		projectName = (String) session
 				.getAttribute(Attribute.PROJECT_NAME.toString());
 		if (projectName == null) {
 			response.sendRedirect("projects.jsp");
+		} else {
+			username = (String) session.getAttribute(Attribute.USERNAME
+					.toString());
 		}
-
-		int accountId = DatabaseApi.getAccountId(username);
-		int projectId = DatabaseApi
-				.getProjectId(projectName, accountId);
 	}
 %>
 <div id="header">
