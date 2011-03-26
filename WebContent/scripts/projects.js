@@ -10,6 +10,7 @@ jQuery(function($) {
 });
 
 function attachHandlers() {
+	printFirstSignInMessage();
 	attachCreateNewProjectHandlers();
 	attachDeleteProjectHandlers();
 	attachRenameProjectHandlers();
@@ -72,6 +73,24 @@ function populateProjects() {
 		
 		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
 	}, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function printFirstSignInMessage() {
+	var requestData = '{'
+		+    '"command" : "isFirstSignIn"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		if (responseData === true) {
+			var welcomeMessage = '<p>Welcome to Olive. This is the projects '
+				+ 'page where you can add, edit, and delete your projects. We '
+				+ 'would like to remind you to go to the Account Information '
+				+ 'page by clicking on your username at the top right and '
+				+ 'adding a security question and answer in case you forget '
+				+ 'your password.<br /><br />Thanks!<br /><br />The Olive '
+				+ 'Team</p>';
+			$('#projects').append(welcomeMessage);
+		}
+	}, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function attachCreateNewProjectHandlers() {
@@ -145,7 +164,7 @@ function renameProject(oldProjectName, newProjectName) {
 		+        '"newProjectName" : "' + newProjectName + '"'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
+	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachDeleteProjectHandlers() {
