@@ -611,6 +611,8 @@ public class OliveServlet extends HttpServlet {
 			handleUpdateTimelinePosition(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideoInformation")) {
 			handleGetVideoInformation(request, response, session, json);
+		} else if (generalRequest.command.equals("isFirstSignIn")) {
+			handleIsFirstSignIn(request, response, session, json);
 		} else {
 			log.warning("JSON request not recognized.");
 			log.warning("JSON request not recognized.");
@@ -1083,6 +1085,16 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(videoString);
+		out.close();
+	}
+
+	private void handleIsFirstSignIn(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(new Gson().toJson((Boolean) session
+				.getAttribute(Attribute.IS_FIRST_SIGN_IN.toString())));
 		out.close();
 	}
 }
