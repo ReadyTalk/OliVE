@@ -471,11 +471,12 @@ public class OliveServlet extends HttpServlet {
 					&& Security.isUniqueVideoName(videoName, projectId)
 					&& Security.videoFits(DatabaseApi
 							.getNumberOfVideos(projectId))) {
-				String videoUrl = S3Api.uploadFile(file);
+				String[] videoUrlAndIcon = S3Api.uploadFile(file);
+				String videoUrl = videoUrlAndIcon[0];
+				String videoIcon = videoUrlAndIcon[1];
 				if (videoUrl != null) {
 					DatabaseApi.addVideo(new Video(videoName, videoUrl,
-							"/olive/images/bbb480.jpg", projectId, -1, -1,
-							false)); // TODO Get icon from Zencoder.
+							videoIcon, projectId, -1, -1, false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();

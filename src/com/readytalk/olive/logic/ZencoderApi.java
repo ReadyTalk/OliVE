@@ -12,15 +12,18 @@ import java.net.URLConnection;
 import com.google.gson.Gson;
 import com.readytalk.olive.json.ZencoderInitialResponse;
 import com.readytalk.olive.model.Video;
+
 /**
- * Provides tool to use Zencoder from Olive 
+ * Provides tool to use Zencoder from Olive
+ * 
  * @author Team Olive
- *
+ * 
  */
 // Modified from: http://www.exampledepot.com/egs/java.net/post.html
 public class ZencoderApi {
 	private static final String ZENCODER_API_JOBS_URL = "https://app.zencoder.com/api/jobs/";
 	private static final String ZENCODER_API_OUTPUTS_URL_PREFIX = "https://app.zencoder.com/api/outputs/";
+
 	/**
 	 * 
 	 * @param outputId
@@ -83,7 +86,7 @@ public class ZencoderApi {
 		outputStreamWriter.flush();
 		System.out.println("Data sent to Zencoder.");
 		outputStreamWriter.close();
-		
+
 		return getResponse(conn.getInputStream());
 	}
 
@@ -99,15 +102,20 @@ public class ZencoderApi {
 		return data;
 	}
 
-	private static String getJsonForConvertToOgg(String input, String baseUrl,
-			String filename, String videoCodec, String audioCodec) {
+	private static String getJsonForConvertToOgg(String input,
+			String videoBaseUrl, String filename, String videoCodec,
+			String audioCodec, String thumbBaseUrl, String thumbPrefix,
+			String thumbFormat) {
 		// Codec and file extension must match.
 		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
-				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
+				+ "\"output\":[{\"base_url\":\"" + videoBaseUrl + "\","
 				+ "\"filename\":\"" + filename + "\",\"video_codec\":\""
-				+ videoCodec + "\",\"audio_codec\":\"" + audioCodec
-				+ "\",\"public\":1" + "}]}";
+				+ videoCodec + "\",\"audio_codec\":\"" + audioCodec + "\","
+				+ "\"thumbnails\":{" + "\"number\":1," + "\"base_url\":\""
+				+ thumbBaseUrl + "\"," + "\"prefix\":\"" + thumbPrefix + "\","
+				+ "\"format\":\"" + thumbFormat + "\"," + "\"public\":1" + "},"
+				+ "\"public\":1" + "}]}";
 		System.out.println(data);
 		return data;
 	}
@@ -124,7 +132,7 @@ public class ZencoderApi {
 				minimumEndTimeInSeconds - splitTimeInSeconds }; // Draw a picture to understand this.
 		Video[] videoFragments = new Video[2];
 		String[] responses = new String[2];
-		
+
 		// Request the first and second halves of the original video.
 		for (int i = 0; i < 2; ++i) {
 			String videoFragmentFileName = S3Api
@@ -138,33 +146,39 @@ public class ZencoderApi {
 							+ videoFragmentFileName,
 					"/olive/images/bbb480.jpg", -1, -1, -1, false); // TODO Get icon from Zencoder
 		}
-		
+
 		// Wait for the first and second halves of the original video.
 		for (int i = 0; i < 2; ++i) {
-			ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
-					responses[i], ZencoderInitialResponse.class);
+			ZencoderInitialResponse zencoderInitialResponse = new Gson()
+					.fromJson(responses[i], ZencoderInitialResponse.class);
 			waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
 		}
 
 		return videoFragments;
 	}
 
-	public static String convertToOgg(String videoUrl) throws IOException {
+	public static String[] convertToOgg(String videoUrl) throws IOException {
 		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
 		String newExtension = ".ogv";
 		String convertedVideoFileName = S3Api
 				.getNameFromUrlWithNewTimeStamp(videoUrl) + newExtension;
 		String newVideoCodec = "theora";
 		String newAudioCodec = "vorbis";
+		String thumbPrefix = S3Api.getTime(); // The video name can't be included because it has a ".".
+		String thumbFormat = "jpg";
 
 		String response = ZencoderApi.sendReceive(
 				getJsonForConvertToOgg(videoUrl, awsBaseUrl,
-						convertedVideoFileName, newVideoCodec, newAudioCodec),
-				new URL(ZENCODER_API_JOBS_URL));
+						convertedVideoFileName, newVideoCodec, newAudioCodec,
+						awsBaseUrl, thumbPrefix, thumbFormat), new URL(
+						ZENCODER_API_JOBS_URL));
 		ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
 				response, ZencoderInitialResponse.class);
 		waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
-		
-		return S3Api.AWS_URL_PREFIX + convertedVideoFileName;
+
+		String[] videoUrlAndIcon = new String[] {
+				awsBaseUrl + convertedVideoFileName,
+				awsBaseUrl + thumbPrefix + "_0000." + thumbFormat };
+		return videoUrlAndIcon;
 	}
 }

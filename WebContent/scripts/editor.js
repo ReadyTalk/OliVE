@@ -46,7 +46,7 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 
 function createVideoSpinner() {
 	var videoContainer = '<div class="video-container">'
-		+ '<img class="video-image" src="/olive/images/ajax-loader.gif"/>'
+		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" />'
 		+ '<div><p>Preparing video...</p></div>'
 		+ '</div>';
 	$('#videos').append(videoContainer);
