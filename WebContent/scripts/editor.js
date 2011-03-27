@@ -472,6 +472,7 @@ function selectAndPlayNextVideo() {
 }
 
 function attachAutomaticPlaybackHandlers() {
+	// Modified from: http://blog.gingertech.net/2009/08/19/jumping-to-time-offsets-in-videos/
 	var video = $('video').get(0);
 	video.addEventListener("timeupdate", function() {
 		if (video.ended) {
