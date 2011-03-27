@@ -6,6 +6,7 @@
 # List of files to be included in PDF.
 FILES="\
     README \
+    OliveData.dmp \
     \
     src/com/readytalk/olive/json/AddToSelectedRequest.java \
     src/com/readytalk/olive/json/CombineVideosRequest.java \
@@ -13,7 +14,10 @@ FILES="\
     src/com/readytalk/olive/json/DeleteProjectRequest.java \
     src/com/readytalk/olive/json/DeleteVideoRequest.java \
     src/com/readytalk/olive/json/GeneralRequest.java \
+    src/com/readytalk/olive/json/GetAccountInformationResponse.java \
     src/com/readytalk/olive/json/RemoveFromSelectedRequest.java \
+    src/com/readytalk/olive/json/RenameProjectRequest.java \
+    src/com/readytalk/olive/json/RenameVideoRequest.java \
     src/com/readytalk/olive/json/SplitVideoRequest.java \
     src/com/readytalk/olive/json/UpdateProjectsPositionRequest.java \
     src/com/readytalk/olive/json/UpdateTimelinePositionRequest.java \

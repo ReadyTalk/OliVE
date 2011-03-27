@@ -1,0 +1,115 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: OliveData
+-- ------------------------------------------------------
+-- Server version	5.0.51a-24+lenny4
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Accounts`
+--
+
+DROP TABLE IF EXISTS `Accounts`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `Accounts` (
+  `AccountID` int(11) NOT NULL auto_increment,
+  `Username` varchar(255) default NULL,
+  `Password` varchar(255) default NULL,
+  `Name` varchar(255) default NULL,
+  `Email` varchar(255) default NULL,
+  `SecurityQuestion` varchar(255) default NULL,
+  `SecurityAnswer` varchar(255) default NULL,
+  PRIMARY KEY  (`AccountID`),
+  UNIQUE KEY `Username` (`Username`)
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `Projects`
+--
+
+DROP TABLE IF EXISTS `Projects`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `Projects` (
+  `ProjectID` int(11) NOT NULL auto_increment,
+  `Name` varchar(255) default NULL,
+  `AccountID` int(11) default NULL,
+  `Icon` varchar(255) default NULL,
+  `PoolPosition` int(11) default NULL,
+  PRIMARY KEY  (`ProjectID`),
+  KEY `AccountID` (`AccountID`)
+) ENGINE=MyISAM AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `S3Credentials`
+--
+
+DROP TABLE IF EXISTS `S3Credentials`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `S3Credentials` (
+  `S3ID` int(11) NOT NULL auto_increment,
+  `AWSAccessKey` varchar(50) default NULL,
+  `AWSSecretKey` varchar(50) default NULL,
+  PRIMARY KEY  (`S3ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `Videos`
+--
+
+DROP TABLE IF EXISTS `Videos`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `Videos` (
+  `VideoID` int(11) NOT NULL auto_increment,
+  `Name` varchar(255) default NULL,
+  `URL` varchar(255) default NULL,
+  `ProjectID` int(11) default NULL,
+  `TimelinePosition` int(11) default NULL,
+  `Icon` varchar(255) default NULL,
+  `IsSelected` int(11) default NULL,
+  `PoolPosition` int(11) default NULL,
+  PRIMARY KEY  (`VideoID`),
+  KEY `ProjectID` (`ProjectID`)
+) ENGINE=MyISAM AUTO_INCREMENT=127 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `ZencoderCredentials`
+--
+
+DROP TABLE IF EXISTS `ZencoderCredentials`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `ZencoderCredentials` (
+  `ZenID` int(11) NOT NULL auto_increment,
+  `ZencoderAPIKey` varchar(255) default NULL,
+  PRIMARY KEY  (`ZenID`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2011-03-27  4:02:09
