@@ -34,8 +34,8 @@ import com.readytalk.olive.util.InvalidFileSizeException;
  * @author Team Olive
  * 
  */
-// JetS3t code samples (in Java): https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
-// JetS3t code samples (in HTML): http://jets3t.s3.amazonaws.com/toolkit/code-samples.html#downloading
+// JetS3t CodeSamples.java: https://bitbucket.org/jmurty/jets3t/src/Release-0_8_0/src/org/jets3t/samples/CodeSamples.java
+// JetS3t code-samples.html: http://jets3t.s3.amazonaws.com/toolkit/code-samples.html
 // JetS3t JavaDocs: http://jets3t.s3.amazonaws.com/api/org/jets3t/service/model/StorageObject.html
 public class S3Api {
 	private static final String BUCKET_NAME = "test-bucket-Olive";
@@ -129,6 +129,7 @@ public class S3Api {
 
 			String[] videoUrlAndIcon = ZencoderApi
 					.convertToOgg(unconvertedVideoUrl);
+			deleteFileInS3(fileAsS3Object.getKey()); // Delete the unconverted version
 
 			return videoUrlAndIcon;
 		} catch (IOException e) {
@@ -151,14 +152,22 @@ public class S3Api {
 	/**
 	 * Enables to delete the file in S3
 	 * 
-	 * @param fileName
-	 *            name of the file
+	 * @param objectKey
+	 *            usually corresponds to the name of the file
 	 */
-	public static void deleteFileInS3(String fileName) {
-		log.severe("deleteFileInS3 has not yet been implemented.");
-		// Do something like this:
-		// RestS3Service s3Service = getS3Service();
-		// s3Service.deleteObject(BUCKET_NAME, objectKey); // TODO Store objectKey in the database
+	public static void deleteFileInS3(String objectKey) {
+		try {
+			RestS3Service s3Service = getS3Service();
+			s3Service.deleteObject(BUCKET_NAME, objectKey);
+		} catch (S3ServiceException e) {
+			log.severe("Error creating RestS3Service object");
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			log.severe("Error deleting object " + objectKey + " in bucket "
+					+ BUCKET_NAME);
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -173,7 +182,7 @@ public class S3Api {
 	}
 
 	/**
-	 * Gets the time stamped on the URL where video is located
+	 * Gets a new time stamp on the URL where video is located
 	 * 
 	 * @param videoUrl
 	 *            where video is located in S3
@@ -181,7 +190,18 @@ public class S3Api {
 	 */
 	public static String getNameFromUrlWithNewTimeStamp(String videoUrl) {
 		return S3Api.getTime()
-				+ getNameFromUrl(videoUrl).substring(S3Api.getTime().length()); // TODO Fix fugly code
+				+ getTimeStampFromUrl(videoUrl);
+	}
+
+	/**
+	 * Gets the time stamped on the URL where video is located
+	 * 
+	 * @param videoUrl
+	 *            where video is located in S3
+	 * @return the time stamped URL
+	 */
+	private static String getTimeStampFromUrl(String videoUrl) {
+		return getNameFromUrl(videoUrl).substring(S3Api.getTime().length());
 	}
 
 	/**

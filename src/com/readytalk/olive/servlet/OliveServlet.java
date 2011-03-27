@@ -783,11 +783,13 @@ public class OliveServlet extends HttpServlet {
 		int projectId = getProjectIdFromSessionAttributes(session);
 		int videoId = DatabaseApi.getVideoId(
 				deleteVideoRequest.arguments.video, projectId);
+
+		S3Api.deleteFileInS3(S3Api.getNameFromUrl(DatabaseApi
+				.getVideoUrl(videoId)));	// Delete video
+		S3Api.deleteFileInS3(S3Api.getNameFromUrl(DatabaseApi
+				.getVideoIcon(videoId)));	// Delete icon
+
 		DatabaseApi.deleteVideo(videoId);
-
-		S3Api.deleteFileInS3(DatabaseApi.getVideoName(videoId));
-
-		S3Api.deleteFileInS3(DatabaseApi.getVideoName(videoId));
 
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
