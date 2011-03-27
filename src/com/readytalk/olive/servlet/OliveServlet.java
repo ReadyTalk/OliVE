@@ -221,19 +221,23 @@ public class OliveServlet extends HttpServlet {
 		String username = request.getParameter("username");
 		if (Security.isSafeUsername(username)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			if(DatabaseApi.usernameExists(username)){
-				String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
-				if (securityQuestion!=null) {
-					session.setAttribute(Attribute.SECURITY_QUESTION.toString(), securityQuestion);
-					session.setAttribute(Attribute.USERNAME.toString(), username);
+			if (DatabaseApi.usernameExists(username)) {
+				String securityQuestion = DatabaseApi
+						.getAccountSecurityQuestion(DatabaseApi
+								.getAccountId(username));
+				if (securityQuestion != null) {
+					session.setAttribute(
+							Attribute.SECURITY_QUESTION.toString(),
+							securityQuestion);
+					session.setAttribute(Attribute.USERNAME.toString(),
+							username);
 					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 					response.sendRedirect("securityQuestion.jsp");
 				} else {
-					session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+					session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 					response.sendRedirect("forgot.jsp");
 				}
-			}
-			else {
+			} else {
 				session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 				response.sendRedirect("forgot.jsp");
 			}
@@ -243,24 +247,27 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("forgot.jsp");
 		}
 	}
-	
+
 	private void handleSecurityAnswer(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		// TODO Auto-generated method stub
 		String answer = request.getParameter("security_answer");
-		String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
 		if (Security.isSafeSecurityAnswer(answer)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
-			Boolean isCorrect = DatabaseApi.isCorrectSecurityInfo(username, securityQuestion, answer);
+			String securityQuestion = DatabaseApi
+					.getAccountSecurityQuestion(DatabaseApi
+							.getAccountId(username));
+			Boolean isCorrect = DatabaseApi.isCorrectSecurityInfo(username,
+					securityQuestion, answer);
 			if (isCorrect) {
 				session.setAttribute(Attribute.IS_CORRECT.toString(), true);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 				response.sendRedirect("new-password-form.jsp");
-			} 
-			else {
-				session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+			} else {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 				response.sendRedirect("securityQuestion.jsp");
 			}
 		} else {
@@ -649,18 +656,16 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 
-		String name = (String) session.getAttribute(Attribute.NAME.toString());
-		String email = (String) session
-				.getAttribute(Attribute.EMAIL.toString());
-		String password = (String) session.getAttribute(Attribute.PASSWORD
-				.toString());
-		String securityQuestion = (String) session
-				.getAttribute(Attribute.SECURITY_QUESTION.toString());
-		String securityAnswer = (String) session
-				.getAttribute(Attribute.SECURITY_ANSWER.toString());
+		int accountId = getAccountIdFromSessionAttributes(session);
+		String name = DatabaseApi.getAccountName(accountId);
+		String email = DatabaseApi.getAccountEmail(accountId);
+		String password = ""; // The encryption function is one-way (and it's a security issue to redisplay this).
+		String securityQuestion = DatabaseApi
+				.getAccountSecurityQuestion(accountId);
+		String securityAnswer = DatabaseApi.getAccountSecurityAnswer(accountId);
+
 		out.println(new Gson().toJson(new GetAccountInformationResponse(name,
 				email, password, securityQuestion, securityAnswer)));
-		
 		out.close();
 	}
 
