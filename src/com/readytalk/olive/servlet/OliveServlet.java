@@ -35,6 +35,7 @@ import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
+import com.readytalk.olive.json.GetAccountInformationResponse;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
@@ -144,7 +145,9 @@ public class OliveServlet extends HttpServlet {
 			} else if (id.equals("AddProject")) {
 				handleAddProject(request, response, session);
 			} else if (id.equals("security-question-form")) {
-				handleSecurityQuestion(request, response, session);
+				handleSecurityQuestionRetrieval(request, response, session);
+			} else if (id.equals("security-question-form-2")) {
+				handleSecurityAnswer(request, response, session);
 			} else if (id.equals("new_password")) {
 				handleNewPassword(request, response, session);
 			} else {
@@ -211,32 +214,59 @@ public class OliveServlet extends HttpServlet {
 		session.removeAttribute(Attribute.USERNAME.toString());
 	}
 
-	private void handleSecurityQuestion(HttpServletRequest request,
+	private void handleSecurityQuestionRetrieval(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		// TODO Auto-generated method stub
 		String username = request.getParameter("username");
-		String securityQuestion = request.getParameter("security_question");
-		String securityAnswer = request.getParameter("security_answer");
-		Boolean isCorrect;
-		if (Security.isSafeUsername(username)
-				&& Security.isSafeSecurityQuestion(securityQuestion)
-				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+		if (Security.isSafeUsername(username)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			isCorrect = DatabaseApi.isCorrectSecurityInfo(username,
-					securityQuestion, securityAnswer);
-			session.setAttribute(Attribute.IS_CORRECT.toString(), isCorrect);
-			if (isCorrect) {
-				session.setAttribute(Attribute.USERNAME.toString(), username);
-				response.sendRedirect("new-password-form.jsp");
-				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
-			} else {
+			if(DatabaseApi.usernameExists(username)){
+				String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
+				if (securityQuestion!=null) {
+					session.setAttribute(Attribute.SECURITY_QUESTION.toString(), securityQuestion);
+					session.setAttribute(Attribute.USERNAME.toString(), username);
+					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
+					response.sendRedirect("securityQuestion.jsp");
+				} else {
+					session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+					response.sendRedirect("forgot.jsp");
+				}
+			}
+			else {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 				response.sendRedirect("forgot.jsp");
 			}
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 			session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 			response.sendRedirect("forgot.jsp");
+		}
+	}
+	
+	private void handleSecurityAnswer(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+			throws UnsupportedEncodingException, IOException {
+		// TODO Auto-generated method stub
+		String answer = request.getParameter("security_answer");
+		String username = (String)session.getAttribute(Attribute.USERNAME.toString());
+		if (Security.isSafeSecurityAnswer(answer)) {
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+			String securityQuestion = DatabaseApi.getAccountSecurityQuestion(DatabaseApi.getAccountId(username));
+			Boolean isCorrect = DatabaseApi.isCorrectSecurityInfo(username, securityQuestion, answer);
+			if (isCorrect) {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), true);
+				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
+				response.sendRedirect("new-password-form.jsp");
+			} 
+			else {
+				session.setAttribute(Attribute.IS_CORRECT.toString(), false);	
+				response.sendRedirect("securityQuestion.jsp");
+			}
+		} else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+			session.setAttribute(Attribute.IS_CORRECT.toString(), false);
+			response.sendRedirect("securityQuestion.jsp");
 		}
 	}
 
@@ -307,10 +337,8 @@ public class OliveServlet extends HttpServlet {
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		String securityQuestion = request.getParameter("security_question");
-		String securityAnswer = request.getParameter("security_answer");
-		log.info("Security question: " + securityQuestion
-				+ ". Security Answer: " + securityAnswer);
+		String securityQuestion = request.getParameter("new-security-question");
+		String securityAnswer = request.getParameter("new-security-answer");
 		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
 				&& Security.isSafePassword(newPassword)
 				&& Security.isSafePassword(confirmNewPassword)
@@ -544,6 +572,8 @@ public class OliveServlet extends HttpServlet {
 
 		if (generalRequest.command.equals("deleteAccount")) {
 			handleDeleteAccount(request, response, session, json);
+		} else if (generalRequest.command.equals("getAccountInformation")) {
+			handleGetAccountInformation(request, response, session, json);
 		} else if (generalRequest.command.equals("getProjects")) {
 			handleGetProjects(request, response, session, json);
 		} else if (generalRequest.command.equals("createProject")) {
@@ -582,6 +612,8 @@ public class OliveServlet extends HttpServlet {
 			handleUpdateTimelinePosition(request, response, session, json);
 		} else if (generalRequest.command.equals("getVideoInformation")) {
 			handleGetVideoInformation(request, response, session, json);
+		} else if (generalRequest.command.equals("isFirstSignIn")) {
+			handleIsFirstSignIn(request, response, session, json);
 		} else {
 			log.warning("JSON request not recognized.");
 			log.warning("JSON request not recognized.");
@@ -608,6 +640,27 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(deleteAccountRequest.arguments.account
 				+ " deleted successfully.");
+		out.close();
+	}
+
+	private void handleGetAccountInformation(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		String name = (String) session.getAttribute(Attribute.NAME.toString());
+		String email = (String) session
+				.getAttribute(Attribute.EMAIL.toString());
+		String password = (String) session.getAttribute(Attribute.PASSWORD
+				.toString());
+		String securityQuestion = (String) session
+				.getAttribute(Attribute.SECURITY_QUESTION.toString());
+		String securityAnswer = (String) session
+				.getAttribute(Attribute.SECURITY_ANSWER.toString());
+		out.println(new Gson().toJson(new GetAccountInformationResponse(name,
+				email, password, securityQuestion, securityAnswer)));
+		
 		out.close();
 	}
 
@@ -1054,6 +1107,16 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(videoString);
+		out.close();
+	}
+
+	private void handleIsFirstSignIn(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println(new Gson().toJson((Boolean) session
+				.getAttribute(Attribute.IS_FIRST_SIGN_IN.toString())));
 		out.close();
 	}
 }

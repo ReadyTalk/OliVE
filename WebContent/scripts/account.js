@@ -8,6 +8,7 @@ var deleteAccountDialogContext;	// TODO Remove this global variable.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachDeleteAccountHandlers();
+	injectAccountData();
 });
 
 function attachDeleteAccountHandlers() {
@@ -41,5 +42,20 @@ function deleteAccount() {
 			+        '"account" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {logout(); }, null);	// Defined in "/olive/scripts/master.js".
+	makeAjaxPostRequest(requestData, logout, null);	// Defined in "/olive/scripts/master.js".
+}
+
+function injectAccountData() {
+	var requestData = '{'
+		+    '"command" : "getAccountInformation"'
+		+  '}';
+	makeAjaxPostRequest(requestData, function (responseData) {
+		$('#new-name').val(responseData.name).change();
+		$('#new-email').val(responseData.email).change();
+		$('#new-password').val(responseData.password).change();
+		$('#confirm-new-password').val(responseData.password).change();
+		$('#new-security-question').val(responseData.securityQuestion).change();
+		$('#new-security-answer').val(responseData.securityAnswer).change();
+		
+	}, null);	// Defined in "/olive/scripts/master.js".
 }

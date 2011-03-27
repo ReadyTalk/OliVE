@@ -28,23 +28,13 @@
 	Boolean isAuthorized = (Boolean) session
 			.getAttribute(Attribute.IS_AUTHORIZED.toString()); // Nasty cast
 	String username = "";
-	String projectsHtml = "";
 	if (isAuthorized == null) {
 		response.sendRedirect("index.jsp");
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	} else {
-		Boolean isFirstSignIn = (Boolean) session.getAttribute(Attribute.IS_FIRST_SIGN_IN.toString());
 		username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
-		int accountId = DatabaseApi.getAccountId(username);
-		if(isFirstSignIn){
-			projectsHtml = "<p>Welcome to Olive. This is the projects page where you "+
-			"can add, edit, and delete your projects. We would like to "+
-				"remind you to go to the Account Information page by clicking "+
-				"on your username at the top right and adding a security question "+
-				"and answer in case you forget your password.<br /><br />Thanks!<br /><br />The Olive Team</p>";
-		}
 	}
 %>
 <div id="header">
@@ -77,7 +67,7 @@
 <!-- end #controls -->
 
 <div class="clear"></div>
-<div id="projects"><%=projectsHtml%></div>
+<div id="projects"></div>
 <!-- end #projects --></div>
 <!-- end #projects-container --></div>
 <!-- end #main -->

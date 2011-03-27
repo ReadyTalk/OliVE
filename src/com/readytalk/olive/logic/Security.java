@@ -75,7 +75,8 @@ public class Security {
 	// Input must match database and JavaScript length requirements!
 	private static boolean isSafeLength(String input, int minLength,
 			int maxLength) {
-		return minLength <= input.length() && input.length() <= maxLength;
+		return input != null && minLength <= input.length()
+				&& input.length() <= maxLength;
 	}
 
 	/**

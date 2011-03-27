@@ -264,6 +264,28 @@ public class DatabaseApi {
 		return -1; // error!
 	}
 
+	public static Boolean usernameExists(String username){
+		Connection conn = getDBConnection();
+		try {
+			Statement st = conn.createStatement();
+			String s = "USE OliveData;";
+			st.executeUpdate(s);
+
+			s = "SELECT AccountID FROM Accounts WHERE Username = '"+username+"';";
+			ResultSet r = st.executeQuery(s);
+			if (r.first()) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(conn);
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * sets the data for edit account section of the web page
 	 * 

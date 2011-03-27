@@ -52,16 +52,6 @@
 
 	String username = (String) session.getAttribute(Attribute.USERNAME
 			.toString());
-	String name = (String) session.getAttribute(Attribute.NAME
-			.toString());
-	String email = (String) session.getAttribute(Attribute.EMAIL
-			.toString());
-	String password = (String) session.getAttribute(Attribute.PASSWORD
-			.toString());
-	String securityQuestion = (String) session
-			.getAttribute(Attribute.SECURITY_QUESTION.toString());
-	String securityAnswer = (String) session
-			.getAttribute(Attribute.SECURITY_ANSWER.toString());
 %>
 <div id="header">
 <div id="header-left">
@@ -85,23 +75,20 @@
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
 <p><label for="new-name">Name</label> <input type="text"
-	name="new-name" id="new-name" value="<%=name%>" size="32"
-	maxlength="32" /></p>
+	name="new-name" id="new-name" size="32" maxlength="32" /></p>
 <p><label for="new-email">Email</label> <input type="text"
-	name="new-email" id="new-email" value="<%=email%>" size="32"
-	maxlength="64" /></p>
+	name="new-email" id="new-email" size="32" maxlength="64" /></p>
 <p><label for="new-password">Password</label> <input type="password"
-	name="new-password" id="new-password" value="<%=password%>" size="32"
-	maxlength="128" /></p>
+	name="new-password" id="new-password" size="32" maxlength="128" /></p>
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
-	value="<%=password%>" size="32" maxlength="128" /></p>
-<p><label for="security_question">Security Question</label> <input
-	type="text" name="security_question" id="security_question"
-	value="<%=securityQuestion%>" size="32" maxlength="128" /></p>
-<p><label for="security_answer">Security Answer</label> <input
-	type="text" name="security_answer" id="security_question_answer"
-	value="<%=securityAnswer%>" size="32" maxlength="128" /></p>
+	size="32" maxlength="128" /></p>
+<p><label for="new-security-question">Security Question</label> <input
+	type="text" name="new-security-question" id="new-security-question"
+	size="32" maxlength="128" /></p>
+<p><label for="new-security-answer">Security Answer</label> <input
+	type="text" name="new-security-answer" id="new-security-answer"
+	size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="EditUser"></input> <input
 	type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
 <p><small><a id="delete-account"
