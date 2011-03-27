@@ -322,6 +322,8 @@ function select(element) {
 	$(element).data('isSelected', true);
 	makeSelectionVisible(element);
 	addToSelected($(element).data('name'));
+	
+	attachAutomaticPlaybackHandlers();
 }
 
 function unselect(element) {
@@ -442,4 +444,37 @@ function enableOrDisablePublishButton() {
 	} else {
 		$('#export-button').attr('disabled', 'disabled');
 	}
+}
+
+function getNextVideoToPlay() {
+	var numberOfVideosInTimeline = $('#timeline > .video-container').length;
+	var retval = null;
+	
+	$('#timeline > .video-container').each(function (index) {
+		if ($(this).data('isSelected')) {
+			if (index < numberOfVideosInTimeline - 1) {
+				retval = $('#timeline > .video-container').get(index + 1);
+			}
+		}
+	});
+	
+	return retval;
+}
+
+function selectAndPlayNextVideo() {
+	var nextVideoToPlay = getNextVideoToPlay();
+	if (nextVideoToPlay !== null) { // If null, the last video was just played; do nothing.
+		unselectAll();
+		select(nextVideoToPlay);
+		var video = $('video').get(0);
+		video.play();
+	}
+}
+
+function attachAutomaticPlaybackHandlers() {
+	var video = $('video').get(0);
+	video.addEventListener("timeupdate", function() {
+		if (video.ended) {
+			selectAndPlayNextVideo();
+	}}, false);
 }
