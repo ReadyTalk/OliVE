@@ -102,7 +102,6 @@ public class ZencoderApi {
 				+ thumbFormat + "\"," + "\"public\":1" + "}," + "\"public\":1,"
 				+ "\"start_clip\":" + startClip + "," + "\"clip_length\":"
 				+ clipLength + "}]}";
-		System.out.println(data);
 		return data;
 	}
 
@@ -120,7 +119,6 @@ public class ZencoderApi {
 				+ thumbBaseUrl + "\"," + "\"prefix\":\"" + thumbPrefix + "\","
 				+ "\"format\":\"" + thumbFormat + "\"," + "\"public\":1" + "},"
 				+ "\"public\":1" + "}]}";
-		System.out.println(data);
 		return data;
 	}
 
