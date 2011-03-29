@@ -7,7 +7,7 @@
 	position: absolute;
 	top: 20px;
 	right: 60%;
-	bottom: 150px;
+	bottom: 125px;
 	left: 0px;
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 }
@@ -40,14 +40,14 @@
 	left: 0%;
 	text-align: left;
 	border: 1px solid gray;
-	margin: 10px;
+	margin: 10px 0px 10px 10px;
 	overflow: auto;
 }
 
 .video-container {
 	float: left;
-	height: 125px;
-	width: 125px;
+	height: 100px;
+	width: 100px;
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid green;
@@ -85,7 +85,7 @@
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	bottom: 150px;
+	bottom: 125px;
 	left: 40%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
@@ -108,7 +108,7 @@
 	right: 150px;
 	bottom: 0px;
 	left: 0px;
-	height: 150px; /* Larger than height of .video-container */
+	height: 125px; /* Larger than height of .video-container */
 	border-top: 1px solid gray;
 	border-right: 1px solid gray;
 	border-left: 1px solid gray;
