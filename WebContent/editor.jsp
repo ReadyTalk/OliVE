@@ -90,8 +90,11 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button" disabled="disabled">Export
-to Computer</button>
+<form id="combine-and-export-form" action="OliveServlet" name="process"
+	method="post">
+<input type="hidden" name="FormName" value="combine-form"></input>
+<input type="submit" value="Export to Computer"></input>
+</form>
 
 </div>
 <!-- end #export --></div>

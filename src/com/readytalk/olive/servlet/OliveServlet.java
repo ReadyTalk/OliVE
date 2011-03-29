@@ -150,6 +150,22 @@ public class OliveServlet extends HttpServlet {
 				handleSecurityAnswer(request, response, session);
 			} else if (id.equals("new_password")) {
 				handleNewPassword(request, response, session);
+			} else if (id.equals("combine-form")) {
+				try {
+					handleCombineVideos(request, response, session,"");
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidFileSizeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
@@ -908,42 +924,55 @@ public class OliveServlet extends HttpServlet {
 	throws IOException, NoSuchAlgorithmException, InvalidFileSizeException,
 			ServiceException, InterruptedException {
 
-		CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
-				CombineVideosRequest.class);
+		//CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+			//	CombineVideosRequest.class);
 		log.info("COMBINING VIDEOS");
 		// response.setContentType("text/plain");
 
 		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
-		String[] videoURLs = new String[videos.length];
-		for (int i = 0; i < videos.length; i++) {
-			videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
-					videos[i], projectId));
+		log.info("videos length: "+videos.length);
+		if(videos.length > 0){
+			String[] videoURLs = new String[videos.length];
+			for (int i = 0; i < videos.length; i++) {
+				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
+						videos[i], projectId));
+			}
+			String combinedURL = "";
+			if(videoURLs.length == 1){
+				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
+			}
+			else if (videoURLs.length > 1){
+				combinedURL = combineVideos(videoURLs, videos);
+			}
+			
+			// My view resource servlet:
+			// Use a ServletOutputStream because we may pass binary information
+			log.info("Combined. Now Dowloading");
+			final ServletOutputStream out = response.getOutputStream();
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition",
+            "attachment;filename=combinedVideo.ogv");
+			File file = new File(combinedURL);
+			BufferedInputStream is = new BufferedInputStream(new FileInputStream(
+					file));
+			byte[] buf = new byte[4 * 1024]; // 4K buffer
+			int bytesRead;
+			log.info("downloading");
+			while ((bytesRead = is.read(buf)) != -1) {
+				log.info("in while");
+				out.write(buf, 0, bytesRead);
+				log.info("...Dowloading in while...");
+			}
+	
+			is.close();
+			out.close();
+			log.info("end of handleCombinedVideos");
 		}
-
-		String combinedURL = combineVideos(videoURLs, videos);
-		// My view resource servlet:
-		// Use a ServletOutputStream because we may pass binary information
-		log.info("Combined. Now Dowloading");
-		final ServletOutputStream out = response.getOutputStream();
-		response.setContentType("application/octet-stream");
-
-		File file = new File(combinedURL);
-		BufferedInputStream is = new BufferedInputStream(new FileInputStream(
-				file));
-		byte[] buf = new byte[4 * 1024]; // 4K buffer
-		int bytesRead;
-		log.info("downloading");
-		while ((bytesRead = is.read(buf)) != -1) {
-			log.info("in while");
-			out.write(buf, 0, bytesRead);
-			log.info("...Dowloading in while...");
+		else{
+			response.sendRedirect("editor.jsp");
 		}
-
-		is.close();
-		out.close();
-		log.info("end of handleCombinedVideos");
 	}
 
 	private String combineVideos(String[] videoURLs, String[] videos)
