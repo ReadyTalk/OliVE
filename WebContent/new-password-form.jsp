@@ -49,7 +49,7 @@
 				+ index
 				+ ">Olive</a>";
 	}
-
+	session.removeAttribute(Attribute.IS_CORRECT.toString());
 	session.removeAttribute(Attribute.IS_SAFE.toString());
 	session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
 	session.removeAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
