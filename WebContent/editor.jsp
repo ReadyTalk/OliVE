@@ -45,7 +45,9 @@
 %>
 <div id="header">
 <div id="header-left">
-<h1>Olive</h1>
+<img id="olive-icon"
+	src="/olive/images/olive.png" />
+<h1 id= "olive-title">Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
