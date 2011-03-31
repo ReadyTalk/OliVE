@@ -23,10 +23,21 @@
 	top: 0%;
 	right: 0%;
 	bottom: 0%;
-	left: 50%;
+	left: 55%;
 	padding: 10% 10% 10% 10%;
 }
 
 #login-form {
 	
+}
+#screencast-container{
+	/*position: absolute;
+	top: 0%;
+	right: 50%;
+	bottom: 0%;
+	left: 0%;*/
+	padding: 2% 10% 10% 5%;
+	width:400px;
+	height: 400px;
+	border: 1px solid red;
 }
