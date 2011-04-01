@@ -197,14 +197,15 @@ $(document).ready(function(){
 
 	var videoPlaylist = new Playlist("1", [
 		{
-			name:"Splitting",
+			name:"Uploading Video",
 			free:true,
-			ogv:"screencasts/split.ogv"
+			ogv: "screencasts/uploadingVideo.ogv"
 		   /* poster:"images/splash-simple.png"*/
 		},
 		{
-			name:"Uploading Video",
-			ogv: "screencasts/uploadingVideo.ogv"
+			name:"Splitting",
+			ogv:"screencasts/split.ogv"
+			
 		}
 	], {
 		ready: function() {
