@@ -940,13 +940,18 @@ public class OliveServlet extends HttpServlet {
 						videos[i], projectId));
 			}
 			String combinedURL = "";
+			//combineVideos(videoURLs, videos);
 			if(videoURLs.length == 1){
 				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
 			}
 			else if (videoURLs.length > 1){
 				combinedURL = combineVideos(videoURLs, videos);
 			}
-			
+			if(combinedURL == null){
+				response.sendRedirect("editor.jsp");
+				return;
+			}
+			//response.sendRedirect("editor.jsp");
 			// My view resource servlet:
 			// Use a ServletOutputStream because we may pass binary information
 			log.info("Combined. Now Dowloading");
@@ -961,9 +966,9 @@ public class OliveServlet extends HttpServlet {
 			int bytesRead;
 			log.info("downloading");
 			while ((bytesRead = is.read(buf)) != -1) {
-				log.info("in while");
+				//log.info("in while");
 				out.write(buf, 0, bytesRead);
-				log.info("...Dowloading in while...");
+				//log.info("...Dowloading in while...");
 			}
 	
 			is.close();
@@ -984,101 +989,84 @@ public class OliveServlet extends HttpServlet {
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
 
-		File combined = new File(videoURLs[0]);
+		File first = new File(videoURLs[0]);
 		S3Api.downloadVideosToTemp(videoURLs[0]);
+		S3Api.downloadVideosToTemp(videoURLs[1]);
 		Process p;
 		String videoName = "";
-		for (int i = 0; i < videos.length - 1; i++) { // Use i+1 everywhere
-			videoName = S3Api.downloadVideosToTemp(videoURLs[i + 1]);
-			p = r.exec("ffmpeg -i " + combined.getName() + " -sameq temp.mpg",
-					null, tempDir);
-
-			/*
-			 * BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
-			 * String currentLine = null;
-			 * while (( currentLine = in.readLine()) != null )
-			 * System.out.println ( currentLine ) ;
-			 */
-
-			// p.waitFor();
-			// log.info("Process 1...Done");
-			p = r.exec("ffmpeg -i " + videoName + " -sameq temp2.mpg", null,
-					tempDir);
-			// p.waitFor();
-			// log.info("Process 2...Done");
-			if (isWindows) {
-
-				log.info("Windows");
-				p = r.exec(
-						"cmd /c copy /b temp.mpg+temp2.mpg intermediateTemp.mpg",
-						null, tempDir);
-				InputStream is2 = p.getInputStream();
-				log.info("InputStream2");
-				InputStreamReader isr2 = new InputStreamReader(is2);
-				log.info("InputStreamReader2");
-				BufferedReader br2 = new BufferedReader(isr2);
-				String line;
-				for (int j = 0; j < 10; j++) {
-					line = br2.readLine();
-					if (line != null) {
-						log.info("Line " + j + 1 + ": " + line);
-					}
-				}
-				// p.waitFor();
-				log.info("after Windows Process finishes");
-				// log.info("Process 3...Done");
-				// r.exec("cmd /c del temp\\"+videos[i+1]+".mpg");
-			} else if (isLinux) {
-
-				log.info("Linux");
-				String[] arr = { "/bin/sh", "-c",
-						"cat temp.mpg temp2.mpg > intermediateTemp.mpg" };
-				p = r.exec(arr, null, tempDir);
-				// p.waitFor();
-				// log.info("Process 3...Done");
-				// r.exec("rm temp\\"+videos[i+1]+".mpg");
-			} else {
-				return null;
+		p = r.exec("ffmpeg -i " + first.getName(),
+				null, tempDir);
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		String s = in.readLine();
+		String[] arr;
+		String[] arrV1 = {};
+		String[] arrA1 = {};
+		while (( s = in.readLine()) != null ){
+			arr = s.split(",");
+			if(s.contains("Video:")){
+				arrV1 = arr;
 			}
-			log.info("after IFS");
-
-			p = r.exec("ffmpeg -i intermediateTemp.mpg -sameq combined.ogv",
-					null, tempDir);
-			InputStream is2 = p.getErrorStream();
-			log.info("InputStream");
-			InputStreamReader isr2 = new InputStreamReader(is2);
-			log.info("InputStreamReader");
-			BufferedReader br2 = new BufferedReader(isr2);
-			String line;
-			for (int j = 0; j < 25; j++) {
-				line = br2.readLine();
-				if (line != null) {
-					log.info("FFMPEG Line " + j + 1 + ": " + line);
-				}
+			else if (s.contains("Audio:")){
+				arrA1 = arr;
 			}
-			log.info("after last ffmpeg process");
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					p.getErrorStream()));
-			String currentLine = null;
-			while ((currentLine = in.readLine()) != null)
-				System.out.println(currentLine);
-			p.waitFor();
-			// log.info("Process 4...Done");
-			combined = new File(tempDir.getAbsolutePath() + File.separator
-					+ "combined.ogv");
-			// process.waitFor();
-
-			videos[0] = "combined";
 		}
-
-		// Removing all temp files except for the one combined video
-		// result[1] = videoURLs[0];
-		// if(inFor){
-		// return S3Api.uploadFile(combined);
-		// }
-		// else{
-		return combined.getAbsolutePath();
+		File second = new File(videoURLs[1]);
+		p = r.exec("ffmpeg -i " + second.getName(),
+				null, tempDir);
+		in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		s = in.readLine();
+		String[] arrV2 = {};
+		String[] arrA2 = {};
+		while (( s = in.readLine()) != null ){
+			arr = s.split(",");
+			if(s.contains("Video:")){
+				arrV2 = arr;
+			}
+			else if (s.contains("Audio:")){
+				arrA2 = arr;
+			}
+		}
+		log.info(first.getName());
+		log.info(second.getName());
+		String aspectRatio1 = (arrV1[2].trim());
+		String aspectRatio2 = (arrV2[2].trim());
+		//String audioChannels1 = (arrA1[2].trim());
+		//String audioChannels2 = (arrA2[2].trim());
+		if(aspectRatio1.equals(aspectRatio2)){
+		//String [] cmd = {"mencoder.exe","-oac pcm -ovc copy "+ first.getName()+" "+ second.getName()+" -o combined.ogv"}; 
+			final Process p2 = r.exec( "cmd /c mencoder -ovc raw -oac pcm "+ first.getName()+" "+ second.getName()+" -o combined.ogv",
+						null, tempDir);
+			new Thread() {
+				 public void run() {
+				   BufferedReader in = new BufferedReader
+				     (new InputStreamReader(p2.getInputStream()));
+	
+				   String s;
+				   try {
+					   while ((s = in.readLine()) != null) {
+						   log.info(s);
+					   }
+				   } catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				   }
+				 }
+			}.start();
+			in = new BufferedReader(new InputStreamReader(p2.getErrorStream())) ;
+			//BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			//String s2 = "";
+			while (( s = in.readLine()) != null){
+				log.info(s);
+			}
+			File combined = new File(tempDir+"/combined.ogv");
+			return combined.getAbsolutePath();
+		}
+		return null;
+		//}
+			
+		
+		//return null;
 		// }
 		// return S3Api.uploadFile(new File(videoName));
 		// return null;
