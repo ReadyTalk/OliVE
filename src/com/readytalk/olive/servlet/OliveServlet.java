@@ -1031,36 +1031,17 @@ public class OliveServlet extends HttpServlet {
 		log.info(second.getName());
 		String aspectRatio1 = (arrV1[2].trim());
 		String aspectRatio2 = (arrV2[2].trim());
-		//String audioChannels1 = (arrA1[2].trim());
-		//String audioChannels2 = (arrA2[2].trim());
+		String audioChannels1 = (arrA1[2].trim());
+		String audioChannels2 = (arrA2[2].trim());
 		if(aspectRatio1.equals(aspectRatio2)){
 		//String [] cmd = {"mencoder.exe","-oac pcm -ovc copy "+ first.getName()+" "+ second.getName()+" -o combined.ogv"}; 
-			final Process p2 = r.exec( "cmd /c mencoder -ovc raw -oac pcm "+ first.getName()+" "+ second.getName()+" -o combined.ogv",
-						null, tempDir);
-			new Thread() {
-				 public void run() {
-				   BufferedReader in = new BufferedReader
-				     (new InputStreamReader(p2.getInputStream()));
-	
-				   String s;
-				   try {
-					   while ((s = in.readLine()) != null) {
-						   log.info(s);
-					   }
-				   } catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				   }
-				 }
-			}.start();
-			in = new BufferedReader(new InputStreamReader(p2.getErrorStream())) ;
-			//BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			//String s2 = "";
-			while (( s = in.readLine()) != null){
-				log.info(s);
+			if(audioChannels1.equals(audioChannels2)){
+				return combine(first.getName(),second.getName());
 			}
-			File combined = new File(tempDir+"/combined.ogv");
-			return combined.getAbsolutePath();
+			else{
+				String newVideo2 = fixAudioChannels(first.getName(),audioChannels1,second.getName(),audioChannels2);
+				return combine(first.getName(),newVideo2);
+			}
 		}
 		return null;
 		//}
@@ -1074,6 +1055,65 @@ public class OliveServlet extends HttpServlet {
 
 	}
 
+	private String fixAudioChannels(String video1Name, String audioChannels1,
+			String video2Name, String audioChannels2) throws IOException {
+		log.info("Fixing audio channels");
+		int ac = 1;
+		if(audioChannels1.equals("stereo")){
+			ac = 2;
+		}
+		else if(audioChannels1.equals("mono")){
+			log.info("Mono!");
+		}
+		Runtime r = Runtime.getRuntime();
+		String newName = video2Name.substring(0, video2Name.length()-4)+"-fixed.ogv";
+		Process p = r.exec("ffmpeg -i " + video2Name + " -ac "+ac+" "+newName,
+				null, tempDir);
+		BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		String s = "";
+		while (( s = in.readLine()) != null ){
+			log.info(s);
+		}
+		return newName;
+	}
+
+	private String combine(String videoName1, String videoName2) throws IOException{
+		Runtime r = Runtime.getRuntime();
+		String cmd = "mencoder -ovc raw -oac pcm "+videoName1+" "+videoName2+" -o combined.ogv";
+		if(isWindows()){
+			cmd = "cmd /c "+cmd; 
+		}
+		else if(isLinux()){
+			log.info("Linux!");
+		}
+		final Process p2 = r.exec(cmd,null,tempDir);
+		new Thread() {
+			 public void run() {
+			   BufferedReader in = new BufferedReader
+			     (new InputStreamReader(p2.getInputStream()));
+	
+			   String s;
+			   try {
+				   while ((s = in.readLine()) != null) {
+					   s.trim();
+				   }
+			   } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			   }
+			 }
+		}.start();
+		String s;
+		BufferedReader in = new BufferedReader(new InputStreamReader(p2.getErrorStream())) ;
+		//BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		//String s2 = "";
+		while (( s = in.readLine()) != null){
+			s.trim();
+		}
+		File combined = new File(tempDir+"/combined.ogv");
+		return combined.getAbsolutePath();
+	}
+	
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
 	private Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
