@@ -1097,7 +1097,7 @@ public class OliveServlet extends HttpServlet {
 
 	private String combine(String videoName1, String videoName2) throws IOException{
 		Runtime r = Runtime.getRuntime();
-		String cmd = "mencoder -ovc raw -oac pcm "+videoName1+" "+videoName2+" -o combined.ogv";
+		String cmd = "mencoder -ovc lavc -oac mp3lame "+videoName1+" "+videoName2+" -o combined.ogv";
 		if(isWindows()){
 			cmd = "cmd /c "+cmd; 
 		}
