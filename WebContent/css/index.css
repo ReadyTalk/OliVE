@@ -3,7 +3,7 @@
 	Login page
 	----------------------------------------
 */
-#splash-container {
+/*#splash-container {
 	position: absolute;
 	top: 0%;
 	right: 50%;
@@ -16,17 +16,30 @@
 	float: right;
 	width: 379px;
 	height: 145px;
-}
+}*/
 
 #login-form-container {
 	position: absolute;
 	top: 0%;
 	right: 0%;
 	bottom: 0%;
-	left: 50%;
+	left: 55%;
 	padding: 10% 10% 10% 10%;
 }
 
 #login-form {
 	
+}
+#screencast-container{
+	position: absolute;
+	top: 0%;
+	right: 50%;
+	bottom: 0%;
+	left: 0%;
+	padding: 2% 10% 10% 5%;
+
+}
+
+#main{
+	min-width: 1200px;
 }
