@@ -988,13 +988,19 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-
+		String cmd = "ffmpeg -i ";
+		if(isWindows){
+			cmd = "cmd /c "+cmd;
+		}
+		else if(isLinux){
+			log.info("Linux!");
+		}
 		File first = new File(videoURLs[0]);
 		S3Api.downloadVideosToTemp(videoURLs[0]);
 		S3Api.downloadVideosToTemp(videoURLs[1]);
 		Process p;
 		String videoName = "";
-		p = r.exec("ffmpeg -i " + first.getName(),
+		p = r.exec(cmd + first.getName(),
 				null, tempDir);
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
@@ -1012,7 +1018,7 @@ public class OliveServlet extends HttpServlet {
 			}
 		}
 		File second = new File(videoURLs[1]);
-		p = r.exec("ffmpeg -i " + second.getName(),
+		p = r.exec(cmd + second.getName(),
 				null, tempDir);
 		in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
 		s = in.readLine();
@@ -1043,7 +1049,11 @@ public class OliveServlet extends HttpServlet {
 				return combine(first.getName(),newVideo2);
 			}
 		}
-		return null;
+		else{
+			String newVideo2 = fixAspectRatio(first.getName(),aspectRatio1,second.getName(),aspectRatio2);
+			return combine(first.getName(),newVideo2);
+		}
+		//return null;
 		//}
 			
 		
@@ -1053,6 +1063,14 @@ public class OliveServlet extends HttpServlet {
 		// return null;
 		// return videoURLs[0];
 
+	}
+
+	private String fixAspectRatio(String video1Name, String aspectRatio1,
+			String video2Name, String aspectRatio2) {
+		String [] aspect1 = aspectRatio1.split("x");
+		String [] aspect2 = aspectRatio2.split("x");
+		
+		return null;
 	}
 
 	private String fixAudioChannels(String video1Name, String audioChannels1,
