@@ -52,7 +52,7 @@
 
 <div id="main">
 <div id="screencast-container">
-		<div class="jp-video jp-video-360p">
+		<div class="jp-video jp-video-270p">
 			<div class="jp-type-playlist">
 				<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 				<div id="jp_interface_1" class="jp-interface">
@@ -80,12 +80,14 @@
 					<div class="jp-current-time"></div>
 					<div class="jp-duration"></div>
 				</div>
+				<div id="playlist-container">
 				<div id="jp_playlist_1" class="jp-playlist">
 					<ul>
 						<!-- The method Playlist.displayPlaylist() uses this unordered list -->
 						<li></li>
 
 					</ul>
+				</div>
 				</div>
 			</div>
 		</div>

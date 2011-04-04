@@ -416,9 +416,9 @@ div.jp-video div.jp-video-play:hover {
 	background: transparent url("jplayer.blue.monday.video.play.hover.png") no-repeat center;
 }
 div.jp-video-270p div.jp-video-play {
-	top:-270px;
+	top:-360px;
 	width:480px;
-	height:270px;
+	height:360px;
 }
 div.jp-video-360p div.jp-video-play {
 	top:-360px;
@@ -437,12 +437,14 @@ div.jp-video div.jp-jplayer {
 }
 div.jp-video-270p div.jp-jplayer {
 	width:480px;
-	height:270px;
+	height:360px;
 }
 div.jp-video-360p div.jp-jplayer {
 	width:640px;
 	height:360px;
 }
+
 div.jp-jplayer {
 	background-color: #000000;
 }
+
