@@ -118,7 +118,7 @@ function attachUploadNewVideoHandlers() {
 				bValid = bValid
 						&& checkRegexp(newVideoName,
 								SAFE_VIDEO_NAME_REGEX,
-								'Video name may consist of letters, numbers, underscores, and spaces.');
+								SAFE_VIDEO_NAME_MESSAGE);
 				if (bValid) {
 					createVideoSpinner();
 					$('#new-video-form').submit();
