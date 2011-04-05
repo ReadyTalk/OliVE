@@ -40,15 +40,15 @@ function attachRegistrationHandlers() {
 				bValid = bValid
 						&& checkRegexp(name,
 								SAFE_USERNAME_REGEX,
-								'Username may consist of a-z, 0-9, underscores; and must begin with a letter.');
+								SAFE_USERNAME_MESSAGE);
 				bValid = bValid
 						&& checkRegexp(email,
 								SAFE_EMAIL_REGEX,
-								'Email should be in the form: example@example.com');
+								SAFE_EMAIL_MESSAGE);
 				bValid = bValid
 						&& checkRegexp(password,
 								SAFE_PASSWORD_REGEX,
-								'Password may consist of letters, numbers, underscores, and spaces.');
+								SAFE_PASSWORD_MESSAGE);
 				bValid = bValid
 						&& checkPasswordsEqual(password,
 								cPassword,
