@@ -52,7 +52,7 @@
 
 <div id="main">
 <div id="screencast-container">
-		<div class="jp-video jp-video-270p">
+		<div class="jp-video jp-video-360p">
 			<div class="jp-type-playlist">
 				<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 				<div id="jp_interface_1" class="jp-interface">
