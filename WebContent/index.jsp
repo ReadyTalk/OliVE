@@ -94,7 +94,7 @@
 
 		
 	</div>
-<!-- end #splash-container -->
+<!-- end #screencast-container -->
 
 <div id="login-form-container">
 <form id="login-form" action="OliveServlet" name="process" method="post">
