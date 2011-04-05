@@ -197,15 +197,36 @@ $(document).ready(function(){
 
 	var videoPlaylist = new Playlist("1", [
 		{
-			name:"Uploading Video",
-			free:true,
-			ogv: "screencasts/uploadingVideo.ogv"
-		   /* poster:"images/splash-simple.png"*/
+			name: "Signing up",
+			ogv: "https://s3.amazonaws.com/o-live/01-SignUp.mp4.ogv"
+			//free: true	// whether to provide a link to download the video
+			//poster:"/olive/images/splash-simple.png"	// Black, wrong aspect ratio
 		},
 		{
-			name:"Splitting",
-			ogv:"screencasts/split.ogv"
-			
+			name: "Projects",
+			ogv: "https://s3.amazonaws.com/o-live/03-myProjectsPage.mp4.ogv"
+			//free: true	// whether to provide a link to download the video
+			//poster:"/olive/images/splash-simple.png"	// Black, wrong aspect ratio
+		},
+		{
+			name: "Uploading videos",
+			ogv: "https://s3.amazonaws.com/o-live/04-uploading.mp4.ogv"
+		},
+		{
+			name: "Playing videos",
+			ogv: "https://s3.amazonaws.com/o-live/05-play.mp4.ogv"
+		},
+		{
+			name: "Splitting videos",
+			ogv: "https://s3.amazonaws.com/o-live/06-spliting.mp4.ogv"
+		},
+		{
+			name: "Combining videos",
+			ogv: "https://s3.amazonaws.com/o-live/07-combining.mp4.ogv"
+		},
+		{
+			name: "Registering and logging in",
+			ogv: "https://s3.amazonaws.com/o-live/02-accountInformation.mp4.ogv"
 		}
 	], {
 		ready: function() {
