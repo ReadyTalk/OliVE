@@ -42,6 +42,8 @@
 	border: 1px solid gray;
 	margin: 10px 0px 10px 10px;
 	overflow: auto;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 .video-container {
@@ -54,6 +56,8 @@
 	background-color: #FEFEFE;
 	text-align: center;
 	overflow: hidden;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 .video-image {
@@ -92,6 +96,8 @@
 	background-color: #101010;
 	text-align: center;
 	margin: 10px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 #player {
@@ -114,6 +120,8 @@
 	border-left: 1px solid gray;
 	margin-left: 10px;
 	overflow-x: auto;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 	/*text-align: center;*/
 }
 
