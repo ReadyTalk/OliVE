@@ -200,13 +200,12 @@ $(document).ready(function(){
 			name: 'Signing up',
 			ogv: 'https://s3.amazonaws.com/o-live/01-SignUp.mp4.ogv',
 			//free: true,	// whether to provide a link to download the video
-			poster: '/olive/images/splash-simple-white.png'	// Wrong aspect ratio
+			poster: '/olive/images/splash-jPlayer.png'
 		},
 		{
 			name: 'Projects',
 			ogv: 'https://s3.amazonaws.com/o-live/03-myProjectsPage.mp4.ogv'
 			//free: true	// whether to provide a link to download the video
-			//poster: '/olive/images/splash-simple.png'	// Black, wrong aspect ratio
 		},
 		{
 			name: 'Uploading videos',
