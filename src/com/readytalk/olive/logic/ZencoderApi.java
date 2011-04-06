@@ -148,7 +148,7 @@ public class ZencoderApi {
 			String videoIcon = awsBaseUrl + thumbPrefix + "_0000."
 					+ thumbFormat;
 			videoFragments[i] = new Video(
-					DatabaseApi.getVideoName(videoId) + i, S3Api.AWS_URL_PREFIX
+					DatabaseApi.getVideoName(videoId) + "_" + i, S3Api.AWS_URL_PREFIX
 							+ videoFragmentFileName, videoIcon, -1, -1, -1,
 					false); // TODO Get icon from Zencoder
 		}
