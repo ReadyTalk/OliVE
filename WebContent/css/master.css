@@ -16,7 +16,7 @@ body {
 	 */
 	font-size: 100%;
 	line-height: 20px;
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: Lato, Calibri, Helvetica, Arial, sans-serif;
 	text-align: left;
 	/*background-color: #edf4e6;*/
 	/* A lightened version of the Olive color */
@@ -24,7 +24,7 @@ body {
 
 h1,h2,h3,h4,h5,h6 {
 	color: #92bd6a; /* The Olive color */
-	font-family: Calibri, Helvetica, Arial, sans-serif;
+	font-family: Lato, Calibri, Helvetica, Arial, sans-serif;
 }
 
 h1 {
