@@ -111,7 +111,7 @@
 
 #timeline {
 	position: absolute;
-	right: 175px;
+	right: 200px;
 	bottom: 0px;
 	left: 0px;
 	height: 150px; /* Larger than height of .video-container */

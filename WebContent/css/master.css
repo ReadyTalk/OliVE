@@ -25,6 +25,7 @@ body {
 h1,h2,h3,h4,h5,h6 {
 	color: #92bd6a; /* The Olive color */
 	font-family: Lato, Calibri, Helvetica, Arial, sans-serif;
+	font-weight: 700;
 }
 
 h1 {
@@ -140,7 +141,7 @@ small {
 	top: 0px;
 	right: 0px;
 	left: 0px;
-	height: 50px;
+	height: 60px;
 	border-bottom: 1px solid #888888;
 	min-width: 1000px;
 }
@@ -169,7 +170,7 @@ small {
 
 #main {
 	position: absolute;
-	top: 50px;
+	top: 60px;
 	right: 0px;
 	bottom: 30px;
 	left: 0px;
