@@ -198,15 +198,15 @@ $(document).ready(function(){
 	var videoPlaylist = new Playlist('1', [
 		{
 			name: 'Signing up',
-			ogv: 'https://s3.amazonaws.com/o-live/01-SignUp.mp4.ogv'
-			//free: true	// whether to provide a link to download the video
-			//poster:'/olive/images/splash-simple.png'	// Black, wrong aspect ratio
+			ogv: 'https://s3.amazonaws.com/o-live/01-SignUp.mp4.ogv',
+			//free: true,	// whether to provide a link to download the video
+			poster: '/olive/images/splash-simple-white.png'	// Wrong aspect ratio
 		},
 		{
 			name: 'Projects',
 			ogv: 'https://s3.amazonaws.com/o-live/03-myProjectsPage.mp4.ogv'
 			//free: true	// whether to provide a link to download the video
-			//poster:'/olive/images/splash-simple.png'	// Black, wrong aspect ratio
+			//poster: '/olive/images/splash-simple.png'	// Black, wrong aspect ratio
 		},
 		{
 			name: 'Uploading videos',
