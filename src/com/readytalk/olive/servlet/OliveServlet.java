@@ -1018,10 +1018,7 @@ public class OliveServlet extends HttpServlet {
 		File second;
 		String[] arr;
 		String[] arrV1 = {};
-		String[] arrA1 = {};
 		String[] arrV2 = {};
-		String[] arrA2 = {};
-
 		for(int i = 1; i < videoURLs.length ; i++){
 			first = new File(videoURLs[0]);
 			S3Api.downloadVideosToTemp(videoURLs[i]);
@@ -1033,8 +1030,6 @@ public class OliveServlet extends HttpServlet {
 				arr = s.split(",");
 				if (s.contains("Video:")) {
 					arrV1 = arr;
-				} else if (s.contains("Audio:")) {
-					arrA1 = arr;
 				}
 			}
 			second = new File(videoURLs[i]);
@@ -1045,8 +1040,6 @@ public class OliveServlet extends HttpServlet {
 				arr = s.split(",");
 				if (s.contains("Video:")) {
 					arrV2 = arr;
-				} else if (s.contains("Audio:")) {
-					arrA2 = arr;
 				}
 			}
 			log.info(first.getName());
@@ -1059,21 +1052,12 @@ public class OliveServlet extends HttpServlet {
 			if(dimensions2.indexOf(" ")!=-1){
 				dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
 			}
-			String audioChannels1 = (arrA1[2].trim());
-			String audioChannels2 = (arrA2[2].trim());
 			if (dimensions1.equals(dimensions2)) {
-				// String [] cmd = {"mencoder.exe","-oac pcm -ovc copy "+ first.getName()+" "+ second.getName()+" -o combined.ogv"};
-				if (audioChannels1.equals(audioChannels2)) {
-					videoURLs[0] = tempDir+"/"+combine(first.getName(), second.getName());
-				} else {
-					String newVideo2 = fixAudioChannels(first.getName(),
-							audioChannels1, second.getName(), audioChannels2);
-					videoURLs[0] = tempDir+"/"+combine(first.getName(), newVideo2);
-				}
+				videoURLs[0] = combine(first.getName(), second.getName());
 			} else {
 				String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
 						second.getName(), dimensions2);
-				videoURLs[0] = tempDir+"/"+combine(newVideos[0], newVideos[1]);
+				videoURLs[0] = combine(newVideos[0], newVideos[1]);
 			}
 		}
 		return videoURLs[0];
@@ -1288,7 +1272,7 @@ public class OliveServlet extends HttpServlet {
 				String s;
 				try {
 					while ((s = in.readLine()) != null) {
-						s.trim();
+						log.info(s);
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -1302,7 +1286,7 @@ public class OliveServlet extends HttpServlet {
 		// BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		// String s2 = "";
 		while ((s = in.readLine()) != null) {
-			s.trim();
+			log.info(s);
 		}
 		File combined = new File(tempDir + "/combined.ogv");
 		return combined.getAbsolutePath();
