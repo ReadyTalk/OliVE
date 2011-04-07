@@ -23,6 +23,16 @@ import com.readytalk.olive.model.Video;
 public class ZencoderApi {
 	private static final String ZENCODER_API_JOBS_URL = "https://app.zencoder.com/api/jobs/";
 	private static final String ZENCODER_API_OUTPUTS_URL_PREFIX = "https://app.zencoder.com/api/outputs/";
+	private static final String NEW_EXTENSION = ".ogv";
+	private static final String NEW_VIDEO_CODEC = "theora";
+	private static final String NEW_AUDIO_CODEC = "vorbis";
+	private static final String THUMB_FORMAT = "jpg";
+	private static final String THUMB_SUFFIX_WITH_DOT = "_0000.";
+	private static final int NUMBER_OF_THUMBS = 1;
+	private static final int FRAMES_PER_SECOND = 30;
+	private static final int AUDIO_CHANNELS = 2; // stereo
+	private static final int THUMB_PUBLICITY = 1; // true; public
+	private static final int VIDEO_PUBLICITY = 1; // true; public
 
 	/**
 	 * 
@@ -91,15 +101,17 @@ public class ZencoderApi {
 	}
 
 	private static String getJsonForSplit(String input, String baseUrl,
-			String filename, double startClip, double clipLength,
-			String thumbBaseUrl, String thumbPrefix, String thumbFormat) {
+			String filename, int numberOfThumbs, double startClip,
+			double clipLength, String thumbBaseUrl, String thumbPrefix,
+			String thumbFormat, int thumbPublicity, int videoPublicity) {
 		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + baseUrl + "\","
 				+ "\"filename\":\"" + filename + "\"," + "\"thumbnails\":{"
-				+ "\"number\":1," + "\"base_url\":\"" + thumbBaseUrl + "\","
-				+ "\"prefix\":\"" + thumbPrefix + "\"," + "\"format\":\""
-				+ thumbFormat + "\"," + "\"public\":1" + "}," + "\"public\":1,"
+				+ "\"number\":" + numberOfThumbs + "," + "\"base_url\":\""
+				+ thumbBaseUrl + "\"," + "\"prefix\":\"" + thumbPrefix + "\","
+				+ "\"format\":\"" + thumbFormat + "\"," + "\"public\":"
+				+ thumbPublicity + "}," + "\"public\":" + videoPublicity + ","
 				+ "\"start_clip\":" + startClip + "," + "\"clip_length\":"
 				+ clipLength + "}]}";
 		return data;
@@ -107,32 +119,35 @@ public class ZencoderApi {
 
 	private static String getJsonForConvertToOgg(String input,
 			String videoBaseUrl, String filename, String videoCodec,
-			String audioCodec, String thumbBaseUrl, String thumbPrefix,
-			String thumbFormat) {
+			String audioCodec, int numberOfThumbs, String thumbBaseUrl,
+			String thumbPrefix, String thumbFormat, int thumbPublicity,
+			int framesPerSecond, int audioChannels, int videoPublicity) {
 		// Codec and file extension must match.
 		String data = "{\"api_key\":\"" + DatabaseApi.getZencoderApiKey()
 				+ "\",\"input\":\"" + input + "\","
 				+ "\"output\":[{\"base_url\":\"" + videoBaseUrl + "\","
 				+ "\"filename\":\"" + filename + "\",\"video_codec\":\""
 				+ videoCodec + "\",\"audio_codec\":\"" + audioCodec + "\","
-				+ "\"thumbnails\":{" + "\"number\":1," + "\"base_url\":\""
-				+ thumbBaseUrl + "\"," + "\"prefix\":\"" + thumbPrefix + "\","
-				+ "\"format\":\"" + thumbFormat + "\"," + "\"public\":1" + "},"
-				+ "\"public\":1" + "}]}";
+				+ "\"thumbnails\":{" + "\"number\":" + numberOfThumbs + ","
+				+ "\"base_url\":\"" + thumbBaseUrl + "\"," + "\"prefix\":\""
+				+ thumbPrefix + "\"," + "\"format\":\"" + thumbFormat + "\","
+				+ "\"public\":" + thumbPublicity + "" + "},"
+				+ "\"frame_rate\":" + framesPerSecond + ","
+				+ "\"audio_channels\":" + audioChannels + "," + "\"public\":"
+				+ videoPublicity + "}]}";
 		return data;
 	}
 
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
 		String originalVideoUrl = DatabaseApi.getVideoUrl(videoId);
-		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
 		double maximumStartTimeInSeconds = Security.MIN_SPLIT_TIME_IN_SECONDS;
 		double minimumEndTimeInSeconds = Security.MAX_SPLIT_TIME_IN_SECONDS;
 		double[] splitStartInSeconds = { 0, splitTimeInSeconds };
 		double[] clipLengthInSeconds = {
 				splitTimeInSeconds - maximumStartTimeInSeconds,
 				minimumEndTimeInSeconds - splitTimeInSeconds }; // Draw a picture to understand this.
-		String thumbFormat = "jpg";
+		String thumbFormat = THUMB_FORMAT;
 		Video[] videoFragments = new Video[2];
 		String[] responses = new String[2];
 
@@ -142,15 +157,17 @@ public class ZencoderApi {
 					.getNameFromUrlWithNewTimeStamp(originalVideoUrl);
 			String thumbPrefix = S3Api.getTime(); // The video name can't be included because it has a ".".
 			responses[i] = ZencoderApi.sendReceive(ZencoderApi.getJsonForSplit(
-					originalVideoUrl, awsBaseUrl, videoFragmentFileName,
-					splitStartInSeconds[i], clipLengthInSeconds[i], awsBaseUrl,
-					thumbPrefix, thumbFormat), new URL(ZENCODER_API_JOBS_URL));
-			String videoIcon = awsBaseUrl + thumbPrefix + "_0000."
-					+ thumbFormat;
-			videoFragments[i] = new Video(
-					DatabaseApi.getVideoName(videoId) + "_" + i, S3Api.AWS_URL_PREFIX
-							+ videoFragmentFileName, videoIcon, -1, -1, -1,
-					false); // TODO Get icon from Zencoder
+					originalVideoUrl, S3Api.AWS_URL_PREFIX,
+					videoFragmentFileName, NUMBER_OF_THUMBS,
+					splitStartInSeconds[i], clipLengthInSeconds[i],
+					S3Api.AWS_URL_PREFIX, thumbPrefix, thumbFormat,
+					THUMB_PUBLICITY, VIDEO_PUBLICITY), new URL(
+					ZENCODER_API_JOBS_URL));
+			String videoIcon = S3Api.AWS_URL_PREFIX + thumbPrefix
+					+ THUMB_SUFFIX_WITH_DOT + thumbFormat;
+			videoFragments[i] = new Video(DatabaseApi.getVideoName(videoId)
+					+ "_" + i, S3Api.AWS_URL_PREFIX + videoFragmentFileName,
+					videoIcon, -1, -1, -1, false);
 		}
 
 		// Wait for the first and second halves of the original video.
@@ -164,27 +181,24 @@ public class ZencoderApi {
 	}
 
 	public static String[] convertToOgg(String videoUrl) throws IOException {
-		String awsBaseUrl = S3Api.AWS_URL_PREFIX;
-		String newExtension = ".ogv";
 		String convertedVideoFileName = S3Api
-				.getNameFromUrlWithNewTimeStamp(videoUrl) + newExtension;
-		String newVideoCodec = "theora";
-		String newAudioCodec = "vorbis";
+				.getNameFromUrlWithNewTimeStamp(videoUrl) + NEW_EXTENSION;
 		String thumbPrefix = S3Api.getTime(); // The video name can't be included because it has a ".".
-		String thumbFormat = "jpg";
-
 		String response = ZencoderApi.sendReceive(
-				getJsonForConvertToOgg(videoUrl, awsBaseUrl,
-						convertedVideoFileName, newVideoCodec, newAudioCodec,
-						awsBaseUrl, thumbPrefix, thumbFormat), new URL(
-						ZENCODER_API_JOBS_URL));
+				getJsonForConvertToOgg(videoUrl, S3Api.AWS_URL_PREFIX,
+						convertedVideoFileName, NEW_VIDEO_CODEC,
+						NEW_AUDIO_CODEC, NUMBER_OF_THUMBS,
+						S3Api.AWS_URL_PREFIX, thumbPrefix, THUMB_FORMAT,
+						THUMB_PUBLICITY, FRAMES_PER_SECOND, AUDIO_CHANNELS,
+						VIDEO_PUBLICITY), new URL(ZENCODER_API_JOBS_URL));
 		ZencoderInitialResponse zencoderInitialResponse = new Gson().fromJson(
 				response, ZencoderInitialResponse.class);
 		waitForJobToFinish(zencoderInitialResponse.outputs[0].id);
 
 		String[] videoUrlAndIcon = new String[] {
-				awsBaseUrl + convertedVideoFileName,
-				awsBaseUrl + thumbPrefix + "_0000." + thumbFormat };
+				S3Api.AWS_URL_PREFIX + convertedVideoFileName,
+				S3Api.AWS_URL_PREFIX + thumbPrefix + THUMB_SUFFIX_WITH_DOT
+						+ THUMB_FORMAT };
 		return videoUrlAndIcon;
 	}
 }

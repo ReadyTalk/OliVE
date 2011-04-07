@@ -373,11 +373,11 @@ function removeFromSelected(videoName) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	var video = '<video id="player" preload controls poster="'
+	var video = '<video id="player" preload="preload" controls="controls" poster="'
 		+ $(element).data('icon')
 		+ '">'
 		+ '<source src="' + $(element).data('url')
-		+ '" type="video/ogg; codecs=\'theora,vorbis\'" /></video>';	// TODO Get this from the database.
+		+ '" type="video/ogg; codecs=theora,vorbis" /></video>';	// TODO Get this from the database.
 	$('#player-container').append(video);
 }
 
