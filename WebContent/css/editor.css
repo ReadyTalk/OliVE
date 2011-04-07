@@ -7,7 +7,7 @@
 	position: absolute;
 	top: 20px;
 	right: 60%;
-	bottom: 125px;
+	bottom: 150px;
 	left: 0px;
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 }
@@ -42,18 +42,22 @@
 	border: 1px solid gray;
 	margin: 10px 0px 10px 10px;
 	overflow: auto;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 .video-container {
 	float: left;
-	height: 100px;
-	width: 120px;
+	height: 125px;
+	width: 130px;
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
 	overflow: hidden;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 .video-image {
@@ -85,13 +89,15 @@
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	bottom: 125px;
+	bottom: 150px;
 	left: 40%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
 	background-color: #101010;
 	text-align: center;
 	margin: 10px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 #player {
@@ -105,15 +111,17 @@
 
 #timeline {
 	position: absolute;
-	right: 150px;
+	right: 200px;
 	bottom: 0px;
 	left: 0px;
-	height: 125px; /* Larger than height of .video-container */
+	height: 150px; /* Larger than height of .video-container */
 	border-top: 1px solid gray;
 	border-right: 1px solid gray;
 	border-left: 1px solid gray;
 	margin-left: 10px;
 	overflow-x: auto;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 	/*text-align: center;*/
 }
 

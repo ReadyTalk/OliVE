@@ -36,15 +36,12 @@
 	right: 50%;
 	bottom: 0%;
 	left: 0%;
-	padding: 2% 10% 10% 5%;
+	padding: 5% 10% 10% 10%;
 
 }
 
 /*.jp-playlist{
 	max-height: 50px;
 	overflow: auto;
-	}*/
+}*/
 
-#main{
-	min-width: 1200px;
-}

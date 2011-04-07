@@ -43,12 +43,14 @@
 .project-container {
 	float: left;
 	height: 125px;
-	width: 125px;
+	width: 130px;
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 .project-image {

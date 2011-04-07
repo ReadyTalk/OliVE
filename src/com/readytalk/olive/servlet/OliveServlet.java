@@ -539,7 +539,7 @@ public class OliveServlet extends HttpServlet {
 				String videoIcon = videoUrlAndIcon[1];
 				if (videoUrl != null) {
 					DatabaseApi.addVideo(new Video(videoName, videoUrl,
-							videoIcon, projectId, -1, -1, false)); // TODO Get icon from Zencoder.
+							videoIcon, projectId, -1, -1, false));
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
 					out
 							.println("File uploaded. Please close this window and refresh the editor page.");

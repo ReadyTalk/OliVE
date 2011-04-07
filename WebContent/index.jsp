@@ -10,9 +10,11 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.9.custom/css/ui-lightness/jquery-ui-1.8.9.custom.css" />
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/index.css" />
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Molengo' rel='stylesheet' type='text/css'>
 <link href="/olive/css/skin/jplayer.blue.monday.css" rel="stylesheet" type="text/css" />
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
@@ -52,7 +54,7 @@
 
 <div id="main">
 <div id="screencast-container">
-		<div class="jp-video jp-video-270p">
+		<div class="jp-video jp-video-360p">
 			<div class="jp-type-playlist">
 				<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 				<div id="jp_interface_1" class="jp-interface">
@@ -94,7 +96,7 @@
 
 		
 	</div>
-<!-- end #splash-container -->
+<!-- end #screencast-container -->
 
 <div id="login-form-container">
 <form id="login-form" action="OliveServlet" name="process" method="post">

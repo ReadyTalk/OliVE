@@ -11,9 +11,10 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.9.custom/css/ui-lightness/jquery-ui-1.8.9.custom.css" />
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/editor.css" />
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -44,10 +45,9 @@
 	}
 %>
 <div id="header">
-<div id="header-left">
-<img id="olive-icon"
+<div id="header-left"><img id="olive-icon"
 	src="/olive/images/olive.png" />
-<h1 id= "olive-title">Olive</h1>
+<h1 id="olive-title">Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
@@ -92,12 +92,9 @@
 <div class="clear"></div>
 
 <div id="export">
-<form id="combine-and-export-form" action="OliveServlet" name="process"
-	method="post">
-<input type="hidden" name="FormName" value="combine-form"></input>
-<input type="submit" value="Export to Computer"></input>
-</form>
-
+<button id="export-button" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" disabled="disabled"><span
+	class="ui-button-text">Combine Videos</span></button>
 </div>
 <!-- end #export --></div>
 <!-- end #main -->
@@ -127,11 +124,11 @@
 </div>
 
 <div id="invalid-split-dialog" class="hidden" title="Warning">
-<p>Please pause the video at a valid split location.</p>
+<p>The video may not be split at the beginning or end.</p>
 </div>
 <!-- end #dialog-form -->
 
-<div id="new-video-dialog-form" class="hidden" title="Create new user">
+<div id="new-video-dialog-form" class="hidden" title="Upload New Video">
 <p class="validateTips">All form fields are required.</p>
 <form id="new-video-form" action="OliveServlet" name="process"
 	enctype="multipart/form-data" method="post">

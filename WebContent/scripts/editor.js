@@ -15,7 +15,7 @@ function attachHandlers() {
 	attachSplitVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
-	//attachPublishButtonHandlers();
+	attachCombineButtonHandlers();
 	enableDragAndDrop();
 }
 
@@ -90,7 +90,7 @@ function populateVideos() {
 		
 		$('.video-container').show();
 		
-		enableOrDisablePublishButton();
+		enableOrDisableCombineButton();
 		
 		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
 	}, null);	// Defined in "/olive/scripts/master.js".
@@ -118,7 +118,7 @@ function attachUploadNewVideoHandlers() {
 				bValid = bValid
 						&& checkRegexp(newVideoName,
 								SAFE_VIDEO_NAME_REGEX,
-								'Video name may consist of letters, numbers, underscores, and spaces.');
+								SAFE_VIDEO_NAME_MESSAGE);
 				if (bValid) {
 					createVideoSpinner();
 					$('#new-video-form').submit();
@@ -271,11 +271,21 @@ function doNotSelectThisTime() {
 	event.stopPropagation();	// Prevent selecting from happening.
 }
 
-function attachPublishButtonHandlers(){
+function attachCombineButtonHandlers(){
 	$('#export-button').click(function(){
-		$(this).text("Please wait...");
+		turnOffCombineButtonText();
 		combineVideos();
 	});
+}
+
+function turnOffCombineButtonText() {
+	$('#export-button > span').text('Please wait...')
+		.attr('disabled', 'disabled');
+}
+
+function turnOnCombineButtonText() {
+	$('#export-button > span').text('Combine Videos')
+		.removeAttr('disabled');
 }
 
 // Perform a combineVideos request
@@ -285,7 +295,7 @@ function combineVideos(){
 		+    '"arguments" : {'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, null, null);
+	makeAjaxPostRequest(requestData, turnOnCombineButtonText, turnOnCombineButtonText);
 }
 
 //Perform a renameVideo request
@@ -363,11 +373,11 @@ function removeFromSelected(videoName) {
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
 // Also: http://stackoverflow.com/questions/2425218/html5-video-tag-in-chrome-wmv
 function updatePlayerWithNewElement(element) {
-	var video = '<video id="player" preload controls poster="'
+	var video = '<video id="player" preload="preload" controls="controls" poster="'
 		+ $(element).data('icon')
 		+ '">'
 		+ '<source src="' + $(element).data('url')
-		+ '" type="video/ogg; codecs=\'theora,vorbis\'" /></video>';	// TODO Get this from the database.
+		+ '" type="video/ogg; codecs=theora,vorbis" /></video>';	// TODO Get this from the database.
 	$('#player-container').append(video);
 }
 
@@ -398,7 +408,7 @@ function enableDragAndDrop() {
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
-			enableOrDisablePublishButton();
+			enableOrDisableCombineButton();
 			updateTimelinePosition();
 		}
 	});
@@ -438,7 +448,7 @@ function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > .video-container');
 }
 
-function enableOrDisablePublishButton() {
+function enableOrDisableCombineButton() {
 	if ($('#timeline').sortable('toArray').length > 0){
 		$('#export-button').removeAttr('disabled');
 	} else {

@@ -11,9 +11,10 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.9.custom/css/ui-lightness/jquery-ui-1.8.9.custom.css" />
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/projects.css" />
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -101,7 +102,7 @@ and answer in case you forget your password.<br />Thanks!<br />The Olive Team</p
 <p>Delete project? This will also delete the project's videos.</p>
 </div>
 
-<div id="new-project-dialog-form" class="hidden" title="Create new user">
+<div id="new-project-dialog-form" class="hidden" title="Create New Project">
 <p class="validateTips">All form fields are required.</p>
 <form id="new-project-form" action="OliveServlet" name="process"
 	method="post">

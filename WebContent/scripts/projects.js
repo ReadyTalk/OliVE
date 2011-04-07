@@ -115,7 +115,7 @@ function attachCreateNewProjectHandlers() {
 				bValid = bValid
 						&& checkRegexp(newProjectName,
 								SAFE_PROJECT_NAME_REGEX,
-								'Project name may consist of letters, numbers, underscores, and spaces.');
+								SAFE_PROJECT_NAME_MESSAGE);
 				if (bValid) {
 					$('#new-project-form').submit();
 					$(this).dialog('close');
