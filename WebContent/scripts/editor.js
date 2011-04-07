@@ -15,7 +15,7 @@ function attachHandlers() {
 	attachSplitVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
-	attachCombineButtonHandlers();
+	//attachCombineButtonHandlers();
 	enableDragAndDrop();
 }
 

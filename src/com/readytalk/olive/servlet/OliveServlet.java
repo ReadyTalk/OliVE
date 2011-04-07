@@ -958,7 +958,9 @@ public class OliveServlet extends HttpServlet {
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
+				log.info("video url "+i+": "+videoURLs[i]);
 			}
+			
 			String combinedURL = "";
 			// combineVideos(videoURLs, videos);
 			if (videoURLs.length == 1) {
@@ -1006,23 +1008,32 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		String cmd = "ffmpeg -i ";
+		//String cmd = "ffmpeg -i ";
+		/*if (isWindows) {
+			cmd = "cmd /c " + cmd;
+		} else if (isLinux) {
+			log.info("Linux!");
+		}*/
+		S3Api.downloadVideosToTemp(videoURLs[0]);
+		File first = new File(videoURLs[0]);
+		
+		//File second;
+		//String[] arr;
+		//String[] arrV1 = {};
+		//String[] arrV2 = {};
+		String cmd = "mencoder -ovc lavc -oac mp3lame "+first.getName()+ " ";
 		if (isWindows) {
 			cmd = "cmd /c " + cmd;
 		} else if (isLinux) {
 			log.info("Linux!");
 		}
-		S3Api.downloadVideosToTemp(videoURLs[0]);
-		File first = new File(videoURLs[0]);
-		Process p;
-		File second;
-		String[] arr;
-		String[] arrV1 = {};
-		String[] arrV2 = {};
+		File temp;
 		for(int i = 1; i < videoURLs.length ; i++){
-			first = new File(videoURLs[0]);
 			S3Api.downloadVideosToTemp(videoURLs[i]);
-			p = r.exec(cmd + first.getName(), null, tempDir);
+			temp = new File(videoURLs[i]);
+			cmd = cmd+temp.getName()+ " ";
+			//log.info(first.getName());
+			/*p = r.exec(cmd + first.getName(), null, tempDir);
 			BufferedReader in = new BufferedReader(new InputStreamReader(p
 					.getErrorStream()));
 			String s = in.readLine();
@@ -1032,7 +1043,10 @@ public class OliveServlet extends HttpServlet {
 					arrV1 = arr;
 				}
 			}
+			log.info("Downloading "+videoURLs[i]+" to temp....");
+			S3Api.downloadVideosToTemp(videoURLs[i]);
 			second = new File(videoURLs[i]);
+			//log.info(second.getName());
 			p = r.exec(cmd + second.getName(), null, tempDir);
 			in = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			s = in.readLine();
@@ -1052,15 +1066,44 @@ public class OliveServlet extends HttpServlet {
 			if(dimensions2.indexOf(" ")!=-1){
 				dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
 			}
+			
 			if (dimensions1.equals(dimensions2)) {
+				log.info("calling combine: "+first.getName()+" and "+ second.getName());
 				videoURLs[0] = combine(first.getName(), second.getName());
 			} else {
 				String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
 						second.getName(), dimensions2);
 				videoURLs[0] = combine(newVideos[0], newVideos[1]);
 			}
+			first = new File(videoURLs[0]);*/
 		}
-		return videoURLs[0];
+		cmd = cmd + "-o combined.ogv";
+		log.info(cmd);
+		final Process p = r.exec(cmd,null,tempDir);
+		new Thread() {
+			public void run() {
+				BufferedReader in = new BufferedReader(new InputStreamReader(p
+						.getInputStream()));
+
+				String s;
+				try {
+					while ((s = in.readLine()) != null) {
+						log.info(s);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();
+		String s;
+		BufferedReader in = new BufferedReader(new InputStreamReader(p
+				.getErrorStream()));
+		while ((s = in.readLine()) != null) {
+			log.info(s);
+		}
+		File combined = new File(tempDir + "/combined.ogv");
+		return combined.getAbsolutePath();
 		// }
 
 		// return null;
