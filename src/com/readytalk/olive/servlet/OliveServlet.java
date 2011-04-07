@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
@@ -152,7 +153,7 @@ public class OliveServlet extends HttpServlet {
 				handleNewPassword(request, response, session);
 			} else if (id.equals("combine-form")) {
 				try {
-					handleCombineVideos(request, response, session,"");
+					handleCombineVideos(request, response, session, "");
 				} catch (NoSuchAlgorithmException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -209,7 +210,9 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			if (newPassword.equals(confirmNewPassword)) {
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session
+						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+								true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
 				newPasswordSet = DatabaseApi
@@ -250,7 +253,9 @@ public class OliveServlet extends HttpServlet {
 					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 					response.sendRedirect("securityQuestion.jsp");
 				} else {
-					session.setAttribute(Attribute.IS_CORRECT.toString(), false);
+					session
+							.setAttribute(Attribute.IS_CORRECT.toString(),
+									false);
 					response.sendRedirect("forgot.jsp");
 				}
 			} else {
@@ -305,13 +310,16 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
 				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
-			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
+			session
+					.setAttribute(Attribute.PROJECT_NAME.toString(),
+							projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
-		out.println("File uploaded. Please close this window and refresh the editor page.");
+		out
+				.println("File uploaded. Please close this window and refresh the editor page.");
 		out.close();
 	}
 
@@ -329,13 +337,13 @@ public class OliveServlet extends HttpServlet {
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = DatabaseApi.getAccountId(username);
-				session.setAttribute(Attribute.USERNAME.toString(),
-						DatabaseApi.getAccountUsername(accountId));
+				session.setAttribute(Attribute.USERNAME.toString(), DatabaseApi
+						.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
-				session.setAttribute(Attribute.EMAIL.toString(),
-						DatabaseApi.getAccountEmail(accountId));
-				session.setAttribute(Attribute.NAME.toString(),
-						DatabaseApi.getAccountName(accountId));
+				session.setAttribute(Attribute.EMAIL.toString(), DatabaseApi
+						.getAccountEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
+						.getAccountName(accountId));
 				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
 						false);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
@@ -373,8 +381,12 @@ public class OliveServlet extends HttpServlet {
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
-				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
+				session
+						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+								true);
+				session
+						.setAttribute(Attribute.PASSWORD.toString(),
+								newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
@@ -529,18 +541,23 @@ public class OliveServlet extends HttpServlet {
 					DatabaseApi.addVideo(new Video(videoName, videoUrl,
 							videoIcon, projectId, -1, -1, false)); // TODO Get icon from Zencoder.
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out.println("File uploaded. Please close this window and refresh the editor page.");
+					out
+							.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
 					response.sendRedirect("editor.jsp"); // Keep the user on the same page.
 				} else {
-					out.println("Upload Failed. Error uploading video to the cloud.");
-					log.warning("Upload Failed. Error uploading video to the cloud.");
+					out
+							.println("Upload Failed. Error uploading video to the cloud.");
+					log
+							.warning("Upload Failed. Error uploading video to the cloud.");
 					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else if (!Security.isSafeVideoName(videoName)) {
-				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				out
+						.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log
+						.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else if (!Security.isUniqueVideoName(videoName, projectId)) {
@@ -548,14 +565,17 @@ public class OliveServlet extends HttpServlet {
 				log.warning("Upload Failed. Video name already exists.");
 				return;
 			} else {
-				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				out
+						.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log
+						.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
 
 		} catch (FileUploadException e) {
-			log.severe("Error encountered while parsing the request in the upload handler");
+			log
+					.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
@@ -801,9 +821,9 @@ public class OliveServlet extends HttpServlet {
 				deleteVideoRequest.arguments.video, projectId);
 
 		S3Api.deleteFileInS3(S3Api.getNameFromUrl(DatabaseApi
-				.getVideoUrl(videoId)));	// Delete video
+				.getVideoUrl(videoId))); // Delete video
 		S3Api.deleteFileInS3(S3Api.getNameFromUrl(DatabaseApi
-				.getVideoIcon(videoId)));	// Delete icon
+				.getVideoIcon(videoId))); // Delete icon
 
 		DatabaseApi.deleteVideo(videoId);
 
@@ -924,58 +944,56 @@ public class OliveServlet extends HttpServlet {
 	throws IOException, NoSuchAlgorithmException, InvalidFileSizeException,
 			ServiceException, InterruptedException {
 
-		//CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
-			//	CombineVideosRequest.class);
+		// CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
+		// CombineVideosRequest.class);
 		log.info("COMBINING VIDEOS");
 		// response.setContentType("text/plain");
 
 		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
-		log.info("videos length: "+videos.length);
-		if(videos.length > 0){
+		log.info("videos length: " + videos.length);
+		if (videos.length > 0) {
 			String[] videoURLs = new String[videos.length];
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
 			}
 			String combinedURL = "";
-			//combineVideos(videoURLs, videos);
-			if(videoURLs.length == 1){
+			// combineVideos(videoURLs, videos);
+			if (videoURLs.length == 1) {
 				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
-			}
-			else if (videoURLs.length > 1){
+			} else if (videoURLs.length > 1) {
 				combinedURL = combineVideos(videoURLs, videos);
 			}
-			if(combinedURL == null){
+			if (combinedURL == null) {
 				response.sendRedirect("editor.jsp");
 				return;
 			}
-			//response.sendRedirect("editor.jsp");
+			// response.sendRedirect("editor.jsp");
 			// My view resource servlet:
 			// Use a ServletOutputStream because we may pass binary information
 			log.info("Combined. Now Dowloading");
 			final ServletOutputStream out = response.getOutputStream();
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
-            "attachment;filename=combinedVideo.ogv");
+					"attachment;filename=combinedVideo.ogv");
 			File file = new File(combinedURL);
-			BufferedInputStream is = new BufferedInputStream(new FileInputStream(
-					file));
+			BufferedInputStream is = new BufferedInputStream(
+					new FileInputStream(file));
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
 			log.info("downloading");
 			while ((bytesRead = is.read(buf)) != -1) {
-				//log.info("in while");
+				// log.info("in while");
 				out.write(buf, 0, bytesRead);
-				//log.info("...Dowloading in while...");
+				// log.info("...Dowloading in while...");
 			}
-	
+
 			is.close();
 			out.close();
 			log.info("end of handleCombinedVideos");
-		}
-		else{
+		} else {
 			response.sendRedirect("editor.jsp");
 		}
 	}
@@ -989,149 +1007,307 @@ public class OliveServlet extends HttpServlet {
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
 		String cmd = "ffmpeg -i ";
-		if(isWindows){
-			cmd = "cmd /c "+cmd;
-		}
-		else if(isLinux){
+		if (isWindows) {
+			cmd = "cmd /c " + cmd;
+		} else if (isLinux) {
 			log.info("Linux!");
 		}
-		File first = new File(videoURLs[0]);
 		S3Api.downloadVideosToTemp(videoURLs[0]);
-		S3Api.downloadVideosToTemp(videoURLs[1]);
+		File first = new File(videoURLs[0]);
 		Process p;
-		String videoName = "";
-		p = r.exec(cmd + first.getName(),
-				null, tempDir);
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
-		String s = in.readLine();
+		File second;
 		String[] arr;
 		String[] arrV1 = {};
 		String[] arrA1 = {};
-		while (( s = in.readLine()) != null ){
-			arr = s.split(",");
-			if(s.contains("Video:")){
-				arrV1 = arr;
-			}
-			else if (s.contains("Audio:")){
-				arrA1 = arr;
-			}
-		}
-		File second = new File(videoURLs[1]);
-		p = r.exec(cmd + second.getName(),
-				null, tempDir);
-		in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
-		s = in.readLine();
 		String[] arrV2 = {};
 		String[] arrA2 = {};
-		while (( s = in.readLine()) != null ){
-			arr = s.split(",");
-			if(s.contains("Video:")){
-				arrV2 = arr;
+
+		for(int i = 1; i < videoURLs.length ; i++){
+			first = new File(videoURLs[0]);
+			S3Api.downloadVideosToTemp(videoURLs[i]);
+			p = r.exec(cmd + first.getName(), null, tempDir);
+			BufferedReader in = new BufferedReader(new InputStreamReader(p
+					.getErrorStream()));
+			String s = in.readLine();
+			while ((s = in.readLine()) != null) {
+				arr = s.split(",");
+				if (s.contains("Video:")) {
+					arrV1 = arr;
+				} else if (s.contains("Audio:")) {
+					arrA1 = arr;
+				}
 			}
-			else if (s.contains("Audio:")){
-				arrA2 = arr;
+			second = new File(videoURLs[i]);
+			p = r.exec(cmd + second.getName(), null, tempDir);
+			in = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			s = in.readLine();
+			while ((s = in.readLine()) != null) {
+				arr = s.split(",");
+				if (s.contains("Video:")) {
+					arrV2 = arr;
+				} else if (s.contains("Audio:")) {
+					arrA2 = arr;
+				}
+			}
+			log.info(first.getName());
+			log.info(second.getName());
+			String dimensions1 = (arrV1[2].trim());
+			String dimensions2 = (arrV2[2].trim());
+			if(dimensions1.indexOf(" ")!=-1){
+				dimensions1 = dimensions1.substring(0, dimensions1.indexOf(" "));	
+			}
+			if(dimensions2.indexOf(" ")!=-1){
+				dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
+			}
+			String audioChannels1 = (arrA1[2].trim());
+			String audioChannels2 = (arrA2[2].trim());
+			if (dimensions1.equals(dimensions2)) {
+				// String [] cmd = {"mencoder.exe","-oac pcm -ovc copy "+ first.getName()+" "+ second.getName()+" -o combined.ogv"};
+				if (audioChannels1.equals(audioChannels2)) {
+					videoURLs[0] = tempDir+"/"+combine(first.getName(), second.getName());
+				} else {
+					String newVideo2 = fixAudioChannels(first.getName(),
+							audioChannels1, second.getName(), audioChannels2);
+					videoURLs[0] = tempDir+"/"+combine(first.getName(), newVideo2);
+				}
+			} else {
+				String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
+						second.getName(), dimensions2);
+				videoURLs[0] = tempDir+"/"+combine(newVideos[0], newVideos[1]);
 			}
 		}
-		log.info(first.getName());
-		log.info(second.getName());
-		String aspectRatio1 = (arrV1[2].trim());
-		String aspectRatio2 = (arrV2[2].trim());
-		String audioChannels1 = (arrA1[2].trim());
-		String audioChannels2 = (arrA2[2].trim());
-		if(aspectRatio1.equals(aspectRatio2)){
-		//String [] cmd = {"mencoder.exe","-oac pcm -ovc copy "+ first.getName()+" "+ second.getName()+" -o combined.ogv"}; 
-			if(audioChannels1.equals(audioChannels2)){
-				return combine(first.getName(),second.getName());
-			}
-			else{
-				String newVideo2 = fixAudioChannels(first.getName(),audioChannels1,second.getName(),audioChannels2);
-				return combine(first.getName(),newVideo2);
-			}
-		}
-		else{
-			String newVideo2 = fixAspectRatio(first.getName(),aspectRatio1,second.getName(),aspectRatio2);
-			return combine(first.getName(),newVideo2);
-		}
-		//return null;
-		//}
-			
-		
-		//return null;
+		return videoURLs[0];
+		// }
+
+		// return null;
 		// }
 		// return S3Api.uploadFile(new File(videoName));
 		// return null;
 		// return videoURLs[0];
 
 	}
-
-	private String fixAspectRatio(String video1Name, String aspectRatio1,
-			String video2Name, String aspectRatio2) {
-		String [] aspect1 = aspectRatio1.split("x");
-		String [] aspect2 = aspectRatio2.split("x");
+	
+	
+	
+	private String[] fixAspectRatio(String video1Name, String dim1,
+			String video2Name, String dim2) throws IOException {
+		String[] dimensions1 = dim1.split("x");
+		String[] dimensions2 = dim2.split("x");
+		int width1 = (new Integer(dimensions1[0])).intValue();
+		int height1 = (new Integer(dimensions1[1])).intValue();
+		int width2 = (new Integer(dimensions2[0])).intValue();
+		int height2 = (new Integer(dimensions2[1])).intValue();
+		int padw2 = 0;
+		int padh2 = 0;
+		int padw1 = 0;
+		int padh1 = 0;
+		int widthf = 0;
+		int heightf = 0;
+		if (width1 > width2 && height1 > height2) {
+			padw2 = (width1 - width2) / 2;
+			padh2 = (height1 - height2) / 2;
+			widthf = width1;
+			heightf = height1;
+		} else if (width1 < width2 && height1 < height2) {
+			padw1 = (width2 - width1) / 2;
+			padh1 = (height2 - height1) / 2;
+			widthf = width2;
+			heightf = height2;
+		} else if (width1 < width2 && height1 > height2) {
+			padw1 = (width2 - width1) / 2;
+			padh2 = (height1 - height2) / 2;
+			widthf = width2;
+			heightf = height1;
+		} else if (width1 > width2 && height1 < height2) {
+			padw2 = (width1 - width2) / 2;
+			padh1 = (height2 - height1) / 2;
+			widthf = width1;
+			heightf = height2;
+		}
+		String cmdPre = "ffmpeg -i ";
+		if (isWindows()) {
+			cmdPre = "cmd /c " + cmdPre;
+		} else if (isLinux()) {
+			log.info("Linux!");
+		}
+		/*int wrem1 = 0;
+		int hrem1 = 0;
+		int wrem2 = 0;
+		int hrem2 = 0;
+		if(padw1%2 != 0 && padw1 != 0){
+			wrem1 = 1;
+		}
+		if(padh1%2 != 0 && padh1 != 0){
+			hrem1 = 1;
+		}
+		if(padw2%2 != 0 && padw2 != 0){
+			wrem2 = 1;
+		}
+		if(padh2%2 != 0 && padh2 != 0){
+			hrem2 = 1;
+		}*/
+		Runtime r = Runtime.getRuntime();
+		String newName1 = video1Name.substring(0, video1Name.length() - 4)
+				+ "-fixed.ogv";
+		String outputFile = "/"+video1Name.substring(0, video1Name.length() - 8)+"output.txt";
 		
-		return null;
+		String cmd = cmdPre + video1Name + " -vf pad=" + widthf + ":" + heightf
+				+ ":" +padw1+ ":" +padh1+ ":black "
+				+ newName1;
+		log.info(cmd);
+		/*String cmd2 = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
+				+ ":" +padw2+ ":" +padh2+ ":black "
+				+ newName1;
+		log.info(cmd2);*/
+		Process p = r.exec(cmd, null, tempDir);
+		/*File output = new File(tempDir+"/output.txt");
+		Scanner in = new Scanner(output);
+		while (in.hasNextLine()) {
+        	log.info(in.next());
+        }*/
+		/*new Thread() {
+			public void run() {
+				BufferedReader in = new BufferedReader(new InputStreamReader(p
+						.getInputStream()));
+
+				String s;
+				try {
+					while ((s = in.readLine()) != null) {
+						log.info(s);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();*/
+		String s2;
+		//BufferedReader in = new BufferedReader(new InputStreamReader(p
+		//		.getInputStream()));
+		BufferedReader in2 = new BufferedReader(new InputStreamReader(p
+				.getErrorStream()));
+		int c = 0;
+		s2 = in2.readLine();
+		for (int i = 0; i<14; i++) {
+			log.info(i+" "+s2);
+			s2 = in2.readLine();
+		}
+		BufferedReader in = new BufferedReader(new InputStreamReader(p
+						.getInputStream()));
+		s2 = in.readLine();
+		for (int i = 0; i<5; i++) {
+			log.info("2-"+i+" "+s2);
+			s2 = in.readLine();
+		}
+		String newName2 = video2Name.substring(0, video2Name.length() - 4)
+				+ "-fixed.ogv";
+		outputFile = "/"+video2Name.substring(0, video2Name.length() - 8)+"output.txt";
+		//cmd = cmdPre + video2Name + " -s " + width2 + "x" + height2
+		//		+ " -padtop " + (padh2+hrem2) + " -padbottom " + (padh2-hrem2) + " -padleft "
+		//		+ (padw2+wrem2) + " -padright " + (padw2-wrem2) + " -padcolor 000000 "
+		//		+ newName2;
+		cmd = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
+				+ ":" +padw2+ ":" +padh2+ ":black "
+				+ newName2;
+		log.info(cmd);
+		Process p2 = r.exec(cmd, null, tempDir);
+		/*output = new File(tempDir+"/output.txt");
+		in = new Scanner(output);
+		while (in.hasNextLine()) {
+        	log.info(in.next());
+        }*/
+		/*new Thread() {
+			public void run() {
+				BufferedReader in = new BufferedReader(new InputStreamReader(p2
+						.getInputStream()));
+
+				String s;
+				try {
+					while ((s = in.readLine()) != null) {
+						log.info(s);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();*/
+		//in = new BufferedReader(new InputStreamReader(p2
+			//	.getInputStream()));
+		in2 = new BufferedReader(new InputStreamReader(p2
+				.getErrorStream()));
+		c = 0;
+		while (((s2 = in2.readLine()) != null)) {
+			log.info(c+" "+s2);
+			c++;
+		}
+		String [] ret = {newName1, newName2};
+		return ret;
+
 	}
 
 	private String fixAudioChannels(String video1Name, String audioChannels1,
 			String video2Name, String audioChannels2) throws IOException {
 		log.info("Fixing audio channels");
 		int ac = 1;
-		if(audioChannels1.equals("stereo")){
+		if (audioChannels1.equals("stereo")) {
 			ac = 2;
-		}
-		else if(audioChannels1.equals("mono")){
+		} else if (audioChannels1.equals("mono")) {
 			log.info("Mono!");
 		}
 		Runtime r = Runtime.getRuntime();
-		String newName = video2Name.substring(0, video2Name.length()-4)+"-fixed.ogv";
-		Process p = r.exec("ffmpeg -i " + video2Name + " -ac "+ac+" "+newName,
-				null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p.getErrorStream())) ;
+		String newName = video2Name.substring(0, video2Name.length() - 4)
+				+ "-fixed.ogv";
+		Process p = r.exec("ffmpeg -i " + video2Name + " -ac " + ac + " "
+				+ newName, null, tempDir);
+		BufferedReader in = new BufferedReader(new InputStreamReader(p
+				.getErrorStream()));
 		String s = "";
-		while (( s = in.readLine()) != null ){
+		while ((s = in.readLine()) != null) {
 			log.info(s);
 		}
 		return newName;
 	}
 
-	private String combine(String videoName1, String videoName2) throws IOException{
+	private String combine(String videoName1, String videoName2)
+			throws IOException {
 		Runtime r = Runtime.getRuntime();
-		String cmd = "mencoder -ovc lavc -oac mp3lame "+videoName1+" "+videoName2+" -o combined.ogv";
-		if(isWindows()){
-			cmd = "cmd /c "+cmd; 
-		}
-		else if(isLinux()){
+		String cmd = "mencoder -ovc lavc -oac mp3lame " + videoName1 + " "
+				+ videoName2 + " -o combined.ogv";
+		if (isWindows()) {
+			cmd = "cmd /c " + cmd;
+		} else if (isLinux()) {
 			log.info("Linux!");
 		}
-		final Process p2 = r.exec(cmd,null,tempDir);
+		final Process p2 = r.exec(cmd, null, tempDir);
 		new Thread() {
-			 public void run() {
-			   BufferedReader in = new BufferedReader
-			     (new InputStreamReader(p2.getInputStream()));
-	
-			   String s;
-			   try {
-				   while ((s = in.readLine()) != null) {
-					   s.trim();
-				   }
-			   } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			   }
-			 }
+			public void run() {
+				BufferedReader in = new BufferedReader(new InputStreamReader(p2
+						.getInputStream()));
+
+				String s;
+				try {
+					while ((s = in.readLine()) != null) {
+						s.trim();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}.start();
 		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p2.getErrorStream())) ;
-		//BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		//String s2 = "";
-		while (( s = in.readLine()) != null){
+		BufferedReader in = new BufferedReader(new InputStreamReader(p2
+				.getErrorStream()));
+		// BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		// String s2 = "";
+		while ((s = in.readLine()) != null) {
 			s.trim();
 		}
-		File combined = new File(tempDir+"/combined.ogv");
+		File combined = new File(tempDir + "/combined.ogv");
 		return combined.getAbsolutePath();
 	}
-	
+
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
 	private Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
