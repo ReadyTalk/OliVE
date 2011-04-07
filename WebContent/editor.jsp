@@ -14,7 +14,8 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/editor.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
+	rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -92,9 +93,13 @@
 <div class="clear"></div>
 
 <div id="export">
-<button id="export-button" type="button"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" disabled="disabled"><span
-	class="ui-button-text">Combine Videos</span></button>
+
+<form id="combine-and-export-form" action="OliveServlet" name="process"
+	method="post"><input type="hidden" name="FormName"
+	value="combine-form"></input> <input id="export-button" type="submit"
+	value="Combine Videos"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"
+	disabled="disabled"></input></form>
 </div>
 <!-- end #export --></div>
 <!-- end #main -->
