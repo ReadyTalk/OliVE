@@ -145,6 +145,7 @@ small {
 	border-bottom: 1px solid #888888;
 	min-width: 1000px;
 	box-shadow: 0 0 2px 2px #888;
+	-moz-box-shadow: 0 0 2px 2px #888;
 }
 
 #header-left {
@@ -193,6 +194,7 @@ small {
 	border-top: 1px solid #888888;
 	min-width: 1000px;
 	box-shadow: 0 0 2px 2px #888;
+	-moz-box-shadow: 0 0 2px 2px #888;
 }
 
 #footer-left {

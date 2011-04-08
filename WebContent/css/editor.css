@@ -44,8 +44,8 @@
 	overflow: auto;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
-	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#def0ce)); /* for webkit browsers */
-	background: -moz-linear-gradient(top,  #ffffff,  #def0ce); /* for firefox 3.6+ */ 
+	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#def0ce));
+	background: -moz-linear-gradient(top,  #ffffff,  #def0ce); 
 	
 }
 
@@ -55,16 +55,23 @@
 	width: 130px;
 	margin: 5px;
 	padding: 5px;
-	border: 1px solid green;
+	border: 2px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
 	overflow: hidden;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
+    -moz-box-shadow: 3px 3px 3px #ccc;
+    box-shadow: 3px 3px 3px #ccc;
+}
+.video-container:hover{
+	background-color: #eef6ff;
 }
 
 .video-image {
-	border: 1px solid gray;
+	border: 3px solid green;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
 	height: 40px;
 }
 
@@ -149,4 +156,5 @@
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
+	margin: 0px 5px 5px 0px;
 }
