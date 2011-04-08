@@ -144,6 +144,7 @@ small {
 	height: 60px;
 	border-bottom: 1px solid #888888;
 	min-width: 1000px;
+	box-shadow: 0 0 2px 2px #888;
 }
 
 #header-left {
@@ -177,6 +178,10 @@ small {
 	min-width: 1000px;
 	min-height: 450px;
 	overflow: auto;
+	border-top: #888888;
+	/*-moz-box-shadow: inset 0 0 2px 2px #888;
+	-webkit-box-shadow: inset 0 0 2px 2px#888;
+	box-shadow: inset 0 0 2px 2px #888;*/
 }
 
 #footer {
@@ -187,6 +192,7 @@ small {
 	height: 30px;
 	border-top: 1px solid #888888;
 	min-width: 1000px;
+	box-shadow: 0 0 2px 2px #888;
 }
 
 #footer-left {
