@@ -14,7 +14,8 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/projects.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
+	rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -39,16 +40,14 @@
 	}
 %>
 <div id="header">
-<div id="header-left">
-<img id="olive-icon"
+<div id="header-left"><img id="olive-icon"
 	src="/olive/images/olive.png" />
-<h1 id= "olive-title">Olive</h1>
+<h1 id="olive-title">Olive</h1>
 </div>
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
+<div><span id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
+	href="account.jsp">Account</a>&nbsp;&nbsp;&nbsp;&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
 </div>
 </div>
 
@@ -58,7 +57,7 @@
 <div id="projects-container">
 
 <div id="projects-title">
-<h1>My Projects</h1>
+<h1>Projects</h1>
 </div>
 <!-- end #projects-title -->
 
@@ -81,11 +80,13 @@
 
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
 <div id="first-sign-in-dialog" class="hidden" title="Welcome to Olive!">
-<p>Welcome to Olive. This is the projects page where you
-can add, edit, and delete your projects. We would like to
-remind you to go to the Account Information page by clicking
-on your username at the top right and adding a security question
-and answer in case you forget your password.<br />Thanks!<br />The Olive Team</p>
+<p>Welcome to Olive. This is the projects page where you can add,
+edit, and delete your projects. We would like to remind you to go to the
+Account Information page by clicking on your username at the top right
+and adding a security question and answer in case you forget your
+password.<br />
+Thanks!<br />
+The Olive Team</p>
 </div>
 
 <div id="help-dialog" class="hidden" title="How to use Olive">
@@ -102,7 +103,8 @@ and answer in case you forget your password.<br />Thanks!<br />The Olive Team</p
 <p>Delete project? This will also delete the project's videos.</p>
 </div>
 
-<div id="new-project-dialog-form" class="hidden" title="Create New Project">
+<div id="new-project-dialog-form" class="hidden"
+	title="Create New Project">
 <p class="validateTips">All form fields are required.</p>
 <form id="new-project-form" action="OliveServlet" name="process"
 	method="post">

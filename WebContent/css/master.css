@@ -144,8 +144,6 @@ small {
 	height: 60px;
 	border-bottom: 1px solid #888888;
 	min-width: 1000px;
-	box-shadow: 0 0 2px 2px #888;
-	-moz-box-shadow: 0 0 2px 2px #888;
 }
 
 #header-left {
@@ -170,11 +168,17 @@ small {
 	margin-right: 1%;
 }
 
+#header-right > div {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+}
+
 #main {
 	position: absolute;
 	top: 60px;
 	right: 0px;
-	bottom: 30px;
+	bottom: 0px;
 	left: 0px;
 	min-width: 1000px;
 	min-height: 450px;
@@ -186,11 +190,10 @@ small {
 	right: 0px;
 	bottom: 0px;
 	left: 0px;
-	height: 30px;
+	height: 0px;
 	border-top: 1px solid #888888;
 	min-width: 1000px;
-	box-shadow: 0 0 2px 2px #888;
-	-moz-box-shadow: 0 0 2px 2px #888;
+	background-color: #ffffff;
 }
 
 #footer-left {

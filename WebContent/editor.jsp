@@ -46,16 +46,32 @@
 	}
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left">
+<div id="videos-header"><span id="videos-title"> <%=projectName%>
+</span> <span id="videos-controls">
+<button id="upload-new-video-button" type="button"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
+	class="ui-button-text">Upload New Video</span></button>
+</span>
+
+<div id="export">
+
+<form id="combine-and-export-form" action="OliveServlet" name="process"
+	method="post"><input type="hidden" name="FormName"
+	value="combine-form"></input> <input id="export-button" type="submit"
+	value="Combine Videos"
+	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"
+	disabled="disabled"></input></form>
+</div>
+<!-- end #export --></div>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
+<div><strong><a href="projects.jsp">Projects</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;<a
+	href="account.jsp">Account</a>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="about-dialog-opener"><a href="">About</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -65,12 +81,6 @@
 <div id="main">
 
 <div id="videos-container">
-<div id="videos-header"><span id="videos-title"> <%=projectName%>
-</span> <span id="videos-controls">
-<button id="upload-new-video-button" type="button"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
-	class="ui-button-text">Upload New Video</span></button>
-</span></div>
 <div id="videos"></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
@@ -86,30 +96,20 @@
 
 <div class="clear"></div>
 
-<div id="timeline">
-<div id="ticks-container"></div>
+<div id="timeline"><span id="timeline-background-text"
+	class="hidden">Drag videos here to be combined</span></div>
 </div>
-
-<div class="clear"></div>
-
-<div id="export">
-
-<form id="combine-and-export-form" action="OliveServlet" name="process"
-	method="post"><input type="hidden" name="FormName"
-	value="combine-form"></input> <input id="export-button" type="submit"
-	value="Combine Videos"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"
-	disabled="disabled"></input></form>
-</div>
-<!-- end #export --></div>
 <!-- end #main -->
 
 <div class="clear"></div>
 
-<div id="footer"></div>
-
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
-<div id="help-dialog" class="hidden" title="How to use Olive">
+<div id="about-dialog" class="hidden" title="About Olive">
+<p>&copy; 2010 ReadyTalk</p>
+</div>
+<div id="footer-right" class="hidden">&copy; 2010 ReadyTalk</div>
+<div id="help-dialog" class="hidden" title="Help">
+<p>How to use Olive:</p>
 <ul>
 	<li>1. Create a new account.</li>
 	<li>2. Create a new project.</li>

@@ -33,22 +33,12 @@ var SAFE_VIDEO_NAME_REGEX = SAFE_PASSWORD_REGEX;
 var SAFE_VIDEO_NAME_MESSAGE = 'Video name ' + SAFE_PASSWORD_MESSAGE_SUFFIX;
 
 jQuery(function($) {
-	includeHeader(); // TODO Fix for index.jsp (which is different)
-	includeFooter();
+	attachDialogs(); // TODO Fix for index.jsp (which is different)
 });
 
-function includeHeader() {
-	$.get('/olive/header.jsp', function(data) {
-		$('#header').append($(data));
-		attachDialogToLink('help');
-	});
-}
-
-function includeFooter() {
-	$.get('/olive/footer.jsp', function(data) {
-		$('#footer').append($(data));
-		attachDialogToLink('about');
-	});
+function attachDialogs() {
+	attachDialogToLink('help');
+	attachDialogToLink('about');
 }
 
 function attachDialogToLink(linkName) {

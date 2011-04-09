@@ -88,9 +88,9 @@ function populateVideos() {
 			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
 		}
 		
-		$('.video-container').show();
-		
+		showOrHideTimelineBackgroundText();
 		enableOrDisableCombineButton();
+		$('.video-container').show();
 		
 		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
 	}, null);	// Defined in "/olive/scripts/master.js".
@@ -313,7 +313,7 @@ function renameVideo(oldVideoName, newVideoName) {
 function makeSelectionVisible(element) {
 	if ($(element).data('isSelected')) {
 		$(element).css( {
-			'background-color': '#edf4e6'	// A lighter version of the Olive color
+			'background-color': '#d4e5c3'	// A lighter version of the Olive color
 		});
 		$(element).find('.split-video-link').removeClass('hidden');
 		$(element).find('.video-controls-divider').removeClass('hidden');
@@ -389,6 +389,7 @@ function enableDragAndDrop() {
 	$('#videos').sortable( {
 		appendTo: 'body',
 		connectWith: '#timeline',
+		//containment: 'window',	// Awesome, but doesn't play well with scroll bars
 		helper: 'clone',
 		items: '.video-container',
 		revert: true,
@@ -402,12 +403,14 @@ function enableDragAndDrop() {
 	$('#timeline').sortable( {
 		appendTo: 'body',
 		connectWith: '#videos',
+		//containment: 'window',	// Awesome, but doesn't play well with scroll bars
 		helper: 'clone',
 		items: '.video-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
+			showOrHideTimelineBackgroundText();
 			enableOrDisableCombineButton();
 			updateTimelinePosition();
 		}
@@ -446,6 +449,14 @@ function updateVideosPosition() {
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > .video-container');
+}
+
+function showOrHideTimelineBackgroundText() {
+	if ($('#timeline').sortable('toArray').length > 0){
+		$('#timeline-background-text').hide();
+	} else {
+		$('#timeline-background-text').show();
+	}
 }
 
 function enableOrDisableCombineButton() {

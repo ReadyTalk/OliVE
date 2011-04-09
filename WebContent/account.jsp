@@ -13,7 +13,8 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
+	rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -55,16 +56,16 @@
 			.toString());
 %>
 <div id="header">
-<div id="header-left">
-<img id="olive-icon"
+<div id="header-left"><img id="olive-icon"
 	src="/olive/images/olive.png" />
-<h1 id= "olive-title">Olive</h1>
+<h1 id="olive-title">Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <%=username%>!&nbsp;<a href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a
+	href="projects.jsp">My Projects</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
+	href="logout.jsp">Logout</a></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -74,7 +75,7 @@
 <div id="main">
 
 <div id="edit-account-container">
-<h2>Edit account information</h2>
+<h2>Edit account: <%=username%></h2>
 <form id="edit-account-form" action="OliveServlet" name="process"
 	method="post">
 <p><label for="new-name">Name</label> <input type="text"
