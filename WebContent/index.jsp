@@ -118,23 +118,23 @@
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
 <div id="shared-dialogs" class="hidden"></div>
 
-<div id="dialog-form" class="hidden" title="Create new user">
+<div id="dialog-form" class="hidden" title="Create New Account">
 <p class="validateTips">All form fields are required.</p>
-<form id="register-form" action="OliveServlet" name="process"
-	method="post">
-<fieldset><label for="name">Username</label> <input
-	type="text" name="name" id="register-name"
+<form id="register-form">
+<fieldset><label for="register-username">Username</label> <input
+	type="text" name="register-username" id="register-username"
 	class="text ui-widget-content ui-corner-all" maxlength="16" /> <label
-	for="email">Email</label> <input type="text" name="email"
-	id="register-email" value=""
+	for="register-email">Email</label> <input type="text"
+	name="register-email" id="register-email" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="64" /> <label
-	for="password">Password</label> <input type="password" name="password"
-	id="register-password" value=""
+	for="register-password">Password</label> <input type="password"
+	name="register-password" id="register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /> <label
-	for="confirm_password">Confirm Password</label> <input type="password"
-	name="confirm_password" id="confirm-register-password" value=""
+	for="confirm-register-password">Confirm Password</label> <input
+	type="password" name="confirm-register-password"
+	id="confirm-register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
-<input type="hidden" name="FormName" value="AddUser"></input></form>
+</form>
 </div>
 <!-- end #dialog-form -->
 

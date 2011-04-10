@@ -32,6 +32,7 @@ import org.jets3t.service.ServiceException;
 import com.google.gson.Gson;
 import com.readytalk.olive.json.AddToSelectedRequest;
 import com.readytalk.olive.json.CombineVideosRequest;
+import com.readytalk.olive.json.CreateAccountRequest;
 import com.readytalk.olive.json.CreateProjectRequest;
 import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
@@ -40,6 +41,8 @@ import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.GetAccountInformationResponse;
 import com.readytalk.olive.json.IsDuplicateProjectNameRequest;
 import com.readytalk.olive.json.IsDuplicateProjectNameResponse;
+import com.readytalk.olive.json.IsDuplicateUsernameRequest;
+import com.readytalk.olive.json.IsDuplicateUsernameResponse;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
@@ -144,8 +147,6 @@ public class OliveServlet extends HttpServlet {
 				handleLogin(request, response, session);
 			} else if (id.equals("EditUser")) {
 				handleEditUser(request, response, session);
-			} else if (id.equals("AddUser")) {
-				handleAddUser(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestionRetrieval(request, response, session);
 			} else if (id.equals("security-question-form-2")) {
@@ -395,32 +396,6 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("account.jsp");
 	}
 
-	private void handleAddUser(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws IOException {
-		// The jQuery regex should catch malicious input, but sanitize just to
-		// be safe.
-		String username = Security.stripOutIllegalCharacters(request
-				.getParameter("name"));
-		String password = Security.stripOutIllegalCharacters(request
-				.getParameter("password"));
-		String email = Security.stripOutIllegalCharacters(request
-				.getParameter("email"));
-		User newUser = new User(username, password, "", email);
-		Boolean addSuccessfully = DatabaseApi.AddAccount(newUser);
-		if (addSuccessfully) {
-			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
-			session.setAttribute(Attribute.USERNAME.toString(), username);
-			session.setAttribute(Attribute.PASSWORD.toString(), password);
-			session.setAttribute(Attribute.EMAIL.toString(), email);
-			session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), true);
-			response.sendRedirect("projects.jsp");
-		} else {
-			response.sendRedirect("index.jsp");
-			// TODO Add error message here
-		}
-	}
-
 	private void handleUploadVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
 			throws IOException {
@@ -566,7 +541,11 @@ public class OliveServlet extends HttpServlet {
 		GeneralRequest generalRequest = new Gson().fromJson(json,
 				GeneralRequest.class);
 
-		if (generalRequest.command.equals("deleteAccount")) {
+		if (generalRequest.command.equals("createAccount")) {
+			handleCreateAccount(request, response, session, json);
+		} else if (generalRequest.command.equals("isDuplicateUsername")) {
+			handleIsDuplicateUsername(request, response, session, json);
+		} else if (generalRequest.command.equals("deleteAccount")) {
 			handleDeleteAccount(request, response, session, json);
 		} else if (generalRequest.command.equals("getAccountInformation")) {
 			handleGetAccountInformation(request, response, session, json);
@@ -620,6 +599,60 @@ public class OliveServlet extends HttpServlet {
 		}
 	}
 
+	private void handleCreateAccount(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		CreateAccountRequest createAccountRequest = new Gson().fromJson(json,
+				CreateAccountRequest.class);
+
+		response.setContentType("text/plain");
+		PrintWriter out = response.getWriter();
+
+		String username = createAccountRequest.arguments.username;
+		String email = createAccountRequest.arguments.email;
+		String password = createAccountRequest.arguments.password;
+		String confirmPassword = createAccountRequest.arguments.confirmPassword;
+		String name = "Enter your name";
+
+		if (Security.isSafeUsername(username) && Security.isSafeEmail(email)
+				&& Security.isSafePassword(password)
+				&& Security.isSafePassword(confirmPassword)
+				&& password.equals(confirmPassword)
+				&& Security.isSafeName(name)) { // Short-circuitry
+			User newUser = new User(username, password, name, email);
+			boolean addedSuccessfully = DatabaseApi.AddAccount(newUser);
+			if (addedSuccessfully) {
+				session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
+				session.setAttribute(Attribute.USERNAME.toString(), username);
+				session.setAttribute(Attribute.EMAIL.toString(), email);
+				session.setAttribute(Attribute.PASSWORD.toString(), password);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						true);
+				out.println(username + " created successfully.");
+			} else {
+				// TODO Add error message here
+			}
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		}
+		out.close();
+	}
+
+	private void handleIsDuplicateUsername(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		IsDuplicateUsernameRequest isDuplicateUsernameRequest = new Gson()
+				.fromJson(json, IsDuplicateUsernameRequest.class);
+		out.println(new Gson().toJson(new IsDuplicateUsernameResponse(
+				DatabaseApi
+						.usernameExists(isDuplicateUsernameRequest.arguments.username))));
+
+		out.close();
+	}
+
 	private void handleDeleteAccount(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
@@ -671,12 +704,12 @@ public class OliveServlet extends HttpServlet {
 			throws IOException {
 		response.setContentType("text/plain");
 		PrintWriter out = response.getWriter();
-		
+
 		int accountId = getAccountIdFromSessionAttributes(session);
-		CreateProjectRequest createProjectRequest = new Gson()
-			.fromJson(json, CreateProjectRequest.class);
+		CreateProjectRequest createProjectRequest = new Gson().fromJson(json,
+				CreateProjectRequest.class);
 		String projectName = createProjectRequest.arguments.project;
-		
+
 		if (Security.isSafeProjectName(projectName)
 				&& Security.isUniqueProjectName(projectName, accountId)
 				&& Security.projectFits(DatabaseApi
@@ -700,7 +733,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
-		
+
 		out.close();
 	}
 

@@ -73,6 +73,10 @@ function logout() {
 	window.location.replace('logout.jsp');
 }
 
+function redirect(url) {
+	window.location.replace(url);
+}
+
 function makeAjaxPostRequest(requestData, onSuccess, onError, asyncArg) {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	// E.g. 'http:' + '//' + 'olive.readytalk.com' + '/olive/OliveServlet'

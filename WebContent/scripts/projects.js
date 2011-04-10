@@ -106,22 +106,21 @@ function attachCreateNewProjectHandlers() {
 		modal : true,
 		buttons : {
 			'Create New Project' : function () {
-				var bValid = true;
 				allFields.removeClass('ui-state-error');
-
-				bValid = bValid
-						&& checkLength(newProjectName,
-								'new-project-name',
-								MIN_PROJECT_NAME_LENGTH,
-								MAX_PROJECT_NAME_LENGTH);
-				bValid = bValid
-						&& checkRegexp(newProjectName,
-								SAFE_PROJECT_NAME_REGEX,
-								SAFE_PROJECT_NAME_MESSAGE);
-				bValid = bValid
-						&& !isDuplicateProjectName(newProjectName,
-								'Project name already exists');
-				if (bValid) {
+				if (
+					checkLength(
+						newProjectName,
+						'new-project-name',
+						MIN_PROJECT_NAME_LENGTH,
+						MAX_PROJECT_NAME_LENGTH)
+					&& checkRegexp(
+						newProjectName,
+						SAFE_PROJECT_NAME_REGEX,
+						SAFE_PROJECT_NAME_MESSAGE)
+					&& !isDuplicateProjectName(
+						newProjectName,
+						'Project name already exists')
+				) {	// Short-circuitry
 					createNewProject();
 					$(this).dialog('close');
 				}
