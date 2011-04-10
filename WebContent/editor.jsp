@@ -112,7 +112,6 @@ videos will appear here</span></div>
 <div id="invalid-split-dialog" class="hidden" title="Warning">
 <p>The video may not be split at the beginning or end.</p>
 </div>
-<!-- end #dialog-form -->
 
 <div id="new-video-dialog-form" class="hidden" title="Upload New Video">
 <p class="validateTips">All form fields are required.</p>
@@ -127,6 +126,10 @@ videos will appear here</span></div>
 </form>
 </div>
 <!-- end #new-video-dialog-form -->
+
+<div id="confirm-combine-videos-dialog" class="hidden" title="Confirm action">
+<p>Combine videos and export them to your computer?</p>
+</div>
 
 </body>
 </html>

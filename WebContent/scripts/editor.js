@@ -15,7 +15,7 @@ function attachHandlers() {
 	attachSplitVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
-	//attachCombineButtonHandlers();
+	attachCombineButtonHandlers();
 	enableDragAndDrop();
 }
 
@@ -272,9 +272,26 @@ function doNotSelectThisTime() {
 }
 
 function attachCombineButtonHandlers(){
-	$('#export-button').click(function(){
-		turnOffCombineButtonText();
-		combineVideos();
+	$('#export-button').click(function (event) {
+		event.preventDefault();
+		$('#confirm-combine-videos-dialog').dialog('open');
+	});
+	
+	$('#confirm-combine-videos-dialog').dialog({
+		autoOpen: false,
+		resizable: false,
+		height: 225,
+		modal: true,
+		buttons: {
+			'Combine': function () {
+				turnOffCombineButtonText();		
+				$('#combine-and-export-form').submit();
+				$(this).dialog('close');
+			},
+			Cancel: function () {
+				$(this).dialog('close');
+			}
+		}
 	});
 }
 
