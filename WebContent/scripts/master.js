@@ -33,8 +33,15 @@ var SAFE_VIDEO_NAME_REGEX = SAFE_PASSWORD_REGEX;
 var SAFE_VIDEO_NAME_MESSAGE = 'Video name ' + SAFE_PASSWORD_MESSAGE_SUFFIX;
 
 jQuery(function($) {
-	attachDialogs(); // TODO Fix for index.jsp (which is different)
+	injectSharedDialogs();
 });
+
+function injectSharedDialogs() {
+	$.get('/olive/shared-dialogs.jsp', function(data) {
+		$('#shared-dialogs').append($(data));
+		attachDialogs();
+	});
+}
 
 function attachDialogs() {
 	attachDialogToLink('help');

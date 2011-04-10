@@ -88,11 +88,11 @@ function populateVideos() {
 			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
 		}
 		
+		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
+		showOrHideVideosBackgroundText();
 		showOrHideTimelineBackgroundText();
 		enableOrDisableCombineButton();
 		$('.video-container').show();
-		
-		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
@@ -396,6 +396,7 @@ function enableDragAndDrop() {
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
+			showOrHideVideosBackgroundText();
 			updateVideosPosition();
 		}
 	});
@@ -449,6 +450,14 @@ function updateVideosPosition() {
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > .video-container');
+}
+
+function showOrHideVideosBackgroundText() {
+	if ($('#videos').sortable('toArray').length > 0){
+		$('#videos-background-text').hide();
+	} else {
+		$('#videos-background-text').show();
+	}
 }
 
 function showOrHideTimelineBackgroundText() {

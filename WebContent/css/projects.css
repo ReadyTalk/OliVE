@@ -6,47 +6,47 @@
 #projects-container {
 	position: absolute;
 	top: 0%;
-	right: 25%;
+	right: 15%;
 	bottom: 0%;
-	left: 25%;
+	left: 15%;
+	overflow: hidden;
+}
+
+#projects-header {
+	width: 100%;
 }
 
 #projects-title {
-	position: absolute;
-	top: 0%;
-	right: 0%;
-	bottom: 85%;
-	left: 0%;
-	overflow: hidden;
+	float: left;
+	margin: 2%;
+	font-size: 240%;	/* 24px */
+	color: #92bd6a; /* The Olive color */
 }
 
 #projects-controls {
-	position: absolute;
-	top: 15%;
-	right: 0%;
-	bottom: 75%;
-	left: 0%;
-	overflow: hidden;
+	float: right;
+	margin: 1%;
 }
 
 #projects {
 	position: absolute;
-	top: 25%;
+	top: 10%;
 	right: 0%;
 	bottom: 0%;
 	left: 0%;
 	text-align: left;
-	border-top: 1px solid gray;
 	overflow: auto;
+	border: 1px solid gray;
+	border-radius: 5px;
 }
 
 .project-container {
 	float: left;
 	height: 125px;
-	width: 130px;
+	width: 110px;
 	margin: 5px;
 	padding: 5px;
-	border: 2px solid green;
+	border: 1px solid green;
 	background-color: #FEFEFE;
 	text-align: center;
 	border-radius: 5px;
@@ -54,7 +54,7 @@
 }
 
 .project-image {
-	border: 3px solid green;
+	border: 1px solid green;
 	border-radius: 3px;
 	height: 40px;
 }

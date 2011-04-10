@@ -45,8 +45,9 @@
 <h1 id="olive-title">Olive</h1>
 </div>
 <div id="header-right">
-<div><span id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
-	href="account.jsp">Account</a>&nbsp;&nbsp;&nbsp;&nbsp;<a
+<div><a href="account.jsp">Account</a>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="about-dialog-opener"><a href="">About</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
 	href="logout.jsp">Logout</a></div>
 </div>
 </div>
@@ -56,17 +57,12 @@
 <div id="main">
 <div id="projects-container">
 
-<div id="projects-title">
-<h1>Projects</h1>
-</div>
-<!-- end #projects-title -->
-
-<div id="projects-controls">
+<div id="projects-header"><span id="projects-title">Projects</span>
+<span id="projects-controls">
 <button id="create-new-project" type="button"
 	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
 	class="ui-button-text">Create New Project</span></button>
-</div>
-<!-- end #controls -->
+</span></div>
 
 <div class="clear"></div>
 <div id="projects"></div>
@@ -76,9 +72,9 @@
 
 <div class="clear"></div>
 
-<div id="footer"></div>
-
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
+<div id="shared-dialogs" class="hidden"></div>
+
 <div id="first-sign-in-dialog" class="hidden" title="Welcome to Olive!">
 <p>Welcome to Olive. This is the projects page where you can add,
 edit, and delete your projects. We would like to remind you to go to the
@@ -87,16 +83,6 @@ and adding a security question and answer in case you forget your
 password.<br />
 Thanks!<br />
 The Olive Team</p>
-</div>
-
-<div id="help-dialog" class="hidden" title="How to use Olive">
-<ul>
-	<li>1. Create a new account.</li>
-	<li>2. Create a new project.</li>
-	<li>3. Upload your videos.</li>
-	<li>4. Edit your videos.</li>
-	<li>5. Export to your computer.</li>
-</ul>
 </div>
 
 <div id="confirm-delete-project-dialog" class="hidden" title="Warning!">
