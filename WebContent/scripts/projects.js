@@ -122,7 +122,6 @@ function attachCreateNewProjectHandlers() {
 						&& !isDuplicateProjectName(newProjectName,
 								'Project name already exists');
 				if (bValid) {
-					console.log('valid');
 					createNewProject();
 					$(this).dialog('close');
 				}

@@ -6,6 +6,7 @@
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachRegistrationHandlers();
+	attachScreencastPlayer();
 });
 
 function attachRegistrationHandlers() {
@@ -67,13 +68,14 @@ function attachRegistrationHandlers() {
 		}
 	});
 
-	$('#create-user').click(function() {
-		$('#dialog-form').dialog('open');
+	$('#create-user')
+		//.button()	// Don't do this; keep it a link
+		.click(function() {
+			$('#dialog-form').dialog('open');
 	});
 }
 
-$(document).ready(function(){
-
+function attachScreencastPlayer() {
 	var Playlist = function(instance, playlist, options) {
 		var self = this;
 
@@ -245,8 +247,6 @@ $(document).ready(function(){
 		muted: false
 	});
 
-	
-
 /*	$('#jplayer_inspector_1').jPlayerInspector({jPlayer:$('#jquery_jplayer_1')});
 	$('#jplayer_inspector_2').jPlayerInspector({jPlayer:$('#jquery_jplayer_2')});*/
-});
+}

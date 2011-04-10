@@ -59,7 +59,8 @@
 
 <div id="projects-header"><span id="projects-title">Projects</span>
 <span id="projects-controls">
-<button id="create-new-project" type="button">Create New Project</button>
+<button id="create-new-project" type="button">Create New
+Project</button>
 </span></div>
 
 <div class="clear"></div>
@@ -93,7 +94,8 @@ The Olive Team</p>
 <form id="new-project-form">
 <fieldset><label for="new-project-name">Project Name</label>
 <input type="text" name="new-project-name" id="new-project-name"
-	class="text ui-widget-content ui-corner-all" maxlength="32" /></fieldset>
+	class="text ui-widget-content ui-corner-all" maxlength="32" /><!-- Add an extra input to get around a jQuery UI bug: http://bugs.jqueryui.com/ticket/6967 --><input
+	type="text" class="hidden" /></fieldset>
 </form>
 </div>
 <!-- end #new-project-dialog-form -->
