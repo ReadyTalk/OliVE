@@ -61,7 +61,12 @@ function populateVideos() {
 	makeAjaxPostRequest(requestData, function (responseData) {
 		var poolPositions = [];
 		var timelinePositions = [];
+		var preloaderVideos = '';	// A hacked way to preload all the videos
 		for (var i = 0; i < responseData.length; ++i) {
+			preloaderVideos += '<video id="loader-player-' + i
+				+ '" class="hidden" preload="preload">'
+				+ '<source src="' + responseData[i].url
+				+ '" type="video/ogg; codecs=theora,vorbis" /></video>';
 			var element = createNewVideoContainer(responseData[i].name, i, responseData[i].icon);
 			$(element).data('name', responseData[i].name);
 			$(element).data('url', responseData[i].url);
@@ -80,6 +85,8 @@ function populateVideos() {
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
 		}
+		$('body').append(preloaderVideos);
+		
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
 			$('#videos').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
