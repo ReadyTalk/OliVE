@@ -1003,24 +1003,11 @@ public class OliveServlet extends HttpServlet {
 	private String combineVideos(String[] videoURLs, String[] videos)
 			throws IOException, NoSuchAlgorithmException,
 			InvalidFileSizeException, ServiceException, InterruptedException {
-		String[] result = new String[2];
-		result[0] = "combined";
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		//String cmd = "ffmpeg -i ";
-		/*if (isWindows) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux) {
-			log.info("Linux!");
-		}*/
 		S3Api.downloadVideosToTemp(videoURLs[0]);
 		File first = new File(videoURLs[0]);
-		
-		//File second;
-		//String[] arr;
-		//String[] arrV1 = {};
-		//String[] arrV2 = {};
 		String cmd = "mencoder -ovc lavc -oac mp3lame "+first.getName()+ " ";
 		if (isWindows) {
 			cmd = "cmd /c " + cmd;
@@ -1114,7 +1101,37 @@ public class OliveServlet extends HttpServlet {
 
 	}
 	
-	
+	private String [] getBiggestDimensions(String [] videos) throws IOException{
+		Process p;
+		Runtime r = Runtime.getRuntime();
+		String[] arr;
+		String[] arrV1 = {};
+		String cmd = "ffmpeg -i ";
+		if (isWindows()) {
+			cmd = "cmd /c " + cmd;
+		} else if (isLinux()) {
+			log.info("Linux!");
+		}
+		File temp;
+		
+		for(int i = 0; i< videos.length; i++){
+			S3Api.downloadVideosToTemp(videos[i]);
+			temp = new File(videos[i]);
+			p = r.exec(cmd + temp.getName(), null, tempDir);
+			BufferedReader in = new BufferedReader(new InputStreamReader(p
+					.getErrorStream()));
+			String s = in.readLine();
+			while ((s = in.readLine()) != null) {
+				arr = s.split(",");
+				if (s.contains("Video:")) {
+					arrV1 = arr;
+				}
+			}
+			
+			
+		}
+		return arrV1;
+	}
 	
 	private String[] fixAspectRatio(String video1Name, String dim1,
 			String video2Name, String dim2) throws IOException {
