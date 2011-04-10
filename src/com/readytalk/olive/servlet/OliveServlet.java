@@ -441,8 +441,8 @@ public class OliveServlet extends HttpServlet {
 				&& Security.projectFits(DatabaseApi
 						.getNumberOfProjects(accountId))) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-
-			String icon = ""; // TODO Get this from user input.
+			
+			String icon = "/olive/images/Ponkan_folder_opened_64.png";
 			Project project = new Project(projectName, accountId, icon, -1);
 			Boolean added = DatabaseApi.addProject(project);
 			if (!added) {
