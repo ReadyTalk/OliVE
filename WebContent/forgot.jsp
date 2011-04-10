@@ -10,10 +10,11 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css"/>
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
+	rel='stylesheet' type='text/css'>
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -47,15 +48,15 @@
 	session.removeAttribute(Attribute.IS_CORRECT.toString());
 %>
 <div id="header">
-<div id="header-left">
-<img id="olive-icon"
+<div id="header-left"><img id="olive-icon"
 	src="/olive/images/olive.png" />
-<h1 id= "olive-title">Olive</h1>
+<h1 id="olive-title">Olive</h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div><strong><a href="index.jsp">Home</a></strong>&nbsp;<span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
+<div><strong><a href="index.jsp">Home</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="about-dialog-opener"><a href="">About</a></span></div>
 </div>
 <!-- end #header-right --></div>
 
@@ -81,18 +82,8 @@ Thank you</p>
 </div>
 <!-- end #main --></div>
 
-<div id="footer"></div>
-
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
-<div id="help-dialog" class="hidden" title="How to use Olive">
-<ul>
-	<li>1. Create a new account.</li>
-	<li>2. Create a new project.</li>
-	<li>3. Upload your videos.</li>
-	<li>4. Edit your videos.</li>
-	<li>5. Export to your computer.</li>
-</ul>
-</div>
+<div id="shared-dialogs" class="hidden"></div>
 
 </body>
 </html>

@@ -18,7 +18,9 @@ function attachHandlers() {
 }
 
 function createNewProjectContainer(projectName, projectNum, projectIcon) {
-	projectIcon = '/olive/images/SPANISH OLIVES.jpg';
+	if (projectIcon === '') {
+		projectIcon = '/olive/images/Ponkan_folder_opened_64.png';
+	}	// TODO Remove
 	var projectContainer = '<div id="project-container-'
 		+ projectNum
 		+ '" class="project-container"><a href="OliveServlet?projectName='

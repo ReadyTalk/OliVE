@@ -52,10 +52,11 @@
 </div>
 <!-- end #header-left -->
 <div id="header-right">
-<div>Welcome, <a href="account.jsp"><%=username%>!</a>&nbsp;<a
+<div><strong><a href="projects.jsp">Projects</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;<a
+	href="account.jsp">Account</a>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="help-dialog-opener"><a href="">Help</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+	id="about-dialog-opener"><a href="">About</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<a
 	href="logout.jsp">Logout</a></div>
-<div><strong><a href="projects.jsp">My Projects</a></strong>&nbsp;<span
-	id="help-dialog-opener"><a href="">Help</a></span></div>
 </div>
 <!-- end #header-right --></div>
 <!-- end #header -->
@@ -64,36 +65,26 @@
 
 <div id="main">
 
-<div id="videos-container">
 <div id="videos-header"><span id="videos-title"> <%=projectName%>
-</span> <span id="videos-controls">
+</span><span id="videos-controls">
 <button id="upload-new-video-button" type="button"
 	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
 	class="ui-button-text">Upload New Video</span></button>
 </span></div>
-<div id="videos"></div>
+
+<div id="videos-container">
+<div id="videos"><span id="videos-background-text" class="hidden">Uploaded
+videos will appear here</span></div>
 <!-- end #videos --></div>
 <!-- end #videos-container -->
-
-<div class="contextMenu" id="video-context-menu">
-<ul>
-	<li id="split-video-menu-item">Split Video</li>
-</ul>
-</div>
-<!-- end #context-menu -->
 
 <div id="player-container"></div>
 
 <div class="clear"></div>
 
-<div id="timeline">
-<div id="ticks-container"></div>
-</div>
-
-<div class="clear"></div>
-
+<div id="timeline"><span id="timeline-background-text"
+	class="hidden">Drag videos here to be combined</span></div>
 <div id="export">
-
 <form id="combine-and-export-form" action="OliveServlet" name="process"
 	method="post"><input type="hidden" name="FormName"
 	value="combine-form"></input> <input id="export-button" type="submit"
@@ -106,18 +97,8 @@
 
 <div class="clear"></div>
 
-<div id="footer"></div>
-
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
-<div id="help-dialog" class="hidden" title="How to use Olive">
-<ul>
-	<li>1. Create a new account.</li>
-	<li>2. Create a new project.</li>
-	<li>3. Upload your videos.</li>
-	<li>4. Edit your videos.</li>
-	<li>5. Export to your computer.</li>
-</ul>
-</div>
+<div id="shared-dialogs" class="hidden"></div>
 
 <div id="confirm-delete-video-dialog" class="hidden" title="Warning!">
 <p>Delete video?</p>
@@ -131,7 +112,6 @@
 <div id="invalid-split-dialog" class="hidden" title="Warning">
 <p>The video may not be split at the beginning or end.</p>
 </div>
-<!-- end #dialog-form -->
 
 <div id="new-video-dialog-form" class="hidden" title="Upload New Video">
 <p class="validateTips">All form fields are required.</p>
@@ -146,6 +126,10 @@
 </form>
 </div>
 <!-- end #new-video-dialog-form -->
+
+<div id="confirm-combine-videos-dialog" class="hidden" title="Confirm action">
+<p>Combine videos and export them to your computer?</p>
+</div>
 
 </body>
 </html>

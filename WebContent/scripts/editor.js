@@ -15,7 +15,7 @@ function attachHandlers() {
 	attachSplitVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
-	//attachCombineButtonHandlers();
+	attachCombineButtonHandlers();
 	enableDragAndDrop();
 }
 
@@ -61,7 +61,12 @@ function populateVideos() {
 	makeAjaxPostRequest(requestData, function (responseData) {
 		var poolPositions = [];
 		var timelinePositions = [];
+		var preloaderVideos = '';	// A hacked way to preload all the videos
 		for (var i = 0; i < responseData.length; ++i) {
+			preloaderVideos += '<video id="loader-player-' + i
+				+ '" class="hidden" preload="preload">'
+				+ '<source src="' + responseData[i].url
+				+ '" type="video/ogg; codecs=theora,vorbis" /></video>';
 			var element = createNewVideoContainer(responseData[i].name, i, responseData[i].icon);
 			$(element).data('name', responseData[i].name);
 			$(element).data('url', responseData[i].url);
@@ -80,6 +85,8 @@ function populateVideos() {
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
 		}
+		$('body').append(preloaderVideos);
+		
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
 			$('#videos').prepend(poolPositions[poolIndex]);	// Prepend to keep unsorted elements (poolPosition == -1) at the end.
@@ -88,11 +95,11 @@ function populateVideos() {
 			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
 		}
 		
-		$('.video-container').show();
-		
-		enableOrDisableCombineButton();
-		
 		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
+		showOrHideVideosBackgroundText();
+		showOrHideTimelineBackgroundText();
+		enableOrDisableCombineButton();
+		$('.video-container').show();
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
@@ -272,9 +279,26 @@ function doNotSelectThisTime() {
 }
 
 function attachCombineButtonHandlers(){
-	$('#export-button').click(function(){
-		turnOffCombineButtonText();
-		combineVideos();
+	$('#export-button').click(function (event) {
+		event.preventDefault();
+		$('#confirm-combine-videos-dialog').dialog('open');
+	});
+	
+	$('#confirm-combine-videos-dialog').dialog({
+		autoOpen: false,
+		resizable: false,
+		height: 225,
+		modal: true,
+		buttons: {
+			'Combine': function () {
+				turnOffCombineButtonText();		
+				$('#combine-and-export-form').submit();
+				$(this).dialog('close');
+			},
+			Cancel: function () {
+				$(this).dialog('close');
+			}
+		}
 	});
 }
 
@@ -313,7 +337,7 @@ function renameVideo(oldVideoName, newVideoName) {
 function makeSelectionVisible(element) {
 	if ($(element).data('isSelected')) {
 		$(element).css( {
-			'background-color': '#edf4e6'	// A lighter version of the Olive color
+			'background-color': '#d4e5c3'	// A lighter version of the Olive color
 		});
 		$(element).find('.split-video-link').removeClass('hidden');
 		$(element).find('.video-controls-divider').removeClass('hidden');
@@ -389,12 +413,14 @@ function enableDragAndDrop() {
 	$('#videos').sortable( {
 		appendTo: 'body',
 		connectWith: '#timeline',
+		//containment: 'window',	// Awesome, but doesn't play well with scroll bars
 		helper: 'clone',
 		items: '.video-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
+			showOrHideVideosBackgroundText();
 			updateVideosPosition();
 		}
 	});
@@ -402,12 +428,14 @@ function enableDragAndDrop() {
 	$('#timeline').sortable( {
 		appendTo: 'body',
 		connectWith: '#videos',
+		//containment: 'window',	// Awesome, but doesn't play well with scroll bars
 		helper: 'clone',
 		items: '.video-container',
 		revert: true,
 		scroll: false,
 		tolerance: 'pointer',
 		update: function (event, ui) {
+			showOrHideTimelineBackgroundText();
 			enableOrDisableCombineButton();
 			updateTimelinePosition();
 		}
@@ -446,6 +474,22 @@ function updateVideosPosition() {
 // Perform an updateTimelinePosition request
 function updateTimelinePosition() {
 	updatePosition('updateTimelinePosition', '#timeline > .video-container');
+}
+
+function showOrHideVideosBackgroundText() {
+	if ($('#videos').sortable('toArray').length > 0){
+		$('#videos-background-text').hide();
+	} else {
+		$('#videos-background-text').show();
+	}
+}
+
+function showOrHideTimelineBackgroundText() {
+	if ($('#timeline').sortable('toArray').length > 0){
+		$('#timeline-background-text').hide();
+	} else {
+		$('#timeline-background-text').show();
+	}
 }
 
 function enableOrDisableCombineButton() {

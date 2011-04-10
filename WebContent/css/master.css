@@ -16,7 +16,7 @@ body {
 	 */
 	font-size: 100%;
 	line-height: 20px;
-	font-family: Lato, Calibri, Helvetica, Arial, sans-serif;
+	font-family: Helvetica, Arial, sans-serif;
 	text-align: left;
 	/*background-color: #edf4e6;*/
 	/* A lightened version of the Olive color */
@@ -168,15 +168,22 @@ small {
 	margin-right: 1%;
 }
 
+#header-right > div {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+}
+
 #main {
 	position: absolute;
 	top: 60px;
 	right: 0px;
-	bottom: 30px;
+	bottom: 0px;
 	left: 0px;
 	min-width: 1000px;
 	min-height: 450px;
 	overflow: auto;
+	box-shadow: 0px 0px 2px 2px #aaaaaa;
 }
 
 #footer {
@@ -184,9 +191,10 @@ small {
 	right: 0px;
 	bottom: 0px;
 	left: 0px;
-	height: 30px;
+	height: 0px;
 	border-top: 1px solid #888888;
 	min-width: 1000px;
+	background-color: #ffffff;
 }
 
 #footer-left {
