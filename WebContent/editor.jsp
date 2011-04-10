@@ -67,9 +67,8 @@
 
 <div id="videos-header"><span id="videos-title"> <%=projectName%>
 </span><span id="videos-controls">
-<button id="upload-new-video-button" type="button"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
-	class="ui-button-text">Upload New Video</span></button>
+<button id="upload-new-video-button" type="button">Upload New
+Video</button>
 </span></div>
 
 <div id="videos-container">
@@ -88,9 +87,7 @@ videos will appear here</span></div>
 <form id="combine-and-export-form" action="OliveServlet" name="process"
 	method="post"><input type="hidden" name="FormName"
 	value="combine-form"></input> <input id="export-button" type="submit"
-	value="Combine Videos"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"
-	disabled="disabled"></input></form>
+	value="Combine Videos" disabled="disabled"></input></form>
 </div>
 <!-- end #export --></div>
 <!-- end #main -->
@@ -127,7 +124,8 @@ videos will appear here</span></div>
 </div>
 <!-- end #new-video-dialog-form -->
 
-<div id="confirm-combine-videos-dialog" class="hidden" title="Confirm action">
+<div id="confirm-combine-videos-dialog" class="hidden"
+	title="Confirm action">
 <p>Combine videos and export them to your computer?</p>
 </div>
 

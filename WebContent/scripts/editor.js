@@ -58,7 +58,7 @@ function populateVideos() {
 	var requestData = '{'
 		+    '"command" : "getVideoInformation"'
 		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
+	makeAsynchronousPostRequest(requestData, function (responseData) {
 		var poolPositions = [];
 		var timelinePositions = [];
 		var preloaderVideos = '';	// A hacked way to preload all the videos
@@ -141,8 +141,10 @@ function attachUploadNewVideoHandlers() {
 		}
 	});
 
-	$('#upload-new-video-button').click(function() {
-		$('#new-video-dialog-form').dialog('open');
+	$('#upload-new-video-button')
+		.button()
+		.click(function() {
+			$('#new-video-dialog-form').dialog('open');
 	});
 }
 
@@ -180,7 +182,7 @@ function deleteVideo(videoName) {
 			+        '"video" : "' + videoName + '"'
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachSplitVideoHandlers() {
@@ -218,7 +220,7 @@ function splitVideo(videoName, splitTimeInSeconds) {
 			+        '"splitTimeInSeconds" : ' + splitTimeInSeconds + ''
 			+    '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachVideoClickHandlers() {
@@ -279,11 +281,6 @@ function doNotSelectThisTime() {
 }
 
 function attachCombineButtonHandlers(){
-	$('#export-button').click(function (event) {
-		event.preventDefault();
-		$('#confirm-combine-videos-dialog').dialog('open');
-	});
-	
 	$('#confirm-combine-videos-dialog').dialog({
 		autoOpen: false,
 		resizable: false,
@@ -291,7 +288,7 @@ function attachCombineButtonHandlers(){
 		modal: true,
 		buttons: {
 			'Combine': function () {
-				turnOffCombineButtonText();		
+				disableCombineButton();		
 				$('#combine-and-export-form').submit();
 				$(this).dialog('close');
 			},
@@ -300,16 +297,21 @@ function attachCombineButtonHandlers(){
 			}
 		}
 	});
+	
+	$('#export-button')
+		.button()
+		.click(function (event) {
+			event.preventDefault();
+			$('#confirm-combine-videos-dialog').dialog('open');
+	});
 }
 
-function turnOffCombineButtonText() {
-	$('#export-button > span').text('Please wait...')
-		.attr('disabled', 'disabled');
+function disableCombineButton() {
+	$('#export-button').button('disable');
 }
 
-function turnOnCombineButtonText() {
-	$('#export-button > span').text('Combine Videos')
-		.removeAttr('disabled');
+function enableCombineButton() {
+	$('#export-button').button('enable');
 }
 
 // Perform a combineVideos request
@@ -319,7 +321,7 @@ function combineVideos(){
 		+    '"arguments" : {'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, turnOnCombineButtonText, turnOnCombineButtonText);
+	makeAsynchronousPostRequest(requestData, turnOnCombineButtonText, turnOnCombineButtonText);
 }
 
 //Perform a renameVideo request
@@ -331,7 +333,7 @@ function renameVideo(oldVideoName, newVideoName) {
 		+        '"newVideoName" : "' + newVideoName + '"'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js". 
 }
 
 function makeSelectionVisible(element) {
@@ -380,7 +382,7 @@ function addToSelected(videoName) {
 		+        '"video" : "' + videoName + '"'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Perform a removeFromSelected request
@@ -391,7 +393,7 @@ function removeFromSelected(videoName) {
 		+        '"video" : "' + videoName + '"'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Video tag codecs: http://www.webmonkey.com/2010/02/embed_audio_and_video_in_html_5_pages/
@@ -463,7 +465,7 @@ function updatePosition(command, collectionItems) {
 	
 	requestData += ']}}';
 	
-	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Perform an updateVideosPosition request
@@ -494,9 +496,9 @@ function showOrHideTimelineBackgroundText() {
 
 function enableOrDisableCombineButton() {
 	if ($('#timeline').sortable('toArray').length > 0){
-		$('#export-button').removeAttr('disabled');
+		enableCombineButton();
 	} else {
-		$('#export-button').attr('disabled', 'disabled');
+		disableCombineButton();
 	}
 }
 

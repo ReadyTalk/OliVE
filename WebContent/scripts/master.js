@@ -73,7 +73,7 @@ function logout() {
 	window.location.replace('logout.jsp');
 }
 
-function makeAjaxPostRequest(requestData, onSuccess, onError) {
+function makeAjaxPostRequest(requestData, onSuccess, onError, asyncArg) {
 	// Domain: http://stackoverflow.com/questions/2300771/jquery-domain-get-url
 	// E.g. 'http:' + '//' + 'olive.readytalk.com' + '/olive/OliveServlet'
 	var postUrl = location.protocol + '//' + location.host + '/olive/OliveServlet';
@@ -82,7 +82,7 @@ function makeAjaxPostRequest(requestData, onSuccess, onError) {
 	$.ajax({
 		type: 'POST',
 		url: postUrl,
-		async: true,
+		async: asyncArg,
 		contentType: 'application/json; charset=utf-8',
 		data: requestData,
 		success: function (responseData) {
@@ -96,6 +96,16 @@ function makeAjaxPostRequest(requestData, onSuccess, onError) {
 			}
 		}
 	});
+}
+
+function makeAsynchronousPostRequest(requestData, onSuccess, onError) {
+	var async = true;
+	makeAjaxPostRequest(requestData, onSuccess, onError, async);
+}
+
+function makeSynchronousPostRequest(requestData, onSuccess, onError) {
+	var async = false;
+	makeAjaxPostRequest(requestData, onSuccess, onError, async);
 }
 
 /*

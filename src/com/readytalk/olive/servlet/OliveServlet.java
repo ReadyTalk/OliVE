@@ -32,11 +32,14 @@ import org.jets3t.service.ServiceException;
 import com.google.gson.Gson;
 import com.readytalk.olive.json.AddToSelectedRequest;
 import com.readytalk.olive.json.CombineVideosRequest;
+import com.readytalk.olive.json.CreateProjectRequest;
 import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.GetAccountInformationResponse;
+import com.readytalk.olive.json.IsDuplicateProjectNameRequest;
+import com.readytalk.olive.json.IsDuplicateProjectNameResponse;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
@@ -143,8 +146,6 @@ public class OliveServlet extends HttpServlet {
 				handleEditUser(request, response, session);
 			} else if (id.equals("AddUser")) {
 				handleAddUser(request, response, session);
-			} else if (id.equals("AddProject")) {
-				handleAddProject(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestionRetrieval(request, response, session);
 			} else if (id.equals("security-question-form-2")) {
@@ -210,9 +211,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			if (newPassword.equals(confirmNewPassword)) {
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
 				newPasswordSet = DatabaseApi
@@ -253,9 +252,7 @@ public class OliveServlet extends HttpServlet {
 					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 					response.sendRedirect("securityQuestion.jsp");
 				} else {
-					session
-							.setAttribute(Attribute.IS_CORRECT.toString(),
-									false);
+					session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 					response.sendRedirect("forgot.jsp");
 				}
 			} else {
@@ -310,16 +307,13 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
 				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
-			session
-					.setAttribute(Attribute.PROJECT_NAME.toString(),
-							projectName);
+			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
-		out
-				.println("File uploaded. Please close this window and refresh the editor page.");
+		out.println("File uploaded. Please close this window and refresh the editor page.");
 		out.close();
 	}
 
@@ -337,13 +331,13 @@ public class OliveServlet extends HttpServlet {
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = DatabaseApi.getAccountId(username);
-				session.setAttribute(Attribute.USERNAME.toString(), DatabaseApi
-						.getAccountUsername(accountId));
+				session.setAttribute(Attribute.USERNAME.toString(),
+						DatabaseApi.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
-				session.setAttribute(Attribute.EMAIL.toString(), DatabaseApi
-						.getAccountEmail(accountId));
-				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
-						.getAccountName(accountId));
+				session.setAttribute(Attribute.EMAIL.toString(),
+						DatabaseApi.getAccountEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(),
+						DatabaseApi.getAccountName(accountId));
 				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
 						false);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
@@ -381,12 +375,8 @@ public class OliveServlet extends HttpServlet {
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
-				session
-						.setAttribute(Attribute.PASSWORD.toString(),
-								newPassword);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
@@ -429,35 +419,6 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("index.jsp");
 			// TODO Add error message here
 		}
-	}
-
-	private void handleAddProject(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws UnsupportedEncodingException, IOException {
-		int accountId = getAccountIdFromSessionAttributes(session);
-		String projectName = request.getParameter("new-project-name");
-		if (Security.isSafeProjectName(projectName)
-				&& Security.isUniqueProjectName(projectName, accountId)
-				&& Security.projectFits(DatabaseApi
-						.getNumberOfProjects(accountId))) {
-			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			
-			String icon = "/olive/images/Ponkan_folder_opened_64.png";
-			Project project = new Project(projectName, accountId, icon, -1);
-			Boolean added = DatabaseApi.addProject(project);
-			if (!added) {
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
-						false);
-			} else {
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
-						true);
-				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
-						false);
-			}
-		} else {
-			session.setAttribute(Attribute.IS_SAFE.toString(), false);
-		}
-		response.sendRedirect("projects.jsp");
 	}
 
 	private void handleUploadVideo(HttpServletRequest request,
@@ -541,23 +502,18 @@ public class OliveServlet extends HttpServlet {
 					DatabaseApi.addVideo(new Video(videoName, videoUrl,
 							videoIcon, projectId, -1, -1, false));
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out
-							.println("File uploaded. Please close this window and refresh the editor page.");
+					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
 					response.sendRedirect("editor.jsp"); // Keep the user on the same page.
 				} else {
-					out
-							.println("Upload Failed. Error uploading video to the cloud.");
-					log
-							.warning("Upload Failed. Error uploading video to the cloud.");
+					out.println("Upload Failed. Error uploading video to the cloud.");
+					log.warning("Upload Failed. Error uploading video to the cloud.");
 					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else if (!Security.isSafeVideoName(videoName)) {
-				out
-						.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log
-						.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else if (!Security.isUniqueVideoName(videoName, projectId)) {
@@ -565,17 +521,14 @@ public class OliveServlet extends HttpServlet {
 				log.warning("Upload Failed. Video name already exists.");
 				return;
 			} else {
-				out
-						.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log
-						.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
 
 		} catch (FileUploadException e) {
-			log
-					.severe("Error encountered while parsing the request in the upload handler");
+			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
@@ -621,6 +574,8 @@ public class OliveServlet extends HttpServlet {
 			handleGetProjects(request, response, session, json);
 		} else if (generalRequest.command.equals("createProject")) {
 			handleCreateProject(request, response, session, json);
+		} else if (generalRequest.command.equals("isDuplicateProjectName")) {
+			handleIsDuplicateProjectName(request, response, session, json);
 		} else if (generalRequest.command.equals("deleteProject")) {
 			handleDeleteProject(request, response, session, json);
 		} else if (generalRequest.command.equals("renameProject")) {
@@ -714,7 +669,56 @@ public class OliveServlet extends HttpServlet {
 	private void handleCreateProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleCreateProject has not yet been implemented.");
+		response.setContentType("text/plain");
+		PrintWriter out = response.getWriter();
+		
+		int accountId = getAccountIdFromSessionAttributes(session);
+		CreateProjectRequest createProjectRequest = new Gson()
+			.fromJson(json, CreateProjectRequest.class);
+		String projectName = createProjectRequest.arguments.project;
+		
+		if (Security.isSafeProjectName(projectName)
+				&& Security.isUniqueProjectName(projectName, accountId)
+				&& Security.projectFits(DatabaseApi
+						.getNumberOfProjects(accountId))) {
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+
+			String icon = "/olive/images/Ponkan_folder_opened_64.png";
+			Project project = new Project(projectName, accountId, icon, -1);
+			Boolean added = DatabaseApi.addProject(project);
+			if (!added) {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						false);
+			} else {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						true);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						false);
+				out.println(createProjectRequest.arguments.project
+						+ " created successfully.");
+			}
+		} else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+		}
+		
+		out.close();
+	}
+
+	private void handleIsDuplicateProjectName(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		int accountId = getAccountIdFromSessionAttributes(session);
+		IsDuplicateProjectNameRequest isDuplicateProjectNameRequest = new Gson()
+				.fromJson(json, IsDuplicateProjectNameRequest.class);
+		out.println(new Gson().toJson(new IsDuplicateProjectNameResponse(
+				DatabaseApi.projectExists(
+						isDuplicateProjectNameRequest.arguments.project,
+						accountId))));
+
+		out.close();
 	}
 
 	private void handleDeleteProject(HttpServletRequest request,
@@ -958,9 +962,9 @@ public class OliveServlet extends HttpServlet {
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
-				log.info("video url "+i+": "+videoURLs[i]);
+				log.info("video url " + i + ": " + videoURLs[i]);
 			}
-			
+
 			String combinedURL = "";
 			// combineVideos(videoURLs, videos);
 			if (videoURLs.length == 1) {
@@ -1008,82 +1012,86 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		//String cmd = "ffmpeg -i ";
-		/*if (isWindows) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux) {
-			log.info("Linux!");
-		}*/
+		// String cmd = "ffmpeg -i ";
+		/*
+		 * if (isWindows) {
+		 * cmd = "cmd /c " + cmd;
+		 * } else if (isLinux) {
+		 * log.info("Linux!");
+		 * }
+		 */
 		S3Api.downloadVideosToTemp(videoURLs[0]);
 		File first = new File(videoURLs[0]);
-		
-		//File second;
-		//String[] arr;
-		//String[] arrV1 = {};
-		//String[] arrV2 = {};
-		String cmd = "mencoder -ovc lavc -oac mp3lame "+first.getName()+ " ";
+
+		// File second;
+		// String[] arr;
+		// String[] arrV1 = {};
+		// String[] arrV2 = {};
+		String cmd = "mencoder -ovc lavc -oac mp3lame " + first.getName() + " ";
 		if (isWindows) {
 			cmd = "cmd /c " + cmd;
 		} else if (isLinux) {
 			log.info("Linux!");
 		}
 		File temp;
-		for(int i = 1; i < videoURLs.length ; i++){
+		for (int i = 1; i < videoURLs.length; i++) {
 			S3Api.downloadVideosToTemp(videoURLs[i]);
 			temp = new File(videoURLs[i]);
-			cmd = cmd+temp.getName()+ " ";
-			//log.info(first.getName());
-			/*p = r.exec(cmd + first.getName(), null, tempDir);
-			BufferedReader in = new BufferedReader(new InputStreamReader(p
-					.getErrorStream()));
-			String s = in.readLine();
-			while ((s = in.readLine()) != null) {
-				arr = s.split(",");
-				if (s.contains("Video:")) {
-					arrV1 = arr;
-				}
-			}
-			log.info("Downloading "+videoURLs[i]+" to temp....");
-			S3Api.downloadVideosToTemp(videoURLs[i]);
-			second = new File(videoURLs[i]);
-			//log.info(second.getName());
-			p = r.exec(cmd + second.getName(), null, tempDir);
-			in = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			s = in.readLine();
-			while ((s = in.readLine()) != null) {
-				arr = s.split(",");
-				if (s.contains("Video:")) {
-					arrV2 = arr;
-				}
-			}
-			log.info(first.getName());
-			log.info(second.getName());
-			String dimensions1 = (arrV1[2].trim());
-			String dimensions2 = (arrV2[2].trim());
-			if(dimensions1.indexOf(" ")!=-1){
-				dimensions1 = dimensions1.substring(0, dimensions1.indexOf(" "));	
-			}
-			if(dimensions2.indexOf(" ")!=-1){
-				dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
-			}
-			
-			if (dimensions1.equals(dimensions2)) {
-				log.info("calling combine: "+first.getName()+" and "+ second.getName());
-				videoURLs[0] = combine(first.getName(), second.getName());
-			} else {
-				String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
-						second.getName(), dimensions2);
-				videoURLs[0] = combine(newVideos[0], newVideos[1]);
-			}
-			first = new File(videoURLs[0]);*/
+			cmd = cmd + temp.getName() + " ";
+			// log.info(first.getName());
+			/*
+			 * p = r.exec(cmd + first.getName(), null, tempDir);
+			 * BufferedReader in = new BufferedReader(new InputStreamReader(p
+			 * .getErrorStream()));
+			 * String s = in.readLine();
+			 * while ((s = in.readLine()) != null) {
+			 * arr = s.split(",");
+			 * if (s.contains("Video:")) {
+			 * arrV1 = arr;
+			 * }
+			 * }
+			 * log.info("Downloading "+videoURLs[i]+" to temp....");
+			 * S3Api.downloadVideosToTemp(videoURLs[i]);
+			 * second = new File(videoURLs[i]);
+			 * //log.info(second.getName());
+			 * p = r.exec(cmd + second.getName(), null, tempDir);
+			 * in = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			 * s = in.readLine();
+			 * while ((s = in.readLine()) != null) {
+			 * arr = s.split(",");
+			 * if (s.contains("Video:")) {
+			 * arrV2 = arr;
+			 * }
+			 * }
+			 * log.info(first.getName());
+			 * log.info(second.getName());
+			 * String dimensions1 = (arrV1[2].trim());
+			 * String dimensions2 = (arrV2[2].trim());
+			 * if(dimensions1.indexOf(" ")!=-1){
+			 * dimensions1 = dimensions1.substring(0, dimensions1.indexOf(" "));
+			 * }
+			 * if(dimensions2.indexOf(" ")!=-1){
+			 * dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
+			 * }
+			 * 
+			 * if (dimensions1.equals(dimensions2)) {
+			 * log.info("calling combine: "+first.getName()+" and "+ second.getName());
+			 * videoURLs[0] = combine(first.getName(), second.getName());
+			 * } else {
+			 * String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
+			 * second.getName(), dimensions2);
+			 * videoURLs[0] = combine(newVideos[0], newVideos[1]);
+			 * }
+			 * first = new File(videoURLs[0]);
+			 */
 		}
 		cmd = cmd + "-o combined.ogv";
 		log.info(cmd);
-		final Process p = r.exec(cmd,null,tempDir);
+		final Process p = r.exec(cmd, null, tempDir);
 		new Thread() {
 			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						p.getInputStream()));
 
 				String s;
 				try {
@@ -1097,8 +1105,8 @@ public class OliveServlet extends HttpServlet {
 			}
 		}.start();
 		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p.getErrorStream()));
 		while ((s = in.readLine()) != null) {
 			log.info(s);
 		}
@@ -1113,9 +1121,7 @@ public class OliveServlet extends HttpServlet {
 		// return videoURLs[0];
 
 	}
-	
-	
-	
+
 	private String[] fixAspectRatio(String video1Name, String dim1,
 			String video2Name, String dim2) throws IOException {
 		String[] dimensions1 = dim1.split("x");
@@ -1157,118 +1163,130 @@ public class OliveServlet extends HttpServlet {
 		} else if (isLinux()) {
 			log.info("Linux!");
 		}
-		/*int wrem1 = 0;
-		int hrem1 = 0;
-		int wrem2 = 0;
-		int hrem2 = 0;
-		if(padw1%2 != 0 && padw1 != 0){
-			wrem1 = 1;
-		}
-		if(padh1%2 != 0 && padh1 != 0){
-			hrem1 = 1;
-		}
-		if(padw2%2 != 0 && padw2 != 0){
-			wrem2 = 1;
-		}
-		if(padh2%2 != 0 && padh2 != 0){
-			hrem2 = 1;
-		}*/
+		/*
+		 * int wrem1 = 0;
+		 * int hrem1 = 0;
+		 * int wrem2 = 0;
+		 * int hrem2 = 0;
+		 * if(padw1%2 != 0 && padw1 != 0){
+		 * wrem1 = 1;
+		 * }
+		 * if(padh1%2 != 0 && padh1 != 0){
+		 * hrem1 = 1;
+		 * }
+		 * if(padw2%2 != 0 && padw2 != 0){
+		 * wrem2 = 1;
+		 * }
+		 * if(padh2%2 != 0 && padh2 != 0){
+		 * hrem2 = 1;
+		 * }
+		 */
 		Runtime r = Runtime.getRuntime();
 		String newName1 = video1Name.substring(0, video1Name.length() - 4)
 				+ "-fixed.ogv";
-		String outputFile = "/"+video1Name.substring(0, video1Name.length() - 8)+"output.txt";
-		
-		String cmd = cmdPre + video1Name + " -vf pad=" + widthf + ":" + heightf
-				+ ":" +padw1+ ":" +padh1+ ":black "
-				+ newName1;
-		log.info(cmd);
-		/*String cmd2 = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
-				+ ":" +padw2+ ":" +padh2+ ":black "
-				+ newName1;
-		log.info(cmd2);*/
-		Process p = r.exec(cmd, null, tempDir);
-		/*File output = new File(tempDir+"/output.txt");
-		Scanner in = new Scanner(output);
-		while (in.hasNextLine()) {
-        	log.info(in.next());
-        }*/
-		/*new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
+		String outputFile = "/"
+				+ video1Name.substring(0, video1Name.length() - 8)
+				+ "output.txt";
 
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();*/
+		String cmd = cmdPre + video1Name + " -vf pad=" + widthf + ":" + heightf
+				+ ":" + padw1 + ":" + padh1 + ":black " + newName1;
+		log.info(cmd);
+		/*
+		 * String cmd2 = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
+		 * + ":" +padw2+ ":" +padh2+ ":black "
+		 * + newName1;
+		 * log.info(cmd2);
+		 */
+		Process p = r.exec(cmd, null, tempDir);
+		/*
+		 * File output = new File(tempDir+"/output.txt");
+		 * Scanner in = new Scanner(output);
+		 * while (in.hasNextLine()) {
+		 * log.info(in.next());
+		 * }
+		 */
+		/*
+		 * new Thread() {
+		 * public void run() {
+		 * BufferedReader in = new BufferedReader(new InputStreamReader(p
+		 * .getInputStream()));
+		 * 
+		 * String s;
+		 * try {
+		 * while ((s = in.readLine()) != null) {
+		 * log.info(s);
+		 * }
+		 * } catch (IOException e) {
+		 * // TODO Auto-generated catch block
+		 * e.printStackTrace();
+		 * }
+		 * }
+		 * }.start();
+		 */
 		String s2;
-		//BufferedReader in = new BufferedReader(new InputStreamReader(p
-		//		.getInputStream()));
-		BufferedReader in2 = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
+		// BufferedReader in = new BufferedReader(new InputStreamReader(p
+		// .getInputStream()));
+		BufferedReader in2 = new BufferedReader(new InputStreamReader(
+				p.getErrorStream()));
 		int c = 0;
 		s2 = in2.readLine();
-		for (int i = 0; i<14; i++) {
-			log.info(i+" "+s2);
+		for (int i = 0; i < 14; i++) {
+			log.info(i + " " + s2);
 			s2 = in2.readLine();
 		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p.getInputStream()));
 		s2 = in.readLine();
-		for (int i = 0; i<5; i++) {
-			log.info("2-"+i+" "+s2);
+		for (int i = 0; i < 5; i++) {
+			log.info("2-" + i + " " + s2);
 			s2 = in.readLine();
 		}
 		String newName2 = video2Name.substring(0, video2Name.length() - 4)
 				+ "-fixed.ogv";
-		outputFile = "/"+video2Name.substring(0, video2Name.length() - 8)+"output.txt";
-		//cmd = cmdPre + video2Name + " -s " + width2 + "x" + height2
-		//		+ " -padtop " + (padh2+hrem2) + " -padbottom " + (padh2-hrem2) + " -padleft "
-		//		+ (padw2+wrem2) + " -padright " + (padw2-wrem2) + " -padcolor 000000 "
-		//		+ newName2;
-		cmd = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
-				+ ":" +padw2+ ":" +padh2+ ":black "
-				+ newName2;
+		outputFile = "/" + video2Name.substring(0, video2Name.length() - 8)
+				+ "output.txt";
+		// cmd = cmdPre + video2Name + " -s " + width2 + "x" + height2
+		// + " -padtop " + (padh2+hrem2) + " -padbottom " + (padh2-hrem2) + " -padleft "
+		// + (padw2+wrem2) + " -padright " + (padw2-wrem2) + " -padcolor 000000 "
+		// + newName2;
+		cmd = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf + ":"
+				+ padw2 + ":" + padh2 + ":black " + newName2;
 		log.info(cmd);
 		Process p2 = r.exec(cmd, null, tempDir);
-		/*output = new File(tempDir+"/output.txt");
-		in = new Scanner(output);
-		while (in.hasNextLine()) {
-        	log.info(in.next());
-        }*/
-		/*new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p2
-						.getInputStream()));
-
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();*/
-		//in = new BufferedReader(new InputStreamReader(p2
-			//	.getInputStream()));
-		in2 = new BufferedReader(new InputStreamReader(p2
-				.getErrorStream()));
+		/*
+		 * output = new File(tempDir+"/output.txt");
+		 * in = new Scanner(output);
+		 * while (in.hasNextLine()) {
+		 * log.info(in.next());
+		 * }
+		 */
+		/*
+		 * new Thread() {
+		 * public void run() {
+		 * BufferedReader in = new BufferedReader(new InputStreamReader(p2
+		 * .getInputStream()));
+		 * 
+		 * String s;
+		 * try {
+		 * while ((s = in.readLine()) != null) {
+		 * log.info(s);
+		 * }
+		 * } catch (IOException e) {
+		 * // TODO Auto-generated catch block
+		 * e.printStackTrace();
+		 * }
+		 * }
+		 * }.start();
+		 */
+		// in = new BufferedReader(new InputStreamReader(p2
+		// .getInputStream()));
+		in2 = new BufferedReader(new InputStreamReader(p2.getErrorStream()));
 		c = 0;
 		while (((s2 = in2.readLine()) != null)) {
-			log.info(c+" "+s2);
+			log.info(c + " " + s2);
 			c++;
 		}
-		String [] ret = {newName1, newName2};
+		String[] ret = { newName1, newName2 };
 		return ret;
 
 	}
@@ -1287,8 +1305,8 @@ public class OliveServlet extends HttpServlet {
 				+ "-fixed.ogv";
 		Process p = r.exec("ffmpeg -i " + video2Name + " -ac " + ac + " "
 				+ newName, null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p.getErrorStream()));
 		String s = "";
 		while ((s = in.readLine()) != null) {
 			log.info(s);
@@ -1309,8 +1327,8 @@ public class OliveServlet extends HttpServlet {
 		final Process p2 = r.exec(cmd, null, tempDir);
 		new Thread() {
 			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p2
-						.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						p2.getInputStream()));
 
 				String s;
 				try {
@@ -1324,8 +1342,8 @@ public class OliveServlet extends HttpServlet {
 			}
 		}.start();
 		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p2
-				.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p2.getErrorStream()));
 		// BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		// String s2 = "";
 		while ((s = in.readLine()) != null) {

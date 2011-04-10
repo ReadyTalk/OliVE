@@ -59,9 +59,7 @@
 
 <div id="projects-header"><span id="projects-title">Projects</span>
 <span id="projects-controls">
-<button id="create-new-project" type="button"
-	class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"><span
-	class="ui-button-text">Create New Project</span></button>
+<button id="create-new-project" type="button">Create New Project</button>
 </span></div>
 
 <div class="clear"></div>
@@ -92,12 +90,11 @@ The Olive Team</p>
 <div id="new-project-dialog-form" class="hidden"
 	title="Create New Project">
 <p class="validateTips">All form fields are required.</p>
-<form id="new-project-form" action="OliveServlet" name="process"
-	method="post">
+<form id="new-project-form">
 <fieldset><label for="new-project-name">Project Name</label>
 <input type="text" name="new-project-name" id="new-project-name"
 	class="text ui-widget-content ui-corner-all" maxlength="32" /></fieldset>
-<input type="hidden" name="FormName" value="AddProject"></input></form>
+</form>
 </div>
 <!-- end #new-project-dialog-form -->
 
