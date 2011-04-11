@@ -1184,46 +1184,6 @@ public class OliveServlet extends HttpServlet {
 		}
 		return newName1;
 	}
-
-	private String combine(String videoName1, String videoName2)
-			throws IOException {
-		Runtime r = Runtime.getRuntime();
-		String cmd = "mencoder -ovc lavc -oac mp3lame " + videoName1 + " "
-				+ videoName2 + " -o combined.ogv";
-		if (isWindows()) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		final Process p2 = r.exec(cmd, null, tempDir);
-		new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						p2.getInputStream()));
-
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();
-		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				p2.getErrorStream()));
-		// BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		// String s2 = "";
-		while ((s = in.readLine()) != null) {
-			log.info(s);
-		}
-		File combined = new File(tempDir + "/combined.ogv");
-		return combined.getAbsolutePath();
-	}
-
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
 	private Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
