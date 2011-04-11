@@ -42,14 +42,14 @@ function deleteAccount() {
 			+        '"account" : "' + $(this).attr('id') + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, logout, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, logout, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function injectAccountData() {
 	var requestData = '{'
 		+    '"command" : "getAccountInformation"'
 		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
+	makeAsynchronousPostRequest(requestData, function (responseData) {
 		$('#new-name').val(responseData.name).change();
 		$('#new-email').val(responseData.email).change();
 		$('#new-password').val(responseData.password).change();

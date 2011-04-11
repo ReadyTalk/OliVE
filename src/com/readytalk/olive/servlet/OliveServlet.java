@@ -32,11 +32,17 @@ import org.jets3t.service.ServiceException;
 import com.google.gson.Gson;
 import com.readytalk.olive.json.AddToSelectedRequest;
 import com.readytalk.olive.json.CombineVideosRequest;
+import com.readytalk.olive.json.CreateAccountRequest;
+import com.readytalk.olive.json.CreateProjectRequest;
 import com.readytalk.olive.json.DeleteAccountRequest;
 import com.readytalk.olive.json.DeleteProjectRequest;
 import com.readytalk.olive.json.DeleteVideoRequest;
 import com.readytalk.olive.json.GeneralRequest;
 import com.readytalk.olive.json.GetAccountInformationResponse;
+import com.readytalk.olive.json.IsDuplicateProjectNameRequest;
+import com.readytalk.olive.json.IsDuplicateProjectNameResponse;
+import com.readytalk.olive.json.IsDuplicateUsernameRequest;
+import com.readytalk.olive.json.IsDuplicateUsernameResponse;
 import com.readytalk.olive.json.RemoveFromSelectedRequest;
 import com.readytalk.olive.json.RenameProjectRequest;
 import com.readytalk.olive.json.RenameVideoRequest;
@@ -141,10 +147,6 @@ public class OliveServlet extends HttpServlet {
 				handleLogin(request, response, session);
 			} else if (id.equals("EditUser")) {
 				handleEditUser(request, response, session);
-			} else if (id.equals("AddUser")) {
-				handleAddUser(request, response, session);
-			} else if (id.equals("AddProject")) {
-				handleAddProject(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestionRetrieval(request, response, session);
 			} else if (id.equals("security-question-form-2")) {
@@ -210,9 +212,7 @@ public class OliveServlet extends HttpServlet {
 				&& Security.isSafePassword(confirmNewPassword)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
 			if (newPassword.equals(confirmNewPassword)) {
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
 				String username = (String) session
 						.getAttribute(Attribute.USERNAME.toString());
 				newPasswordSet = DatabaseApi
@@ -253,9 +253,7 @@ public class OliveServlet extends HttpServlet {
 					session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
 					response.sendRedirect("securityQuestion.jsp");
 				} else {
-					session
-							.setAttribute(Attribute.IS_CORRECT.toString(),
-									false);
+					session.setAttribute(Attribute.IS_CORRECT.toString(), false);
 					response.sendRedirect("forgot.jsp");
 				}
 			} else {
@@ -310,16 +308,13 @@ public class OliveServlet extends HttpServlet {
 				.getAttribute(Attribute.USERNAME.toString()));
 		if (projectName != null && Security.isSafeProjectName(projectName)
 				&& DatabaseApi.projectExists(projectName, accountId)) { // Short-circuiting
-			session
-					.setAttribute(Attribute.PROJECT_NAME.toString(),
-							projectName);
+			session.setAttribute(Attribute.PROJECT_NAME.toString(), projectName);
 			response.sendRedirect("editor.jsp");
 		} else {
 			response.sendRedirect("projects.jsp");
 		}
 		PrintWriter out = response.getWriter();
-		out
-				.println("File uploaded. Please close this window and refresh the editor page.");
+		out.println("File uploaded. Please close this window and refresh the editor page.");
 		out.close();
 	}
 
@@ -337,13 +332,13 @@ public class OliveServlet extends HttpServlet {
 					isAuthorized);
 			if (isAuthorized) { // Take the user to the projects page.
 				int accountId = DatabaseApi.getAccountId(username);
-				session.setAttribute(Attribute.USERNAME.toString(), DatabaseApi
-						.getAccountUsername(accountId));
+				session.setAttribute(Attribute.USERNAME.toString(),
+						DatabaseApi.getAccountUsername(accountId));
 				session.setAttribute(Attribute.PASSWORD.toString(), password);
-				session.setAttribute(Attribute.EMAIL.toString(), DatabaseApi
-						.getAccountEmail(accountId));
-				session.setAttribute(Attribute.NAME.toString(), DatabaseApi
-						.getAccountName(accountId));
+				session.setAttribute(Attribute.EMAIL.toString(),
+						DatabaseApi.getAccountEmail(accountId));
+				session.setAttribute(Attribute.NAME.toString(),
+						DatabaseApi.getAccountName(accountId));
 				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
 						false);
 				session.removeAttribute(Attribute.IS_SAFE.toString()); // Cleared so as to not interfere with any other form.
@@ -381,12 +376,8 @@ public class OliveServlet extends HttpServlet {
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
 						editSuccessfully);
-				session
-						.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-								true);
-				session
-						.setAttribute(Attribute.PASSWORD.toString(),
-								newPassword);
+				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
 				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 				session.setAttribute(Attribute.NAME.toString(), newName);
 				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
@@ -403,61 +394,6 @@ public class OliveServlet extends HttpServlet {
 			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
 		}
 		response.sendRedirect("account.jsp");
-	}
-
-	private void handleAddUser(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws IOException {
-		// The jQuery regex should catch malicious input, but sanitize just to
-		// be safe.
-		String username = Security.stripOutIllegalCharacters(request
-				.getParameter("name"));
-		String password = Security.stripOutIllegalCharacters(request
-				.getParameter("password"));
-		String email = Security.stripOutIllegalCharacters(request
-				.getParameter("email"));
-		User newUser = new User(username, password, "", email);
-		Boolean addSuccessfully = DatabaseApi.AddAccount(newUser);
-		if (addSuccessfully) {
-			session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
-			session.setAttribute(Attribute.USERNAME.toString(), username);
-			session.setAttribute(Attribute.PASSWORD.toString(), password);
-			session.setAttribute(Attribute.EMAIL.toString(), email);
-			session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(), true);
-			response.sendRedirect("projects.jsp");
-		} else {
-			response.sendRedirect("index.jsp");
-			// TODO Add error message here
-		}
-	}
-
-	private void handleAddProject(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session)
-			throws UnsupportedEncodingException, IOException {
-		int accountId = getAccountIdFromSessionAttributes(session);
-		String projectName = request.getParameter("new-project-name");
-		if (Security.isSafeProjectName(projectName)
-				&& Security.isUniqueProjectName(projectName, accountId)
-				&& Security.projectFits(DatabaseApi
-						.getNumberOfProjects(accountId))) {
-			session.setAttribute(Attribute.IS_SAFE.toString(), true);
-			
-			String icon = "/olive/images/Ponkan_folder_opened_64.png";
-			Project project = new Project(projectName, accountId, icon, -1);
-			Boolean added = DatabaseApi.addProject(project);
-			if (!added) {
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
-						false);
-			} else {
-				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
-						true);
-				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
-						false);
-			}
-		} else {
-			session.setAttribute(Attribute.IS_SAFE.toString(), false);
-		}
-		response.sendRedirect("projects.jsp");
 	}
 
 	private void handleUploadVideo(HttpServletRequest request,
@@ -541,23 +477,18 @@ public class OliveServlet extends HttpServlet {
 					DatabaseApi.addVideo(new Video(videoName, videoUrl,
 							videoIcon, projectId, -1, -1, false));
 					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out
-							.println("File uploaded. Please close this window and refresh the editor page.");
+					out.println("File uploaded. Please close this window and refresh the editor page.");
 					out.println();
 					response.sendRedirect("editor.jsp"); // Keep the user on the same page.
 				} else {
-					out
-							.println("Upload Failed. Error uploading video to the cloud.");
-					log
-							.warning("Upload Failed. Error uploading video to the cloud.");
+					out.println("Upload Failed. Error uploading video to the cloud.");
+					log.warning("Upload Failed. Error uploading video to the cloud.");
 					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
 			} else if (!Security.isSafeVideoName(videoName)) {
-				out
-						.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log
-						.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
 				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 				return;
 			} else if (!Security.isUniqueVideoName(videoName, projectId)) {
@@ -565,17 +496,14 @@ public class OliveServlet extends HttpServlet {
 				log.warning("Upload Failed. Video name already exists.");
 				return;
 			} else {
-				out
-						.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log
-						.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
+				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
 				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
 				return;
 			}
 
 		} catch (FileUploadException e) {
-			log
-					.severe("Error encountered while parsing the request in the upload handler");
+			log.severe("Error encountered while parsing the request in the upload handler");
 			out.println("Upload failed.");
 			e.printStackTrace();
 		} catch (InvalidFileSizeException e) {
@@ -613,7 +541,11 @@ public class OliveServlet extends HttpServlet {
 		GeneralRequest generalRequest = new Gson().fromJson(json,
 				GeneralRequest.class);
 
-		if (generalRequest.command.equals("deleteAccount")) {
+		if (generalRequest.command.equals("createAccount")) {
+			handleCreateAccount(request, response, session, json);
+		} else if (generalRequest.command.equals("isDuplicateUsername")) {
+			handleIsDuplicateUsername(request, response, session, json);
+		} else if (generalRequest.command.equals("deleteAccount")) {
 			handleDeleteAccount(request, response, session, json);
 		} else if (generalRequest.command.equals("getAccountInformation")) {
 			handleGetAccountInformation(request, response, session, json);
@@ -621,6 +553,8 @@ public class OliveServlet extends HttpServlet {
 			handleGetProjects(request, response, session, json);
 		} else if (generalRequest.command.equals("createProject")) {
 			handleCreateProject(request, response, session, json);
+		} else if (generalRequest.command.equals("isDuplicateProjectName")) {
+			handleIsDuplicateProjectName(request, response, session, json);
 		} else if (generalRequest.command.equals("deleteProject")) {
 			handleDeleteProject(request, response, session, json);
 		} else if (generalRequest.command.equals("renameProject")) {
@@ -663,6 +597,60 @@ public class OliveServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+	}
+
+	private void handleCreateAccount(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		CreateAccountRequest createAccountRequest = new Gson().fromJson(json,
+				CreateAccountRequest.class);
+
+		response.setContentType("text/plain");
+		PrintWriter out = response.getWriter();
+
+		String username = createAccountRequest.arguments.username;
+		String email = createAccountRequest.arguments.email;
+		String password = createAccountRequest.arguments.password;
+		String confirmPassword = createAccountRequest.arguments.confirmPassword;
+		String name = "Enter your name";
+
+		if (Security.isSafeUsername(username) && Security.isSafeEmail(email)
+				&& Security.isSafePassword(password)
+				&& Security.isSafePassword(confirmPassword)
+				&& password.equals(confirmPassword)
+				&& Security.isSafeName(name)) { // Short-circuitry
+			User newUser = new User(username, password, name, email);
+			boolean addedSuccessfully = DatabaseApi.AddAccount(newUser);
+			if (addedSuccessfully) {
+				session.setAttribute(Attribute.IS_AUTHORIZED.toString(), true);
+				session.setAttribute(Attribute.USERNAME.toString(), username);
+				session.setAttribute(Attribute.EMAIL.toString(), email);
+				session.setAttribute(Attribute.PASSWORD.toString(), password);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						true);
+				out.println(username + " created successfully.");
+			} else {
+				// TODO Add error message here
+			}
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		}
+		out.close();
+	}
+
+	private void handleIsDuplicateUsername(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		IsDuplicateUsernameRequest isDuplicateUsernameRequest = new Gson()
+				.fromJson(json, IsDuplicateUsernameRequest.class);
+		out.println(new Gson().toJson(new IsDuplicateUsernameResponse(
+				DatabaseApi
+						.usernameExists(isDuplicateUsernameRequest.arguments.username))));
+
+		out.close();
 	}
 
 	private void handleDeleteAccount(HttpServletRequest request,
@@ -714,7 +702,56 @@ public class OliveServlet extends HttpServlet {
 	private void handleCreateProject(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session, String json)
 			throws IOException {
-		log.severe("handleCreateProject has not yet been implemented.");
+		response.setContentType("text/plain");
+		PrintWriter out = response.getWriter();
+
+		int accountId = getAccountIdFromSessionAttributes(session);
+		CreateProjectRequest createProjectRequest = new Gson().fromJson(json,
+				CreateProjectRequest.class);
+		String projectName = createProjectRequest.arguments.project;
+
+		if (Security.isSafeProjectName(projectName)
+				&& Security.isUniqueProjectName(projectName, accountId)
+				&& Security.projectFits(DatabaseApi
+						.getNumberOfProjects(accountId))) {
+			session.setAttribute(Attribute.IS_SAFE.toString(), true);
+
+			String icon = "/olive/images/Ponkan_folder_opened_64.png";
+			Project project = new Project(projectName, accountId, icon, -1);
+			Boolean added = DatabaseApi.addProject(project);
+			if (!added) {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						false);
+			} else {
+				session.setAttribute(Attribute.ADD_SUCCESSFULLY.toString(),
+						true);
+				session.setAttribute(Attribute.IS_FIRST_SIGN_IN.toString(),
+						false);
+				out.println(createProjectRequest.arguments.project
+						+ " created successfully.");
+			}
+		} else {
+			session.setAttribute(Attribute.IS_SAFE.toString(), false);
+		}
+
+		out.close();
+	}
+
+	private void handleIsDuplicateProjectName(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session, String json)
+			throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+		int accountId = getAccountIdFromSessionAttributes(session);
+		IsDuplicateProjectNameRequest isDuplicateProjectNameRequest = new Gson()
+				.fromJson(json, IsDuplicateProjectNameRequest.class);
+		out.println(new Gson().toJson(new IsDuplicateProjectNameResponse(
+				DatabaseApi.projectExists(
+						isDuplicateProjectNameRequest.arguments.project,
+						accountId))));
+
+		out.close();
 	}
 
 	private void handleDeleteProject(HttpServletRequest request,
@@ -958,9 +995,9 @@ public class OliveServlet extends HttpServlet {
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
-				log.info("video url "+i+": "+videoURLs[i]);
+				log.info("video url " + i + ": " + videoURLs[i]);
 			}
-			
+
 			String combinedURL = "";
 			// combineVideos(videoURLs, videos);
 			if (videoURLs.length == 1) {
@@ -1022,11 +1059,11 @@ public class OliveServlet extends HttpServlet {
 		}
 		cmd = cmd + "-o combined.ogv";
 		log.info(cmd);
-		final Process p = r.exec(cmd,null,tempDir);
+		final Process p = r.exec(cmd, null, tempDir);
 		new Thread() {
 			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						p.getInputStream()));
 
 				String s;
 				try {
@@ -1040,15 +1077,14 @@ public class OliveServlet extends HttpServlet {
 			}
 		}.start();
 		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p.getErrorStream()));
 		while ((s = in.readLine()) != null) {
 			log.info(s);
 		}
 		File combined = new File(tempDir + "/combined.ogv");
 		return combined.getAbsolutePath();
 	}
-	
 	private int [] getBiggestDimensions(String [] videos) throws IOException{
 		int[]biggestDimensions = {0,0};
 		File temp;
@@ -1093,7 +1129,6 @@ public class OliveServlet extends HttpServlet {
 		int [] ret = {width,height};
 		return ret;
 	}
-	
 	private String adjustDimensions(File video, int[]biggestDimensions) throws IOException {
 		int[]dimensions = getDimensions(video);
 		int width = dimensions[0];
@@ -1116,26 +1151,9 @@ public class OliveServlet extends HttpServlet {
 		String newName1 = videoName.substring(0, videoName.length() - 4)
 				+ "-fixed.ogv";
 		String cmd = cmdPre + videoName + " -vf pad=" + bigWidth + ":" + bigHeight
-				+ ":" +padw1+ ":" +padh1+ ":black "
-				+ newName1;
+				+ ":" + padw1 + ":" + padh1 + ":black " + newName1;
 		log.info(cmd);
 		Process p = r.exec(cmd, null, tempDir);
-		/*new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
-
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();*/
 		//String s;
 		BufferedReader in = new BufferedReader(new InputStreamReader(p
 						.getErrorStream()));
@@ -1145,7 +1163,6 @@ public class OliveServlet extends HttpServlet {
 			System.out.println("ffmpeg output: "+s);
 		}
 		return newName1;
-
 	}
 
 	private String combine(String videoName1, String videoName2)
@@ -1161,8 +1178,8 @@ public class OliveServlet extends HttpServlet {
 		final Process p2 = r.exec(cmd, null, tempDir);
 		new Thread() {
 			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p2
-						.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						p2.getInputStream()));
 
 				String s;
 				try {
@@ -1176,8 +1193,8 @@ public class OliveServlet extends HttpServlet {
 			}
 		}.start();
 		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p2
-				.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				p2.getErrorStream()));
 		// BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		// String s2 = "";
 		while ((s = in.readLine()) != null) {

@@ -6,11 +6,12 @@
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
 	attachRegistrationHandlers();
+	attachScreencastPlayer();
 });
 
 function attachRegistrationHandlers() {
-	var name = $('#register-name'), email = $('#register-email'), password = $('#register-password'), cPassword = $('#confirm-register-password'), allFields = $(
-			[]).add(name).add(email).add(password).add(cPassword);
+	var username = $('#register-username'), email = $('#register-email'), password = $('#register-password'), cPassword = $('#confirm-register-password'), allFields = $(
+			[]).add(username).add(email).add(password).add(cPassword);
 	
 	$('#dialog-form').dialog({
 		autoOpen : false,
@@ -19,42 +20,37 @@ function attachRegistrationHandlers() {
 		modal : true,
 		buttons : {
 			'Create an account' : function() {
-				var bValid = true;
 				allFields.removeClass('ui-state-error');
 
-				bValid = bValid
-						&& checkLength(name,
-								'register-username',
-								MIN_USERNAME_LENGTH,
-								MAX_USERNAME_LENGTH);
-				bValid = bValid
-						&& checkLength(email,
-								'register-email',
-								MIN_EMAIL_LENGTH,
-								MAX_EMAIL_LENGTH);
-				bValid = bValid
-						&& checkLength(password,
-								'register-password',
-								MIN_PASSWORD_LENGTH,
-								MAX_PASSWORD_LENGTH);
-				bValid = bValid
-						&& checkRegexp(name,
-								SAFE_USERNAME_REGEX,
-								SAFE_USERNAME_MESSAGE);
-				bValid = bValid
-						&& checkRegexp(email,
-								SAFE_EMAIL_REGEX,
-								SAFE_EMAIL_MESSAGE);
-				bValid = bValid
-						&& checkRegexp(password,
-								SAFE_PASSWORD_REGEX,
-								SAFE_PASSWORD_MESSAGE);
-				bValid = bValid
-						&& checkPasswordsEqual(password,
-								cPassword,
-								'Passwords do not match.');
-				if (bValid) {
-					$('#register-form').submit();
+				if (
+					checkLength(username,
+							'register-username',
+							MIN_USERNAME_LENGTH,
+							MAX_USERNAME_LENGTH)
+					&& checkLength(email,
+							'register-email',
+							MIN_EMAIL_LENGTH,
+							MAX_EMAIL_LENGTH)
+					&& checkLength(password,
+							'register-password',
+							MIN_PASSWORD_LENGTH,
+							MAX_PASSWORD_LENGTH)
+					&& checkRegexp(username,
+							SAFE_USERNAME_REGEX,
+							SAFE_USERNAME_MESSAGE)
+					&& checkRegexp(email,
+							SAFE_EMAIL_REGEX,
+							SAFE_EMAIL_MESSAGE)
+					&& checkRegexp(password,
+							SAFE_PASSWORD_REGEX,
+							SAFE_PASSWORD_MESSAGE)
+					&& checkPasswordsEqual(password,
+							cPassword,
+							'Passwords do not match.')
+					&& !isDuplicateUsername(username,
+							'Account name already taken')
+				) {	// Short-circuitry
+					createNewAccount();
 					$(this).dialog('close');
 				}
 			},
@@ -67,13 +63,50 @@ function attachRegistrationHandlers() {
 		}
 	});
 
-	$('#create-user').click(function() {
-		$('#dialog-form').dialog('open');
+	$('#create-user')
+		//.button()	// Don't do this; keep it a link
+		.click(function() {
+			$('#dialog-form').dialog('open');
 	});
 }
 
-$(document).ready(function(){
+//Perform an isDuplicateUsername request.
+function isDuplicateUsername(o, n) {
+	var retval = true;	// Guilty until proven innocent.
+	var requestData = '{'
+		+    '"command" : "isDuplicateUsername",'
+		+    '"arguments" : {'
+		+        '"username" : "' + o.val() + '"'
+		+    '}'
+		+  '}';
+	makeSynchronousPostRequest(requestData, function (responseData) {
+		if (responseData.isDuplicateUsername === true) {
+			o.addClass('ui-state-error');
+			updateTips(n);
+			retval = true;
+		} else {
+			retval = false;
+		}
+	}, null);	// Defined in "/olive/scripts/master.js".
+	
+	return retval;
+}
 
+//Perform a createNewAccount request
+function createNewAccount() {
+	var requestData = '{'
+			+    '"command" : "createAccount",'
+			+    '"arguments" : {'
+			+        '"username" : "' + $('#register-username').val() + '",'
+			+        '"email" : "' + $('#register-email').val() + '",'
+			+        '"password" : "' + $('#register-password').val() + '",'
+			+        '"confirmPassword" : "' + $('#confirm-register-password').val() + '"'
+			+      '}'
+			+  '}';
+	makeAsynchronousPostRequest(requestData, redirect('projects.jsp'), null);	// Defined in "/olive/scripts/master.js".
+}
+
+function attachScreencastPlayer() {
 	var Playlist = function(instance, playlist, options) {
 		var self = this;
 
@@ -245,8 +278,6 @@ $(document).ready(function(){
 		muted: false
 	});
 
-	
-
 /*	$('#jplayer_inspector_1').jPlayerInspector({jPlayer:$('#jquery_jplayer_1')});
 	$('#jplayer_inspector_2').jPlayerInspector({jPlayer:$('#jquery_jplayer_2')});*/
-});
+}

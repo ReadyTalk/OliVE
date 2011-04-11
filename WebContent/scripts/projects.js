@@ -53,7 +53,7 @@ function populateProjects() {
 	var requestData = '{'
 		+    '"command" : "getProjectInformation"'
 		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
+	makeAsynchronousPostRequest(requestData, function (responseData) {
 		var poolPositions = [];
 		for (var i = 0; i < responseData.length; ++i) {
 			var element = createNewProjectContainer(responseData[i].name, i, responseData[i].icon);
@@ -81,7 +81,7 @@ function printFirstSignInMessage() {
 	var requestData = '{'
 		+    '"command" : "isFirstSignIn"'
 		+  '}';
-	makeAjaxPostRequest(requestData, function (responseData) {
+	makeAsynchronousPostRequest(requestData, function (responseData) {
 		if (responseData === true) {
 			var welcomeMessage = '<p>Welcome to Olive. This is the projects '
 				+ 'page where you can add, edit, and delete your projects. We '
@@ -106,20 +106,22 @@ function attachCreateNewProjectHandlers() {
 		modal : true,
 		buttons : {
 			'Create New Project' : function () {
-				var bValid = true;
 				allFields.removeClass('ui-state-error');
-
-				bValid = bValid
-						&& checkLength(newProjectName,
-								'new-project-name',
-								MIN_PROJECT_NAME_LENGTH,
-								MAX_PROJECT_NAME_LENGTH);
-				bValid = bValid
-						&& checkRegexp(newProjectName,
-								SAFE_PROJECT_NAME_REGEX,
-								SAFE_PROJECT_NAME_MESSAGE);
-				if (bValid) {
-					$('#new-project-form').submit();
+				if (
+					checkLength(
+						newProjectName,
+						'new-project-name',
+						MIN_PROJECT_NAME_LENGTH,
+						MAX_PROJECT_NAME_LENGTH)
+					&& checkRegexp(
+						newProjectName,
+						SAFE_PROJECT_NAME_REGEX,
+						SAFE_PROJECT_NAME_MESSAGE)
+					&& !isDuplicateProjectName(
+						newProjectName,
+						'Project name already exists')
+				) {	// Short-circuitry
+					createNewProject();
 					$(this).dialog('close');
 				}
 			},
@@ -132,9 +134,34 @@ function attachCreateNewProjectHandlers() {
 		}
 	});
 
-	$('#create-new-project').click(function() {
-		$('#new-project-dialog-form').dialog('open');
+	$('#create-new-project')
+		.button()	// Style it all fancy-like
+		.show()
+		.click(function() {
+			$('#new-project-dialog-form').dialog('open');
 	});
+}
+
+// Perform an isDuplicateProjectName request.
+function isDuplicateProjectName(o, n) {
+	var retval = true;	// Guilty until proven innocent.
+	var requestData = '{'
+		+    '"command" : "isDuplicateProjectName",'
+		+    '"arguments" : {'
+		+        '"project" : "' + o.val() + '"'
+		+    '}'
+		+  '}';
+	makeSynchronousPostRequest(requestData, function (responseData) {
+		if (responseData.isDuplicateProjectName === true) {
+			o.addClass('ui-state-error');
+			updateTips(n);
+			retval = true;
+		} else {
+			retval = false;
+		}
+	}, null);	// Defined in "/olive/scripts/master.js".
+	
+	return retval;
 }
 
 function attachRenameProjectHandlers() {
@@ -166,7 +193,7 @@ function renameProject(oldProjectName, newProjectName) {
 		+        '"newProjectName" : "' + newProjectName + '"'
 		+    '}'
 		+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 function attachDeleteProjectHandlers() {
@@ -229,12 +256,23 @@ function updatePosition(command, collectionItems) {
 	
 	requestData += ']}}';
 	
-	makeAjaxPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, null, null);	// Defined in "/olive/scripts/master.js".
 }
 
 //Perform an updateProjectsPosition request
 function updateProjectsPosition() {
 	updatePosition('updateProjectsPosition', '#projects > .project-container');
+}
+
+//Perform a createNewProject request
+function createNewProject() {
+	var requestData = '{'
+			+    '"command" : "createProject",'
+			+    '"arguments" : {'
+			+        '"project" : "' + $('#new-project-name').val() + '"'
+			+      '}'
+			+  '}';
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
 
 // Perform a deleteProject request
@@ -245,5 +283,5 @@ function deleteProject(projectName) {
 			+        '"project" : "' + projectName + '"'
 			+      '}'
 			+  '}';
-	makeAjaxPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
+	makeAsynchronousPostRequest(requestData, refresh, null);	// Defined in "/olive/scripts/master.js".
 }
