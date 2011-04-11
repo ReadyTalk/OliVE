@@ -55,11 +55,8 @@ public class Security {
 	private static final int MAX_SECURITY_ANSWER_LENGTH = 128;
 	private static final String SAFE_SECURITY_ANSWER_REGEX = "^([0-9a-zA-Z .,])+$";
 
-	// Why some characters are allowed:
-	// http://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-email-address
-	private static final String[] ILLEGAL_STRINGS = { "!", "&", "*", "(", ")",
-			"-", "=", "{", "}", "[", "]", "\\", "|", ";", "'", "\"", ":", ",",
-			"<", ">", "/", "?", "`" };
+	private static final long MIN_VIDEO_SIZE_IN_BYTES = 1; // No empty files
+	private static final long MAX_VIDEO_SIZE_IN_BYTES = 524288000; // 500 MB
 
 	/**
 	 * Checks to see if the length of an input meets database and JavaScript length requirement
@@ -168,26 +165,74 @@ public class Security {
 		return false; // TODO Implement this
 	}
 
-	public static boolean isSafeVideo(FileItem video) {
-		String contentType = video.getContentType();
-		if (contentType == null) {
-			return false;
-		}
-		String[] content = contentType.split("/");
-		return content[0].equals("video")
-				|| (content[0].equals("audio") && content[1].equals("ogg"));
+	public static boolean isSafeVideo(File video) {
+		return video.isFile(); // TODO Improve this.
+
+		/*
+		 * FileItem video; // Passed as argument
+		 * String contentType = video.getContentType();
+		 * if (contentType == null) {
+		 * return false;
+		 * }
+		 * String[] content = contentType.split("/");
+		 * return content[0].equals("video")
+		 * || (content[0].equals("audio") && content[1].equals("ogg"));
+		 */
 	}
+
+	public static String convertToSafeAndUniqueVideoName(String videoName,
+			int projectId) {
+		String safeVideo = stripOutIllegalCharacters(videoName, "_");
+		safeVideo = safeVideo.trim(); // Trim off white space at beginning and end.
+
+		while (safeVideo.length() < MIN_VIDEO_NAME_LENGTH) {
+			safeVideo += "Video";
+		}
+
+		if (safeVideo.length() > MAX_VIDEO_NAME_LENGTH) {
+			safeVideo.substring(0, MAX_VIDEO_NAME_LENGTH);
+		}
+
+		String divider = "_";
+		int suffixInt = 1; // Normal human beings start counting at one, not zero.
+		while (DatabaseApi.videoExists(safeVideo, projectId)) {
+			String suffix = divider + suffixInt;
+			int substringLength = MAX_VIDEO_NAME_LENGTH - suffix.length();
+
+			if (safeVideo.length() > substringLength) { // Prevent IndexOutOfBoundsException
+				safeVideo.substring(0, substringLength);
+			}
+
+			safeVideo += suffix;
+
+			if (DatabaseApi.videoExists(safeVideo, projectId)) {
+				// The loop will occur again and another number will be
+				// appended, so undo the last appending before trying again. (so
+				// "Video1" becomes "Video2" next, not "Video12")
+				safeVideo = safeVideo.substring(0, safeVideo.length() - suffix.length());
+			}
+
+			suffixInt++;
+		}
+
+		return safeVideo;
+	}
+
+	private static final String[] ILLEGAL_STRINGS = { "!", "@", "#", "$", "%",
+			"^", "&", "*", "(", ")", "-", "+", "=", "{", "}", "[", "]", "\\",
+			"|", ";", ":", "'", "\"", ",", ".", "<", ">", "/", "?", "`", "~" };
 
 	// The registration modal form does its own regular expression checking,
 	// which should prevent any bad characters from getting in. This is just a
 	// safety check for if the JavaScript got hacked and a bad character got in.
-	public static String stripOutIllegalCharacters(String input) {
+	public static String stripOutIllegalCharacters(String input,
+			String replacement) {
 		String output = input;
 
 		// Remove the *really* bad stuff (which cause XSS attacks and SQL
 		// injections).
 		for (int i = 0; i < ILLEGAL_STRINGS.length; ++i) {
-			output = output.replace(ILLEGAL_STRINGS[i], "");
+			output = output.replace(ILLEGAL_STRINGS[i], replacement);
 		}
 
 		return output;

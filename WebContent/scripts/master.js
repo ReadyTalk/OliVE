@@ -32,6 +32,9 @@ var MAX_VIDEO_NAME_LENGTH = 32;
 var SAFE_VIDEO_NAME_REGEX = SAFE_PASSWORD_REGEX;
 var SAFE_VIDEO_NAME_MESSAGE = 'Video name ' + SAFE_PASSWORD_MESSAGE_SUFFIX;
 
+var MIN_VIDEO_SIZE_IN_BYTES = 1;	// No empty files
+var MAX_VIDEO_SIZE_IN_BYTES = 524288000;	// 500 MB
+
 jQuery(function($) {
 	injectSharedDialogs();
 });

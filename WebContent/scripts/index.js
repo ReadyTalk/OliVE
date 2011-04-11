@@ -60,6 +60,7 @@ function attachRegistrationHandlers() {
 		},
 		close : function() {
 			allFields.val('').change().removeClass('ui-state-error');
+			$('.validateTips').text('All form fields are required.').change();
 		}
 	});
 
