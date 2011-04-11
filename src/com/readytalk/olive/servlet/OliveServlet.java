@@ -1006,63 +1006,19 @@ public class OliveServlet extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 		boolean isWindows = isWindows();
 		boolean isLinux = isLinux();
-		S3Api.downloadVideosToTemp(videoURLs[0]);
-		File first = new File(videoURLs[0]);
-		String cmd = "mencoder -ovc lavc -oac mp3lame "+first.getName()+ " ";
+		String cmd = "mencoder -ovc lavc -oac mp3lame ";
 		if (isWindows) {
 			cmd = "cmd /c " + cmd;
 		} else if (isLinux) {
 			log.info("Linux!");
 		}
 		File temp;
-		for(int i = 1; i < videoURLs.length ; i++){
-			S3Api.downloadVideosToTemp(videoURLs[i]);
+		String tempName;
+		int [] biggestDims = getBiggestDimensions(videoURLs);
+		for(int i = 0; i < videoURLs.length ; i++){
 			temp = new File(videoURLs[i]);
-			cmd = cmd+temp.getName()+ " ";
-			//log.info(first.getName());
-			/*p = r.exec(cmd + first.getName(), null, tempDir);
-			BufferedReader in = new BufferedReader(new InputStreamReader(p
-					.getErrorStream()));
-			String s = in.readLine();
-			while ((s = in.readLine()) != null) {
-				arr = s.split(",");
-				if (s.contains("Video:")) {
-					arrV1 = arr;
-				}
-			}
-			log.info("Downloading "+videoURLs[i]+" to temp....");
-			S3Api.downloadVideosToTemp(videoURLs[i]);
-			second = new File(videoURLs[i]);
-			//log.info(second.getName());
-			p = r.exec(cmd + second.getName(), null, tempDir);
-			in = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			s = in.readLine();
-			while ((s = in.readLine()) != null) {
-				arr = s.split(",");
-				if (s.contains("Video:")) {
-					arrV2 = arr;
-				}
-			}
-			log.info(first.getName());
-			log.info(second.getName());
-			String dimensions1 = (arrV1[2].trim());
-			String dimensions2 = (arrV2[2].trim());
-			if(dimensions1.indexOf(" ")!=-1){
-				dimensions1 = dimensions1.substring(0, dimensions1.indexOf(" "));	
-			}
-			if(dimensions2.indexOf(" ")!=-1){
-				dimensions2 = dimensions2.substring(0, dimensions2.indexOf(" "));
-			}
-			
-			if (dimensions1.equals(dimensions2)) {
-				log.info("calling combine: "+first.getName()+" and "+ second.getName());
-				videoURLs[0] = combine(first.getName(), second.getName());
-			} else {
-				String[] newVideos = fixAspectRatio(first.getName(), dimensions1,
-						second.getName(), dimensions2);
-				videoURLs[0] = combine(newVideos[0], newVideos[1]);
-			}
-			first = new File(videoURLs[0]);*/
+			tempName = adjustDimensions(temp,biggestDims); 
+			cmd = cmd+tempName+" ";
 		}
 		cmd = cmd + "-o combined.ogv";
 		log.info(cmd);
@@ -1091,124 +1047,79 @@ public class OliveServlet extends HttpServlet {
 		}
 		File combined = new File(tempDir + "/combined.ogv");
 		return combined.getAbsolutePath();
-		// }
-
-		// return null;
-		// }
-		// return S3Api.uploadFile(new File(videoName));
-		// return null;
-		// return videoURLs[0];
-
 	}
 	
-	private String [] getBiggestDimensions(String [] videos) throws IOException{
-		Process p;
+	private int [] getBiggestDimensions(String [] videos) throws IOException{
+		int[]biggestDimensions = {0,0};
+		File temp;
+		int[]dimensions;
+		for(int i = 0; i< videos.length; i++){
+			S3Api.downloadVideosToTemp(videos[i]);
+			temp = new File(videos[i]);
+			dimensions = getDimensions(temp);
+			if(dimensions[0]>biggestDimensions[0] && dimensions[1]>biggestDimensions[1]){
+				biggestDimensions = dimensions;
+			}
+		}
+		return biggestDimensions;
+	}
+	
+	private int [] getDimensions(File video) throws IOException{
 		Runtime r = Runtime.getRuntime();
-		String[] arr;
-		String[] arrV1 = {};
+		String [] arrV = new String[1];
 		String cmd = "ffmpeg -i ";
 		if (isWindows()) {
 			cmd = "cmd /c " + cmd;
 		} else if (isLinux()) {
 			log.info("Linux!");
 		}
-		File temp;
-		
-		for(int i = 0; i< videos.length; i++){
-			S3Api.downloadVideosToTemp(videos[i]);
-			temp = new File(videos[i]);
-			p = r.exec(cmd + temp.getName(), null, tempDir);
-			BufferedReader in = new BufferedReader(new InputStreamReader(p
-					.getErrorStream()));
-			String s = in.readLine();
-			while ((s = in.readLine()) != null) {
-				arr = s.split(",");
-				if (s.contains("Video:")) {
-					arrV1 = arr;
-				}
+		cmd = cmd+video.getName();
+		Process p = r.exec(cmd, null, tempDir);
+		BufferedReader in = new BufferedReader(new InputStreamReader(p
+				.getErrorStream()));
+		String s;
+		while ((s = in.readLine()) != null) {
+			if (s.contains("Video:")) {
+				arrV = s.split(",");
 			}
-			
-			
 		}
-		return arrV1;
+		String tempDim = arrV[2].trim();
+		if(tempDim.indexOf(" ") != -1){
+			tempDim = tempDim.substring(0, tempDim.indexOf(" "));
+		}
+		String [] dimsArr = tempDim.split("x");
+		int width = (new Integer(dimsArr[0])).intValue();
+		int height = (new Integer(dimsArr[1])).intValue(); 
+		int [] ret = {width,height};
+		return ret;
 	}
 	
-	private String[] fixAspectRatio(String video1Name, String dim1,
-			String video2Name, String dim2) throws IOException {
-		String[] dimensions1 = dim1.split("x");
-		String[] dimensions2 = dim2.split("x");
-		int width1 = (new Integer(dimensions1[0])).intValue();
-		int height1 = (new Integer(dimensions1[1])).intValue();
-		int width2 = (new Integer(dimensions2[0])).intValue();
-		int height2 = (new Integer(dimensions2[1])).intValue();
-		int padw2 = 0;
-		int padh2 = 0;
-		int padw1 = 0;
-		int padh1 = 0;
-		int widthf = 0;
-		int heightf = 0;
-		if (width1 > width2 && height1 > height2) {
-			padw2 = (width1 - width2) / 2;
-			padh2 = (height1 - height2) / 2;
-			widthf = width1;
-			heightf = height1;
-		} else if (width1 < width2 && height1 < height2) {
-			padw1 = (width2 - width1) / 2;
-			padh1 = (height2 - height1) / 2;
-			widthf = width2;
-			heightf = height2;
-		} else if (width1 < width2 && height1 > height2) {
-			padw1 = (width2 - width1) / 2;
-			padh2 = (height1 - height2) / 2;
-			widthf = width2;
-			heightf = height1;
-		} else if (width1 > width2 && height1 < height2) {
-			padw2 = (width1 - width2) / 2;
-			padh1 = (height2 - height1) / 2;
-			widthf = width1;
-			heightf = height2;
+	private String adjustDimensions(File video, int[]biggestDimensions) throws IOException {
+		int[]dimensions = getDimensions(video);
+		int width = dimensions[0];
+		int height = dimensions[1];
+		int bigWidth = biggestDimensions[0];
+		int bigHeight = biggestDimensions[1];
+		if(bigWidth==width && bigHeight==height){
+			return video.getName();
 		}
+		int padw1 = (bigWidth - width) / 2;
+		int padh1 = (bigHeight - height) / 2;
 		String cmdPre = "ffmpeg -i ";
 		if (isWindows()) {
 			cmdPre = "cmd /c " + cmdPre;
 		} else if (isLinux()) {
 			log.info("Linux!");
 		}
-		/*int wrem1 = 0;
-		int hrem1 = 0;
-		int wrem2 = 0;
-		int hrem2 = 0;
-		if(padw1%2 != 0 && padw1 != 0){
-			wrem1 = 1;
-		}
-		if(padh1%2 != 0 && padh1 != 0){
-			hrem1 = 1;
-		}
-		if(padw2%2 != 0 && padw2 != 0){
-			wrem2 = 1;
-		}
-		if(padh2%2 != 0 && padh2 != 0){
-			hrem2 = 1;
-		}*/
 		Runtime r = Runtime.getRuntime();
-		String newName1 = video1Name.substring(0, video1Name.length() - 4)
+		String videoName = video.getName();
+		String newName1 = videoName.substring(0, videoName.length() - 4)
 				+ "-fixed.ogv";
-		String outputFile = "/"+video1Name.substring(0, video1Name.length() - 8)+"output.txt";
-		
-		String cmd = cmdPre + video1Name + " -vf pad=" + widthf + ":" + heightf
+		String cmd = cmdPre + videoName + " -vf pad=" + bigWidth + ":" + bigHeight
 				+ ":" +padw1+ ":" +padh1+ ":black "
 				+ newName1;
 		log.info(cmd);
-		/*String cmd2 = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
-				+ ":" +padw2+ ":" +padh2+ ":black "
-				+ newName1;
-		log.info(cmd2);*/
 		Process p = r.exec(cmd, null, tempDir);
-		/*File output = new File(tempDir+"/output.txt");
-		Scanner in = new Scanner(output);
-		while (in.hasNextLine()) {
-        	log.info(in.next());
-        }*/
 		/*new Thread() {
 			public void run() {
 				BufferedReader in = new BufferedReader(new InputStreamReader(p
@@ -1225,92 +1136,16 @@ public class OliveServlet extends HttpServlet {
 				}
 			}
 		}.start();*/
-		String s2;
-		//BufferedReader in = new BufferedReader(new InputStreamReader(p
-		//		.getInputStream()));
-		BufferedReader in2 = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
-		int c = 0;
-		s2 = in2.readLine();
-		for (int i = 0; i<14; i++) {
-			log.info(i+" "+s2);
-			s2 = in2.readLine();
-		}
+		//String s;
 		BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
-		s2 = in.readLine();
-		for (int i = 0; i<5; i++) {
-			log.info("2-"+i+" "+s2);
-			s2 = in.readLine();
+						.getErrorStream()));
+		String s;
+		//This is where the code seems to get hung up
+		while ((s = in.readLine())!=null) {
+			System.out.println("ffmpeg output: "+s);
 		}
-		String newName2 = video2Name.substring(0, video2Name.length() - 4)
-				+ "-fixed.ogv";
-		outputFile = "/"+video2Name.substring(0, video2Name.length() - 8)+"output.txt";
-		//cmd = cmdPre + video2Name + " -s " + width2 + "x" + height2
-		//		+ " -padtop " + (padh2+hrem2) + " -padbottom " + (padh2-hrem2) + " -padleft "
-		//		+ (padw2+wrem2) + " -padright " + (padw2-wrem2) + " -padcolor 000000 "
-		//		+ newName2;
-		cmd = cmdPre + video2Name + " -vf pad=" + widthf + ":" + heightf
-				+ ":" +padw2+ ":" +padh2+ ":black "
-				+ newName2;
-		log.info(cmd);
-		Process p2 = r.exec(cmd, null, tempDir);
-		/*output = new File(tempDir+"/output.txt");
-		in = new Scanner(output);
-		while (in.hasNextLine()) {
-        	log.info(in.next());
-        }*/
-		/*new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(p2
-						.getInputStream()));
+		return newName1;
 
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();*/
-		//in = new BufferedReader(new InputStreamReader(p2
-			//	.getInputStream()));
-		in2 = new BufferedReader(new InputStreamReader(p2
-				.getErrorStream()));
-		c = 0;
-		while (((s2 = in2.readLine()) != null)) {
-			log.info(c+" "+s2);
-			c++;
-		}
-		String [] ret = {newName1, newName2};
-		return ret;
-
-	}
-
-	private String fixAudioChannels(String video1Name, String audioChannels1,
-			String video2Name, String audioChannels2) throws IOException {
-		log.info("Fixing audio channels");
-		int ac = 1;
-		if (audioChannels1.equals("stereo")) {
-			ac = 2;
-		} else if (audioChannels1.equals("mono")) {
-			log.info("Mono!");
-		}
-		Runtime r = Runtime.getRuntime();
-		String newName = video2Name.substring(0, video2Name.length() - 4)
-				+ "-fixed.ogv";
-		Process p = r.exec("ffmpeg -i " + video2Name + " -ac " + ac + " "
-				+ newName, null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
-		String s = "";
-		while ((s = in.readLine()) != null) {
-			log.info(s);
-		}
-		return newName;
 	}
 
 	private String combine(String videoName1, String videoName2)
