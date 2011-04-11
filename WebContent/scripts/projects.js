@@ -136,6 +136,7 @@ function attachCreateNewProjectHandlers() {
 
 	$('#create-new-project')
 		.button()	// Style it all fancy-like
+		.show()
 		.click(function() {
 			$('#new-project-dialog-form').dialog('open');
 	});

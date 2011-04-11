@@ -59,8 +59,8 @@
 
 <div id="projects-header"><span id="projects-title">Projects</span>
 <span id="projects-controls">
-<button id="create-new-project" type="button">Create New
-Project</button>
+<button id="create-new-project" class="hidden" type="button">Create
+New Project</button>
 </span></div>
 
 <div class="clear"></div>

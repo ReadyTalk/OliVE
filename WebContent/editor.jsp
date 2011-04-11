@@ -67,8 +67,8 @@
 
 <div id="videos-header"><span id="videos-title"> <%=projectName%>
 </span><span id="videos-controls">
-<button id="upload-new-video-button" type="button">Upload New
-Video</button>
+<button id="upload-new-video-button" class="hidden" type="button">Upload
+New Video</button>
 </span></div>
 
 <div id="videos-container">
@@ -86,8 +86,8 @@ videos will appear here</span></div>
 <div id="export">
 <form id="combine-and-export-form" action="OliveServlet" name="process"
 	method="post"><input type="hidden" name="FormName"
-	value="combine-form"></input> <input id="export-button" type="submit"
-	value="Combine Videos" disabled="disabled"></input></form>
+	value="combine-form"></input> <input id="export-button" class="hidden"
+	type="submit" value="Combine Videos" disabled="disabled"></input></form>
 </div>
 <!-- end #export --></div>
 <!-- end #main -->

@@ -143,6 +143,7 @@ function attachUploadNewVideoHandlers() {
 
 	$('#upload-new-video-button')
 		.button()
+		.show()
 		.click(function() {
 			$('#new-video-dialog-form').dialog('open');
 	});
@@ -300,6 +301,7 @@ function attachCombineButtonHandlers(){
 	
 	$('#export-button')
 		.button()
+		.show()
 		.click(function (event) {
 			event.preventDefault();
 			$('#confirm-combine-videos-dialog').dialog('open');
