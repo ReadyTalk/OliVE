@@ -107,6 +107,7 @@ function attachCreateNewProjectHandlers() {
 		buttons : {
 			'Create New Project' : function () {
 				allFields.removeClass('ui-state-error');
+				
 				if (
 					checkLength(
 						newProjectName,
@@ -131,6 +132,7 @@ function attachCreateNewProjectHandlers() {
 		},
 		close : function () {
 			allFields.val('').change().removeClass('ui-state-error');
+			$('.validateTips').text('All form fields are required.').change();
 		}
 	});
 

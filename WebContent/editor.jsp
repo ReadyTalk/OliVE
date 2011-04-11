@@ -12,6 +12,8 @@
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
+<link rel="stylesheet" type="text/css"
+	href="/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/editor.css" />
 <link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
@@ -22,6 +24,8 @@
 	src="/olive/scripts/jquery-ui-1.8.9.custom/js/jquery-ui-1.8.9.custom.min.js"></script>
 <script src="/olive/scripts/contextMenu.js"></script>
 <script src="/olive/scripts/jquery.editable-1.3.3.min.js"></script>
+<script
+	src="/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"></script>
 <script src="/olive/scripts/master.js"></script>
 <script src="/olive/scripts/editor.js"></script>
 <script src="/olive/scripts/google-analytics.js"></script>
@@ -111,16 +115,8 @@ videos will appear here</span></div>
 </div>
 
 <div id="new-video-dialog-form" class="hidden" title="Upload New Video">
-<p class="validateTips">All form fields are required.</p>
-<form id="new-video-form" action="OliveServlet" name="process"
-	enctype="multipart/form-data" method="post">
-<fieldset><input type="hidden" name="FormName"
-	value="UploadVideo"></input><input type="file" id="new-video-file"
-	name="file" /> <br />
-<label for="new-video-name">Give the video a new name</label> <input
-	type="text" name="new-video-name" id="new-video-name"
-	class="text ui-widget-content ui-corner-all" maxlength="32" /></fieldset>
-</form>
+<p class="validateTips"></p>
+<div id="fancy-uploader"></div>
 </div>
 <!-- end #new-video-dialog-form -->
 
@@ -128,6 +124,8 @@ videos will appear here</span></div>
 	title="Confirm action">
 <p>Combine videos and export them to your computer?</p>
 </div>
+
+<div id="preloader-videos" class="hidden"></div>
 
 </body>
 </html>

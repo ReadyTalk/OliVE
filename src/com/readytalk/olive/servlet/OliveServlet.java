@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,6 +29,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.jets3t.service.ServiceException;
 
 import com.google.gson.Gson;
@@ -172,11 +175,23 @@ public class OliveServlet extends HttpServlet {
 			} else {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
-		} else if (request.getContentType().contains("multipart/form-data")) { // Full value: "multipart/form-data; boundary=----WebKitFormBoundaryjAGjLWGWeI3ltfBe"
-			// This is a file upload form.
+		} else if (request.getContentType()
+				.contains("application/octet-stream")) { // Full value: "application/octet-stream"
+			// This is a fancy file upload form.
 			log.info("The servlet is responding to an "
-					+ "HTTP POST request from a file upload form");
-			handleUploadVideo(request, response, session);
+					+ "HTTP POST request from a fancy file upload form");
+			try {
+				handleFancyUploadVideo(request, response, session);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidFileSizeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (request.getContentType().contains("application/json")) {
 			// This is not a form, but a custom POST request with JSON in it.
 			log.info("The servlet is responding to an "
@@ -315,6 +330,7 @@ public class OliveServlet extends HttpServlet {
 		}
 		PrintWriter out = response.getWriter();
 		out.println("File uploaded. Please close this window and refresh the editor page.");
+		out.flush();
 		out.close();
 	}
 
@@ -396,131 +412,122 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("account.jsp");
 	}
 
-	private void handleUploadVideo(HttpServletRequest request,
+	/**
+	 * 
+	 * Modified from OctetStreamReader.java at: http://valums.com/ajax-upload/
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServiceException
+	 * @throws IOException
+	 * @throws InvalidFileSizeException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void handleFancyUploadVideo(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-			throws IOException {
-		PrintWriter out = response.getWriter();
-		out.println("Uploading file...");
-
-		response.setContentType("text/plain");
-
-		DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-		// Set the size threshold, above which content will be stored on disk.
-		fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 1 MB
-
-		// Set the temporary directory to store the uploaded files of size above threshold.
-		fileItemFactory.setRepository(tempDir);
-
-		ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
-		File file = null;
+			throws NoSuchAlgorithmException, InvalidFileSizeException,
+			IOException, ServiceException {
+		PrintWriter out = null;
 		try {
-			/*
-			 * Parse the request
-			 */
-			List items = uploadHandler.parseRequest(request);
-			Iterator itr = items.iterator();
+			out = response.getWriter();
+		} catch (IOException ex) {
+			log.severe(OliveServlet.class.getName()
+					+ " has thrown an exception: " + ex.getMessage());
+		}
 
-			/*
-			 * The two items in the form
-			 */
-			FileItem videoNameItem = null;
-			FileItem fileItem = null;
-			while (itr.hasNext()) {
-				FileItem item = (FileItem) itr.next();
-				/*
-				 * Handle Form Fields.
-				 */
-				if (item.isFormField()
-						&& item.getFieldName().equals("new-video-name")) { // Short-circuitry
-					// Handle text fields
-					log.info("Form Name = \"" + item.getFieldName()
-							+ "\", Value = \"" + item.getString() + "\"");
-					videoNameItem = item;
-				} else {
-					// Handle Uploaded files.
-					log.info("Field Name = \"" + item.getFieldName()
-							+ "\", File Name = \"" + item.getName()
-							+ "\", Content type = \""
-							+ item.getContentType() // TODO Save this
-							+ "\", File Size (bytes) = \"" + item.getSize()
-							+ "\"");
-					fileItem = item;
-				}
-			}
+		log.info("Uploading file...");
+		File video = streamVideoToTemp(request, response, out);
+		addVideoEverywhere(out, getProjectIdFromSessionAttributes(session),
+				video);
+		video.delete(); // Delete it from the temp folder
+		log.info("File uploaded");
+	}
 
-			if (videoNameItem == null) {
-				log.severe("Video name field not found in video upload form");
-				return;
-			}
-			if (fileItem == null) {
-				log.severe("File field not found in video upload form");
-				return;
-			}
+	private File streamVideoToTemp(HttpServletRequest request,
+			HttpServletResponse response, PrintWriter out) {
+		InputStream inputStream = null;
+		FileOutputStream fileOutputStream = null;
 
-			/*
-			 * Write file to the ultimate location.
-			 */
-			FileItem i = fileItem;
-			file = new File(destinationDir, fileItem.getName()); // Allocate the space
-			fileItem.write(file); // Save the file to the allocated space
-			int projectId = getProjectIdFromSessionAttributes(session);
-			String videoName = videoNameItem.getString();
-			if (Security.isSafeVideoName(videoName)
-					&& Security.isSafeVideo(i)
-					&& Security.isUniqueVideoName(videoName, projectId)
-					&& Security.videoFits(DatabaseApi
-							.getNumberOfVideos(projectId))) {
-				String[] videoUrlAndIcon = S3Api.uploadFile(file);
-				String videoUrl = videoUrlAndIcon[0];
-				String videoIcon = videoUrlAndIcon[1];
-				if (videoUrl != null) {
-					DatabaseApi.addVideo(new Video(videoName, videoUrl,
-							videoIcon, projectId, -1, -1, false));
-					// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
-					out.println("File uploaded. Please close this window and refresh the editor page.");
-					out.println();
-					response.sendRedirect("editor.jsp"); // Keep the user on the same page.
-				} else {
-					out.println("Upload Failed. Error uploading video to the cloud.");
-					log.warning("Upload Failed. Error uploading video to the cloud.");
-					// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-					return;
-				}
-			} else if (!Security.isSafeVideoName(videoName)) {
-				out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-				// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-				return;
-			} else if (!Security.isUniqueVideoName(videoName, projectId)) {
-				out.println("Upload Failed. Video name already exists.");
-				log.warning("Upload Failed. Video name already exists.");
-				return;
-			} else {
-				out.println("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				log.warning("Upload Failed. Video type is invalid or maximum number of videos reached.");
-				// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
-				return;
-			}
-
-		} catch (FileUploadException e) {
-			log.severe("Error encountered while parsing the request in the upload handler");
-			out.println("Upload failed.");
-			e.printStackTrace();
-		} catch (InvalidFileSizeException e) {
-			log.severe("Invalid file size");
-			out.println("Upload failed (invalid file size)");
-			e.printStackTrace();
-		} catch (Exception e) {
-			log.severe("Unknown error encountered while uploading file");
-			out.println("Upload failed (unknown reason).");
-			e.printStackTrace();
+		String filename = request.getHeader("X-File-Name");
+		File video = new File(destinationDir, filename);
+		try {
+			inputStream = request.getInputStream();
+			fileOutputStream = new FileOutputStream(video);
+			IOUtils.copy(inputStream, fileOutputStream);
+			response.setStatus(HttpServletResponse.SC_OK);
+			out.print("{\"success\": true, \"videoPath\": \"" + "/olive/temp/"
+					+ video.getName() + "\"}");
+		} catch (FileNotFoundException ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			out.print("{success: false}");
+			log.severe(OliveServlet.class.getName()
+					+ " has thrown an exception: " + ex.getMessage());
+		} catch (IOException ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			out.print("{success: false}");
+			log.severe(OliveServlet.class.getName()
+					+ " has thrown an exception: " + ex.getMessage());
 		} finally {
-			if (out != null) {
-				out.close();
+			try {
+				fileOutputStream.close();
+				inputStream.close();
+			} catch (IOException ignored) {
 			}
-			if (file != null) {
-				file.delete();
+		}
+
+		out.flush();
+		out.close();
+
+		return video;
+	}
+
+	private void addVideoEverywhere(PrintWriter out, int projectId, File video)
+			throws InvalidFileSizeException, IOException, ServiceException,
+			NoSuchAlgorithmException {
+		String videoName = Security.convertToSafeAndUniqueVideoName(
+				video.getName(), projectId);
+		if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(video)
+				&& Security.isUniqueVideoName(videoName, projectId)
+				&& Security.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
+			String[] videoUrlAndIcon = S3Api.uploadFile(video);
+			String videoUrl = videoUrlAndIcon[0];
+			String videoIcon = videoUrlAndIcon[1];
+			if (videoUrl != null) {
+				DatabaseApi.addVideo(new Video(videoName, videoUrl, videoIcon,
+						projectId, -1, -1, false));
+				// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
+				out.println("File uploaded. Please close this window and refresh the editor page.");
+				out.println();
+
+				return;
 			}
+			out.println("Upload Failed. Error uploading video to the cloud.");
+			log.warning("Upload Failed. Error uploading video to the cloud.");
+			// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		} else if (!Security.isSafeVideoName(videoName)) {
+			out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+			log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
+			// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+			return;
+		} else if (!Security.isUniqueVideoName(videoName, projectId)) {
+			out.println("Upload Failed. Video name already exists.");
+			log.warning("Upload Failed. Video name already exists.");
+			return;
+		} else if (!Security.isSafeVideo(video)) {
+			out.println("Upload Failed. Video is invalid.");
+			log.warning("Upload Failed. Video is invalid.");
+			return;
+		} else if (!Security
+				.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
+			out.println("Upload Failed. Maximum number of videos reached.");
+			log.warning("Upload Failed. Maximum number of videos reached.");
+			return;
+		} else {
+			out.println("Upload Failed. Unknown reason.");
+			log.warning("Upload Failed. Unknown reason.");
+			// response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Name");
+			return;
 		}
 	}
 
@@ -635,6 +642,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		}
+		out.flush();
 		out.close();
 	}
 
@@ -650,6 +658,7 @@ public class OliveServlet extends HttpServlet {
 				DatabaseApi
 						.usernameExists(isDuplicateUsernameRequest.arguments.username))));
 
+		out.flush();
 		out.close();
 	}
 
@@ -671,6 +680,7 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(deleteAccountRequest.arguments.account
 				+ " deleted successfully.");
+		out.flush();
 		out.close();
 	}
 
@@ -690,6 +700,7 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(new Gson().toJson(new GetAccountInformationResponse(name,
 				email, password, securityQuestion, securityAnswer)));
+		out.flush();
 		out.close();
 	}
 
@@ -734,6 +745,7 @@ public class OliveServlet extends HttpServlet {
 			session.setAttribute(Attribute.IS_SAFE.toString(), false);
 		}
 
+		out.flush();
 		out.close();
 	}
 
@@ -751,6 +763,7 @@ public class OliveServlet extends HttpServlet {
 						isDuplicateProjectNameRequest.arguments.project,
 						accountId))));
 
+		out.flush();
 		out.close();
 	}
 
@@ -774,6 +787,7 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(deleteProjectRequest.arguments.project
 				+ " deleted successfully.");
+		out.flush();
 		out.close();
 	}
 
@@ -798,6 +812,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			out.println(oldProjectName);
 		}
+		out.flush();
 		out.close();
 	}
 
@@ -828,6 +843,7 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(projectString);
+		out.flush();
 		out.close();
 	}
 
@@ -866,6 +882,7 @@ public class OliveServlet extends HttpServlet {
 
 		out.println(deleteVideoRequest.arguments.video
 				+ " deleted successfully.");
+		out.flush();
 		out.close();
 	}
 
@@ -889,6 +906,7 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			out.println(oldVideoName);
 		}
+		out.flush();
 		out.close();
 	}
 
@@ -972,6 +990,7 @@ public class OliveServlet extends HttpServlet {
 		out.println(splitVideoRequest.arguments.video + " split at "
 				+ splitVideoRequest.arguments.splitTimeInSeconds
 				+ " seconds successfully.");
+		out.flush();
 		out.close();
 	}
 
@@ -1030,6 +1049,7 @@ public class OliveServlet extends HttpServlet {
 			}
 
 			is.close();
+			out.flush();
 			out.close();
 			log.info("end of handleCombinedVideos");
 		} else {
@@ -1261,6 +1281,7 @@ public class OliveServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println(videoString);
+		out.flush();
 		out.close();
 	}
 
@@ -1271,6 +1292,7 @@ public class OliveServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println(new Gson().toJson((Boolean) session
 				.getAttribute(Attribute.IS_FIRST_SIGN_IN.toString())));
+		out.flush();
 		out.close();
 	}
 }

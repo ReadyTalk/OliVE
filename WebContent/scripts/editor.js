@@ -6,17 +6,20 @@
 // Called once the DOM is ready but before the images, etc. load.
 // Failsafe jQuery code modified from: http://api.jquery.com/jQuery/#jQuery3
 jQuery(function($) {
-	populateVideos();
+	populateVideos(true);
 });
 
-function attachHandlers() {
-	attachUploadNewVideoHandlers();
+function attachVideoContainerHandlers() {
 	attachDeleteVideoHandlers();
 	attachSplitVideoHandlers();
 	attachVideoClickHandlers();
 	attachRenameVideoHandlers();
-	attachCombineButtonHandlers();
 	enableDragAndDrop();
+}
+
+function attachOtherHandlers() {
+	attachUploadNewVideoHandlers();
+	attachCombineButtonHandlers();
 }
 
 function createNewVideoContainer(videoName, videoNum, videoIcon) {
@@ -52,7 +55,7 @@ function createVideoSpinner() {
 	$('#videos').append(videoContainer);
 }
 
-function populateVideos() {
+function populateVideos(isFirst) {
 	$('.video-container').hide();
 	
 	var requestData = '{'
@@ -63,8 +66,8 @@ function populateVideos() {
 		var timelinePositions = [];
 		var preloaderVideos = '';	// A hacked way to preload all the videos
 		for (var i = 0; i < responseData.length; ++i) {
-			preloaderVideos += '<video id="loader-player-' + i
-				+ '" class="hidden" preload="preload">'
+			preloaderVideos += '<video id="preloader-video-' + i
+				+ '" class="hidden preloader-video" preload="preload">'
 				+ '<source src="' + responseData[i].url
 				+ '" type="video/ogg; codecs=theora,vorbis" /></video>';
 			var element = createNewVideoContainer(responseData[i].name, i, responseData[i].icon);
@@ -85,7 +88,7 @@ function populateVideos() {
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
 		}
-		$('body').append(preloaderVideos);
+		$('#preloader-videos').append(preloaderVideos);
 		
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
@@ -94,8 +97,11 @@ function populateVideos() {
 		for (var timelineIndex = 0; timelineIndex < timelinePositions.length; ++timelineIndex) {
 			$('#timeline').prepend(timelinePositions[timelineIndex]);	// Prepend to keep unsorted elements (timelinePosition == -1) at the end.
 		}
-		
-		attachHandlers();	// This must go inside the ajax callback or it will be called too early.
+
+		attachVideoContainerHandlers();
+		if (isFirst) {
+			attachOtherHandlers();	// This must go inside the ajax callback or it will be called too early.
+		}
 		showOrHideVideosBackgroundText();
 		showOrHideTimelineBackgroundText();
 		enableOrDisableCombineButton();
@@ -103,9 +109,17 @@ function populateVideos() {
 	}, null);	// Defined in "/olive/scripts/master.js".
 }
 
+function rePopulateVideos() {
+	$('.video-container').remove();
+	$('.preloader-video').remove();
+	populateVideos(false);
+}
+
 function attachUploadNewVideoHandlers() {
-	var newVideoName = $('#new-video-name'),
-		allFields = $([]).add(newVideoName);
+	var fancyUploader = $('#fancy-uploader'),
+		allFields = $([]).add(fancyUploader);
+	
+	$('.qq-upload-button').button();
 	
 	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
@@ -113,31 +127,14 @@ function attachUploadNewVideoHandlers() {
 		width : 400,
 		modal : true,
 		buttons : {
-			'Upload New Video' : function () {
-				var bValid = true;
-				allFields.removeClass('ui-state-error');
-
-				bValid = bValid
-						&& checkLength(newVideoName,
-								'new-video-name',
-								MIN_VIDEO_NAME_LENGTH,
-								MAX_VIDEO_NAME_LENGTH);
-				bValid = bValid
-						&& checkRegexp(newVideoName,
-								SAFE_VIDEO_NAME_REGEX,
-								SAFE_VIDEO_NAME_MESSAGE);
-				if (bValid) {
-					createVideoSpinner();
-					$('#new-video-form').submit();
-					$(this).dialog('close');
-				}
-			},
-			Cancel : function () {
+			'OK' : function () {
 				$(this).dialog('close');
 			}
 		},
 		close : function () {
 			allFields.val('').change().removeClass('ui-state-error');
+			$('.validateTips').text('').change();
+			$('.qq-upload-list').empty();
 		}
 	});
 
@@ -146,6 +143,65 @@ function attachUploadNewVideoHandlers() {
 		.show()
 		.click(function() {
 			$('#new-video-dialog-form').dialog('open');
+	});
+	
+	attachFancyUploadForm();
+}
+
+// Modified from: http://valums.com/ajax-upload/
+function attachFancyUploadForm() {
+	var uploader = new qq.FileUploader({
+		element: $('#fancy-uploader').get(0),	// DOM node
+		action: 'OliveServlet',	// Servlet
+		//params: {
+		//	newVideoName: 'defaultVideoName'
+		//},
+		multiple: false,
+		allowedExtensions: ['ogg', 'ogv', 'm4v', 'mp4', 'webm', 'avi', 'wmv', 'mpeg', 'mpg'],
+		maxConnections: 3,
+		minSizeLimit: MIN_VIDEO_SIZE_IN_BYTES,	
+		sizeLimit: MAX_VIDEO_SIZE_IN_BYTES,
+		debug: false,
+		
+		// Events. Return false to abort submit.
+		onSubmit: function(id, fileName){
+			if (id > 0) {
+				// cancel (don't allow multiple uploads)
+			}
+			//uploader.setParams({
+			//	'new': 'newvalue'
+			//});
+		},
+		onProgress: function(id, fileName, loaded, total) {
+		},
+		onComplete: function(id, fileName, responseJSON) {
+			createVideoSpinner();
+			//$('#new-video-dialog-form').dialog('close');
+			if (responseJSON.success) {
+				waitForVideoToBeDeleted(responseJSON.videoPath);
+			}
+		},
+		onCancel: function(id, fileName){
+		},
+		showMessage: function (message) {
+			updateTips(message);
+		}
+	});
+}
+
+function waitForVideoToBeDeleted(videoPath) {
+	$.ajax({
+		url: videoPath,
+		async: true,
+		type: 'HEAD',
+		success: function() {
+			// File exists.
+			//waitForVideoToBeDeleted(videoPath);	// No need for recursion
+		},
+		error: function() {
+			// File does not exist.
+			rePopulateVideos();
+		}
 	});
 }
 
