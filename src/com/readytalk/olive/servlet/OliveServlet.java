@@ -1051,6 +1051,7 @@ public class OliveServlet extends HttpServlet {
 			is.close();
 			out.flush();
 			out.close();
+			file.delete();
 			log.info("end of handleCombinedVideos");
 		} else {
 			response.sendRedirect("editor.jsp");
@@ -1069,12 +1070,12 @@ public class OliveServlet extends HttpServlet {
 		} else if (isLinux) {
 			log.info("Linux!");
 		}
-		File temp;
+		File [] temp = new File[videoURLs.length];
 		String tempName;
 		int [] biggestDims = getBiggestDimensions(videoURLs);
 		for(int i = 0; i < videoURLs.length ; i++){
-			temp = new File(videoURLs[i]);
-			tempName = adjustDimensions(temp,biggestDims); 
+			temp[i] = new File(videoURLs[i]);
+			tempName = adjustDimensions(temp[i],biggestDims); 
 			cmd = cmd+tempName+" ";
 		}
 		cmd = cmd + "-o combined.ogv";
@@ -1103,6 +1104,9 @@ public class OliveServlet extends HttpServlet {
 			log.info(s);
 		}
 		File combined = new File(tempDir + "/combined.ogv");
+		for(int j = 0;j<temp.length;j++){
+			temp[j].delete();
+		}
 		return combined.getAbsolutePath();
 	}
 	private int [] getBiggestDimensions(String [] videos) throws IOException{
@@ -1182,6 +1186,7 @@ public class OliveServlet extends HttpServlet {
 		while ((s = in.readLine())!=null) {
 			System.out.println("ffmpeg output: "+s);
 		}
+		video.delete();
 		return newName1;
 	}
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
