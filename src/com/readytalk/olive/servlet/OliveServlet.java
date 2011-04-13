@@ -1071,11 +1071,15 @@ public class OliveServlet extends HttpServlet {
 			log.info("Linux!");
 		}
 		File [] temp = new File[videoURLs.length];
+		File [] tempToDel = new File[videoURLs.length];
+		
 		String tempName;
 		int [] biggestDims = getBiggestDimensions(videoURLs);
 		for(int i = 0; i < videoURLs.length ; i++){
 			temp[i] = new File(videoURLs[i]);
+			temp[i] = new File(tempDir+"/"+temp[i].getName());
 			tempName = adjustDimensions(temp[i],biggestDims); 
+			tempToDel[i] = new File(tempDir+"/"+tempName);
 			cmd = cmd+tempName+" ";
 		}
 		cmd = cmd + "-o combined.ogv";
@@ -1104,8 +1108,8 @@ public class OliveServlet extends HttpServlet {
 			log.info(s);
 		}
 		File combined = new File(tempDir + "/combined.ogv");
-		for(int j = 0;j<temp.length;j++){
-			temp[j].delete();
+		for(int j = 0;j<tempToDel.length;j++){
+			tempToDel[j].delete();
 		}
 		return combined.getAbsolutePath();
 	}
