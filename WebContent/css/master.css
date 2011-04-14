@@ -59,6 +59,10 @@ p {
 	line-height: 1.2em;
 }
 
+a {
+	text-decoration: none;
+}
+
 a:link {
 	color: green;
 }
