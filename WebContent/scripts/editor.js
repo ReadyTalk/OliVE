@@ -23,7 +23,7 @@ function attachOtherHandlers() {
 }
 
 function createNewVideoContainer(videoName, videoNum, videoIcon) {
-	var videoContainer = '<div id="video-container-'
+	var videoContainer = '<span id="video-container-'
 		+ videoNum
 		+ '" class="video-container"><img id="video-image-'
 		+ videoNum
@@ -31,15 +31,15 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 		+ videoIcon
 		+ '" alt="video-image-'
 		+ videoNum
-		+ '" /><div class="video-name">'
+		+ '" /><br /><span class="video-name">'
 		+ videoName
-		+ '</div><div class="video-controls"><small><a id="split-video-link-'
+		+ '</span><br /><span class="video-controls"><small><a id="split-video-link-'
 		+ videoNum
 		+ '" class="split-video-link link hidden">Split</a>'
 		+ '<span class="video-controls-divider hidden"> | </span>'
 		+ '<a id="delete-video-link-'
 		+ videoNum
-		+ '" class="delete-video-link warning">Delete</a></small></div></div>';
+		+ '" class="delete-video-link warning">Delete</a></small></span></span>';
 	
 	$('#videos').append(videoContainer);
 	
@@ -48,10 +48,10 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 }
 
 function createVideoSpinner() {
-	var videoContainer = '<div class="video-container">'
-		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" />'
-		+ '<div>Preparing video...</div>'
-		+ '</div>';
+	var videoContainer = '<span class="video-container">'
+		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" /><br />'
+		+ '<span>Preparing video...</span>'
+		+ '</span>';
 	$('#videos').append(videoContainer);
 }
 
