@@ -1082,7 +1082,8 @@ public class OliveServlet extends HttpServlet {
 			tempToDel[i] = new File(tempDir+"/"+tempName);
 			cmd = cmd+tempName+" ";
 		}
-		cmd = cmd + "-o combined.ogv";
+		String combinedName = S3Api.getTime()+"-combined.ogv";
+		cmd = cmd + "-o "+combinedName;
 		log.info(cmd);
 		final Process p = r.exec(cmd, null, tempDir);
 		new Thread() {
@@ -1107,7 +1108,7 @@ public class OliveServlet extends HttpServlet {
 		while ((s = in.readLine()) != null) {
 			log.info(s);
 		}
-		File combined = new File(tempDir + "/combined.ogv");
+		File combined = new File(tempDir + "/"+combinedName);
 		for(int j = 0;j<tempToDel.length;j++){
 			tempToDel[j].delete();
 		}
