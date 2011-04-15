@@ -32,26 +32,57 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	}
+	
+	Boolean editNameSuccessfully = (Boolean) session
+			.getAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
+	Boolean editPwdSuccessfully = (Boolean) session
+			.getAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString());
+	Boolean editSecSuccessfully = (Boolean) session
+			.getAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
 
-	Boolean editSuccessfully = (Boolean) session
-			.getAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
+	
 	Boolean passwordsMatch = (Boolean) session
 			.getAttribute(Attribute.PASSWORDS_MATCH.toString());
-	String editConfirmation;
-	if (editSuccessfully == null) {
-		editConfirmation = "";
-	} else if (editSuccessfully) {
-		editConfirmation = "Your information has been changed successfully.";
-	} else {
-		if (passwordsMatch == null) { // Not safe
-			editConfirmation = "Invalid characters or length on one or more fields.";
-		} else { // Safe, but differing passwords
-			editConfirmation = "Passwords do not match.";
+	String editNameEmailConfirmation = "";
+	String editPasswordConfirmation = "";
+	String editSecurityConfirmation = "";
+	if (editNameSuccessfully == null) {
+		editNameEmailConfirmation = "";
+		
+		if(editPwdSuccessfully==null) {
+			editPasswordConfirmation = "";
+			
+			
+			if(editSecSuccessfully==null) {	
+				editSecurityConfirmation = "";
+			} else if(editSecSuccessfully){
+				editSecurityConfirmation = "Your security information has been changed successfully.";
+				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
+			} else {
+				editSecurityConfirmation = "Invalid characters or length in entry.";
+				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
+			}
+			
+			
+		} else if(editPwdSuccessfully){
+			editPasswordConfirmation = "Your password has been changed successfully.";
+			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString());
+		} else {
+			if (passwordsMatch == null) { // Not safe
+				editPasswordConfirmation = "Invalid characters or length in entry.";
+			} else { // Safe, but differing passwords
+				editPasswordConfirmation = "Passwords do not match.";
+				session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
+			}
+			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString());
 		}
+	} else if (editNameSuccessfully) {
+		editNameEmailConfirmation = "Your name and/or email have been changed successfully.";
+		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
+	} else {
+		editNameEmailConfirmation = "Invalid characters or length in entry.";
+		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
 	}
-	session.removeAttribute(Attribute.EDIT_SUCCESSFULLY.toString());
-	session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
-
 	String username = (String) session.getAttribute(Attribute.USERNAME
 			.toString());
 %>
@@ -74,33 +105,54 @@
 <div class="clear"></div>
 
 <div id="main">
-
 <div id="edit-account-container">
 <h2>Edit account: <%=username%></h2>
-<form id="edit-account-form" action="OliveServlet" name="process"
+<br />
+<div id="edit-account-container-small">
+<form id="edit-account-form-name-and-email" action="OliveServlet" name="process"
 	method="post">
 <p><label for="new-name">Name</label> <input type="text"
 	name="new-name" id="new-name" size="32" maxlength="32" /></p>
 <p><label for="new-email">Email</label> <input type="text"
 	name="new-email" id="new-email" size="32" maxlength="64" /></p>
+<input type="hidden" name="FormName" value="EditUser-NameEmail"></input> <input
+	type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
+</div>
+
+<div id="edit-account-container-small">
+<form id="edit-account-form-password" action="OliveServlet" name="process"
+	method="post">
 <p><label for="new-password">Password</label> <input type="password"
 	name="new-password" id="new-password" size="32" maxlength="128" /></p>
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
 	size="32" maxlength="128" /></p>
+	<input type="hidden" name="FormName" value="EditUserPassword"></input> <input
+	type="submit" value="Update password" /><span><%=editPasswordConfirmation%></span></form>
+</div>
+
+<div id="edit-account-container-small">
+<form id="edit-account-form-security" action="OliveServlet" name="process"
+	method="post">
 <p><label for="new-security-question">Security Question</label> <input
 	type="text" name="new-security-question" id="new-security-question"
 	size="32" maxlength="128" /></p>
 <p><label for="new-security-answer">Security Answer</label> <input
 	type="text" name="new-security-answer" id="new-security-answer"
 	size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="EditUser"></input> <input
-	type="submit" value="Update information" /><span><%=editConfirmation%></span></form>
+<input type="hidden" name="FormName" value="EditUserSecurity"></input> <input
+	type="submit" value="Update Security Q&A" /><span><%=editSecurityConfirmation%></span></form>
+</div>
+
+</div>
+
+<!-- end #edit-account-container -->
+<div id="delete-account">
 <p><small><a id="delete-account"
 	class="warning delete-project">Delete account</a></small></p>
 </div>
-<!-- end #login-form-container --></div>
-<!-- end #main -->
+
+<!-- end #main --></div>
 
 <div class="clear"></div>
 

@@ -305,29 +305,36 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Accounts SET Name = '" + user.getName()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET Password = Password('"
+			if(!user.getName().equals("") && !user.getEmail().equals("")){
+				s = "UPDATE Accounts SET Name = '" + user.getName()
+				+ "' WHERE Username = '" + user.getUsername() + "';";
+				st.executeUpdate(s);
+		
+				s = "UPDATE Accounts SET Email = '" + user.getEmail()
+				+ "' WHERE Username = '" + user.getUsername() + "';";
+				st.executeUpdate(s);
+				return true;
+			}
+			if(!user.getPassword().equals("")){
+				s = "UPDATE Accounts SET Password = Password('"
 					+ user.getPassword() + "') WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET Email = '" + user.getEmail()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET SecurityQuestion = '"
+				st.executeUpdate(s);
+				return true;
+			}
+			else {
+				s = "UPDATE Accounts SET SecurityQuestion = '"
 					+ user.getSecurityQuestion() + "' WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
+				st.executeUpdate(s);
 
-			s = "UPDATE Accounts SET SecurityAnswer = '"
+				s = "UPDATE Accounts SET SecurityAnswer = '"
 					+ user.getSecurityAnswer() + "' WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
-			return true;
+				st.executeUpdate(s);
+				return true;
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

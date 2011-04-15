@@ -148,8 +148,12 @@ public class OliveServlet extends HttpServlet {
 					+ "HTTP POST request from form: " + id);
 			if (id.equals("LoginUser")) {
 				handleLogin(request, response, session);
-			} else if (id.equals("EditUser")) {
-				handleEditUser(request, response, session);
+			} else if (id.equals("EditUser-NameEmail")) {
+				handleEditUserNameEmail(request, response, session);
+			} else if (id.equals("EditUserPassword")) {
+				handleEditUserPassword(request, response, session);
+			} else if (id.equals("EditUserSecurity")) {
+				handleEditUserSecurity(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestionRetrieval(request, response, session);
 			} else if (id.equals("security-question-form-2")) {
@@ -368,49 +372,130 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("index.jsp");
 		}
 	}
-
-	private void handleEditUser(HttpServletRequest request,
+	private void handleEditUserNameEmail(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-			throws UnsupportedEncodingException, IOException {
+	throws UnsupportedEncodingException, IOException {
 		String username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		String newName = request.getParameter("new-name");
 		String newEmail = request.getParameter("new-email");
+		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)){
+			User updateUser = new User(username, "" , newName,
+					newEmail, "", "");
+			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
+			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(),
+					editSuccessfully);
+			session.setAttribute(Attribute.EMAIL.toString(), newEmail);
+			session.setAttribute(Attribute.NAME.toString(), newName);
+			
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(), false);
+		}
+		response.sendRedirect("account.jsp");
+				
+	}
+	private void handleEditUserPassword(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+	throws UnsupportedEncodingException, IOException {
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		String securityQuestion = request.getParameter("new-security-question");
-		String securityAnswer = request.getParameter("new-security-answer");
-		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
-				&& Security.isSafePassword(newPassword)
-				&& Security.isSafePassword(confirmNewPassword)
-				&& Security.isSafeSecurityQuestion(securityQuestion)
-				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+		if (Security.isSafePassword(newPassword)
+				&& Security.isSafePassword(confirmNewPassword)){
 			if (newPassword.equals(confirmNewPassword)) {
-				User updateUser = new User(username, newPassword, newName,
-						newEmail, securityQuestion, securityAnswer);
+				User updateUser = new User(username, newPassword, "",
+						"", "", "");
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
-				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
-				session.setAttribute(Attribute.NAME.toString(), newName);
-				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
-						securityQuestion);
-				session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
-						securityAnswer);
-			} else {
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+			}
+			else{
+				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
 						false);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
 						false);
 			}
-		} else {
-			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+			
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(), false);
 		}
 		response.sendRedirect("account.jsp");
+				
 	}
+	private void handleEditUserSecurity(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+	throws UnsupportedEncodingException, IOException {
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
+		String securityQuestion = request.getParameter("new-security-question");
+		String securityAnswer = request.getParameter("new-security-answer");
+		if (Security.isSafeSecurityQuestion(securityQuestion)
+				&& Security.isSafeSecurityAnswer(securityAnswer)){
+			User updateUser = new User(username, "", "",
+					"", securityQuestion, securityAnswer);
+			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
+			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(),
+					editSuccessfully);
+			session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
+					securityQuestion);
+			session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
+					securityAnswer);
+				
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(), false);
+		}
+		response.sendRedirect("account.jsp");
+				
+	}
+	
+//	private void handleEditUser(HttpServletRequest request,
+//			HttpServletResponse response, HttpSession session)
+//			throws UnsupportedEncodingException, IOException {
+//		String username = (String) session.getAttribute(Attribute.USERNAME
+//				.toString());
+//		String newName = request.getParameter("new-name");
+//		String newEmail = request.getParameter("new-email");
+//		String newPassword = request.getParameter("new-password");
+//		String confirmNewPassword = request
+//				.getParameter("confirm-new-password");
+//		String securityQuestion = request.getParameter("new-security-question");
+//		String securityAnswer = request.getParameter("new-security-answer");
+//		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
+//				&& Security.isSafePassword(newPassword)
+//				&& Security.isSafePassword(confirmNewPassword)
+//				&& Security.isSafeSecurityQuestion(securityQuestion)
+//				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+//			if (newPassword.equals(confirmNewPassword)) {
+//				User updateUser = new User(username, newPassword, newName,
+//						newEmail, securityQuestion, securityAnswer);
+//				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
+//				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+//						editSuccessfully);
+//				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
+//				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
+//				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
+//				session.setAttribute(Attribute.NAME.toString(), newName);
+//				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
+//						securityQuestion);
+//				session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
+//						securityAnswer);
+//			} else {
+//				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+//						false);
+//				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
+//						false);
+//			}
+//		} else {
+//			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+//		}
+//		response.sendRedirect("account.jsp");
+//	}
 
 	/**
 	 * 
