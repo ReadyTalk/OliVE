@@ -10,11 +10,17 @@ FILES="\
     \
     src/com/readytalk/olive/json/AddToSelectedRequest.java \
     src/com/readytalk/olive/json/CombineVideosRequest.java \
+    src/com/readytalk/olive/json/CreateAccountRequest.java \
+    src/com/readytalk/olive/json/CreateProjectRequest.java \
     src/com/readytalk/olive/json/DeleteAccountRequest.java \
     src/com/readytalk/olive/json/DeleteProjectRequest.java \
     src/com/readytalk/olive/json/DeleteVideoRequest.java \
     src/com/readytalk/olive/json/GeneralRequest.java \
     src/com/readytalk/olive/json/GetAccountInformationResponse.java \
+    src/com/readytalk/olive/json/IsDuplicateProjectNameRequest.java \
+    src/com/readytalk/olive/json/IsDuplicateProjectNameResponse.java \
+    src/com/readytalk/olive/json/IsDuplicateUsernameRequest.java \
+    src/com/readytalk/olive/json/IsDuplicateUsernameResponse.java \
     src/com/readytalk/olive/json/RemoveFromSelectedRequest.java \
     src/com/readytalk/olive/json/RenameProjectRequest.java \
     src/com/readytalk/olive/json/RenameVideoRequest.java \
@@ -60,13 +66,13 @@ FILES="\
         \
     WebContent/account.jsp \
     WebContent/editor.jsp \
-    WebContent/footer.jsp \
     WebContent/forgot.jsp \
-    WebContent/header.jsp \
     WebContent/index.jsp \
     WebContent/logout.jsp \
     WebContent/new-password-form.jsp \
     WebContent/projects.jsp \
+    WebContent/securityQuestion.jsp \
+    WebContent/shared-dialogs.jsp \
     "
 
 # Remove any old PostScript or PDF versions lying around.

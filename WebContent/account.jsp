@@ -104,8 +104,6 @@
 
 <div class="clear"></div>
 
-<div id="footer"></div>
-
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
 <div id="shared-dialogs" class="hidden"></div>
 
