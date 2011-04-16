@@ -88,7 +88,7 @@ function populateVideos(isFirst) {
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
 		}
-		$('#preloader-videos').append(preloaderVideos);
+		//$('#preloader-videos').append(preloaderVideos);
 		
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
