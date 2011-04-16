@@ -4,9 +4,22 @@
 	----------------------------------------
 */
 #edit-account-container {
-	padding: 5%;
+	padding: 6%;
 }
 
 #edit-account-container h2 {
 	margin: .75em 0;
+	
+}
+
+#edit-account-container-small {
+	float:left;
+	padding-right:10%;
+}
+
+#delete-account{
+	padding:3.2%;
+	display:block;
+	float:none;
+	
 }

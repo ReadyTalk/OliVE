@@ -80,8 +80,10 @@ public class DatabaseApi {
 					+ "' AND Password = Password('" + password + "');";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
+				r.close();
 				return true;
 			}
+			r.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,6 +139,7 @@ public class DatabaseApi {
 			if (r.first()) {
 				unknownValue = r.getString(unknownLabel);
 			}
+			r.close();
 			return unknownValue;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -255,6 +258,7 @@ public class DatabaseApi {
 					numberOfProjects++;
 				} while (r.next());
 			}
+			r.close();
 			return numberOfProjects;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -274,8 +278,10 @@ public class DatabaseApi {
 			s = "SELECT AccountID FROM Accounts WHERE Username = '"+username+"';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
+				r.close();
 				return true;
 			}
+			r.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -299,29 +305,36 @@ public class DatabaseApi {
 			Statement st = conn.createStatement();
 			String s = "USE OliveData;";
 			st.executeUpdate(s);
-			s = "UPDATE Accounts SET Name = '" + user.getName()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET Password = Password('"
+			if(!user.getName().equals("") && !user.getEmail().equals("")){
+				s = "UPDATE Accounts SET Name = '" + user.getName()
+				+ "' WHERE Username = '" + user.getUsername() + "';";
+				st.executeUpdate(s);
+		
+				s = "UPDATE Accounts SET Email = '" + user.getEmail()
+				+ "' WHERE Username = '" + user.getUsername() + "';";
+				st.executeUpdate(s);
+				return true;
+			}
+			if(!user.getPassword().equals("")){
+				s = "UPDATE Accounts SET Password = Password('"
 					+ user.getPassword() + "') WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET Email = '" + user.getEmail()
-					+ "' WHERE Username = '" + user.getUsername() + "';";
-			st.executeUpdate(s);
-
-			s = "UPDATE Accounts SET SecurityQuestion = '"
+				st.executeUpdate(s);
+				return true;
+			}
+			else {
+				s = "UPDATE Accounts SET SecurityQuestion = '"
 					+ user.getSecurityQuestion() + "' WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
+				st.executeUpdate(s);
 
-			s = "UPDATE Accounts SET SecurityAnswer = '"
+				s = "UPDATE Accounts SET SecurityAnswer = '"
 					+ user.getSecurityAnswer() + "' WHERE Username = '"
 					+ user.getUsername() + "';";
-			st.executeUpdate(s);
-			return true;
+				st.executeUpdate(s);
+				return true;
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -354,20 +367,12 @@ public class DatabaseApi {
 			s = "SELECT ProjectID FROM Projects WHERE AccountID = " + accountId
 					+ ";";
 			r = st.executeQuery(s);
-			if (r.first()) {
+			if (r.first()) { //deleting projects and videos recursively
 				do {
 					deleteProject(r.getInt("ProjectID"));
 				} while (r.next());
 			}
-			// TODO Broken
-			// Delete all videos associated with all projects associated with the account.
-			// s = "DELETE FROM Videos WHERE ProjectID = '" + projectId + "';"; // TODO Add error checking
-			// st.executeUpdate(s);
-
-			// Delete all projects associated with the account.
-			// s = "DELETE FROM Projects WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
-			// st.executeUpdate(s);
-
+			r.close();
 			// Delete the account itself.
 			s = "DELETE FROM Accounts WHERE AccountID = '" + accountId + "';"; // TODO Add error checking
 			st.executeUpdate(s);
@@ -400,6 +405,7 @@ public class DatabaseApi {
 			if (r.first()) {
 				projectId = r.getInt("ProjectID");
 			}
+			r.close();
 			return projectId;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -470,6 +476,7 @@ public class DatabaseApi {
 					numberOfVideos++;
 				} while (r.next());
 			}
+			r.close();
 			return numberOfVideos;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -508,7 +515,7 @@ public class DatabaseApi {
 			for (int i = 0; i < projectIds.size(); ++i) {
 				projectIdsAsIntArray[i] = projectIds.get(i);
 			}
-
+			r.close();
 			return projectIdsAsIntArray;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -538,8 +545,10 @@ public class DatabaseApi {
 					+ "' AND AccountID = '" + accountId + "';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
+				r.close();
 				return true;
 			}
+			r.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -677,6 +686,7 @@ public class DatabaseApi {
 					setProjectPoolPosition(r.getInt("ProjectID"), -1); // TODO Insert "NULL", not -1
 				} while (r.next());
 			}
+			r.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -741,6 +751,7 @@ public class DatabaseApi {
 			if (r.first()) {
 				videoId = r.getInt("VideoID");
 			}
+			r.close();
 			return videoId;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1016,6 +1027,7 @@ public class DatabaseApi {
 							positionType);
 				} while (r.next());
 			}
+			r.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1078,7 +1090,7 @@ public class DatabaseApi {
 			for (int i = 0; i < videoIds.size(); ++i) {
 				videoIdsAsIntArray[i] = videoIds.get(i);
 			}
-
+			r.close();
 			return videoIdsAsIntArray;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1108,8 +1120,10 @@ public class DatabaseApi {
 					+ "' AND ProjectID = '" + projectId + "';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
+				r.close();
 				return true;
 			}
+			r.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1222,6 +1236,7 @@ public class DatabaseApi {
 			} else {
 				log.severe("Cannot locate AWS credentials");
 			}
+			r.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1251,6 +1266,7 @@ public class DatabaseApi {
 			} else {
 				log.severe("Cannot locate Zencoder credentials");
 			}
+			r.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1283,8 +1299,10 @@ public class DatabaseApi {
 					+ "' AND SecurityAnswer = '" + securityAnswer + "';";
 			ResultSet r = st.executeQuery(s);
 			if (r.first()) {
+				r.close();
 				return true;
 			}
+			r.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1363,9 +1381,11 @@ public class DatabaseApi {
 						result[i] = r.getString("Name");
 					}
 				}
+				r.close();
 				return result;
 
 			} else {
+				r.close();
 				return null;
 			}
 		} catch (Exception e) {

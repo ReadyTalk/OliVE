@@ -24,6 +24,18 @@ public enum Attribute {
 	/**
 	 * 
 	 */
+	EDIT_NAME_SUCCESSFULLY,
+	/**
+	 * 
+	 */
+	EDIT_PWD_SUCCESSFULLY,
+	/**
+	 * 
+	 */
+	EDIT_QA_SUCCESSFULLY,
+	/**
+	 * 
+	 */
 	ADD_SUCCESSFULLY,
 	/**
 	 * 
