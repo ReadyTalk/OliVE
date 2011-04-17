@@ -145,7 +145,7 @@
 </div>
 
 </div>
-
+<div class="clear"></div>
 <!-- end #edit-account-container -->
 <div id="delete-account">
 <p><small><a id="delete-account"
