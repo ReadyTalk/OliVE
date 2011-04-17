@@ -1023,6 +1023,11 @@ public class OliveServlet extends HttpServlet {
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop
+			// Give the video a name at the last moment to prevent duplicates.
+			String newVideoName = Security.convertToSafeAndUniqueVideoName(
+					videoFragment.getName(), projectId);	// .getName() returns the original video name at this point.
+			videoFragment.setName(newVideoName);	// Now, change .getName() to a unique name.
+			
 			DatabaseApi.addVideo(new Video(videoFragment.getName(),
 					videoFragment.getUrl(), videoFragment.getIcon(), projectId,
 					-1, -1, false)); // projectId not computed by Zencoder
