@@ -68,11 +68,11 @@
 
 <div id="main">
 
-<div id="videos-header"><span id="videos-title"> <%=projectName%>
-</span><span id="videos-controls">
+<div id="videos-header"><div id="videos-title"> <%=projectName%>
+</div><div id="videos-controls">
 <button id="upload-new-video-button" class="hidden" type="button">Upload
 New Video</button>
-</span></div>
+</div></div>
 
 <div id="videos-container">
 <div id="videos"><span id="videos-background-text" class="hidden">Uploaded

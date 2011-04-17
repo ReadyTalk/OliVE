@@ -23,7 +23,7 @@ function attachOtherHandlers() {
 }
 
 function createNewVideoContainer(videoName, videoNum, videoIcon) {
-	var videoContainer = '<span id="video-container-'
+	var videoContainer = '<div id="video-container-'
 		+ videoNum
 		+ '" class="video-container"><img id="video-image-'
 		+ videoNum
@@ -31,15 +31,15 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 		+ videoIcon
 		+ '" alt="video-image-'
 		+ videoNum
-		+ '" /><br /><span class="video-name">'
+		+ '" /><div class="video-name">'
 		+ videoName
-		+ '</span><br /><span class="video-controls"><small><a id="split-video-link-'
+		+ '</div><div class="video-controls"><small><a id="split-video-link-'
 		+ videoNum
 		+ '" class="split-video-link link hidden">Split</a>'
 		+ '<span class="video-controls-divider hidden"> | </span>'
 		+ '<a id="delete-video-link-'
 		+ videoNum
-		+ '" class="delete-video-link warning">Delete</a></small></span></span>';
+		+ '" class="delete-video-link warning">Delete</a></small></div></div>';
 	
 	$('#videos').append(videoContainer);
 	
@@ -123,7 +123,7 @@ function attachUploadNewVideoHandlers() {
 	
 	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 350,
+		height : 375,
 		width : 400,
 		modal : true,
 		buttons : {

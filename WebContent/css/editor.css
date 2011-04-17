@@ -15,18 +15,26 @@
 
 #videos-header {
 	width: 50%;
+	height: 50px;
 }
 
 #videos-title {
 	float: left;
 	margin: 2%;
-	font-size: 160%;	/* 16px */
+	font-size: 150%;	/* 15px */
+	line-height: 1em;
 	color: #92bd6a; /* The Olive color */
+	width: 55%;
+	height: 50px;
+	word-wrap: break-word;
+	overflow: hidden;
 }
 
 #videos-controls {
 	float: right;
 	margin: 1%;
+	height: 50px;
+	overflow: hidden;
 }
 
 #videos {
