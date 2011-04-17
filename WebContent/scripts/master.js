@@ -35,6 +35,10 @@ var SAFE_VIDEO_NAME_MESSAGE = 'Video name ' + SAFE_PASSWORD_MESSAGE_SUFFIX;
 var MIN_VIDEO_SIZE_IN_BYTES = 1;	// No empty files
 var MAX_VIDEO_SIZE_IN_BYTES = 524288000;	// 500 MB
 
+var VALID_EXTENSIONS = ['ogg', 'ogv', 'm4v', 'mp4', 'webm', 'avi', 'wmv',
+                        'mpeg', 'mpg', 'swf', 'mpg', 'wmv', '3gp', 'mkv',
+                        'mov', 'flv', 'rm', 'asf', 'asx', 'bsf'];
+
 jQuery(function($) {
 	injectSharedDialogs();
 });

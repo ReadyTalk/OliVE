@@ -48,9 +48,9 @@
 	session.removeAttribute(Attribute.IS_CORRECT.toString());
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
@@ -75,7 +75,7 @@ Thank you</p>
 	method="post">
 <p><label for="username">Username</label><br />
 <input type="text" name="username" id="username" value="" size="32"
-	maxlength="32" /></p>
+	maxlength="16" /></p>
 <input type="hidden" name="FormName" value="security-question-form"></input><br />
 <input type="submit" value="Get Security Question" /><span><%=confirmation%></span>
 </form>

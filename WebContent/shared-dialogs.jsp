@@ -9,5 +9,5 @@
 </div>
 
 <div id="about-dialog" class="hidden" title="About Olive">
-<p>&copy; 2010 ReadyTalk</p>
+<p>&copy; 2010 <a href="http://www.readytalk.com/">ReadyTalk</a></p>
 </div>

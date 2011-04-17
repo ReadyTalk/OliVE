@@ -42,9 +42,9 @@
 	}
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right"><span id="help-dialog-opener"><a

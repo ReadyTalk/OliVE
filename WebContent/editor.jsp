@@ -49,9 +49,9 @@
 	}
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
@@ -115,7 +115,10 @@ videos will appear here</span></div>
 
 <div id="new-video-dialog-form" class="hidden" title="Upload New Video">
 <p class="validateTips"></p>
+<button id="choose-video-button">Upload a video</button>
 <div id="fancy-uploader"></div>
+<br />
+<div id="upload-list"></div>
 </div>
 <!-- end #new-video-dialog-form -->
 

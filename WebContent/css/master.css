@@ -151,6 +151,15 @@ small {
 	margin-left: 1%;
 }
 
+#header-left a {
+	color: #92bd6a;
+	text-decoration: none;
+}
+
+#header-left a:hover {
+	color: #92bd6a;	/* Override normal behavior. */
+}
+
 #olive-icon {
 	float: left;
 	height: 45px;

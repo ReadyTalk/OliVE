@@ -32,7 +32,7 @@
 	} else if (!isAuthorized) {
 		response.sendRedirect("index.jsp");
 	}
-	
+
 	Boolean editNameSuccessfully = (Boolean) session
 			.getAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
 	Boolean editPwdSuccessfully = (Boolean) session
@@ -40,7 +40,6 @@
 	Boolean editSecSuccessfully = (Boolean) session
 			.getAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
 
-	
 	Boolean passwordsMatch = (Boolean) session
 			.getAttribute(Attribute.PASSWORDS_MATCH.toString());
 	String editNameEmailConfirmation = "";
@@ -48,48 +47,53 @@
 	String editSecurityConfirmation = "";
 	if (editNameSuccessfully == null) {
 		editNameEmailConfirmation = "";
-		
-		if(editPwdSuccessfully==null) {
+
+		if (editPwdSuccessfully == null) {
 			editPasswordConfirmation = "";
-			
-			
-			if(editSecSuccessfully==null) {	
+
+			if (editSecSuccessfully == null) {
 				editSecurityConfirmation = "";
-			} else if(editSecSuccessfully){
+			} else if (editSecSuccessfully) {
 				editSecurityConfirmation = "Your security information has been changed successfully.";
-				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
+				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY
+						.toString());
 			} else {
 				editSecurityConfirmation = "Invalid characters or length in entry.";
-				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString());
+				session.removeAttribute(Attribute.EDIT_QA_SUCCESSFULLY
+						.toString());
 			}
-			
-			
-		} else if(editPwdSuccessfully){
+
+		} else if (editPwdSuccessfully) {
 			editPasswordConfirmation = "Your password has been changed successfully.";
-			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString());
+			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY
+					.toString());
 		} else {
 			if (passwordsMatch == null) { // Not safe
 				editPasswordConfirmation = "Invalid characters or length in entry.";
 			} else { // Safe, but differing passwords
 				editPasswordConfirmation = "Passwords do not match.";
-				session.removeAttribute(Attribute.PASSWORDS_MATCH.toString());
+				session.removeAttribute(Attribute.PASSWORDS_MATCH
+						.toString());
 			}
-			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString());
+			session.removeAttribute(Attribute.EDIT_PWD_SUCCESSFULLY
+					.toString());
 		}
 	} else if (editNameSuccessfully) {
 		editNameEmailConfirmation = "Your name and/or email have been changed successfully.";
-		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
+		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY
+				.toString());
 	} else {
 		editNameEmailConfirmation = "Invalid characters or length in entry.";
-		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString());
+		session.removeAttribute(Attribute.EDIT_NAME_SUCCESSFULLY
+				.toString());
 	}
 	String username = (String) session.getAttribute(Attribute.USERNAME
 			.toString());
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
@@ -109,31 +113,31 @@
 <h2>Edit account: <%=username%></h2>
 <br />
 <div id="edit-account-container-small">
-<form id="edit-account-form-name-and-email" action="OliveServlet" name="process"
-	method="post">
+<form id="edit-account-form-name-and-email" action="OliveServlet"
+	name="process" method="post">
 <p><label for="new-name">Name</label> <input type="text"
 	name="new-name" id="new-name" size="32" maxlength="32" /></p>
 <p><label for="new-email">Email</label> <input type="text"
 	name="new-email" id="new-email" size="32" maxlength="64" /></p>
-<input type="hidden" name="FormName" value="EditUser-NameEmail"></input> <input
-	type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
+<input type="hidden" name="FormName" value="EditUser-NameEmail"></input>
+<input type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
 </div>
 
 <div id="edit-account-container-small">
-<form id="edit-account-form-password" action="OliveServlet" name="process"
-	method="post">
+<form id="edit-account-form-password" action="OliveServlet"
+	name="process" method="post">
 <p><label for="new-password">Password</label> <input type="password"
 	name="new-password" id="new-password" size="32" maxlength="128" /></p>
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
 	size="32" maxlength="128" /></p>
-	<input type="hidden" name="FormName" value="EditUserPassword"></input> <input
+<input type="hidden" name="FormName" value="EditUserPassword"></input> <input
 	type="submit" value="Update password" /><span><%=editPasswordConfirmation%></span></form>
 </div>
 
 <div id="edit-account-container-small">
-<form id="edit-account-form-security" action="OliveServlet" name="process"
-	method="post">
+<form id="edit-account-form-security" action="OliveServlet"
+	name="process" method="post">
 <p><label for="new-security-question">Security Question</label> <input
 	type="text" name="new-security-question" id="new-security-question"
 	size="32" maxlength="128" /></p>
@@ -155,8 +159,6 @@
 <!-- end #main --></div>
 
 <div class="clear"></div>
-
-<div id="footer"></div>
 
 <!-- Everything below this line will be hidden and inserted in pop-ups. -->
 <div id="shared-dialogs" class="hidden"></div>
