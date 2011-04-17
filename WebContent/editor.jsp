@@ -115,7 +115,10 @@ videos will appear here</span></div>
 
 <div id="new-video-dialog-form" class="hidden" title="Upload New Video">
 <p class="validateTips"></p>
+<button id="choose-video-button">Upload a video</button>
 <div id="fancy-uploader"></div>
+<br />
+<div id="upload-list"></div>
 </div>
 <!-- end #new-video-dialog-form -->
 

@@ -88,7 +88,7 @@ function populateVideos(isFirst) {
 			$(element).data('isSelected', responseData[i].isSelected);
 			makeSelectionVisible(element);
 		}
-		//$('#preloader-videos').append(preloaderVideos);
+		$('#preloader-videos').append(preloaderVideos);
 		
 		// Append in the sorted order
 		for (var poolIndex = 0; poolIndex < poolPositions.length; ++poolIndex) {
@@ -119,11 +119,11 @@ function attachUploadNewVideoHandlers() {
 	var fancyUploader = $('#fancy-uploader'),
 		allFields = $([]).add(fancyUploader);
 	
-	$('.qq-upload-button').button();
+	$('#choose-video-button').button();
 	
 	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 400,
+		height : 300,
 		width : 400,
 		modal : true,
 		buttons : {
@@ -134,7 +134,7 @@ function attachUploadNewVideoHandlers() {
 		close : function () {
 			allFields.val('').change().removeClass('ui-state-error');
 			$('.validateTips').text('').change();
-			$('.qq-upload-list').empty();
+			$('#upload-list').empty();
 		}
 	});
 
@@ -150,15 +150,16 @@ function attachUploadNewVideoHandlers() {
 
 // Modified from: http://valums.com/ajax-upload/
 function attachFancyUploadForm() {
-	var uploader = new qq.FileUploader({
+	var uploader = new qq.FileUploaderBasic({
 		element: $('#fancy-uploader').get(0),	// DOM node
+		button: $('#choose-video-button').get(0),	// DOM node
 		action: 'OliveServlet',	// Servlet
 		//params: {
 		//	newVideoName: 'defaultVideoName'
 		//},
 		multiple: false,
 		allowedExtensions: ['ogg', 'ogv', 'm4v', 'mp4', 'webm', 'avi', 'wmv', 'mpeg', 'mpg'],
-		maxConnections: 3,
+		maxConnections: 1,	// Maximum number of concurrent uploads
 		minSizeLimit: MIN_VIDEO_SIZE_IN_BYTES,	
 		sizeLimit: MAX_VIDEO_SIZE_IN_BYTES,
 		debug: false,
@@ -171,22 +172,46 @@ function attachFancyUploadForm() {
 			//uploader.setParams({
 			//	'new': 'newvalue'
 			//});
+			$('#choose-video-button').hide();	// Prevent future uploads
 		},
 		onProgress: function(id, fileName, loaded, total) {
+			// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
+			var html = fileName + '&nbsp;&nbsp;';
+			if (loaded !== total) {
+			    html += Math.round(loaded / total * 100) + '% of '
+			    		+ formatSize(total);
+			} else {
+			    html += formatSize(total);
+			}
+			
+			$('#upload-list').html(html);
 		},
 		onComplete: function(id, fileName, responseJSON) {
+			$('#choose-video-button').show();	// Allow future uploads
 			createVideoSpinner();
-			//$('#new-video-dialog-form').dialog('close');
+			$('#new-video-dialog-form').dialog('close');
 			if (responseJSON.success) {
 				waitForVideoToBeDeleted(responseJSON.videoPath);
 			}
 		},
 		onCancel: function(id, fileName){
+			$('#choose-video-button').show();	// Allow future uploads
 		},
 		showMessage: function (message) {
 			updateTips(message);
 		}
 	});
+}
+
+// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
+function formatSize(bytes){
+	var i = -1;
+	do {
+	    bytes = bytes / 1024;
+	    i++;
+	} while (bytes > 99);
+	
+	return Math.max(bytes, 0.1).toFixed(1) + ['kB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];          
 }
 
 function waitForVideoToBeDeleted(videoPath) {
