@@ -13,8 +13,8 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
-	rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lato:%20regular,bold"
+	rel="stylesheet" type="text/css">
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -92,7 +92,7 @@
 %>
 <div id="header">
 <div id="header-left"><a href="projects.jsp"><img
-	id="olive-icon" src="/olive/images/olive.png" /></a>
+	id="olive-icon" src="/olive/images/olive.png" alt="" /></a>
 <h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
@@ -112,18 +112,18 @@
 <div id="edit-account-container">
 <h2>Edit account: <%=username%></h2>
 <br />
-<div id="edit-account-container-small">
+<div class="edit-account-container-small">
 <form id="edit-account-form-name-and-email" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-name">Name</label> <input type="text"
 	name="new-name" id="new-name" size="32" maxlength="32" /></p>
 <p><label for="new-email">Email</label> <input type="text"
 	name="new-email" id="new-email" size="32" maxlength="64" /></p>
-<input type="hidden" name="FormName" value="EditUser-NameEmail"></input>
-<input type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
+<input type="hidden" name="FormName" value="EditUser-NameEmail" /> <input
+	type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
 </div>
 
-<div id="edit-account-container-small">
+<div class="edit-account-container-small">
 <form id="edit-account-form-password" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-password">Password</label> <input type="password"
@@ -131,11 +131,11 @@
 <p><label for="confirm-new-password">Confirm password</label> <input
 	type="password" name="confirm-new-password" id="confirm-new-password"
 	size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="EditUserPassword"></input> <input
+<input type="hidden" name="FormName" value="EditUserPassword" /> <input
 	type="submit" value="Update password" /><span><%=editPasswordConfirmation%></span></form>
 </div>
 
-<div id="edit-account-container-small">
+<div class="edit-account-container-small">
 <form id="edit-account-form-security" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-security-question">Security Question</label> <input
@@ -144,15 +144,15 @@
 <p><label for="new-security-answer">Security Answer</label> <input
 	type="text" name="new-security-answer" id="new-security-answer"
 	size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="EditUserSecurity"></input> <input
-	type="submit" value="Update Security Q&A" /><span><%=editSecurityConfirmation%></span></form>
+<input type="hidden" name="FormName" value="EditUserSecurity" /> <input
+	type="submit" value="Update Security Q&amp;A" /><span><%=editSecurityConfirmation%></span></form>
 </div>
 
 </div>
 <div class="clear"></div>
 <!-- end #edit-account-container -->
-<div id="delete-account">
-<p><small><a id="delete-account"
+<div id="delete-account-container">
+<p><small><a id="delete-account-link"
 	class="warning delete-project">Delete account</a></small></p>
 </div>
 

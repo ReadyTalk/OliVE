@@ -16,8 +16,8 @@
 	href="/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/editor.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
-	rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lato:%20regular,bold"
+	rel="stylesheet" type="text/css">
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -50,7 +50,7 @@
 %>
 <div id="header">
 <div id="header-left"><a href="projects.jsp"><img
-	id="olive-icon" src="/olive/images/olive.png" /></a>
+	id="olive-icon" src="/olive/images/olive.png" alt="" /></a>
 <h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
@@ -128,14 +128,14 @@ Videos</button>
 <form id="combine-and-export-form" action="OliveServlet" name="process"
 	method="post">
 <fieldset><input type="hidden" name="FormName"
-	value="combine-form"></input> <input type="radio"
-	name="output-extension" value="mp4" class="inline" checked="checked" /><label
+	value="combine-form" /> <input type="radio" name="output-extension"
+	id="mp4" value="mp4" class="inline" checked="checked" /><label
 	for="mp4" class="inline">.mp4</label><br />
-<input type="radio" name="output-extension" value="wmv" class="inline" /><label
-	for="wmv" class="inline">.wmv</label><br />
-<input type="radio" name="output-extension" value="avi" class="inline" /><label
-	for="avi" class="inline">.avi</label><br />
-<input type="radio" id="ogv" name="output-extension" value="ogv"
+<input type="radio" name="output-extension" id="wmv" value="wmv"
+	class="inline" /><label for="wmv" class="inline">.wmv</label><br />
+<input type="radio" name="output-extension" id="avi" value="avi"
+	class="inline" /><label for="avi" class="inline">.avi</label><br />
+<input type="radio" name="output-extension" id="ogv" value="ogv"
 	class="inline" /><label for="ogv" class="inline">.ogv</label></fieldset>
 </form>
 </div>

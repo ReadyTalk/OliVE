@@ -342,8 +342,8 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		Boolean isAuthorized;
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String username = request.getParameter("login-username");
+		String password = request.getParameter("login-password");
 		if (Security.isSafeUsername(username)
 				&& Security.isSafePassword(password)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
@@ -641,7 +641,6 @@ public class OliveServlet extends HttpServlet {
 		} else if (generalRequest.command.equals("isFirstSignIn")) {
 			handleIsFirstSignIn(request, response, session, json);
 		} else {
-			log.warning("JSON request not recognized.");
 			log.warning("JSON request not recognized.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;

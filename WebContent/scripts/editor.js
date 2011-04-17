@@ -48,11 +48,15 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 }
 
 function createVideoSpinner() {
-	var videoContainer = '<span class="video-container">'
-		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" /><br />'
-		+ '<span>Preparing video...</span>'
-		+ '</span>';
+	var videoContainer = '<div class="video-container">'
+		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" />'
+		+ '<div>Preparing video...</div>'
+		+ '</div>';
 	$('#videos').append(videoContainer);
+	//$('#videos').sortable('refresh');	// Refreshing is unnecessary.
+	//$('#timeline').sortable('refresh');	// Refreshing is unnecessary.
+	showOrHideVideosBackgroundText();
+	showOrHideTimelineBackgroundText();
 }
 
 function populateVideos(isFirst) {
