@@ -4,7 +4,7 @@
 	----------------------------------------
 */
 #edit-account-container {
-	padding: 6%;
+	padding: 5%;
 }
 
 #edit-account-container h2 {
@@ -14,12 +14,8 @@
 
 #edit-account-container-small {
 	float:left;
-	padding-right:10%;
+	padding-right:3%;
 }
-
-#delete-account{
-	padding:3.2%;
-	display:block;
-	float:none;
-	
+#delete-account {
+	padding: 2.7%;
 }
