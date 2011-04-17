@@ -526,15 +526,15 @@ public class OliveServlet extends HttpServlet {
 	private void addVideoEverywhere(PrintWriter out, int projectId, File video)
 			throws InvalidFileSizeException, IOException, ServiceException,
 			NoSuchAlgorithmException {
-		String videoName = Security.convertToSafeAndUniqueVideoName(
-				video.getName(), projectId);
-		if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(video)
-				&& Security.isUniqueVideoName(videoName, projectId)
+		if (Security.isSafeVideo(video)
 				&& Security.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
 			String[] videoUrlAndIcon = S3Api.uploadFile(video);
 			String videoUrl = videoUrlAndIcon[0];
 			String videoIcon = videoUrlAndIcon[1];
 			if (videoUrl != null) {
+				// Give the video a name only at the last moment to prevent duplicates.
+				String videoName = Security.convertToSafeAndUniqueVideoName(
+						video.getName(), projectId);
 				DatabaseApi.addVideo(new Video(videoName, videoUrl, videoIcon,
 						projectId, -1, -1, false));
 				// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
@@ -546,15 +546,6 @@ public class OliveServlet extends HttpServlet {
 			out.println("Upload Failed. Error uploading video to the cloud.");
 			log.warning("Upload Failed. Error uploading video to the cloud.");
 			// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		} else if (!Security.isSafeVideoName(videoName)) {
-			out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-			log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-			// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-			return;
-		} else if (!Security.isUniqueVideoName(videoName, projectId)) {
-			out.println("Upload Failed. Video name already exists.");
-			log.warning("Upload Failed. Video name already exists.");
 			return;
 		} else if (!Security.isSafeVideo(video)) {
 			out.println("Upload Failed. Video is invalid.");
@@ -1023,7 +1014,7 @@ public class OliveServlet extends HttpServlet {
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop
-			// Give the video a name at the last moment to prevent duplicates.
+			// Give the video a name only at the last moment to prevent duplicates.
 			String newVideoName = Security.convertToSafeAndUniqueVideoName(
 					videoFragment.getName(), projectId);	// .getName() returns the original video name at this point.
 			videoFragment.setName(newVideoName);	// Now, change .getName() to a unique name.
