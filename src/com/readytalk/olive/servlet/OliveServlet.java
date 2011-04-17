@@ -453,49 +453,6 @@ public class OliveServlet extends HttpServlet {
 		response.sendRedirect("account.jsp");
 				
 	}
-	
-//	private void handleEditUser(HttpServletRequest request,
-//			HttpServletResponse response, HttpSession session)
-//			throws UnsupportedEncodingException, IOException {
-//		String username = (String) session.getAttribute(Attribute.USERNAME
-//				.toString());
-//		String newName = request.getParameter("new-name");
-//		String newEmail = request.getParameter("new-email");
-//		String newPassword = request.getParameter("new-password");
-//		String confirmNewPassword = request
-//				.getParameter("confirm-new-password");
-//		String securityQuestion = request.getParameter("new-security-question");
-//		String securityAnswer = request.getParameter("new-security-answer");
-//		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
-//				&& Security.isSafePassword(newPassword)
-//				&& Security.isSafePassword(confirmNewPassword)
-//				&& Security.isSafeSecurityQuestion(securityQuestion)
-//				&& Security.isSafeSecurityAnswer(securityAnswer)) {
-//			if (newPassword.equals(confirmNewPassword)) {
-//				User updateUser = new User(username, newPassword, newName,
-//						newEmail, securityQuestion, securityAnswer);
-//				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
-//				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
-//						editSuccessfully);
-//				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-//				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
-//				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
-//				session.setAttribute(Attribute.NAME.toString(), newName);
-//				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
-//						securityQuestion);
-//				session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
-//						securityAnswer);
-//			} else {
-//				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
-//						false);
-//				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
-//						false);
-//			}
-//		} else {
-//			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
-//		}
-//		response.sendRedirect("account.jsp");
-//	}
 
 	/**
 	 * 
@@ -1179,7 +1136,7 @@ public class OliveServlet extends HttpServlet {
 				String s;
 				try {
 					while ((s = in.readLine()) != null) {
-						log.info(s);
+						s.trim();
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -1191,7 +1148,7 @@ public class OliveServlet extends HttpServlet {
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				p.getErrorStream()));
 		while ((s = in.readLine()) != null) {
-			log.info(s);
+			s.trim();
 		}
 		File combined = new File(tempDir + "/"+combinedName);
 		for(int j = 0;j<tempToDel.length;j++){
@@ -1274,7 +1231,7 @@ public class OliveServlet extends HttpServlet {
 		String s;
 		//This is where the code seems to get hung up
 		while ((s = in.readLine())!=null) {
-			System.out.println("ffmpeg output: "+s);
+			s.trim();
 		}
 		video.delete();
 		return newName1;
