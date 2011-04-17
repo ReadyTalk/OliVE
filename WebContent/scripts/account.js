@@ -19,8 +19,6 @@ function attachDeleteAccountHandlers() {
 	
 	$('#confirm-delete-account-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {

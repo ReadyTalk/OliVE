@@ -241,8 +241,6 @@ function attachDeleteVideoHandlers() {
 	
 	$('#confirm-delete-video-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {
@@ -375,7 +373,6 @@ function attachCombineButtonHandlers(){
 	
 	$('#confirm-combine-videos-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
 		modal: true,
 		buttons: {
 			'Combine': function () {		
