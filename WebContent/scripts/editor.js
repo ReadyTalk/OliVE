@@ -123,7 +123,7 @@ function attachUploadNewVideoHandlers() {
 	
 	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 300,
+		height : 350,
 		width : 400,
 		modal : true,
 		buttons : {
@@ -158,7 +158,7 @@ function attachFancyUploadForm() {
 		//	newVideoName: 'defaultVideoName'
 		//},
 		multiple: false,
-		allowedExtensions: ['ogg', 'ogv', 'm4v', 'mp4', 'webm', 'avi', 'wmv', 'mpeg', 'mpg'],
+		allowedExtensions: VALID_EXTENSIONS,
 		maxConnections: 1,	// Maximum number of concurrent uploads
 		minSizeLimit: MIN_VIDEO_SIZE_IN_BYTES,	
 		sizeLimit: MAX_VIDEO_SIZE_IN_BYTES,
