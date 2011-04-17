@@ -131,6 +131,10 @@ small {
 	display: none;
 }
 
+.inline {
+	display: inline;
+}
+
 /* 
 	----------------------------------------
 	Common elements to every page

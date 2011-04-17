@@ -68,11 +68,13 @@
 
 <div id="main">
 
-<div id="videos-header"><div id="videos-title"> <%=projectName%>
-</div><div id="videos-controls">
+<div id="videos-header">
+<div id="videos-title"><%=projectName%></div>
+<div id="videos-controls">
 <button id="upload-new-video-button" class="hidden" type="button">Upload
 New Video</button>
-</div></div>
+</div>
+</div>
 
 <div id="videos-container">
 <div id="videos"><span id="videos-background-text" class="hidden">Uploaded
@@ -87,10 +89,8 @@ videos will appear here</span></div>
 <div id="timeline"><span id="timeline-background-text"
 	class="hidden">Drag videos here to be combined</span></div>
 <div id="export">
-<form id="combine-and-export-form" action="OliveServlet" name="process"
-	method="post"><input type="hidden" name="FormName"
-	value="combine-form"></input> <input id="export-button" class="hidden"
-	type="submit" value="Combine Videos" disabled="disabled"></input></form>
+<button id="export-dialog-opener" class="hidden" disabled="disabled">Combine
+Videos</button>
 </div>
 <!-- end #export --></div>
 <!-- end #main -->
@@ -123,8 +123,27 @@ videos will appear here</span></div>
 <!-- end #new-video-dialog-form -->
 
 <div id="confirm-combine-videos-dialog" class="hidden"
-	title="Confirm action">
-<p>Combine videos and export them to your computer?</p>
+	title="Combine Videos">
+<p>Choose a format:</p>
+<form id="combine-and-export-form" action="OliveServlet" name="process"
+	method="post">
+<fieldset><input type="hidden" name="FormName"
+	value="combine-form"></input> <input type="radio"
+	name="output-extension" value="mp4" class="inline" checked="checked"><label
+	for="mp4" class="inline">.mp4</label><br />
+<input type="radio" name="output-extension" value="wmv" class="inline" /><label
+	for="wmv" class="inline">.wmv</label><br />
+<input type="radio" name="output-extension" value="avi" class="inline" /><label
+	for="avi" class="inline">.avi</label><br />
+<input type="radio" id="ogv" name="output-extension" value="ogv"
+	class="inline" /><label for="ogv" class="inline">.ogv</label></fieldset>
+</form>
+</div>
+
+<div id="combine-pending-dialog" class="hidden"
+	title="Combining videos...">
+<p>Please wait while your videos are being combined. This may take
+several minutes.</p>
 </div>
 
 <div id="preloader-videos" class="hidden"></div>

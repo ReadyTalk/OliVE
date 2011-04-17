@@ -363,15 +363,24 @@ function doNotSelectThisTime() {
 }
 
 function attachCombineButtonHandlers(){
+	$('#combine-pending-dialog').dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+			'OK': function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+	
 	$('#confirm-combine-videos-dialog').dialog({
 		autoOpen: false,
 		resizable: false,
-		height: 225,
 		modal: true,
 		buttons: {
-			'Combine': function () {
-				disableCombineButton();		
+			'Combine': function () {		
 				$('#combine-and-export-form').submit();
+				$('#combine-pending-dialog').dialog('open');
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -380,21 +389,20 @@ function attachCombineButtonHandlers(){
 		}
 	});
 	
-	$('#export-button')
+	$('#export-dialog-opener')
 		.button()
 		.show()
 		.click(function (event) {
-			event.preventDefault();
 			$('#confirm-combine-videos-dialog').dialog('open');
 	});
 }
 
 function disableCombineButton() {
-	$('#export-button').button('disable');
+	$('#export-dialog-opener').button('disable');
 }
 
 function enableCombineButton() {
-	$('#export-button').button('enable');
+	$('#export-dialog-opener').button('enable');
 }
 
 // Perform a combineVideos request
@@ -404,7 +412,7 @@ function combineVideos(){
 		+    '"arguments" : {'
 		+    '}'
 		+  '}';
-	makeAsynchronousPostRequest(requestData, turnOnCombineButtonText, turnOnCombineButtonText);
+	makeAsynchronousPostRequest(requestData, null, null);
 }
 
 //Perform a renameVideo request
