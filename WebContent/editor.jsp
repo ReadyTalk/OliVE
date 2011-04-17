@@ -129,7 +129,7 @@ Videos</button>
 	method="post">
 <fieldset><input type="hidden" name="FormName"
 	value="combine-form"></input> <input type="radio"
-	name="output-extension" value="mp4" class="inline" checked="checked"><label
+	name="output-extension" value="mp4" class="inline" checked="checked" /><label
 	for="mp4" class="inline">.mp4</label><br />
 <input type="radio" name="output-extension" value="wmv" class="inline" /><label
 	for="wmv" class="inline">.wmv</label><br />
