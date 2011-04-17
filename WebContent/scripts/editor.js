@@ -180,15 +180,15 @@ function attachFancyUploadForm() {
 		},
 		onProgress: function(id, fileName, loaded, total) {
 			// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
-			var html = fileName + '&nbsp;&nbsp;';
+			var text = fileName + '\u00a0\u00a0';	// Unicode &nbsp;
 			if (loaded !== total) {
-			    html += Math.round(loaded / total * 100) + '% of '
+			    text += Math.round(loaded / total * 100) + '% of '
 			    		+ formatSize(total);
 			} else {
-			    html += formatSize(total);
+			    text += formatSize(total);
 			}
 			
-			$('#upload-list').html(html);
+			$('#upload-list').text(text);
 		},
 		onComplete: function(id, fileName, responseJSON) {
 			$('#choose-video-button').show();	// Allow future uploads
