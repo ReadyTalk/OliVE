@@ -181,7 +181,10 @@ public class OliveServlet extends HttpServlet {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
 		} else if (request.getContentType()
-				.contains("application/octet-stream")) { // Full value: "application/octet-stream"
+				.contains("application/octet-stream")|| request.getContentType()
+				.contains("multipart/form-data")) {
+			// Full value: "application/octet-stream"
+			// Full value: multipart/form-data; boundary=----------dlUx99n87cK8smSPjRMecS
 			// This is a fancy file upload form.
 			log.info("The servlet is responding to an "
 					+ "HTTP POST request from a fancy file upload form");
