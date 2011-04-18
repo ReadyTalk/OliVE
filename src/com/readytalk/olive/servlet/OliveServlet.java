@@ -1050,6 +1050,7 @@ public class OliveServlet extends HttpServlet {
 		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
+		String format = request.getParameter("output-extension");
 		log.info("videos length: " + videos.length);
 		if (videos.length > 0) {
 			String[] videoURLs = new String[videos.length];
@@ -1073,12 +1074,29 @@ public class OliveServlet extends HttpServlet {
 			// response.sendRedirect("editor.jsp");
 			// My view resource servlet:
 			// Use a ServletOutputStream because we may pass binary information
-			log.info("Combined. Now Dowloading");
+			log.info("Combined. Now converting, if necessary");
+			File file = new File(combinedURL);
+			String ext = ".ogv";
+			String converted = "";
+			if(format.equals("avi")){
+				ext=".avi";
+				converted = convertTo(format,file);
+				file = new File(tempDir+"/"+converted);
+			} else if(format.equals("wmv")){
+				ext=".wmv";
+				converted = convertTo(format,file);
+				file = new File(tempDir+"/"+converted);
+			} else if(format.equals("mp4")){
+				ext=".mp4";
+				converted = convertTo(format,file);
+				file = new File(tempDir+"/"+converted);
+			}
+			
+			log.info("Now Dowloading");
 			final ServletOutputStream out = response.getOutputStream();
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
-					"attachment;filename=combinedVideo.ogv");
-			File file = new File(combinedURL);
+			"attachment;filename=combinedVideo"+ext);
 			BufferedInputStream is = new BufferedInputStream(
 					new FileInputStream(file));
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
@@ -1098,6 +1116,28 @@ public class OliveServlet extends HttpServlet {
 		} else {
 			response.sendRedirect("editor.jsp");
 		}
+	}
+
+	private String convertTo(String format, File video) throws IOException {
+		String cmd = "ffmpeg -i ";
+		if (isWindows()) {
+			cmd = "cmd /c " + cmd;
+		} else if (isLinux()) {
+			log.info("Linux!");
+		}
+		String name = video.getName();
+		String newName = name.substring(0, name.length() - 4) + "-converted."+format;
+		cmd = cmd+name+" -sameq "+newName;
+		Runtime r = Runtime.getRuntime();
+		Process p = r.exec(cmd, null, tempDir);
+		BufferedReader in = new BufferedReader(new InputStreamReader(p
+						.getErrorStream()));
+		String s;
+		while ((s = in.readLine())!=null) {
+			s.trim();
+		}
+		video.delete();
+		return newName;
 	}
 
 	private String combineVideos(String[] videoURLs, String[] videos)
