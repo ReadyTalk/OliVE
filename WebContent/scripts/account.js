@@ -12,15 +12,13 @@ jQuery(function($) {
 });
 
 function attachDeleteAccountHandlers() {
-	$('#delete-account').click(function () {
+	$('#delete-account-link').click(function () {
 		$('#confirm-delete-account-dialog').dialog('open');
 		deleteAccountDialogContext = this;	// This is a global variable.
 	});
 	
 	$('#confirm-delete-account-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {

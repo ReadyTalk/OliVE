@@ -193,7 +193,7 @@ public class Security {
 			safeVideo.substring(0, MAX_VIDEO_NAME_LENGTH);
 		}
 
-		String divider = "_";
+		String divider = " ";
 		int suffixInt = 1; // Normal human beings start counting at one, not zero.
 		while (DatabaseApi.videoExists(safeVideo, projectId)) {
 			String suffix = divider + suffixInt;

@@ -48,11 +48,15 @@ function createNewVideoContainer(videoName, videoNum, videoIcon) {
 }
 
 function createVideoSpinner() {
-	var videoContainer = '<span class="video-container">'
-		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" /><br />'
-		+ '<span>Preparing video...</span>'
-		+ '</span>';
+	var videoContainer = '<div class="video-container">'
+		+ '<img class="video-image" src="/olive/images/ajax-loader.gif" />'
+		+ '<div>Preparing video...</div>'
+		+ '</div>';
 	$('#videos').append(videoContainer);
+	//$('#videos').sortable('refresh');	// Refreshing is unnecessary.
+	//$('#timeline').sortable('refresh');	// Refreshing is unnecessary.
+	showOrHideVideosBackgroundText();
+	showOrHideTimelineBackgroundText();
 }
 
 function populateVideos(isFirst) {
@@ -176,15 +180,15 @@ function attachFancyUploadForm() {
 		},
 		onProgress: function(id, fileName, loaded, total) {
 			// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
-			var html = fileName + '&nbsp;&nbsp;';
+			var text = fileName + '\u00a0\u00a0';	// Unicode &nbsp;
 			if (loaded !== total) {
-			    html += Math.round(loaded / total * 100) + '% of '
+			    text += Math.round(loaded / total * 100) + '% of '
 			    		+ formatSize(total);
 			} else {
-			    html += formatSize(total);
+			    text += formatSize(total);
 			}
 			
-			$('#upload-list').html(html);
+			$('#upload-list').text(text);
 		},
 		onComplete: function(id, fileName, responseJSON) {
 			$('#choose-video-button').show();	// Allow future uploads
@@ -241,8 +245,6 @@ function attachDeleteVideoHandlers() {
 	
 	$('#confirm-delete-video-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {
@@ -375,7 +377,6 @@ function attachCombineButtonHandlers(){
 	
 	$('#confirm-combine-videos-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
 		modal: true,
 		buttons: {
 			'Combine': function () {		

@@ -13,8 +13,8 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
-	rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lato:%20regular,bold"
+	rel="stylesheet" type="text/css">
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
 <script
@@ -58,7 +58,7 @@
 %>
 <div id="header">
 <div id="header-left"><a href="projects.jsp"><img
-	id="olive-icon" src="/olive/images/olive.png" /></a>
+	id="olive-icon" src="/olive/images/olive.png" alt="" /></a>
 <h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
@@ -84,7 +84,7 @@
 <p><label for="password">Confirm Password</label><br />
 <input type="password" name="confirm_password" id="confirm_password"
 	value="" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="new_password"></input><br />
+<input type="hidden" name="FormName" value="new_password" /><br />
 <input type="submit" value="Submit New Password" /><span><%=confirmation%></span></form>
 </div>
 <!-- end #main --></div>

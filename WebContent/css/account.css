@@ -9,13 +9,17 @@
 
 #edit-account-container h2 {
 	margin: .75em 0;
-	
 }
 
-#edit-account-container-small {
-	float:left;
-	padding-right:3%;
+.edit-account-container-small {
+	float: left;
+	padding-right: 3%;
 }
-#delete-account {
-	padding: 2.7%;
+
+#delete-account-container {
+	margin: 2.7%;
+}
+
+#delete-account-link {
+	margin: 2.7%;
 }

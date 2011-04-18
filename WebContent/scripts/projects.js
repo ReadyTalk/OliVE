@@ -208,8 +208,6 @@ function attachDeleteProjectHandlers() {
 	
 	$('#confirm-delete-project-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {

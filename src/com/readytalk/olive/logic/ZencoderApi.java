@@ -141,6 +141,7 @@ public class ZencoderApi {
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
 		String originalVideoUrl = DatabaseApi.getVideoUrl(videoId);
+		String originalVideoName = DatabaseApi.getVideoName(videoId);
 		double maximumStartTimeInSeconds = Security.MIN_SPLIT_TIME_IN_SECONDS;
 		double minimumEndTimeInSeconds = Security.MAX_SPLIT_TIME_IN_SECONDS;
 		double[] splitStartInSeconds = { 0, splitTimeInSeconds };
@@ -165,9 +166,9 @@ public class ZencoderApi {
 					ZENCODER_API_JOBS_URL));
 			String videoIcon = S3Api.AWS_URL_PREFIX + thumbPrefix
 					+ THUMB_SUFFIX_WITH_DOT + thumbFormat;
-			videoFragments[i] = new Video(DatabaseApi.getVideoName(videoId)
-					+ "_" + i, S3Api.AWS_URL_PREFIX + videoFragmentFileName,
-					videoIcon, -1, -1, -1, false);
+			videoFragments[i] = new Video(originalVideoName,
+					S3Api.AWS_URL_PREFIX + videoFragmentFileName, videoIcon,
+					-1, -1, -1, false); // Name will be overwritten.
 		}
 
 		// Wait for the first and second halves of the original video.
