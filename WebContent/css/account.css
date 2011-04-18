@@ -14,6 +14,9 @@
 .edit-account-container-small {
 	float: left;
 	padding-right: 3%;
+	word-wrap:break-word;
+	overflow:auto;
+	width: 210px;
 }
 
 #delete-account-container {
