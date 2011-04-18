@@ -53,6 +53,7 @@ import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.json.UpdateProjectsPositionRequest;
 import com.readytalk.olive.json.UpdateTimelinePositionRequest;
 import com.readytalk.olive.json.UpdateVideosPositionRequest;
+import com.readytalk.olive.logic.Combiner;
 import com.readytalk.olive.logic.ZencoderApi;
 import com.readytalk.olive.logic.DatabaseApi;
 import com.readytalk.olive.logic.S3Api;
@@ -1036,57 +1037,43 @@ public class OliveServlet extends HttpServlet {
 
 	throws IOException, NoSuchAlgorithmException, InvalidFileSizeException,
 			ServiceException, InterruptedException {
-
-		// CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
-		// CombineVideosRequest.class);
-		log.info("COMBINING VIDEOS");
-		// response.setContentType("text/plain");
-
-		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
 		String format = request.getParameter("output-extension");
-		log.info("videos length: " + videos.length);
-		if (videos.length > 0) {
+		log.info("Combining Videos, if necessary");
+		if (videos.length == 0){
+			response.sendRedirect("editor.jsp");
+		} else {
 			String[] videoURLs = new String[videos.length];
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
-				log.info("video url " + i + ": " + videoURLs[i]);
 			}
-
 			String combinedURL = "";
-			// combineVideos(videoURLs, videos);
 			if (videoURLs.length == 1) {
 				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
 			} else if (videoURLs.length > 1) {
-				combinedURL = combineVideos(videoURLs, videos);
+				combinedURL = Combiner.combineVideos(videoURLs, videos, tempDir);
 			}
 			if (combinedURL == null) {
 				response.sendRedirect("editor.jsp");
 				return;
 			}
-			// response.sendRedirect("editor.jsp");
-			// My view resource servlet:
-			// Use a ServletOutputStream because we may pass binary information
-			log.info("Combined. Now converting, if necessary");
+			log.info("Now converting, if necessary");
 			File file = new File(combinedURL);
 			String ext = ".ogv";
 			String converted = "";
-			if(format.equals("avi")){
-				ext=".avi";
-				converted = convertTo(format,file);
-				file = new File(tempDir+"/"+converted);
-			} else if(format.equals("wmv")){
-				ext=".wmv";
-				converted = convertTo(format,file);
-				file = new File(tempDir+"/"+converted);
-			} else if(format.equals("mp4")){
-				ext=".mp4";
-				converted = convertTo(format,file);
+			if(!format.equals("ogv")){
+				if(format.equals("avi")){
+					ext=".avi";
+				} else if(format.equals("wmv")){
+					ext=".wmv";
+				} else if(format.equals("mp4")){
+					ext=".mp4";
+				}
+				converted = Combiner.convertTo(format,file,tempDir);
 				file = new File(tempDir+"/"+converted);
 			}
-			
 			log.info("Now Dowloading");
 			final ServletOutputStream out = response.getOutputStream();
 			response.setContentType("application/octet-stream");
@@ -1096,192 +1083,15 @@ public class OliveServlet extends HttpServlet {
 					new FileInputStream(file));
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
-			log.info("downloading");
 			while ((bytesRead = is.read(buf)) != -1) {
-				// log.info("in while");
 				out.write(buf, 0, bytesRead);
-				// log.info("...Dowloading in while...");
 			}
-
 			is.close();
 			out.flush();
 			out.close();
 			file.delete();
-			log.info("end of handleCombinedVideos");
-		} else {
-			response.sendRedirect("editor.jsp");
+			log.info("Downloaded. End of handleCombinedVideos");
 		}
-	}
-
-	private String convertTo(String format, File video) throws IOException {
-		String cmd = "ffmpeg -i ";
-		if (isWindows()) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		String name = video.getName();
-		String newName = name.substring(0, name.length() - 4) + "-converted."+format;
-		cmd = cmd+name+" -sameq "+newName;
-		Runtime r = Runtime.getRuntime();
-		Process p = r.exec(cmd, null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getErrorStream()));
-		String s;
-		while ((s = in.readLine())!=null) {
-			s.trim();
-		}
-		video.delete();
-		return newName;
-	}
-
-	private String combineVideos(String[] videoURLs, String[] videos)
-			throws IOException, NoSuchAlgorithmException,
-			InvalidFileSizeException, ServiceException, InterruptedException {
-		Runtime r = Runtime.getRuntime();
-		boolean isWindows = isWindows();
-		boolean isLinux = isLinux();
-		String cmd = "mencoder -ovc lavc -oac mp3lame ";
-		if (isWindows) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux) {
-			log.info("Linux!");
-		}
-		File [] temp = new File[videoURLs.length];
-		File [] tempToDel = new File[videoURLs.length];
-		
-		String tempName;
-		int [] biggestDims = getBiggestDimensions(videoURLs);
-		for(int i = 0; i < videoURLs.length ; i++){
-			temp[i] = new File(videoURLs[i]);
-			temp[i] = new File(tempDir+"/"+temp[i].getName());
-			tempName = adjustDimensions(temp[i],biggestDims); 
-			tempToDel[i] = new File(tempDir+"/"+tempName);
-			cmd = cmd+tempName+" ";
-		}
-		String combinedName = S3Api.getTime()+"-combined.ogv";
-		cmd = cmd + "-o "+combinedName;
-		log.info(cmd);
-		final Process p = r.exec(cmd, null, tempDir);
-		new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						p.getInputStream()));
-
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						s.trim();
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();
-		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				p.getErrorStream()));
-		while ((s = in.readLine()) != null) {
-			s.trim();
-		}
-		File combined = new File(tempDir + "/"+combinedName);
-		for(int j = 0;j<tempToDel.length;j++){
-			tempToDel[j].delete();
-		}
-		return combined.getAbsolutePath();
-	}
-	private int [] getBiggestDimensions(String [] videos) throws IOException{
-		int[]biggestDimensions = {0,0};
-		File temp;
-		int[]dimensions;
-		for(int i = 0; i< videos.length; i++){
-			S3Api.downloadVideosToTemp(videos[i]);
-			temp = new File(videos[i]);
-			dimensions = getDimensions(temp);
-			if(dimensions[0]>biggestDimensions[0] && dimensions[1]>biggestDimensions[1]){
-				biggestDimensions = dimensions;
-			}
-		}
-		return biggestDimensions;
-	}
-	
-	private int [] getDimensions(File video) throws IOException{
-		Runtime r = Runtime.getRuntime();
-		String [] arrV = new String[1];
-		String cmd = "ffmpeg -i ";
-		if (isWindows()) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		cmd = cmd+video.getName();
-		Process p = r.exec(cmd, null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
-		String s;
-		while ((s = in.readLine()) != null) {
-			if (s.contains("Video:")) {
-				arrV = s.split(",");
-			}
-		}
-		String tempDim = arrV[2].trim();
-		if(tempDim.indexOf(" ") != -1){
-			tempDim = tempDim.substring(0, tempDim.indexOf(" "));
-		}
-		String [] dimsArr = tempDim.split("x");
-		int width = (new Integer(dimsArr[0])).intValue();
-		int height = (new Integer(dimsArr[1])).intValue(); 
-		int [] ret = {width,height};
-		return ret;
-	}
-	private String adjustDimensions(File video, int[]biggestDimensions) throws IOException {
-		int[]dimensions = getDimensions(video);
-		int width = dimensions[0];
-		int height = dimensions[1];
-		int bigWidth = biggestDimensions[0];
-		int bigHeight = biggestDimensions[1];
-		if(bigWidth==width && bigHeight==height){
-			return video.getName();
-		}
-		int padw1 = (bigWidth - width) / 2;
-		int padh1 = (bigHeight - height) / 2;
-		String cmdPre = "ffmpeg -i ";
-		if (isWindows()) {
-			cmdPre = "cmd /c " + cmdPre;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		Runtime r = Runtime.getRuntime();
-		String videoName = video.getName();
-		String newName1 = videoName.substring(0, videoName.length() - 4)
-				+ "-fixed.ogv";
-		String cmd = cmdPre + videoName + " -vf pad=" + bigWidth + ":" + bigHeight
-				+ ":" + padw1 + ":" + padh1 + ":black " + newName1;
-		log.info(cmd);
-		Process p = r.exec(cmd, null, tempDir);
-		//String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getErrorStream()));
-		String s;
-		//This is where the code seems to get hung up
-		while ((s = in.readLine())!=null) {
-			s.trim();
-		}
-		video.delete();
-		return newName1;
-	}
-	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
-	private Boolean isWindows() {
-		String os = System.getProperty("os.name").toLowerCase();
-		// windows
-		return (os.indexOf("win") >= 0);
-	}
-
-	private Boolean isLinux() {
-		String os = System.getProperty("os.name").toLowerCase();
-		// linux or unix
-		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 	}
 
 	private void handleUpdateVideosPosition(HttpServletRequest request,
