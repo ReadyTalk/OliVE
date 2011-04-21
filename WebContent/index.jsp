@@ -13,10 +13,10 @@
 	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/index.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold'
-	rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Molengo'
-	rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lato:%20regular,bold"
+	rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Molengo"
+	rel="stylesheet" type="text/css">
 <link href="/olive/css/skin/jplayer.blue.monday.css" rel="stylesheet"
 	type="text/css" />
 
@@ -42,9 +42,9 @@
 	}
 %>
 <div id="header">
-<div id="header-left"><img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id="olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" alt="" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right"><span id="help-dialog-opener"><a
@@ -102,11 +102,12 @@
 
 <div id="login-form-container">
 <form id="login-form" action="OliveServlet" name="process" method="post">
-<p><label for="username">Username</label> <input type="text"
-	name="username" id="login-username" size="32" maxlength="16" /></p>
-<p><label for="password">Password</label> <input type="password"
-	name="password" id="login-password" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="LoginUser"></input> <input
+<p><label for="login-username">Username</label> <input type="text"
+	id="login-username" name="login-username" size="32" maxlength="16" /></p>
+<p><label for="login-password">Password</label> <input
+	type="password" id="login-password" name="login-password" size="32"
+	maxlength="128" /></p>
+<input type="hidden" name="FormName" value="LoginUser" /> <input
 	type="submit" value="Login" /><br />
 <span><%=loginMessage%> <a href="forgot.jsp">Forgot password?</a></span></form>
 <p>Don't have an account? <a id="create-user" href="javascript:;"
@@ -122,17 +123,17 @@
 <p class="validateTips">All form fields are required.</p>
 <form id="register-form">
 <fieldset><label for="register-username">Username</label> <input
-	type="text" name="register-username" id="register-username"
+	type="text" id="register-username" name="register-username"
 	class="text ui-widget-content ui-corner-all" maxlength="16" /> <label
 	for="register-email">Email</label> <input type="text"
-	name="register-email" id="register-email" value=""
+	id="register-email" name="register-email" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="64" /> <label
 	for="register-password">Password</label> <input type="password"
-	name="register-password" id="register-password" value=""
+	id="register-password" name="register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /> <label
 	for="confirm-register-password">Confirm Password</label> <input
-	type="password" name="confirm-register-password"
-	id="confirm-register-password" value=""
+	type="password" id="confirm-register-password"
+	name="confirm-register-password" value=""
 	class="text ui-widget-content ui-corner-all" maxlength="128" /></fieldset>
 </form>
 </div>

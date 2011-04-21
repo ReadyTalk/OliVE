@@ -135,6 +135,10 @@ small {
 	display: none;
 }
 
+.inline {
+	display: inline;
+}
+
 /* 
 	----------------------------------------
 	Common elements to every page
@@ -153,6 +157,15 @@ small {
 #header-left {
 	text-align: left;
 	margin-left: 1%;
+}
+
+#header-left a {
+	color: #92bd6a;
+	text-decoration: none;
+}
+
+#header-left a:hover {
+	color: #92bd6a;	/* Override normal behavior. */
 }
 
 #olive-icon {
@@ -187,7 +200,7 @@ small {
 	min-width: 1000px;
 	min-height: 450px;
 	overflow: auto;
-	box-shadow: 0px 0px 2px 2px #aaaaaa;
+	box-shadow: 0px 0px 2px 2px #dddddd;
 }
 
 #footer {

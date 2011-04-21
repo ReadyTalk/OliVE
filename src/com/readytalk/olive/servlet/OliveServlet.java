@@ -53,6 +53,7 @@ import com.readytalk.olive.json.SplitVideoRequest;
 import com.readytalk.olive.json.UpdateProjectsPositionRequest;
 import com.readytalk.olive.json.UpdateTimelinePositionRequest;
 import com.readytalk.olive.json.UpdateVideosPositionRequest;
+import com.readytalk.olive.logic.Combiner;
 import com.readytalk.olive.logic.ZencoderApi;
 import com.readytalk.olive.logic.DatabaseApi;
 import com.readytalk.olive.logic.S3Api;
@@ -148,8 +149,12 @@ public class OliveServlet extends HttpServlet {
 					+ "HTTP POST request from form: " + id);
 			if (id.equals("LoginUser")) {
 				handleLogin(request, response, session);
-			} else if (id.equals("EditUser")) {
-				handleEditUser(request, response, session);
+			} else if (id.equals("EditUser-NameEmail")) {
+				handleEditUserNameEmail(request, response, session);
+			} else if (id.equals("EditUserPassword")) {
+				handleEditUserPassword(request, response, session);
+			} else if (id.equals("EditUserSecurity")) {
+				handleEditUserSecurity(request, response, session);
 			} else if (id.equals("security-question-form")) {
 				handleSecurityQuestionRetrieval(request, response, session);
 			} else if (id.equals("security-question-form-2")) {
@@ -176,7 +181,10 @@ public class OliveServlet extends HttpServlet {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
 		} else if (request.getContentType()
-				.contains("application/octet-stream")) { // Full value: "application/octet-stream"
+				.contains("application/octet-stream")|| request.getContentType()
+				.contains("multipart/form-data")) {
+			// Full value: "application/octet-stream"
+			// Full value: multipart/form-data; boundary=----------dlUx99n87cK8smSPjRMecS
 			// This is a fancy file upload form.
 			log.info("The servlet is responding to an "
 					+ "HTTP POST request from a fancy file upload form");
@@ -338,8 +346,8 @@ public class OliveServlet extends HttpServlet {
 			HttpServletResponse response, HttpSession session)
 			throws UnsupportedEncodingException, IOException {
 		Boolean isAuthorized;
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String username = request.getParameter("login-username");
+		String password = request.getParameter("login-password");
 		if (Security.isSafeUsername(username)
 				&& Security.isSafePassword(password)) {
 			session.setAttribute(Attribute.IS_SAFE.toString(), true);
@@ -368,48 +376,86 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("index.jsp");
 		}
 	}
-
-	private void handleEditUser(HttpServletRequest request,
+	private void handleEditUserNameEmail(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-			throws UnsupportedEncodingException, IOException {
+	throws UnsupportedEncodingException, IOException {
 		String username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		String newName = request.getParameter("new-name");
 		String newEmail = request.getParameter("new-email");
+		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)){
+			User updateUser = new User(username, "" , newName,
+					newEmail, "", "");
+			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
+			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(),
+					editSuccessfully);
+			session.setAttribute(Attribute.EMAIL.toString(), newEmail);
+			session.setAttribute(Attribute.NAME.toString(), newName);
+			
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(), false);
+		}
+		response.sendRedirect("account.jsp");
+				
+	}
+	private void handleEditUserPassword(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+	throws UnsupportedEncodingException, IOException {
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
-		String securityQuestion = request.getParameter("new-security-question");
-		String securityAnswer = request.getParameter("new-security-answer");
-		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)
-				&& Security.isSafePassword(newPassword)
-				&& Security.isSafePassword(confirmNewPassword)
-				&& Security.isSafeSecurityQuestion(securityQuestion)
-				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+		if (Security.isSafePassword(newPassword)
+				&& Security.isSafePassword(confirmNewPassword)){
 			if (newPassword.equals(confirmNewPassword)) {
-				User updateUser = new User(username, newPassword, newName,
-						newEmail, securityQuestion, securityAnswer);
+				User updateUser = new User(username, newPassword, "",
+						"", "", "");
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-				session.setAttribute(Attribute.PASSWORD.toString(), newPassword);
-				session.setAttribute(Attribute.EMAIL.toString(), newEmail);
-				session.setAttribute(Attribute.NAME.toString(), newName);
-				session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
-						securityQuestion);
-				session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
-						securityAnswer);
-			} else {
-				session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(),
+			}
+			else{
+				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
 						false);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
 						false);
 			}
-		} else {
-			session.setAttribute(Attribute.EDIT_SUCCESSFULLY.toString(), false);
+			
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(), false);
 		}
 		response.sendRedirect("account.jsp");
+				
+	}
+	private void handleEditUserSecurity(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session)
+	throws UnsupportedEncodingException, IOException {
+		String username = (String) session.getAttribute(Attribute.USERNAME
+				.toString());
+		String securityQuestion = request.getParameter("new-security-question");
+		String securityAnswer = request.getParameter("new-security-answer");
+		if (Security.isSafeSecurityQuestion(securityQuestion)
+				&& Security.isSafeSecurityAnswer(securityAnswer)){
+			User updateUser = new User(username, "", "",
+					"", securityQuestion, securityAnswer);
+			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
+			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(),
+					editSuccessfully);
+			session.setAttribute(Attribute.SECURITY_QUESTION.toString(),
+					securityQuestion);
+			session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
+					securityAnswer);
+				
+		}
+		else {
+			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(), false);
+		}
+		response.sendRedirect("account.jsp");
+				
 	}
 
 	/**
@@ -484,15 +530,15 @@ public class OliveServlet extends HttpServlet {
 	private void addVideoEverywhere(PrintWriter out, int projectId, File video)
 			throws InvalidFileSizeException, IOException, ServiceException,
 			NoSuchAlgorithmException {
-		String videoName = Security.convertToSafeAndUniqueVideoName(
-				video.getName(), projectId);
-		if (Security.isSafeVideoName(videoName) && Security.isSafeVideo(video)
-				&& Security.isUniqueVideoName(videoName, projectId)
+		if (Security.isSafeVideo(video)
 				&& Security.videoFits(DatabaseApi.getNumberOfVideos(projectId))) {
 			String[] videoUrlAndIcon = S3Api.uploadFile(video);
 			String videoUrl = videoUrlAndIcon[0];
 			String videoIcon = videoUrlAndIcon[1];
 			if (videoUrl != null) {
+				// Give the video a name only at the last moment to prevent duplicates.
+				String videoName = Security.convertToSafeAndUniqueVideoName(
+						video.getName(), projectId);
 				DatabaseApi.addVideo(new Video(videoName, videoUrl, videoIcon,
 						projectId, -1, -1, false));
 				// File downloadedFile = S3Api.downloadFile(videoUrl); // TODO Add to /temp/ folder so it can be played in the player.
@@ -504,15 +550,6 @@ public class OliveServlet extends HttpServlet {
 			out.println("Upload Failed. Error uploading video to the cloud.");
 			log.warning("Upload Failed. Error uploading video to the cloud.");
 			// response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		} else if (!Security.isSafeVideoName(videoName)) {
-			out.println("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-			log.warning("Upload Failed. Video name may consist of a-z, 0-9; and must begin with a letter.");
-			// response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-			return;
-		} else if (!Security.isUniqueVideoName(videoName, projectId)) {
-			out.println("Upload Failed. Video name already exists.");
-			log.warning("Upload Failed. Video name already exists.");
 			return;
 		} else if (!Security.isSafeVideo(video)) {
 			out.println("Upload Failed. Video is invalid.");
@@ -599,7 +636,6 @@ public class OliveServlet extends HttpServlet {
 		} else if (generalRequest.command.equals("isFirstSignIn")) {
 			handleIsFirstSignIn(request, response, session, json);
 		} else {
-			log.warning("JSON request not recognized.");
 			log.warning("JSON request not recognized.");
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -982,6 +1018,11 @@ public class OliveServlet extends HttpServlet {
 				splitVideoRequest.arguments.splitTimeInSeconds);
 
 		for (Video videoFragment : videoFragments) { // foreach-loop
+			// Give the video a name only at the last moment to prevent duplicates.
+			String newVideoName = Security.convertToSafeAndUniqueVideoName(
+					videoFragment.getName(), projectId);	// .getName() returns the original video name at this point.
+			videoFragment.setName(newVideoName);	// Now, change .getName() to a unique name.
+			
 			DatabaseApi.addVideo(new Video(videoFragment.getName(),
 					videoFragment.getUrl(), videoFragment.getIcon(), projectId,
 					-1, -1, false)); // projectId not computed by Zencoder
@@ -999,211 +1040,61 @@ public class OliveServlet extends HttpServlet {
 
 	throws IOException, NoSuchAlgorithmException, InvalidFileSizeException,
 			ServiceException, InterruptedException {
-
-		// CombineVideosRequest combineVideosRequest = new Gson().fromJson(json,
-		// CombineVideosRequest.class);
-		log.info("COMBINING VIDEOS");
-		// response.setContentType("text/plain");
-
-		// PrintWriter out = response.getWriter();
 		int projectId = getProjectIdFromSessionAttributes(session);
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
-		log.info("videos length: " + videos.length);
-		if (videos.length > 0) {
+		String format = request.getParameter("output-extension");
+		log.info("Combining Videos, if necessary");
+		if (videos.length == 0){
+			response.sendRedirect("editor.jsp");
+		} else {
 			String[] videoURLs = new String[videos.length];
 			for (int i = 0; i < videos.length; i++) {
 				videoURLs[i] = DatabaseApi.getVideoUrl(DatabaseApi.getVideoId(
 						videos[i], projectId));
-				log.info("video url " + i + ": " + videoURLs[i]);
 			}
-
 			String combinedURL = "";
-			// combineVideos(videoURLs, videos);
 			if (videoURLs.length == 1) {
 				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
 			} else if (videoURLs.length > 1) {
-				combinedURL = combineVideos(videoURLs, videos);
+				combinedURL = Combiner.combineVideos(videoURLs, videos, tempDir);
 			}
 			if (combinedURL == null) {
 				response.sendRedirect("editor.jsp");
 				return;
 			}
-			// response.sendRedirect("editor.jsp");
-			// My view resource servlet:
-			// Use a ServletOutputStream because we may pass binary information
-			log.info("Combined. Now Dowloading");
+			log.info("Now converting, if necessary");
+			File file = new File(combinedURL);
+			String ext = ".ogv";
+			String converted = "";
+			if(!format.equals("ogv")){
+				if(format.equals("avi")){
+					ext=".avi";
+				} else if(format.equals("wmv")){
+					ext=".wmv";
+				} else if(format.equals("mp4")){
+					ext=".mp4";
+				}
+				converted = Combiner.convertTo(format,file,tempDir);
+				file = new File(tempDir+"/"+converted);
+			}
+			log.info("Now Dowloading");
 			final ServletOutputStream out = response.getOutputStream();
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
-					"attachment;filename=combinedVideo.ogv");
-			File file = new File(combinedURL);
+			"attachment;filename=combinedVideo"+ext);
 			BufferedInputStream is = new BufferedInputStream(
 					new FileInputStream(file));
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
-			log.info("downloading");
 			while ((bytesRead = is.read(buf)) != -1) {
-				// log.info("in while");
 				out.write(buf, 0, bytesRead);
-				// log.info("...Dowloading in while...");
 			}
-
 			is.close();
 			out.flush();
 			out.close();
 			file.delete();
-			log.info("end of handleCombinedVideos");
-		} else {
-			response.sendRedirect("editor.jsp");
+			log.info("Downloaded. End of handleCombinedVideos");
 		}
-	}
-
-	private String combineVideos(String[] videoURLs, String[] videos)
-			throws IOException, NoSuchAlgorithmException,
-			InvalidFileSizeException, ServiceException, InterruptedException {
-		Runtime r = Runtime.getRuntime();
-		boolean isWindows = isWindows();
-		boolean isLinux = isLinux();
-		String cmd = "mencoder -ovc lavc -oac mp3lame ";
-		if (isWindows) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux) {
-			log.info("Linux!");
-		}
-		File [] temp = new File[videoURLs.length];
-		File [] tempToDel = new File[videoURLs.length];
-		
-		String tempName;
-		int [] biggestDims = getBiggestDimensions(videoURLs);
-		for(int i = 0; i < videoURLs.length ; i++){
-			temp[i] = new File(videoURLs[i]);
-			temp[i] = new File(tempDir+"/"+temp[i].getName());
-			tempName = adjustDimensions(temp[i],biggestDims); 
-			tempToDel[i] = new File(tempDir+"/"+tempName);
-			cmd = cmd+tempName+" ";
-		}
-		cmd = cmd + "-o combined.ogv";
-		log.info(cmd);
-		final Process p = r.exec(cmd, null, tempDir);
-		new Thread() {
-			public void run() {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						p.getInputStream()));
-
-				String s;
-				try {
-					while ((s = in.readLine()) != null) {
-						log.info(s);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();
-		String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				p.getErrorStream()));
-		while ((s = in.readLine()) != null) {
-			log.info(s);
-		}
-		File combined = new File(tempDir + "/combined.ogv");
-		for(int j = 0;j<tempToDel.length;j++){
-			tempToDel[j].delete();
-		}
-		return combined.getAbsolutePath();
-	}
-	private int [] getBiggestDimensions(String [] videos) throws IOException{
-		int[]biggestDimensions = {0,0};
-		File temp;
-		int[]dimensions;
-		for(int i = 0; i< videos.length; i++){
-			S3Api.downloadVideosToTemp(videos[i]);
-			temp = new File(videos[i]);
-			dimensions = getDimensions(temp);
-			if(dimensions[0]>biggestDimensions[0] && dimensions[1]>biggestDimensions[1]){
-				biggestDimensions = dimensions;
-			}
-		}
-		return biggestDimensions;
-	}
-	
-	private int [] getDimensions(File video) throws IOException{
-		Runtime r = Runtime.getRuntime();
-		String [] arrV = new String[1];
-		String cmd = "ffmpeg -i ";
-		if (isWindows()) {
-			cmd = "cmd /c " + cmd;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		cmd = cmd+video.getName();
-		Process p = r.exec(cmd, null, tempDir);
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-				.getErrorStream()));
-		String s;
-		while ((s = in.readLine()) != null) {
-			if (s.contains("Video:")) {
-				arrV = s.split(",");
-			}
-		}
-		String tempDim = arrV[2].trim();
-		if(tempDim.indexOf(" ") != -1){
-			tempDim = tempDim.substring(0, tempDim.indexOf(" "));
-		}
-		String [] dimsArr = tempDim.split("x");
-		int width = (new Integer(dimsArr[0])).intValue();
-		int height = (new Integer(dimsArr[1])).intValue(); 
-		int [] ret = {width,height};
-		return ret;
-	}
-	private String adjustDimensions(File video, int[]biggestDimensions) throws IOException {
-		int[]dimensions = getDimensions(video);
-		int width = dimensions[0];
-		int height = dimensions[1];
-		int bigWidth = biggestDimensions[0];
-		int bigHeight = biggestDimensions[1];
-		if(bigWidth==width && bigHeight==height){
-			return video.getName();
-		}
-		int padw1 = (bigWidth - width) / 2;
-		int padh1 = (bigHeight - height) / 2;
-		String cmdPre = "ffmpeg -i ";
-		if (isWindows()) {
-			cmdPre = "cmd /c " + cmdPre;
-		} else if (isLinux()) {
-			log.info("Linux!");
-		}
-		Runtime r = Runtime.getRuntime();
-		String videoName = video.getName();
-		String newName1 = videoName.substring(0, videoName.length() - 4)
-				+ "-fixed.ogv";
-		String cmd = cmdPre + videoName + " -vf pad=" + bigWidth + ":" + bigHeight
-				+ ":" + padw1 + ":" + padh1 + ":black " + newName1;
-		log.info(cmd);
-		Process p = r.exec(cmd, null, tempDir);
-		//String s;
-		BufferedReader in = new BufferedReader(new InputStreamReader(p
-						.getErrorStream()));
-		String s;
-		//This is where the code seems to get hung up
-		while ((s = in.readLine())!=null) {
-			System.out.println("ffmpeg output: "+s);
-		}
-		video.delete();
-		return newName1;
-	}
-	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
-	private Boolean isWindows() {
-		String os = System.getProperty("os.name").toLowerCase();
-		// windows
-		return (os.indexOf("win") >= 0);
-	}
-
-	private Boolean isLinux() {
-		String os = System.getProperty("os.name").toLowerCase();
-		// linux or unix
-		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 	}
 
 	private void handleUpdateVideosPosition(HttpServletRequest request,

@@ -53,6 +53,10 @@ function createVideoSpinner() {
 		+ '<div>Preparing video...</div>'
 		+ '</div>';
 	$('#videos').append(videoContainer);
+	//$('#videos').sortable('refresh');	// Refreshing is unnecessary.
+	//$('#timeline').sortable('refresh');	// Refreshing is unnecessary.
+	showOrHideVideosBackgroundText();
+	showOrHideTimelineBackgroundText();
 }
 
 function populateVideos(isFirst) {
@@ -119,11 +123,11 @@ function attachUploadNewVideoHandlers() {
 	var fancyUploader = $('#fancy-uploader'),
 		allFields = $([]).add(fancyUploader);
 	
-	$('.qq-upload-button').button();
+	$('#choose-video-button').button();
 	
 	$('#new-video-dialog-form').dialog({
 		autoOpen : false,
-		height : 400,
+		height : 375,
 		width : 400,
 		modal : true,
 		buttons : {
@@ -134,7 +138,7 @@ function attachUploadNewVideoHandlers() {
 		close : function () {
 			allFields.val('').change().removeClass('ui-state-error');
 			$('.validateTips').text('').change();
-			$('.qq-upload-list').empty();
+			$('#upload-list').empty();
 		}
 	});
 
@@ -150,15 +154,16 @@ function attachUploadNewVideoHandlers() {
 
 // Modified from: http://valums.com/ajax-upload/
 function attachFancyUploadForm() {
-	var uploader = new qq.FileUploader({
+	var uploader = new qq.FileUploaderBasic({
 		element: $('#fancy-uploader').get(0),	// DOM node
+		button: $('#choose-video-button').get(0),	// DOM node
 		action: 'OliveServlet',	// Servlet
 		//params: {
 		//	newVideoName: 'defaultVideoName'
 		//},
 		multiple: false,
-		allowedExtensions: ['ogg', 'ogv', 'm4v', 'mp4', 'webm', 'avi', 'wmv', 'mpeg', 'mpg'],
-		maxConnections: 3,
+		allowedExtensions: VALID_EXTENSIONS,
+		maxConnections: 1,	// Maximum number of concurrent uploads
 		minSizeLimit: MIN_VIDEO_SIZE_IN_BYTES,	
 		sizeLimit: MAX_VIDEO_SIZE_IN_BYTES,
 		debug: false,
@@ -171,22 +176,46 @@ function attachFancyUploadForm() {
 			//uploader.setParams({
 			//	'new': 'newvalue'
 			//});
+			$('#choose-video-button').hide();	// Prevent future uploads
 		},
 		onProgress: function(id, fileName, loaded, total) {
+			// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
+			var text = fileName + '\u00a0\u00a0';	// Unicode &nbsp;
+			if (loaded !== total) {
+			    text += Math.round(loaded / total * 100) + '% of '
+			    		+ formatSize(total);
+			} else {
+			    text += formatSize(total);
+			}
+			
+			$('#upload-list').text(text);
 		},
 		onComplete: function(id, fileName, responseJSON) {
+			$('#choose-video-button').show();	// Allow future uploads
 			createVideoSpinner();
-			//$('#new-video-dialog-form').dialog('close');
+			$('#new-video-dialog-form').dialog('close');
 			if (responseJSON.success) {
 				waitForVideoToBeDeleted(responseJSON.videoPath);
 			}
 		},
 		onCancel: function(id, fileName){
+			$('#choose-video-button').show();	// Allow future uploads
 		},
 		showMessage: function (message) {
 			updateTips(message);
 		}
 	});
+}
+
+// Modified from "/olive/scripts/valums-file-uploader-0c701eb/client/fileuploader.js"
+function formatSize(bytes){
+	var i = -1;
+	do {
+	    bytes = bytes / 1024;
+	    i++;
+	} while (bytes > 99);
+	
+	return Math.max(bytes, 0.1).toFixed(1) + ['kB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];          
 }
 
 function waitForVideoToBeDeleted(videoPath) {
@@ -216,8 +245,6 @@ function attachDeleteVideoHandlers() {
 	
 	$('#confirm-delete-video-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 275,
 		modal: true,
 		buttons: {
 			'Delete': function () {
@@ -338,15 +365,23 @@ function doNotSelectThisTime() {
 }
 
 function attachCombineButtonHandlers(){
-	$('#confirm-combine-videos-dialog').dialog({
+	$('#combine-pending-dialog').dialog({
 		autoOpen: false,
-		resizable: false,
-		height: 225,
 		modal: true,
 		buttons: {
-			'Combine': function () {
-				disableCombineButton();		
+			'OK': function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+	
+	$('#confirm-combine-videos-dialog').dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+			'Combine': function () {		
 				$('#combine-and-export-form').submit();
+				$('#combine-pending-dialog').dialog('open');
 				$(this).dialog('close');
 			},
 			Cancel: function () {
@@ -355,21 +390,20 @@ function attachCombineButtonHandlers(){
 		}
 	});
 	
-	$('#export-button')
+	$('#export-dialog-opener')
 		.button()
 		.show()
 		.click(function (event) {
-			event.preventDefault();
 			$('#confirm-combine-videos-dialog').dialog('open');
 	});
 }
 
 function disableCombineButton() {
-	$('#export-button').button('disable');
+	$('#export-dialog-opener').button('disable');
 }
 
 function enableCombineButton() {
-	$('#export-button').button('enable');
+	$('#export-dialog-opener').button('enable');
 }
 
 // Perform a combineVideos request
@@ -379,7 +413,7 @@ function combineVideos(){
 		+    '"arguments" : {'
 		+    '}'
 		+  '}';
-	makeAsynchronousPostRequest(requestData, turnOnCombineButtonText, turnOnCombineButtonText);
+	makeAsynchronousPostRequest(requestData, null, null);
 }
 
 //Perform a renameVideo request

@@ -10,10 +10,11 @@
 
 <link rel="stylesheet" type="text/css" href="/olive/css/reset.css" />
 <link rel="stylesheet" type="text/css"
-	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css"/>
+	href="/olive/scripts/jquery-ui-1.8.9.custom/css/custom-theme/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/olive/css/account.css" />
-<link href='http://fonts.googleapis.com/css?family=Lato: regular,bold' rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lato:%20regular,bold"
+	rel="stylesheet" type="text/css">
 
 
 <script src="/olive/scripts/jquery-1.5.min.js"></script>
@@ -29,8 +30,10 @@
 			.toString());
 	Boolean isCorrect = (Boolean) session
 			.getAttribute(Attribute.IS_CORRECT.toString());
-	String username = (String) session.getAttribute(Attribute.USERNAME.toString());
-	String securityQuestion = (String) session.getAttribute(Attribute.SECURITY_QUESTION.toString());
+	String username = (String) session.getAttribute(Attribute.USERNAME
+			.toString());
+	String securityQuestion = (String) session
+			.getAttribute(Attribute.SECURITY_QUESTION.toString());
 	String confirmation = "";
 	if (isCorrect == null) {
 		confirmation = "";
@@ -50,10 +53,9 @@
 	session.removeAttribute(Attribute.IS_CORRECT.toString());
 %>
 <div id="header">
-<div id="header-left">
-<img id="olive-icon"
-	src="/olive/images/olive.png" />
-<h1 id= "olive-title">Olive</h1>
+<div id="header-left"><a href="projects.jsp"><img
+	id="olive-icon" src="/olive/images/olive.png" alt="" /></a>
+<h1 id="olive-title"><a href="projects.jsp">Olive</a></h1>
 </div>
 <!-- end #header-left -->
 <div id="header-right">
@@ -70,19 +72,18 @@
 <div id="main">
 <div id="edit-account-container">
 <h2>Forgot Password?</h2>
-<p>Welcome <%=username%>. Please enter the answer you gave for your security question.
-Thank you</p>
+<p>Welcome <%=username%>. Please enter the answer you gave for your
+security question. Thank you</p>
 <!-- end #about-title -->
 
 <form id="security-question-form-2" action="OliveServlet" name="process"
 	method="post">
 <p>Security Question:<br />
-<%=securityQuestion%>
-</p>
+<%=securityQuestion%></p>
 <p><label for="security_answer">Security Answer</label><br />
-<input type="text" name="security_answer" id="security_answer"
-	value="" size="32" maxlength="128" /></p>
-<input type="hidden" name="FormName" value="security-question-form-2"></input><br />
+<input type="text" name="security_answer" id="security_answer" value=""
+	size="32" maxlength="128" /></p>
+<input type="hidden" name="FormName" value="security-question-form-2" /><br />
 <input type="submit" value="Recover Password" /><span><%=confirmation%></span>
 </form>
 </div>

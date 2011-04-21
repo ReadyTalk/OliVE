@@ -7,7 +7,7 @@
 	position: absolute;
 	top: 50px;
 	right: 50%;
-	bottom: 200px;
+	bottom: 220px;
 	left: 0px;
 	/* 100% - (video width) - (2 x (sum of padding, border, margin)) */
 	margin: 10px;
@@ -15,18 +15,26 @@
 
 #videos-header {
 	width: 50%;
+	height: 50px;
 }
 
 #videos-title {
 	float: left;
 	margin: 2%;
-	font-size: 160%;	/* 16px */
+	font-size: 150%;	/* 15px */
+	line-height: 1em;
 	color: #92bd6a; /* The Olive color */
+	width: 55%;
+	height: 50px;
+	word-wrap: break-word;
+	overflow: hidden;
 }
 
 #videos-controls {
 	float: right;
 	margin: 1%;
+	height: 50px;
+	overflow: hidden;
 }
 
 #videos {
@@ -51,7 +59,8 @@
 }
 
 .video-container {
-	float: left;
+	display: inline-block;	/* Enable horizontal scrolling: http://stackoverflow.com/questions/2343989/how-to-set-height-property-for-span */
+	vertical-align: text-top;	/* Goes along with display:inline-block to images, not Delete links, are lined up */
 	height: 125px;
 	width: 110px;
 	margin: 5px;
@@ -60,6 +69,7 @@
 	background-color: #FEFEFE;
 	text-align: center;
 	overflow: hidden;
+	white-space: normal;	/* Override the inheritance of #timeline's white-space: nowrap */
 	border-radius: 5px;
     box-shadow: 5px 5px 5px #ccc;
 }
@@ -97,7 +107,7 @@
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	bottom: 200px;
+	bottom: 220px;
 	left: 50%;
 	/* A bit smaller than #videos-container's right edge (compensate for border, etc. */
 	border: 1px solid gray;
@@ -121,11 +131,12 @@
 	right: 0px;
 	bottom: 50px;
 	left: 0px;
-	height: 150px; /* Larger than height of .video-container */
+	height: 170px; /* Larger than height of .video-container */
 	border: 1px solid gray;
 	margin-left: 10px;
 	margin-right: 10px;
 	overflow-x: auto;
+	white-space: nowrap;
 	border-radius: 5px;
 	/*text-align: center;*/
 }
