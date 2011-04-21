@@ -112,7 +112,7 @@
 <div id="edit-account-container">
 <h2>Edit account: <%=username%></h2>
 <br />
-<div class="edit-account-container-small">
+<div class="edit-name-container">
 <form id="edit-account-form-name-and-email" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-name">Name</label> <input type="text"
@@ -123,7 +123,7 @@
 	type="submit" value="Update Name and Email" /><span><%=editNameEmailConfirmation%></span></form>
 </div>
 
-<div class="edit-account-container-small">
+<div class="edit-password-container">
 <form id="edit-account-form-password" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-password">Password</label> <input type="password"
@@ -135,7 +135,7 @@
 	type="submit" value="Update password" /><span><%=editPasswordConfirmation%></span></form>
 </div>
 
-<div class="edit-account-container-small">
+<div class="edit-security-container">
 <form id="edit-account-form-security" action="OliveServlet"
 	name="process" method="post">
 <p><label for="new-security-question">Security Question</label> <input

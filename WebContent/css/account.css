@@ -8,21 +8,43 @@
 }
 
 #edit-account-container h2 {
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	bottom: 0px;
+	right: 0px;
 	margin: .75em 0;
 }
 
-.edit-account-container-small {
-	float: left;
-	padding-right: 3%;
-	word-wrap:break-word;
-	overflow:auto;
-	width: 210px;
-}
+.edit-name-container {
+	position: absolute;
+	top: 30%;
+	left: 10%;
+	bottom: 0px;
+	right: 0px;
+	}
+	
+.edit-password-container {
+	position: absolute;
+	top: 30%;
+	left: 40%;
+	bottom: 0px;
+	right: 0px;
+	}
+	
+.edit-security-container {
+	position: absolute;
+	top: 30%;
+	left: 70%;
+	bottom: 0px;
+	right: 0px;
+	}
+
 
 #delete-account-container {
-	margin: 2.7%;
-}
-
-#delete-account-link {
-	margin: 2.7%;
+	position: absolute;
+	top: 70%;
+	left: 10%;
+	bottom: 0px;
+	right: 0px;
 }
