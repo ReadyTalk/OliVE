@@ -10,7 +10,9 @@
 	bottom: 10%;
 	left: 15%;
 	overflow: hidden;
+	padding: 10px;
 }
+
 
 #projects-title {
 	float: left;
@@ -72,4 +74,8 @@
 
 .project-name > button {
 	font-size: 12px;
+}
+
+#first-sign-in-dialog{
+	margin: 10px;
 }

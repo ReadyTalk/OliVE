@@ -83,13 +83,13 @@ function printFirstSignInMessage() {
 		+  '}';
 	makeAsynchronousPostRequest(requestData, function (responseData) {
 		if (responseData === true) {
-			var welcomeMessage = '<p>Welcome to Olive. This is the projects '
-				+ 'page where you can add, edit, and delete your projects. We '
-				+ 'would like to remind you to go to the Account Information '
-				+ 'page by clicking on your username at the top right and '
-				+ 'adding a security question and answer in case you forget '
-				+ 'your password.<br /><br />Thanks!<br /><br />The Olive '
-				+ 'Team</p>';
+			var welcomeMessage = '<p id="first-sign-in-dialog">Welcome to Olive. ' 
+				+ 'This is the projects page where you can add, edit, and '
+				+ 'delete your projects. We would like to remind you to go to '
+				+ 'the Account Information page by clicking the account link '
+				+ 'at the top right and adding a security question and answer '
+				+ 'in case you forget your password.<br /><br />Thanks!<br /><br />'
+				+ 'The Olive Team</p>';
 			$('#projects').append(welcomeMessage);
 		}
 	}, null);	// Defined in "/olive/scripts/master.js". 
