@@ -183,8 +183,8 @@ public class OliveServlet extends HttpServlet {
 				log.severe("HTTP POST request coming from unknown form: " + id);
 			}
 		} else if (request.getContentType()
-				.contains("application/octet-stream")|| request.getContentType()
-				.contains("multipart/form-data")) {
+				.contains("application/octet-stream")
+				|| request.getContentType().contains("multipart/form-data")) {
 			// Full value: "application/octet-stream"
 			// Full value: multipart/form-data; boundary=----------dlUx99n87cK8smSPjRMecS
 			// This is a fancy file upload form.
@@ -378,72 +378,74 @@ public class OliveServlet extends HttpServlet {
 			response.sendRedirect("index.jsp");
 		}
 	}
+
 	private void handleEditUserNameEmail(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-	throws UnsupportedEncodingException, IOException {
+			throws UnsupportedEncodingException, IOException {
 		String username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		String newName = request.getParameter("new-name");
 		String newEmail = request.getParameter("new-email");
-		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)){
-			User updateUser = new User(username, "" , newName,
-					newEmail, "", "");
+		if (Security.isSafeName(newName) && Security.isSafeEmail(newEmail)) {
+			User updateUser = new User(username, "", newName, newEmail, "", "");
 			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(),
 					editSuccessfully);
 			session.setAttribute(Attribute.EMAIL.toString(), newEmail);
 			session.setAttribute(Attribute.NAME.toString(), newName);
-			
-		}
-		else {
-			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(), false);
+
+		} else {
+			session.setAttribute(Attribute.EDIT_NAME_SUCCESSFULLY.toString(),
+					false);
 		}
 		response.sendRedirect("account.jsp");
-				
+
 	}
+
 	private void handleEditUserPassword(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-	throws UnsupportedEncodingException, IOException {
+			throws UnsupportedEncodingException, IOException {
 		String username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		String newPassword = request.getParameter("new-password");
 		String confirmNewPassword = request
 				.getParameter("confirm-new-password");
 		if (Security.isSafePassword(newPassword)
-				&& Security.isSafePassword(confirmNewPassword)){
+				&& Security.isSafePassword(confirmNewPassword)) {
 			if (newPassword.equals(confirmNewPassword)) {
-				User updateUser = new User(username, newPassword, "",
-						"", "", "");
+				User updateUser = new User(username, newPassword, "", "", "",
+						"");
 				Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
-				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
+				session.setAttribute(
+						Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
 						editSuccessfully);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(), true);
-			}
-			else{
-				session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
-						false);
+			} else {
+				session.setAttribute(
+						Attribute.EDIT_PWD_SUCCESSFULLY.toString(), false);
 				session.setAttribute(Attribute.PASSWORDS_MATCH.toString(),
 						false);
 			}
-			
-		}
-		else {
-			session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(), false);
+
+		} else {
+			session.setAttribute(Attribute.EDIT_PWD_SUCCESSFULLY.toString(),
+					false);
 		}
 		response.sendRedirect("account.jsp");
-				
+
 	}
+
 	private void handleEditUserSecurity(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session)
-	throws UnsupportedEncodingException, IOException {
+			throws UnsupportedEncodingException, IOException {
 		String username = (String) session.getAttribute(Attribute.USERNAME
 				.toString());
 		String securityQuestion = request.getParameter("new-security-question");
 		String securityAnswer = request.getParameter("new-security-answer");
 		if (Security.isSafeSecurityQuestion(securityQuestion)
-				&& Security.isSafeSecurityAnswer(securityAnswer)){
-			User updateUser = new User(username, "", "",
-					"", securityQuestion, securityAnswer);
+				&& Security.isSafeSecurityAnswer(securityAnswer)) {
+			User updateUser = new User(username, "", "", "", securityQuestion,
+					securityAnswer);
 			Boolean editSuccessfully = DatabaseApi.editAccount(updateUser);
 			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(),
 					editSuccessfully);
@@ -451,13 +453,13 @@ public class OliveServlet extends HttpServlet {
 					securityQuestion);
 			session.setAttribute(Attribute.SECURITY_ANSWER.toString(),
 					securityAnswer);
-				
-		}
-		else {
-			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(), false);
+
+		} else {
+			session.setAttribute(Attribute.EDIT_QA_SUCCESSFULLY.toString(),
+					false);
 		}
 		response.sendRedirect("account.jsp");
-				
+
 	}
 
 	/**
@@ -500,9 +502,9 @@ public class OliveServlet extends HttpServlet {
 		Enumeration headerNames = request.getHeaderNames();
 		String header;
 		while ((header = (String) headerNames.nextElement()) != null) {
-			System.out.println(header + ": " + request.getHeader(header));	// key: value
+			System.out.println(header + ": " + request.getHeader(header)); // key: value
 		}
-		
+
 		String filename = request.getHeader("X-File-Name");
 		File video = new File(destinationDir, filename);
 		try {
@@ -1029,9 +1031,9 @@ public class OliveServlet extends HttpServlet {
 		for (Video videoFragment : videoFragments) { // foreach-loop
 			// Give the video a name only at the last moment to prevent duplicates.
 			String newVideoName = Security.convertToSafeAndUniqueVideoName(
-					videoFragment.getName(), projectId);	// .getName() returns the original video name at this point.
-			videoFragment.setName(newVideoName);	// Now, change .getName() to a unique name.
-			
+					videoFragment.getName(), projectId); // .getName() returns the original video name at this point.
+			videoFragment.setName(newVideoName); // Now, change .getName() to a unique name.
+
 			DatabaseApi.addVideo(new Video(videoFragment.getName(),
 					videoFragment.getUrl(), videoFragment.getIcon(), projectId,
 					-1, -1, false)); // projectId not computed by Zencoder
@@ -1053,7 +1055,7 @@ public class OliveServlet extends HttpServlet {
 		String[] videos = DatabaseApi.getVideosOnTimeline(projectId);
 		String format = request.getParameter("output-extension");
 		log.info("Combining Videos, if necessary");
-		if (videos.length == 0){
+		if (videos.length == 0) {
 			response.sendRedirect("editor.jsp");
 		} else {
 			String[] videoURLs = new String[videos.length];
@@ -1065,7 +1067,8 @@ public class OliveServlet extends HttpServlet {
 			if (videoURLs.length == 1) {
 				combinedURL = S3Api.downloadVideosToTemp(videoURLs[0]);
 			} else if (videoURLs.length > 1) {
-				combinedURL = Combiner.combineVideos(videoURLs, videos, tempDir);
+				combinedURL = Combiner
+						.combineVideos(videoURLs, videos, tempDir);
 			}
 			if (combinedURL == null) {
 				response.sendRedirect("editor.jsp");
@@ -1075,22 +1078,22 @@ public class OliveServlet extends HttpServlet {
 			File file = new File(combinedURL);
 			String ext = ".ogv";
 			String converted = "";
-			if(!format.equals("ogv")){
-				if(format.equals("avi")){
-					ext=".avi";
-				} else if(format.equals("wmv")){
-					ext=".wmv";
-				} else if(format.equals("mp4")){
-					ext=".mp4";
+			if (!format.equals("ogv")) {
+				if (format.equals("avi")) {
+					ext = ".avi";
+				} else if (format.equals("wmv")) {
+					ext = ".wmv";
+				} else if (format.equals("mp4")) {
+					ext = ".mp4";
 				}
-				converted = Combiner.convertTo(format,file,tempDir);
-				file = new File(tempDir+"/"+converted);
+				converted = Combiner.convertTo(format, file, tempDir);
+				file = new File(tempDir + "/" + converted);
 			}
 			log.info("Now Dowloading");
 			final ServletOutputStream out = response.getOutputStream();
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
-			"attachment;filename=combinedVideo"+ext);
+					"attachment;filename=combinedVideo" + ext);
 			BufferedInputStream is = new BufferedInputStream(
 					new FileInputStream(file));
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
