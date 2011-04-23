@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -141,6 +142,7 @@ public class OliveServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		log.info(request.getContentType());
 		if (request.getContentType().contains(
 				"application/x-www-form-urlencoded")) { // Full value: "application/x-www-form-urlencoded"
 			// This is a regular text form.
@@ -494,6 +496,13 @@ public class OliveServlet extends HttpServlet {
 		InputStream inputStream = null;
 		FileOutputStream fileOutputStream = null;
 
+		// Used for debugging. X-File-Name is not displaying in Opera on upload.
+		Enumeration headerNames = request.getHeaderNames();
+		String header;
+		while ((header = (String) headerNames.nextElement()) != null) {
+			System.out.println(header + ": " + request.getHeader(header));	// key: value
+		}
+		
 		String filename = request.getHeader("X-File-Name");
 		File video = new File(destinationDir, filename);
 		try {

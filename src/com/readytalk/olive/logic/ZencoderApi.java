@@ -33,6 +33,7 @@ public class ZencoderApi {
 	private static final int AUDIO_CHANNELS = 2; // stereo
 	private static final int THUMB_PUBLICITY = 1; // true; public
 	private static final int VIDEO_PUBLICITY = 1; // true; public
+	private static final int MAX_JOB_LOOP_COUNT = 600; // 10 minutes
 
 	/**
 	 * 
@@ -51,8 +52,14 @@ public class ZencoderApi {
 		// {"current_event":"Uploading","progress":"100.0","state":"processing"}
 		// {"current_event":"Uploading","state":"finished"}
 
-		while (!doGet(zencoderOutputsUrl).contains("\"state\":\"finished\"")) {
+		int jobLoopCount = 0;
+		while (!doGet(zencoderOutputsUrl).contains("\"state\":\"finished\"")
+				&& !doGet(zencoderOutputsUrl).contains("\"state\":\"failed\"")) {
 			System.out.println("Job " + outputId + " not done yet.");
+			jobLoopCount++;
+			if (jobLoopCount > MAX_JOB_LOOP_COUNT) {
+				break; // Prevent infinite loop
+			}
 			try {
 				Thread.sleep(1000); // 1 second
 			} catch (InterruptedException e) {
@@ -94,6 +101,7 @@ public class ZencoderApi {
 				conn.getOutputStream());
 		outputStreamWriter.write(data);
 		outputStreamWriter.flush();
+		System.out.println(data);
 		System.out.println("Data sent to Zencoder.");
 		outputStreamWriter.close();
 
