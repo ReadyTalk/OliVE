@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -506,6 +507,11 @@ public class OliveServlet extends HttpServlet {
 		}
 
 		String filename = request.getHeader("X-File-Name");
+
+		// Unescape spaces, which don't hurt S3 or Zencoder
+		// Supposedly other characters could be escaped here.
+		filename = filename.replace("%20", " ");
+
 		File video = new File(destinationDir, filename);
 		try {
 			inputStream = request.getInputStream();
