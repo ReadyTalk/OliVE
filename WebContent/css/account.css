@@ -22,24 +22,23 @@
 	left: 10%;
 	bottom: 0px;
 	right: 0px;
-	}
-	
+}
+
 .edit-password-container {
 	position: absolute;
 	top: 30%;
 	left: 40%;
 	bottom: 0px;
 	right: 0px;
-	}
-	
+}
+
 .edit-security-container {
 	position: absolute;
 	top: 30%;
 	left: 70%;
 	bottom: 0px;
 	right: 0px;
-	}
-
+}
 
 #delete-account-container {
 	position: absolute;

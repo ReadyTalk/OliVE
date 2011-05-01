@@ -67,6 +67,7 @@
 <div id="main">
 <div id="edit-account-container">
 <h2>Forgot Password?</h2>
+<div class="edit-name-container">
 <p>Please enter your username to retrieve your security question.
 Thank you</p>
 <!-- end #about-title -->
@@ -79,6 +80,7 @@ Thank you</p>
 <input type="hidden" name="FormName" value="security-question-form" /><br />
 <input type="submit" value="Get Security Question" /><span><%=confirmation%></span>
 </form>
+</div>
 </div>
 <!-- end #main --></div>
 

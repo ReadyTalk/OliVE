@@ -73,6 +73,7 @@
 <div id="main">
 <div id="edit-account-container">
 <h2>New Password</h2>
+<div class="edit-name-container">
 <p>Please enter a new password for your account</p>
 <!-- end #about-title -->
 
@@ -86,6 +87,7 @@
 	value="" size="32" maxlength="128" /></p>
 <input type="hidden" name="FormName" value="new_password" /><br />
 <input type="submit" value="Submit New Password" /><span><%=confirmation%></span></form>
+</div>
 </div>
 <!-- end #main --></div>
 
