@@ -232,34 +232,34 @@ function attachScreencastPlayer() {
 	var videoPlaylist = new Playlist('1', [
 		{
 			name: 'Signing up',
-			ogv: 'https://s3.amazonaws.com/o-live/01-SignUp.mp4.ogv',
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-00-49-21-648-01SigningUp.avi.ogv',
 			//free: true,	// whether to provide a link to download the video
 			poster: '/olive/images/splash-jPlayer.png'
 		},
 		{
-			name: 'Projects',
-			ogv: 'https://s3.amazonaws.com/o-live/03-myProjectsPage.mp4.ogv'
+			name: 'Account information',
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-00-57-46-237-O2accountInformation.avi.ogv'
 			//free: true	// whether to provide a link to download the video
 		},
 		{
-			name: 'Uploading videos',
-			ogv: 'https://s3.amazonaws.com/o-live/04-uploading.mp4.ogv'
+			name: 'Projects',
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-11-37-28-696-O3myProjectsPage.avi.ogv'
 		},
 		{
-			name: 'Playing videos',
-			ogv: 'https://s3.amazonaws.com/o-live/05-play.mp4.ogv'
+			name: 'Uploading videos',
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-11-48-19-365-O4Uploading.avi.ogv'
 		},
 		{
 			name: 'Splitting videos',
-			ogv: 'https://s3.amazonaws.com/o-live/06-spliting.mp4.ogv'
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-12-23-33-262-O5Splitting.avi.ogv'
 		},
 		{
 			name: 'Combining videos',
-			ogv: 'https://s3.amazonaws.com/o-live/07-combining.mp4.ogv'
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-12-39-36-754-O6Combining.avi.ogv'
 		},
 		{
-			name: 'Registering and logging in',
-			ogv: 'https://s3.amazonaws.com/o-live/02-accountInformation.mp4.ogv'
+			name: 'Recovering password',
+			ogv: 'https://s3.amazonaws.com/o-live/2011-05-01-12-56-37-134-O7RecoveringPW.avi.ogv'
 		}
 	], {
 		ready: function() {
