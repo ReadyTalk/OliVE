@@ -77,7 +77,7 @@ public class Security {
 	}
 
 	/**
-	 * 
+	 * Determines whether the input value is valid according to regular expression
 	 * @param input
 	 * @param validRegex
 	 * @return
@@ -179,7 +179,13 @@ public class Security {
 		 * || (content[0].equals("audio") && content[1].equals("ogg"));
 		 */
 	}
-
+	
+	/**
+	 * Used whenever a new video is created. Generates unique video name.
+	 * @param videoName
+	 * @param projectId
+	 * @return
+	 */
 	public static String convertToSafeAndUniqueVideoName(String videoName,
 			int projectId) {
 		String safeVideo = stripOutIllegalCharacters(videoName, "_");

@@ -10,7 +10,21 @@ import org.jets3t.service.ServiceException;
 
 import com.readytalk.olive.util.InvalidFileSizeException;
 
+/**
+ * class Combiner allows user to combine multiple videos in the timeline
+ * @author Team Olive
+ *
+ */
 public class Combiner {
+	
+	/**
+	 * Converts output to specified format
+	 * @param format
+	 * @param video
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 */
 	public static String convertTo(String format, File video, File tempDir)
 			throws IOException {
 		String cmd = "ffmpeg -i ";
@@ -33,6 +47,18 @@ public class Combiner {
 		return newName;
 	}
 
+	/**
+	 * Use FFMPEG and Mencoder to combine multiple videos
+	 * @param videoURLs
+	 * @param videos
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidFileSizeException
+	 * @throws ServiceException
+	 * @throws InterruptedException
+	 */
 	public static String combineVideos(String[] videoURLs, String[] videos,
 			File tempDir) throws IOException, NoSuchAlgorithmException,
 			InvalidFileSizeException, ServiceException, InterruptedException {
@@ -87,6 +113,13 @@ public class Combiner {
 		return combined.getAbsolutePath();
 	}
 
+	/**
+	 * Figures out how much padding has to be added
+	 * @param videos
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 */
 	public static int[] getBiggestDimensions(String[] videos, File tempDir)
 			throws IOException {
 		int[] biggestDimensions = { 0, 0 };
@@ -104,6 +137,13 @@ public class Combiner {
 		return biggestDimensions;
 	}
 
+	/**
+	 * Extracts dimensions using FFMPEG
+	 * @param video
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 */
 	public static int[] getDimensions(File video, File tempDir)
 			throws IOException {
 		Runtime r = Runtime.getRuntime();
@@ -133,6 +173,14 @@ public class Combiner {
 		return ret;
 	}
 
+	/**
+	 * Adds padding
+	 * @param video
+	 * @param biggestDimensions
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 */
 	public static String adjustDimensions(File video, int[] biggestDimensions,
 			File tempDir) throws IOException {
 		int[] dimensions = getDimensions(video, tempDir);
@@ -168,6 +216,10 @@ public class Combiner {
 		return newName1;
 	}
 
+	/**
+	 * Checks whether this is windows or not for FFMPEG usage
+	 * @return
+	 */
 	// http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
 	private static Boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();

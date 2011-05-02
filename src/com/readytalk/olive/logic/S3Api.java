@@ -321,7 +321,7 @@ public class S3Api {
 	}
 
 	/**
-	 * 
+	 * Downloads a video to temporary folder
 	 * @param videoUrl
 	 * @return
 	 * @throws IOException
@@ -337,6 +337,12 @@ public class S3Api {
 		return outFile.getName();
 	}
 
+	/**
+	 * Converts virtual file to a real file
+	 * @param from
+	 * @param to
+	 * @throws IOException
+	 */
 	// Modified from: http://java.sun.com/docs/books/performance/1st_edition/html/JPIOPerformance.fm.html#11078
 	public static void saveFileToDisk(File from, File to) throws IOException {
 		InputStream in = null;

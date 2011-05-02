@@ -36,7 +36,7 @@ public class ZencoderApi {
 	private static final int MAX_JOB_LOOP_COUNT = 600; // 10 minutes
 
 	/**
-	 * 
+	 * Keeps asking Zencoder whether the given job is done yet
 	 * @param outputId
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -69,6 +69,12 @@ public class ZencoderApi {
 		}
 	}
 
+	/**
+	 * Converts inputStream to type string
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
 	// Modified from: http://download.oracle.com/javase/tutorial/networking/urls/readingWriting.html
 	private static String getResponse(InputStream inputStream)
 			throws IOException {
@@ -84,7 +90,13 @@ public class ZencoderApi {
 		System.out.println(response);
 		return response;
 	}
-
+	
+	/**
+	 * Perform a get request to specified URL
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
 	public static String doGet(String url) throws IOException {
 		return getResponse((new URL(url)).openConnection().getInputStream());
 	}
@@ -108,6 +120,21 @@ public class ZencoderApi {
 		return getResponse(conn.getInputStream());
 	}
 
+	/**
+	 * Constructs the Json string of Splitting to send to Zencoder
+	 * @param input
+	 * @param baseUrl
+	 * @param filename
+	 * @param numberOfThumbs
+	 * @param startClip
+	 * @param clipLength
+	 * @param thumbBaseUrl
+	 * @param thumbPrefix
+	 * @param thumbFormat
+	 * @param thumbPublicity
+	 * @param videoPublicity
+	 * @return
+	 */
 	private static String getJsonForSplit(String input, String baseUrl,
 			String filename, int numberOfThumbs, double startClip,
 			double clipLength, String thumbBaseUrl, String thumbPrefix,
@@ -125,6 +152,23 @@ public class ZencoderApi {
 		return data;
 	}
 
+	/**
+	 * Constructs the Json string of converting to ogg to send to Zencoder
+	 * @param input
+	 * @param videoBaseUrl
+	 * @param filename
+	 * @param videoCodec
+	 * @param audioCodec
+	 * @param numberOfThumbs
+	 * @param thumbBaseUrl
+	 * @param thumbPrefix
+	 * @param thumbFormat
+	 * @param thumbPublicity
+	 * @param framesPerSecond
+	 * @param audioChannels
+	 * @param videoPublicity
+	 * @return
+	 */
 	private static String getJsonForConvertToOgg(String input,
 			String videoBaseUrl, String filename, String videoCodec,
 			String audioCodec, int numberOfThumbs, String thumbBaseUrl,
@@ -146,6 +190,13 @@ public class ZencoderApi {
 		return data;
 	}
 
+	/**
+	 * Perform a high level split operation
+	 * @param videoId
+	 * @param splitTimeInSeconds
+	 * @return
+	 * @throws IOException
+	 */
 	public static Video[] split(int videoId, double splitTimeInSeconds)
 			throws IOException {
 		String originalVideoUrl = DatabaseApi.getVideoUrl(videoId);
@@ -189,6 +240,12 @@ public class ZencoderApi {
 		return videoFragments;
 	}
 
+	/**
+	 * Perform a high level converting to ogg operation
+	 * @param videoUrl
+	 * @return
+	 * @throws IOException
+	 */
 	public static String[] convertToOgg(String videoUrl) throws IOException {
 		String convertedVideoFileName = S3Api
 				.getNameFromUrlWithNewTimeStamp(videoUrl) + NEW_EXTENSION;

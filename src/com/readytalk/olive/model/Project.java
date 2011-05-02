@@ -92,8 +92,8 @@ public class Project {
 		this.poolPosition = poolPosition;
 	}
 /**
- * 
- * @return
+ * Gets the position of the icon in the editing box (pool)
+ * @return the order position
  */
 	public int getPoolPosition() {
 		return poolPosition;
