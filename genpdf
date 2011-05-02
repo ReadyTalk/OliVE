@@ -72,6 +72,8 @@ FILES="\
     WebContent/projects.jsp \
     WebContent/securityQuestion.jsp \
     WebContent/shared-dialogs.jsp \
+        \
+    genpdf \
     "
 
 # Remove any old PostScript or PDF versions lying around.
