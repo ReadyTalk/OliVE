@@ -30,6 +30,7 @@ FILES="\
     src/com/readytalk/olive/json/UpdateVideosPositionRequest.java \
     src/com/readytalk/olive/json/ZencoderInitialResponse.java \
     \
+    src/com/readytalk/olive/logic/Combiner.java \
     src/com/readytalk/olive/logic/DatabaseApi.java \
     src/com/readytalk/olive/logic/S3Api.java \
     src/com/readytalk/olive/logic/Security.java \
@@ -52,8 +53,6 @@ FILES="\
     WebContent/css/reset.css \
         \
     WebContent/META-INF/context.xml \
-        \
-    WebContent/temp/maintainer.txt \
         \
     WebContent/scripts/account.js \
     WebContent/scripts/editor.js \
